@@ -436,6 +436,23 @@ if (!siteConfig) {
       margin: 2rem 0;
     }
 
+    /* Newsletter Bar */
+    .newsletter-bar { background:var(--card-bg,#0a1020); border-top:1px solid var(--border-color); padding:2rem 1.5rem; margin-top:3rem; }
+    .newsletter-inner { max-width:800px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; }
+    .newsletter-text { flex:1; min-width:200px; }
+    .newsletter-text strong { display:block; font-size:1rem; color:var(--text-primary); margin-bottom:4px; }
+    .newsletter-text span { font-size:0.85rem; color:var(--text-secondary); }
+    .newsletter-form { display:flex; gap:8px; }
+    .newsletter-form input { padding:10px 16px; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-color,#060a12); color:var(--text-primary); font-size:0.9rem; width:220px; outline:none; }
+    .newsletter-form input:focus { border-color:var(--accent-color); }
+    .newsletter-form button { padding:10px 20px; border-radius:8px; border:none; background:var(--accent-color); color:#fff; font-weight:600; font-size:0.9rem; cursor:pointer; white-space:nowrap; }
+    .newsletter-form button:hover { opacity:0.9; }
+    @media (max-width:600px) {
+      .newsletter-inner { flex-direction:column; text-align:center; }
+      .newsletter-form { width:100%; }
+      .newsletter-form input { flex:1; }
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -551,6 +568,19 @@ if (!siteConfig) {
   </script>
 
   <slot />
+
+  <div class="newsletter-bar">
+    <div class="newsletter-inner">
+      <div class="newsletter-text">
+        <strong>📬 Weekly Market Brief</strong>
+        <span>Free data-driven insights. No spam. Unsubscribe anytime.</span>
+      </div>
+      <form class="newsletter-form" action="https://formspree.io/f/xyzgabwm" method="POST">
+        <input type="email" name="email" placeholder="you@example.com" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </div>
 
   <footer>
     <p>
