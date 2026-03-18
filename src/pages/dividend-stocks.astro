@@ -1,0 +1,351 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Top Dividend Stocks & Growth Guide",
+  description: "Could passive income change your financial future? Uncover our comprehensive list of top dividend stocks, yields, and growth history for 2025.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are dividend stocks?", "acceptedAnswer": {"@type": "Answer", "text": "Dividend stocks are shares of companies that distribute a portion of their earnings directly to shareholders on a regular schedule, typically quarterly. These distributions represent a tangible return on investment independent of the stock's price movement. They are often favored by income-seeking investors, such as retirees, because they provide a steady stream of passive income."}}, {"@type": "Question", "name": "What are the best dividend growth stocks?", "acceptedAnswer": {"@type": "Answer", "text": "The best dividend growth stocks belong to companies that not only pay a dividend but have a proven history of consistently increasing that payment year after year. Groups like the Dividend Aristocrats (S&P 500 companies with 25+ consecutive years of increases) are highly sought after. These companies demonstrate strong free cash flow generation and a commitment to returning capital to shareholders."}}, {"@type": "Question", "name": "Where can I find a comprehensive dividend stocks list?", "acceptedAnswer": {"@type": "Answer", "text": "Our interactive table provided above serves as a curated dividend stocks list, featuring real-time data on yields, prices, and valuation metrics for top-tier companies. Additionally, investors can utilize financial screeners or examine the holdings of prominent dividend-focused Exchange Traded Funds (ETFs) to discover new income-generating opportunities."}}, {"@type": "Question", "name": "What are the top dividend stocks 2025?", "acceptedAnswer": {"@type": "Answer", "text": "For 2025, the top dividend stocks often include companies operating in mature, cash-generative industries. High-yield opportunities are frequently found in telecommunications, energy, and real estate. However, the best picks balance high current yield with the safety of the payout, favoring steady consumer defensive stocks and healthcare giants with manageable payout ratios."}}, {"@type": "Question", "name": "How do I use a dividend stocks calculator?", "acceptedAnswer": {"@type": "Answer", "text": "A dividend stocks calculator is a powerful tool used to project future passive income and portfolio value. By inputting your initial investment amount, the stock's expected dividend yield, an estimated dividend growth rate, and your planned regular contributions, the calculator models the powerful effects of compounding, especially when dividends are automatically reinvested (DRIP)."}}]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Top Dividend Stocks & Growth Guide", "description": "Could passive income change your financial future? Uncover our comprehensive list of top dividend stocks, yields, and growth history for 2025.", "datePublished": "2026-03-15", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}}];
+---
+<SiteLayout site="westmount" title="Top Dividend Stocks & Growth Guide" description="Could passive income change your financial future? Uncover our comprehensive list of top dividend stocks, yields, and growth history for 2025." canonical="https://westmountfundamentals.com/dividend-stocks" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Top Dividend Stocks & Growth Guide</h1>
+      <p class="subtitle">Build sustainable passive income with high-yield and consistent dividend growth stocks.</p>
+    </div>
+
+    <section class="intro-section" style="margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.8;">
+        <p>For investors focused on generating reliable, passive income, building a portfolio of high-quality dividend stocks is a fundamental strategy. Unlike pure growth equities, which rely entirely on price appreciation to deliver returns, dividend stocks provide a tangible cash flow stream regardless of day-to-day market volatility. As we analyze the landscape for dividend stocks 2025, the importance of focusing on companies with sustainable payout ratios, strong balance sheets, and a history of consecutive payout increases cannot be overstated.</p><p>This guide explores the mechanics of income investing, highlighting the difference between chasing the highest initial dividend yield and identifying the best dividend growth stocks. A company that consistently raises its dividend—often referred to as a Dividend Aristocrat or Dividend King—demonstrates robust underlying business fundamentals and a management team committed to shareholder value. Our comprehensive dividend stocks list below features real-time data on some of the most prominent income-generating companies across various sectors, from consumer staples to energy and telecommunications.</p><p>Furthermore, understanding how to project future returns using a dividend stocks calculator is essential for long-term planning. By reinvesting dividends, investors can harness the power of compound interest, significantly accelerating wealth accumulation over decades. Whether you are nearing retirement and require immediate income, or you are a younger investor looking to build a snowball of passive cash flow, selecting the right dividend yield stocks is a critical component of a balanced financial plan.</p>
+    </section>
+
+    <div class="search-container" style="margin-bottom: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h3 style="margin-top: 0; margin-bottom: 1rem;">Filter the Data</h3>
+        <input type="text" id="searchInput" placeholder="Search by ticker, name, or sector..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1rem; background: transparent; color: var(--text-primary);">
+    </div>
+
+    <div style="overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 1rem;">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)" style="cursor:pointer;" title="Sort by Ticker">Ticker &#x2195;</th>
+                    <th onclick="sortTable(1)" style="cursor:pointer;" title="Sort by Name">Name &#x2195;</th>
+                    <th onclick="sortTable(2)" style="cursor:pointer;" title="Sort by Sector">Sector &#x2195;</th>
+                    <th onclick="sortTable(3)" style="cursor:pointer;" title="Sort by Price">Price &#x2195;</th>
+                    <th onclick="sortTable(4)" style="cursor:pointer;" title="Sort by Dividend Yield">Yield &#x2195;</th>
+                    <th onclick="sortTable(5)" style="cursor:pointer;" title="Sort by P/E Ratio">P/E Ratio &#x2195;</th>
+                    <th onclick="sortTable(6)" style="cursor:pointer;" title="Sort by Market Cap">Market Cap &#x2195;</th>
+                </tr>
+            </thead>
+            <tbody>
+
+        <tr>
+            <td><strong>KO</strong></td>
+            <td>Coca-Cola Company (The)</td>
+            <td>Consumer Defensive</td>
+            <td>$77.34</td>
+            <td>2.66%</td>
+            <td>25.44</td>
+            <td>$332.69B</td>
+        </tr>
+        <tr>
+            <td><strong>PEP</strong></td>
+            <td>Pepsico, Inc.</td>
+            <td>Consumer Defensive</td>
+            <td>$159.88</td>
+            <td>3.56%</td>
+            <td>26.65</td>
+            <td>$218.61B</td>
+        </tr>
+        <tr>
+            <td><strong>CVX</strong></td>
+            <td>Chevron Corporation</td>
+            <td>Energy</td>
+            <td>$196.82</td>
+            <td>3.62%</td>
+            <td>29.69</td>
+            <td>$393.51B</td>
+        </tr>
+        <tr>
+            <td><strong>XOM</strong></td>
+            <td>Exxon Mobil Corporation</td>
+            <td>Energy</td>
+            <td>$156.12</td>
+            <td>2.64%</td>
+            <td>23.30</td>
+            <td>$650.52B</td>
+        </tr>
+        <tr>
+            <td><strong>PG</strong></td>
+            <td>Procter & Gamble Company (The)</td>
+            <td>Consumer Defensive</td>
+            <td>$150.65</td>
+            <td>2.81%</td>
+            <td>22.32</td>
+            <td>$352.59B</td>
+        </tr>
+        <tr>
+            <td><strong>ABBV</strong></td>
+            <td>AbbVie Inc.</td>
+            <td>Healthcare</td>
+            <td>$219.68</td>
+            <td>3.15%</td>
+            <td>92.69</td>
+            <td>$388.43B</td>
+        </tr>
+        <tr>
+            <td><strong>MRK</strong></td>
+            <td>Merck & Company, Inc.</td>
+            <td>Healthcare</td>
+            <td>$115.61</td>
+            <td>2.94%</td>
+            <td>15.88</td>
+            <td>$285.83B</td>
+        </tr>
+        <tr>
+            <td><strong>VZ</strong></td>
+            <td>Verizon Communications Inc.</td>
+            <td>Communication Services</td>
+            <td>$51.38</td>
+            <td>5.51%</td>
+            <td>12.66</td>
+            <td>$216.70B</td>
+        </tr>
+        <tr>
+            <td><strong>T</strong></td>
+            <td>AT&T Inc.</td>
+            <td>Communication Services</td>
+            <td>$27.72</td>
+            <td>4.00%</td>
+            <td>9.12</td>
+            <td>$196.52B</td>
+        </tr>
+        <tr>
+            <td><strong>MO</strong></td>
+            <td>Altria Group, Inc.</td>
+            <td>Consumer Defensive</td>
+            <td>$67.89</td>
+            <td>6.25%</td>
+            <td>16.48</td>
+            <td>$113.97B</td>
+        </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <section style="margin-top: 3rem;">
+        <h2>Detailed Equity Analysis</h2>
+        <p style="margin-bottom: 1.5rem;">Below is a comprehensive breakdown of each stock in our list. By combining fundamental metrics like valuation multiples and dividend yields with qualitative analysis of company operations and sector dynamics, investors can make more informed portfolio allocation decisions.</p>
+        <div id="analysisContainer">
+
+        <div class="card item-card">
+            <h3>KO - Coca-Cola Company (The)</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $77.34 | <strong>Yield:</strong> 2.66% | <strong>P/E:</strong> 25.44 | <strong>Market Cap:</strong> $332.69B</p>
+            <p>The Coca-Cola Company, a beverage company, manufactures and sells various nonalcoholic beverages in the United States and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=KO" style="color: var(--accent-color); font-weight: bold;">Compare KO metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>PEP - Pepsico, Inc.</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $159.88 | <strong>Yield:</strong> 3.56% | <strong>P/E:</strong> 26.65 | <strong>Market Cap:</strong> $218.61B</p>
+            <p>PepsiCo, Inc. engages in the manufacture, marketing, distribution, and sale of various beverages and convenient foods worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=PEP" style="color: var(--accent-color); font-weight: bold;">Compare PEP metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>CVX - Chevron Corporation</h3>
+            <p><strong>Sector:</strong> Energy | <strong>Price:</strong> $196.82 | <strong>Yield:</strong> 3.62% | <strong>P/E:</strong> 29.69 | <strong>Market Cap:</strong> $393.51B</p>
+            <p>Chevron Corporation, through its subsidiaries, engages in the integrated energy and chemicals operations in the United States and internationally. It operates through Upstream, Downstream, and All Other segments.</p>
+            <p><a href="/stock-comparison-tool?symbols=CVX" style="color: var(--accent-color); font-weight: bold;">Compare CVX metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>XOM - Exxon Mobil Corporation</h3>
+            <p><strong>Sector:</strong> Energy | <strong>Price:</strong> $156.12 | <strong>Yield:</strong> 2.64% | <strong>P/E:</strong> 23.30 | <strong>Market Cap:</strong> $650.52B</p>
+            <p>Exxon Mobil Corporation engages in the exploration and production of crude oil and natural gas in the United States, Canada, and internationally. The company operates through Upstream, Energy Products, Chemical Products, and Specialty Products segments.</p>
+            <p><a href="/stock-comparison-tool?symbols=XOM" style="color: var(--accent-color); font-weight: bold;">Compare XOM metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>PG - Procter & Gamble Company (The)</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $150.65 | <strong>Yield:</strong> 2.81% | <strong>P/E:</strong> 22.32 | <strong>Market Cap:</strong> $352.59B</p>
+            <p>The Procter & Gamble Company provides branded consumer packaged goods worldwide. It operates through Beauty; Grooming; Health Care; Fabric & Home Care; and Baby, Feminine & Family Care segments.</p>
+            <p><a href="/stock-comparison-tool?symbols=PG" style="color: var(--accent-color); font-weight: bold;">Compare PG metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>ABBV - AbbVie Inc.</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $219.68 | <strong>Yield:</strong> 3.15% | <strong>P/E:</strong> 92.69 | <strong>Market Cap:</strong> $388.43B</p>
+            <p>AbbVie Inc., a research-based biopharmaceutical company, engages in the research and development, manufacturing, commercializing, and sale of medicines and therapies worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=ABBV" style="color: var(--accent-color); font-weight: bold;">Compare ABBV metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>MRK - Merck & Company, Inc.</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $115.61 | <strong>Yield:</strong> 2.94% | <strong>P/E:</strong> 15.88 | <strong>Market Cap:</strong> $285.83B</p>
+            <p>Merck & Co., Inc. operates as a healthcare company worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=MRK" style="color: var(--accent-color); font-weight: bold;">Compare MRK metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>VZ - Verizon Communications Inc.</h3>
+            <p><strong>Sector:</strong> Communication Services | <strong>Price:</strong> $51.38 | <strong>Yield:</strong> 5.51% | <strong>P/E:</strong> 12.66 | <strong>Market Cap:</strong> $216.70B</p>
+            <p>Verizon Communications Inc., through its subsidiaries, engages in the provision of communications, technology, information, and streaming products and services to consumers, businesses, and governmental entities worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=VZ" style="color: var(--accent-color); font-weight: bold;">Compare VZ metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>T - AT&T Inc.</h3>
+            <p><strong>Sector:</strong> Communication Services | <strong>Price:</strong> $27.72 | <strong>Yield:</strong> 4.00% | <strong>P/E:</strong> 9.12 | <strong>Market Cap:</strong> $196.52B</p>
+            <p>AT&T Inc. provides telecommunications and technology services worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=T" style="color: var(--accent-color); font-weight: bold;">Compare T metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>MO - Altria Group, Inc.</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $67.89 | <strong>Yield:</strong> 6.25% | <strong>P/E:</strong> 16.48 | <strong>Market Cap:</strong> $113.97B</p>
+            <p>Altria Group, Inc., through its subsidiaries, manufactures and sells smokeable and oral tobacco products in the United States.</p>
+            <p><a href="/stock-comparison-tool?symbols=MO" style="color: var(--accent-color); font-weight: bold;">Compare MO metrics &rarr;</a></p>
+        </div>
+        </div>
+    </section>
+
+
+    <section style="margin-top: 3rem;">
+        <h2>Our Methodology and Market Approach</h2>
+        <p>Understanding how we select and analyze equities is crucial for making informed investment decisions. Our proprietary methodology involves a rigorous, multi-factor screening process designed to identify companies with durable competitive advantages, robust financial health, and compelling valuation metrics. We begin by defining the investable universe, which typically includes large-cap and mid-cap equities trading on major global exchanges.</p>
+
+        <p>The first pillar of our analysis focuses on fundamental financial metrics. We meticulously review income statements, balance sheets, and cash flow statements to assess a company's profitability, leverage, and liquidity. Key indicators such as the Price-to-Earnings (P/E) ratio, Price-to-Book (P/B) ratio, and Free Cash Flow (FCF) yield are evaluated relative to industry peers and historical averages. A company must demonstrate consistent revenue growth and expanding profit margins to warrant consideration. Furthermore, we pay close attention to return on invested capital (ROIC), as it is a strong indicator of management's ability to efficiently allocate capital.</p>
+
+        <p>Beyond quantitative metrics, our methodology heavily weights qualitative factors. We conduct deep-dive research into the competitive landscape of each industry, identifying structural tailwinds and potential disruptive threats. Evaluating a company's economic moat—whether derived from network effects, switching costs, cost advantages, or intangible assets like patents and brand strength—is central to our approach. We look for businesses that can maintain pricing power and protect their market share over the long term.</p>
+
+        <p>Macroeconomic conditions also play a significant role in our equity selection process. We continuously monitor interest rate trends, inflation expectations, and geopolitical developments, as these factors can broadly impact market sentiment and sector performance. For instance, in a rising interest rate environment, we may pivot towards value-oriented sectors with strong near-term cash flows, whereas a low-rate environment might favor long-duration growth equities.</p>
+    </section>
+
+
+
+
+    <section class="faq-section" style="margin-top: 3rem;">
+        <h2>Frequently Asked Questions</h2>
+
+        <details>
+            <summary>What are dividend stocks?</summary>
+            <p>Dividend stocks are shares of companies that distribute a portion of their earnings directly to shareholders on a regular schedule, typically quarterly. These distributions represent a tangible return on investment independent of the stock's price movement. They are often favored by income-seeking investors, such as retirees, because they provide a steady stream of passive income.</p>
+        </details>
+        <details>
+            <summary>What are the best dividend growth stocks?</summary>
+            <p>The best dividend growth stocks belong to companies that not only pay a dividend but have a proven history of consistently increasing that payment year after year. Groups like the Dividend Aristocrats (S&P 500 companies with 25+ consecutive years of increases) are highly sought after. These companies demonstrate strong free cash flow generation and a commitment to returning capital to shareholders.</p>
+        </details>
+        <details>
+            <summary>Where can I find a comprehensive dividend stocks list?</summary>
+            <p>Our interactive table provided above serves as a curated dividend stocks list, featuring real-time data on yields, prices, and valuation metrics for top-tier companies. Additionally, investors can utilize financial screeners or examine the holdings of prominent dividend-focused Exchange Traded Funds (ETFs) to discover new income-generating opportunities.</p>
+        </details>
+        <details>
+            <summary>What are the top dividend stocks 2025?</summary>
+            <p>For 2025, the top dividend stocks often include companies operating in mature, cash-generative industries. High-yield opportunities are frequently found in telecommunications, energy, and real estate. However, the best picks balance high current yield with the safety of the payout, favoring steady consumer defensive stocks and healthcare giants with manageable payout ratios.</p>
+        </details>
+        <details>
+            <summary>How do I use a dividend stocks calculator?</summary>
+            <p>A dividend stocks calculator is a powerful tool used to project future passive income and portfolio value. By inputting your initial investment amount, the stock's expected dividend yield, an estimated dividend growth rate, and your planned regular contributions, the calculator models the powerful effects of compounding, especially when dividends are automatically reinvested (DRIP).</p>
+        </details>
+    </section>
+
+    <section class="internal-links" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+        <h3>Related Resources</h3>
+        <p style="margin-bottom: 1rem;">Expand your research by exploring our other guides and interactive tools:</p>
+        <ul>
+            <li><a href="/best-stocks-to-buy-now">Best Stocks to Buy Now</a></li>
+            <li><a href="/best-stocks-to-invest-in-2025">Best Stocks to Invest in 2025</a></li>
+            <li><a href="/dividend-stocks">Top Dividend Stocks Guide</a></li>
+            <li><a href="/stock-screener">Interactive Stock Screener</a></li>
+            <li><a href="/stock-comparison-tool">Stock Comparison Tool</a></li>
+        </ul>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+
+        // Filter table rows
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+
+        // Filter analysis cards
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+
+    // Table sorting
+    function sortTable(n) {
+        const table = document.getElementById("dataTable");
+        let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                let valX = x.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+                let valY = y.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+
+                if (valX === 'n/a') valX = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valX.endsWith('t')) valX = parseFloat(valX) * 1e12;
+                else if (valX.endsWith('b')) valX = parseFloat(valX) * 1e9;
+                else if (valX.endsWith('m')) valX = parseFloat(valX) * 1e6;
+                else if (!isNaN(parseFloat(valX))) valX = parseFloat(valX);
+
+                if (valY === 'n/a') valY = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valY.endsWith('t')) valY = parseFloat(valY) * 1e12;
+                else if (valY.endsWith('b')) valY = parseFloat(valY) * 1e9;
+                else if (valY.endsWith('m')) valY = parseFloat(valY) * 1e6;
+                else if (!isNaN(parseFloat(valY))) valY = parseFloat(valY);
+
+                if (dir == "asc") {
+                    if (valX > valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (valX < valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; margin: 0; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background-color: rgba(0,0,0,0.02); white-space: nowrap; user-select: none; }
+    th:hover { background-color: rgba(0,0,0,0.05); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; font-size: 1.1rem; }
+    .faq-section p { margin-top: 1rem; color: var(--text-secondary); line-height: 1.6; }
+    .internal-links ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+    .internal-links a { text-decoration: none; color: var(--accent-color); font-weight: 600; padding: 0.5rem 1rem; border-radius: 6px; background: rgba(74, 143, 231, 0.1); }
+    .internal-links a:hover { background: rgba(74, 143, 231, 0.2); }
+  </style>
+</SiteLayout>

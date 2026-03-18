@@ -1,0 +1,542 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Free Capital Gains Tax Calculator & Estimator (2024-2025 Rates)",
+  description: "Calculate your estimated short-term and long-term capital gains taxes with our free calculator. Understand how filing status and income affect your tax bill.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the capital gains tax rate for 2024?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For 2024, long-term capital gains tax rates are 0%, 15%, or 20% depending on your taxable income and filing status. Short-term capital gains are taxed at ordinary income tax rates, which range from 10% to 37%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long do I need to hold an asset for long-term capital gains?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To qualify for long-term capital gains tax rates, you must hold the asset for more than one year (at least one year and one day) before selling it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Net Investment Income Tax (NIIT)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Net Investment Income Tax is an additional 3.8% tax that applies to individuals, estates, and trusts that have net investment income and modified adjusted gross income above certain threshold amounts (e.g., $250,000 for married filing jointly)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can capital losses offset capital gains?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, capital losses can be used to offset capital gains. If your losses exceed your gains, you can use up to $3,000 of the excess loss to offset other income, such as your salary. Any remaining losses can be carried forward to future years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my state charge capital gains tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most states tax capital gains as ordinary income, though rates vary. A few states, like Florida and Texas, have no state income tax, so there is no state capital gains tax. Some states also offer special breaks for long-term capital gains."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/capital-gains-tax-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Capital Gains Tax Calculator</h1>
+      <p>Estimate your short-term or long-term capital gains tax based on current tax brackets and holding periods.</p>
+
+      <div class="calculator-card">
+        <h3>Calculate Your Estimated Tax</h3>
+
+        <div class="calc-grid">
+          <div class="calc-inputs">
+
+            <div class="input-group">
+              <label for="filingStatus">Filing Status</label>
+              <select id="filingStatus" class="calc-select">
+                <option value="single">Single</option>
+                <option value="married_joint">Married Filing Jointly</option>
+                <option value="head_of_household">Head of Household</option>
+                <option value="married_separate">Married Filing Separately</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="ordinaryIncome">Taxable Ordinary Income (excluding this sale)</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="ordinaryIncome" value="60000" min="0" step="1000">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="purchasePrice">Purchase Price (Cost Basis)</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="purchasePrice" value="10000" min="0" step="100">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="salePrice">Sale Price</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="salePrice" value="15000" min="0" step="100">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Holding Period</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="holdingPeriod" value="short" checked>
+                  Short-Term (&le; 1 Year)
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="holdingPeriod" value="long">
+                  Long-Term (&gt; 1 Year)
+                </label>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="calc-results-panel">
+            <div class="result-box primary-result">
+              <span class="calc-result-label">Estimated Capital Gains Tax</span>
+              <span class="calc-result-value" id="estimatedTax">$0</span>
+            </div>
+
+            <div class="result-details">
+              <div class="detail-row">
+                <span>Net Gain/Loss:</span>
+                <span id="netGainValue" class="detail-val">$0</span>
+              </div>
+              <div class="detail-row">
+                <span>Marginal Tax Bracket:</span>
+                <span id="taxBracketValue" class="detail-val">0%</span>
+              </div>
+              <div class="detail-row niit-row" style="display: none;">
+                <span>Net Investment Income Tax (3.8%):</span>
+                <span id="niitValue" class="detail-val">$0</span>
+              </div>
+              <div class="detail-row">
+                <span>Total Tax Rate (Blended):</span>
+                <span id="effectiveRateValue" class="detail-val">0%</span>
+              </div>
+            </div>
+
+            <p class="disclaimer text-sm mt-4">This calculator provides an estimate for federal capital gains taxes (2024 brackets) based on simplified assumptions. It does not account for state taxes, local taxes, deductions, alternative minimum tax (AMT), or specific investment types like collectibles or real estate depreciation recapture. For exact tax liability, please consult a certified tax professional.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>How is Capital Gains Tax Calculated?</h2>
+        <p>A capital gain occurs when you sell an asset (like stocks, real estate, or business interests) for more than you paid for it. The amount of tax you owe depends heavily on how long you held the asset before selling it and your overall income.</p>
+
+        <h3>Short-Term vs. Long-Term Capital Gains</h3>
+        <div class="highlight-box">
+          <p><strong>Short-Term Capital Gains</strong> apply to assets held for one year or less. These gains are taxed as ordinary income, meaning they are subject to your standard federal income tax bracket. In 2024, ordinary income tax rates range from 10% to 37%.</p>
+          <p><strong>Long-Term Capital Gains</strong> apply to assets held for more than one year. These benefit from preferential tax rates designed to encourage long-term investment. Depending on your taxable income, the long-term capital gains tax rates are 0%, 15%, or 20%.</p>
+        </div>
+
+        <h3>The Cost Basis</h3>
+        <p>The <strong>Cost Basis</strong> is the original value of an asset for tax purposes. Usually, it's the purchase price. When you sell an asset, your capital gain (or loss) is the sale price minus the cost basis. If you bought shares of stock for $1,000 and sold them for $1,500, your capital gain is $500, and you are only taxed on that $500, not the full $1,500.</p>
+
+        <h3>Net Investment Income Tax (NIIT)</h3>
+        <p>High earners may also be subject to the Net Investment Income Tax (NIIT). This is an additional 3.8% tax on investment income (including capital gains) for individuals whose Modified Adjusted Gross Income (MAGI) exceeds certain thresholds:</p>
+        <ul>
+          <li>Married Filing Jointly: $250,000</li>
+          <li>Single or Head of Household: $200,000</li>
+          <li>Married Filing Separately: $125,000</li>
+        </ul>
+        <p>The calculator estimates your MAGI simply as your taxable ordinary income plus your capital gain. The 3.8% tax applies to either your net investment income or the amount by which your MAGI exceeds the threshold, whichever is smaller.</p>
+      </div>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        {JSON.parse(schema).mainEntity.map((item: any) => (
+          <div class="faq-item">
+            <h3>{item.name}</h3>
+            <p>{item.acceptedAnswer.text}</p>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Input Elements
+    const filingStatusEl = document.getElementById("filingStatus");
+    const ordinaryIncomeEl = document.getElementById("ordinaryIncome");
+    const purchasePriceEl = document.getElementById("purchasePrice");
+    const salePriceEl = document.getElementById("salePrice");
+    const holdingPeriodEls = document.querySelectorAll('input[name="holdingPeriod"]');
+
+    // Result Elements
+    const estimatedTaxEl = document.getElementById("estimatedTax");
+    const netGainValueEl = document.getElementById("netGainValue");
+    const taxBracketValueEl = document.getElementById("taxBracketValue");
+    const niitValueEl = document.getElementById("niitValue");
+    const effectiveRateValueEl = document.getElementById("effectiveRateValue");
+    const niitRowEl = document.querySelector(".niit-row");
+
+    // Formatters
+    const currencyFormatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    });
+
+    const percentFormatter = new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 2
+    });
+
+    // 2024 Long-Term Capital Gains Tax Brackets
+    const longTermBrackets = {
+      single: [
+        { max: 47025, rate: 0 },
+        { max: 518900, rate: 0.15 },
+        { max: Infinity, rate: 0.20 }
+      ],
+      married_joint: [
+        { max: 94050, rate: 0 },
+        { max: 583750, rate: 0.15 },
+        { max: Infinity, rate: 0.20 }
+      ],
+      head_of_household: [
+        { max: 63000, rate: 0 },
+        { max: 551350, rate: 0.15 },
+        { max: Infinity, rate: 0.20 }
+      ],
+      married_separate: [
+        { max: 47025, rate: 0 },
+        { max: 291850, rate: 0.15 },
+        { max: Infinity, rate: 0.20 }
+      ]
+    };
+
+    // 2024 Short-Term (Ordinary Income) Tax Brackets
+    const shortTermBrackets = {
+      single: [
+        { max: 11600, rate: 0.10 },
+        { max: 47150, rate: 0.12 },
+        { max: 100525, rate: 0.22 },
+        { max: 191950, rate: 0.24 },
+        { max: 243725, rate: 0.32 },
+        { max: 609350, rate: 0.35 },
+        { max: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { max: 23200, rate: 0.10 },
+        { max: 94300, rate: 0.12 },
+        { max: 201050, rate: 0.22 },
+        { max: 383900, rate: 0.24 },
+        { max: 487450, rate: 0.32 },
+        { max: 731200, rate: 0.35 },
+        { max: Infinity, rate: 0.37 }
+      ],
+      head_of_household: [
+        { max: 16550, rate: 0.10 },
+        { max: 63100, rate: 0.12 },
+        { max: 100500, rate: 0.22 },
+        { max: 191950, rate: 0.24 },
+        { max: 243700, rate: 0.32 },
+        { max: 609350, rate: 0.35 },
+        { max: Infinity, rate: 0.37 }
+      ],
+      married_separate: [
+        { max: 11600, rate: 0.10 },
+        { max: 47150, rate: 0.12 },
+        { max: 100525, rate: 0.22 },
+        { max: 191950, rate: 0.24 },
+        { max: 243725, rate: 0.32 },
+        { max: 365600, rate: 0.35 },
+        { max: Infinity, rate: 0.37 }
+      ]
+    };
+
+    // NIIT Thresholds
+    const niitThresholds = {
+      single: 200000,
+      married_joint: 250000,
+      head_of_household: 200000,
+      married_separate: 125000
+    };
+
+    function calculateProgressiveTax(income, capitalGain, brackets) {
+      let tax = 0;
+      let remainingGain = capitalGain;
+      let currentIncome = income;
+
+      for (const bracket of brackets) {
+        if (remainingGain <= 0) break;
+
+        // Income is below bracket maximum
+        if (currentIncome < bracket.max) {
+          // How much room is left in this bracket
+          const roomInBracket = bracket.max - currentIncome;
+
+          // Tax the gain that fits in this bracket
+          const gainInBracket = Math.min(remainingGain, roomInBracket);
+          tax += gainInBracket * bracket.rate;
+
+          // Move income and remaining gain up
+          currentIncome += gainInBracket;
+          remainingGain -= gainInBracket;
+        }
+      }
+      return tax;
+    }
+
+    function calculate() {
+      // Inputs
+      const status = filingStatusEl.value;
+      const income = parseFloat(ordinaryIncomeEl.value) || 0;
+      const purchase = parseFloat(purchasePriceEl.value) || 0;
+      const sale = parseFloat(salePriceEl.value) || 0;
+
+      let holding = 'short';
+      holdingPeriodEls.forEach(el => {
+        if (el.checked) holding = el.value;
+      });
+
+      // Calculate Net Gain
+      const netGain = sale - purchase;
+      netGainValueEl.textContent = currencyFormatter.format(netGain);
+
+      if (netGain <= 0) {
+        // No tax on loss or break even
+        estimatedTaxEl.textContent = "$0";
+        taxBracketValueEl.textContent = "0%";
+        niitValueEl.textContent = "$0";
+        niitRowEl.style.display = "none";
+        effectiveRateValueEl.textContent = "0%";
+        return;
+      }
+
+      // Calculate Base Tax
+      let baseTax = 0;
+      let brackets = holding === 'long' ? longTermBrackets[status] : shortTermBrackets[status];
+
+      baseTax = calculateProgressiveTax(income, netGain, brackets);
+
+      // Determine Marginal Bracket
+      let marginalRate = 0;
+      let totalIncome = income + netGain;
+      for (const b of brackets) {
+        if (totalIncome <= b.max || b.max === Infinity) {
+          marginalRate = b.rate;
+          break;
+        }
+      }
+
+      // Calculate Net Investment Income Tax (NIIT)
+      const threshold = niitThresholds[status];
+      const magi = income + netGain;
+      let niitTax = 0;
+
+      if (magi > threshold) {
+        const excessMagi = magi - threshold;
+        const subjectToNiit = Math.min(netGain, excessMagi);
+        niitTax = subjectToNiit * 0.038;
+      }
+
+      // Final Calculations
+      const totalTax = baseTax + niitTax;
+      const effectiveRate = totalTax / netGain;
+
+      // Update UI
+      estimatedTaxEl.textContent = currencyFormatter.format(totalTax);
+      taxBracketValueEl.textContent = percentFormatter.format(marginalRate) + " Marginal";
+
+      if (niitTax > 0) {
+        niitRowEl.style.display = "flex";
+        niitValueEl.textContent = currencyFormatter.format(niitTax);
+      } else {
+        niitRowEl.style.display = "none";
+      }
+
+      effectiveRateValueEl.textContent = percentFormatter.format(effectiveRate);
+    }
+
+    // Bind Events
+    [filingStatusEl, ordinaryIncomeEl, purchasePriceEl, salePriceEl].forEach(el => {
+      el.addEventListener('input', calculate);
+    });
+
+    holdingPeriodEls.forEach(el => {
+      el.addEventListener('change', calculate);
+    });
+
+    // Initial Calculation
+    calculate();
+  });
+</script>
+
+<style>
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .calc-select, .input-wrapper input {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .calc-select:focus, .input-wrapper input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrapper .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+
+  .input-wrapper input {
+    padding-left: 2rem;
+  }
+
+  /* Radio Buttons styling */
+  .radio-group {
+    display: flex;
+    gap: 1rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .radio-label {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    color: var(--text-secondary);
+  }
+
+  .radio-label:has(input:checked) {
+    background-color: var(--card-bg);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+  }
+
+  .radio-label input[type="radio"] {
+    display: none;
+  }
+
+  .calc-results-panel {
+    background-color: var(--bg-color);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+  }
+
+  .result-box {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .primary-result .calc-result-value {
+    font-size: 3rem;
+  }
+
+  .result-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border-color);
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-row span:first-child {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .detail-val {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .disclaimer {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .mt-4 { margin-top: 1rem; }
+  .text-sm { font-size: 0.85rem; }
+
+</style>

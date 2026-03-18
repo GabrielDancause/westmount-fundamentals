@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP Over-Contribution Guide",
+    "description": "Understanding the $2K buffer, penalties, and how to fix errors.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the penalty for over-contributing to an RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The CRA imposes a 1% per month penalty tax on any contributions that exceed your deduction limit plus the $2,000 lifetime buffer."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix an RRSP over-contribution?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You must immediately withdraw the excess amount to stop the penalty from accruing, and then file a T1-OVP form to calculate and pay the required penalty tax."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the $2,000 over-contribution buffer apply to everyone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, any Canadian resident over the age of 18 has a lifetime $2,000 over-contribution buffer. However, this buffer does not provide a tax deduction."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP Over-Contribution Guide",
+  description: "Understanding the $2K buffer, penalties, and how to fix errors.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP Over-Contribution Guide" description="Understanding the $2K buffer, penalties, and how to fix errors." canonical="https://westmountfundamentals.com/rrsp-overcontribution-guide" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP Over-Contribution Guide</h1><p>Understanding the $2K buffer, penalties, and how to fix errors.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-contribution-calculator">Rrsp Contribution Calculator</a></li>
+        <li><a href="/rrsp-deadline-reminder">Rrsp Deadline Reminder</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>What is the penalty for over-contributing to an RRSP?</h3>
+      <p>The CRA imposes a 1% per month penalty tax on any contributions that exceed your deduction limit plus the $2,000 lifetime buffer.</p>
+      <h3>How do I fix an RRSP over-contribution?</h3>
+      <p>You must immediately withdraw the excess amount to stop the penalty from accruing, and then file a T1-OVP form to calculate and pay the required penalty tax.</p>
+      <h3>Does the $2,000 over-contribution buffer apply to everyone?</h3>
+      <p>Yes, any Canadian resident over the age of 18 has a lifetime $2,000 over-contribution buffer. However, this buffer does not provide a tax deduction.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Risks of Exceeding Your Deduction Limit</h2>
+      <p>The Registered Retirement Savings Plan (RRSP) is heavily regulated by the Canada Revenue Agency (CRA) to ensure that its tax-sheltering benefits are not abused. Every Canadian has a specific RRSP deduction limit, which is the absolute maximum they are allowed to contribute based on their previous income and pension adjustments. Exceeding this limit is a serious compliance issue that can result in punitive taxes if not addressed promptly.</p>
+
+      <p>The CRA imposes a penalty tax of 1% per month on the amount of the over-contribution that exceeds the permitted lifetime buffer. This penalty continues to compound every month until the excess funds are withdrawn from the account. Depending on the size of the over-contribution and how long it goes unnoticed, this penalty can rapidly consume the investment gains within the account and result in a substantial tax bill.</p>
+    </div>
+
+    <div class="card">
+      <h2>Understanding the $2,000 Lifetime Buffer</h2>
+      <p>To provide some leeway for honest mistakes, the CRA grants every Canadian over the age of 18 a lifetime over-contribution buffer of $2,000. This means that if your contribution limit is $10,000, you can technically contribute up to $12,000 without triggering the 1% monthly penalty tax. However, it is crucial to understand that while you will not be penalized for utilizing this buffer, the extra $2,000 is not tax-deductible. You cannot use the buffer to artificially inflate your tax refund.</p>
+
+      <p>Furthermore, because the buffer is a lifetime limit, it is generally unwise to intentionally utilize it as an investment strategy. If you intentionally max out the $2,000 buffer to gain extra tax-sheltered growth, you leave yourself zero margin for error. A minor miscalculation in the future, such as an unexpected pension adjustment or an accidental duplicate transfer, will immediately push you over the threshold and trigger the penalty tax.</p>
+    </div>
+
+    <div class="card">
+      <h2>Resolving an Over-Contribution: Immediate Actions</h2>
+      <p>If you discover that you have over-contributed to your RRSP beyond the $2,000 buffer, you must take immediate action to mitigate the penalties. The first step is to immediately contact your financial institution and withdraw the excess amount. This stops the 1% monthly penalty tax from accruing further. Depending on the institution, they may apply withholding taxes on this withdrawal, but you can usually reclaim this on your next tax return by proving it was a withdrawal of an over-contribution.</p>
+
+      <p>Once the funds are withdrawn, you must fulfill your reporting obligations to the CRA. This involves completing a T1-OVP form (Individual Tax Return for RRSP, PRPP and SPP Excess Contributions). This form is notoriously complex and is used to calculate the exact amount of penalty tax you owe based on the exact days the excess funds were in the account. In some cases, if you can prove the over-contribution was a reasonable error and that you took immediate steps to correct it, you can apply to the CRA to have the penalty waived or cancelled using form RC4288.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

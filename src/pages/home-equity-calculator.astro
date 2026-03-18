@@ -1,0 +1,547 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Home Equity Calculator | Calculate Your Borrowing Power",
+  description: "Calculate your home equity and loan-to-value (LTV) ratio instantly. See how much you can borrow with a HELOC or home equity loan based on real formulas.",
+  category: "tool",
+  published: "2026-03-24",
+};
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Home Equity Calculator",
+    "description": "Calculate your home equity and how much you can borrow against your home.",
+    "author": {
+      "@type": "Organization",
+      "name": "SiliconBased"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do you calculate home equity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Home equity is calculated by subtracting your outstanding mortgage balance and any other liens on your property from the current market value of your home."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good Loan-to-Value (LTV) ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A good LTV ratio is typically 80% or lower. Lenders generally require an LTV of 80% to avoid private mortgage insurance (PMI) and to offer the best interest rates on loans."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much home equity can I borrow?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most lenders allow you to borrow up to 80% or sometimes 85% of your home's total value, minus your current mortgage balance. This limit ensures you retain a buffer of equity in the home."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a home equity loan increase my mortgage?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, a home equity loan is typically a second mortgage. It does not replace your primary mortgage unless you choose to do a cash-out refinance, which creates a single new mortgage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why did my home equity decrease?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your home equity can decrease if the market value of your home drops, or if you take out additional loans against the property like a HELOC."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/home-equity-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="hero">
+      <h1>Home Equity Calculator</h1>
+      <p class="subtitle">Calculate your home's equity, loan-to-value (LTV) ratio, and how much you can potentially borrow.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="input-column">
+        <div class="input-group">
+          <label for="home-value">Current Home Value</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="home-value" value="500000" min="0" step="1000" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="mortgage-balance">Current Mortgage Balance</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="mortgage-balance" value="300000" min="0" step="1000" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="other-loans">Other Loans or Liens (e.g., HELOCs)</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="other-loans" value="0" min="0" step="1000" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="max-ltv">Maximum LTV allowed by lender</label>
+          <div class="input-wrapper">
+            <input type="number" id="max-ltv" value="80" min="1" max="100" step="1" />
+            <span class="suffix">%</span>
+          </div>
+          <p class="helper-text">Most lenders allow you to borrow up to 80% to 85% of your home's value.</p>
+        </div>
+      </div>
+
+      <div class="results-column">
+        <div class="result-card primary">
+          <h3>Total Home Equity</h3>
+          <div class="result-value" id="total-equity">$0</div>
+          <p class="result-desc">The portion of the home's value you actually own outright.</p>
+        </div>
+
+        <div class="results-grid">
+          <div class="sub-result">
+            <h4>Current LTV Ratio</h4>
+            <div id="current-ltv">0.00%</div>
+            <p class="result-desc">Loan-to-Value. Should ideally be under 80%.</p>
+          </div>
+          <div class="sub-result highlight">
+            <h4>Available to Borrow</h4>
+            <div id="available-borrow">$0</div>
+            <p class="result-desc">Estimated maximum additional borrowing power.</p>
+          </div>
+        </div>
+
+        <div id="error-message" class="error-text" style="display: none;">
+          Total loans cannot exceed the home value. Please check your inputs.
+        </div>
+        <div id="negative-equity-message" class="error-text" style="display: none;">
+          You appear to have negative equity (underwater mortgage).
+        </div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding Home Equity</h2>
+      <p>
+        Home equity is simply the portion of your home's value that you actually own free and clear. It's calculated by taking the current market value of your property and subtracting any outstanding debts secured against it—primarily your mortgage, but also any second mortgages, HELOCs (Home Equity Lines of Credit), or other liens.
+      </p>
+
+      <h3>How Home Equity is Calculated</h3>
+      <p>The mathematical formula for calculating home equity is straightforward:</p>
+      <div class="formula-box">
+        <strong>Home Equity = Current Home Value - Outstanding Mortgage Balance - Other Property Debts</strong>
+      </div>
+      <p>
+        For example, if your home is currently worth $500,000, and you owe $300,000 on your primary mortgage, your total home equity is $200,000.
+      </p>
+
+      <h3>What is Loan-to-Value (LTV)?</h3>
+      <p>
+        The Loan-to-Value (LTV) ratio is a critical metric used by lenders to assess the risk of a loan. It represents the percentage of your home's value that is currently financed by debt.
+      </p>
+      <div class="formula-box">
+        <strong>LTV = (Total Outstanding Loans / Current Home Value) &times; 100</strong>
+      </div>
+      <p>
+        Using the previous example, a $300,000 loan on a $500,000 home results in an LTV of 60%. A lower LTV is better. Lenders generally consider an LTV of 80% or lower to be standard. If your LTV goes above 80% on a primary mortgage, you are typically required to pay Private Mortgage Insurance (PMI).
+      </p>
+
+      <h3>How Much Equity Can I Borrow?</h3>
+      <p>
+        Just because you have $200,000 in equity doesn't mean a lender will let you borrow the full amount. Lenders want to ensure there is a buffer—a margin of safety in case property values decline.
+      </p>
+      <p>
+        Therefore, most lenders cap total borrowing at a Maximum LTV. This cap is most commonly 80%, though some lenders will allow up to 85% or even 90% (often at higher interest rates or with stricter credit requirements).
+      </p>
+      <p>The formula to determine how much *usable* equity you have is:</p>
+      <div class="formula-box">
+        <strong>Available Borrowing Power = (Current Home Value &times; Max LTV Percentage) - Current Outstanding Debts</strong>
+      </div>
+      <p>
+        If your home is worth $500,000, and the lender's max LTV is 80%, the maximum total debt allowed on the property is $400,000. If you already owe $300,000, your available borrowing power is the remaining $100,000.
+      </p>
+
+      <h3>Ways to Access Your Equity</h3>
+      <p>If you have substantial equity built up, there are a few primary ways to access that capital:</p>
+      <ul>
+        <li><strong>Home Equity Loan:</strong> Often called a "second mortgage." You receive a lump sum upfront and repay it with a fixed interest rate over a set term (e.g., 10 or 15 years).</li>
+        <li><strong>Home Equity Line of Credit (HELOC):</strong> A revolving line of credit, similar to a credit card. You can draw money as needed up to your limit, and you only pay interest on the amount you draw. Rates are typically variable.</li>
+        <li><strong>Cash-Out Refinance:</strong> You replace your current primary mortgage with a new, larger mortgage and take the difference in cash. This means a new interest rate on your entire balance.</li>
+      </ul>
+
+      <p>
+        Building equity takes time, achieved both through paying down your mortgage principal and through natural appreciation in your local real estate market. Use our mortgage calculator to see how extra payments can accelerate your equity growth.
+      </p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>How do you calculate home equity?</summary>
+        <p>Home equity is calculated by subtracting your outstanding mortgage balance and any other liens on your property from the current market value of your home.</p>
+      </details>
+
+      <details>
+        <summary>What is a good Loan-to-Value (LTV) ratio?</summary>
+        <p>A good LTV ratio is typically 80% or lower. Lenders generally require an LTV of 80% to avoid private mortgage insurance (PMI) and to offer the best interest rates on loans.</p>
+      </details>
+
+      <details>
+        <summary>How much home equity can I borrow?</summary>
+        <p>Most lenders allow you to borrow up to 80% or sometimes 85% of your home's total value, minus your current mortgage balance. This limit ensures you retain a buffer of equity in the home to protect the lender if prices fall.</p>
+      </details>
+
+      <details>
+        <summary>Does a home equity loan increase my mortgage?</summary>
+        <p>No, a home equity loan is typically a second, separate mortgage. It does not replace or increase your primary mortgage unless you explicitly choose to do a cash-out refinance.</p>
+      </details>
+
+      <details>
+        <summary>Why did my home equity decrease?</summary>
+        <p>Your home equity can decrease if the market value of your home drops significantly in your area, or if you take out additional loans against the property like a HELOC which increases your total debt.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function calculateEquity() {
+      const homeValueInput = document.getElementById('home-value');
+      const mortgageBalanceInput = document.getElementById('mortgage-balance');
+      const otherLoansInput = document.getElementById('other-loans');
+      const maxLtvInput = document.getElementById('max-ltv');
+
+      const errorMessage = document.getElementById('error-message');
+      const negativeEquityMessage = document.getElementById('negative-equity-message');
+
+      const homeValue = parseFloat(homeValueInput.value) || 0;
+      const mortgageBalance = parseFloat(mortgageBalanceInput.value) || 0;
+      const otherLoans = parseFloat(otherLoansInput.value) || 0;
+      const maxLtvPercentage = parseFloat(maxLtvInput.value) || 80;
+
+      const totalLoans = mortgageBalance + otherLoans;
+      const totalEquity = homeValue - totalLoans;
+
+      let currentLtv = 0;
+      if (homeValue > 0) {
+        currentLtv = (totalLoans / homeValue) * 100;
+      }
+
+      // Max borrowable amount based on max LTV
+      const maxAllowedDebt = homeValue * (maxLtvPercentage / 100);
+      let availableBorrow = maxAllowedDebt - totalLoans;
+
+      if (availableBorrow < 0) {
+          availableBorrow = 0;
+      }
+
+      // Reset UI state
+      errorMessage.style.display = 'none';
+      negativeEquityMessage.style.display = 'none';
+
+      // Edge case warnings
+      if (totalLoans > homeValue && homeValue > 0) {
+          negativeEquityMessage.style.display = 'block';
+      } else if (homeValue === 0 && totalLoans > 0) {
+          errorMessage.style.display = 'block';
+      }
+
+      // Update UI
+      document.getElementById('total-equity').textContent = formatCurrency(totalEquity);
+      document.getElementById('current-ltv').textContent = currentLtv.toFixed(2) + '%';
+
+      const availableEl = document.getElementById('available-borrow');
+      availableEl.textContent = formatCurrency(availableBorrow);
+
+      if (availableBorrow > 0) {
+        availableEl.style.color = 'var(--accent-color)';
+      } else {
+        availableEl.style.color = 'var(--text-secondary)';
+      }
+    }
+
+    // Attach event listeners for real-time calculation
+    const inputs = ['home-value', 'mortgage-balance', 'other-loans', 'max-ltv'];
+    inputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', calculateEquity);
+    });
+
+    // Run initial calculation
+    calculateEquity();
+  </script>
+
+  <style>
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .calculator-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    @media (min-width: 768px) {
+      .calculator-container {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .input-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .prefix {
+      position: absolute;
+      left: 1rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .suffix {
+      position: absolute;
+      right: 1rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      padding-left: 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-family: var(--font-mono);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="number"]#max-ltv {
+      padding-left: 1rem;
+      padding-right: 2.5rem;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .helper-text {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .results-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .result-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .result-card.primary {
+      background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+      border-color: var(--accent-color);
+    }
+
+    .result-card h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+
+    .result-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      font-family: var(--font-mono);
+      margin-bottom: 0.5rem;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .sub-result {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .sub-result h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .sub-result div {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-bottom: 0.25rem;
+    }
+
+    .result-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .error-text {
+      background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+      color: var(--text-primary);
+      padding: 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .explainer {
+      margin: 3rem 0;
+      line-height: 1.6;
+    }
+
+    .explainer h2 {
+      font-size: 1.8rem;
+      margin: 2rem 0 1rem;
+    }
+
+    .explainer h3 {
+      font-size: 1.4rem;
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    .explainer p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .explainer ul {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+      padding-left: 1.5rem;
+    }
+
+    .explainer li {
+      margin-bottom: 0.5rem;
+    }
+
+    .formula-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: 8px;
+      text-align: center;
+      margin: 1.5rem 0;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1.25rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 1.05rem;
+    }
+
+    .faq-section details p {
+      margin: 1rem 0 0 0;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+  </style>
+</SiteLayout>

@@ -1,0 +1,516 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Return on Investment (ROI) Calculator",
+      "description": "Calculate your total and annualized ROI with this interactive tool. Learn how to calculate return on investment, see real-world examples, and understand common mistakes.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you calculate return on investment (ROI)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The basic formula for ROI is: (Net Profit / Cost of Investment) × 100. To find Net Profit, subtract the initial cost from the final value. For example, if you invest $1,000 and it grows to $1,200, your net profit is $200. Your ROI is ($200 / $1,000) × 100 = 20%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good ROI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 'good' ROI depends entirely on the asset class and your time horizon. Historically, the stock market (S&P 500) has returned about 7-10% annually after inflation. Real estate investors often target 8-12% annually. For short-term or low-risk investments like CDs or high-yield savings accounts, a good return is typically close to the current risk-free rate."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between ROI and annualized ROI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Total ROI measures the total percentage growth over the entire life of the investment. Annualized ROI (or Compound Annual Growth Rate - CAGR) calculates the average yearly growth rate needed to reach the final value. Annualized ROI is better for comparing investments held for different lengths of time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can ROI be negative?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, if an investment loses value, the ROI will be negative. This happens when the final value is less than the initial cost of the investment. For example, if you buy a stock for $100 and sell it for $80, your ROI is -20%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does ROI account for time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Basic ROI does not account for time. A 50% return sounds great, but it's very different if it took 1 year versus 10 years to achieve. That's why investors use Annualized ROI (CAGR) to factor in the holding period and make apples-to-apples comparisons."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+export const meta = {
+  title: "Return on Investment (ROI) Calculator | Westmount Fundamentals",
+  description: "Made a 50% profit? That might actually be terrible depending on how long it took. Find your true annualized return and learn exactly what it means.",
+  category: "tool",
+  published: "2026-03-17"
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/roi-calculator"
+  schema={schema}
+>
+  <style>
+    .calculator-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .calc-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .calc-header h1 {
+      font-size: 2.5rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 1rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    input[type="number"].has-prefix {
+      padding-left: 2rem;
+    }
+
+    input[type="number"].has-suffix {
+      padding-right: 3rem;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .results-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .result-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card.primary {
+      background: var(--card-bg);
+      border-color: var(--accent-color);
+    }
+
+    .result-label {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .result-value.positive {
+      color: var(--accent-color); /* Positive */
+    }
+
+    .result-value.negative {
+      color: var(--text-secondary); /* Negative */
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-table th {
+      background: var(--bg-color);
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table td {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .table-value {
+      text-align: right;
+    }
+  </style>
+
+  <div class="page-content">
+    <div class="calculator-container">
+      <div class="calc-header">
+        <h1>Return on Investment (ROI) Calculator</h1>
+        <p class="subtitle">Calculate your total profit, percentage return, and true annualized rate.</p>
+      </div>
+
+      <div class="calc-grid">
+        <div class="input-section">
+          <div class="form-group">
+            <label for="initial-investment">Amount Invested (Initial Cost)</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="number" id="initial-investment" class="has-prefix" value="10000" min="0" step="100">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="final-value">Amount Returned (Final Value)</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="number" id="final-value" class="has-prefix" value="15000" min="0" step="100">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="time-period">Holding Period</label>
+            <div class="input-wrapper">
+              <input type="number" id="time-period" class="has-suffix" value="5" min="0.1" step="0.1">
+              <span class="input-suffix">Years</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="result-card primary">
+            <div class="result-label">Total Return on Investment</div>
+            <div class="result-value" id="roi-percentage">50.00%</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-label">Annualized Return (CAGR)</div>
+            <div class="result-value" id="annualized-roi">8.45%</div>
+          </div>
+
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Summary</th>
+                <th class="table-value">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Initial Investment</td>
+                <td class="table-value" id="table-initial">$10,000.00</td>
+              </tr>
+              <tr>
+                <td>Final Value</td>
+                <td class="table-value" id="table-final">$15,000.00</td>
+              </tr>
+              <tr>
+                <td>Net Profit / Loss</td>
+                <td class="table-value" id="table-profit">$5,000.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="content-section" style="margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <h2>What is Return on Investment (ROI)?</h2>
+        <p>Return on Investment (ROI) is the most fundamental metric in finance. It measures the amount of return—or profit—on an investment relative to the investment's cost. In simple terms, it answers the question: <em>"For every dollar I put in, how much did I get back?"</em></p>
+
+        <p>While looking at raw dollar profits (like making $5,000) is nice, it doesn't tell the whole story. Making $5,000 on a $1,000 investment is incredible. Making $5,000 on a $1,000,000 investment is terrible. ROI levels the playing field by converting returns into a percentage, allowing you to compare entirely different investments—like a stock portfolio versus a rental property—apples to apples.</p>
+
+        <h3>How to Calculate ROI (The Formula)</h3>
+        <p>The standard formula for calculating basic ROI is straightforward:</p>
+
+        <div style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; margin-bottom: 0;"><strong>ROI = [(Current Value of Investment - Cost of Investment) / Cost of Investment] × 100</strong></p>
+        </div>
+
+        <p>Or, more simply:</p>
+        <div style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; margin-bottom: 0;"><strong>ROI = (Net Profit / Cost of Investment) × 100</strong></p>
+        </div>
+
+        <p><strong>A Worked Example:</strong></p>
+        <p>Let's say you bought 100 shares of a company at $50 per share. Your initial investment (cost) is $5,000. Three years later, you sell those shares for $75 each, totaling $7,500.</p>
+        <ul style="margin-left: 2rem; margin-bottom: 1.5rem; color: var(--text-secondary);">
+          <li><strong>Net Profit:</strong> $7,500 - $5,000 = $2,500</li>
+          <li><strong>ROI Calculation:</strong> ($2,500 / $5,000) × 100</li>
+          <li><strong>Total ROI:</strong> 50%</li>
+        </ul>
+
+        <h2>The Problem with Basic ROI: It Ignores Time</h2>
+        <p>A 50% return sounds fantastic. But here is the critical flaw with basic ROI: <em>it completely ignores how long it took to make that money</em>.</p>
+
+        <p>If you made 50% in one month, you're a genius. If it took you 30 years to make that 50%, your money actually lost significant purchasing power to inflation, and you would have been much better off in a basic <a href="/investment-calculator">investment calculator</a> scenario utilizing standard index funds.</p>
+
+        <p>This is why professional investors rarely use basic ROI in isolation. Instead, they use <strong>Annualized ROI</strong>, also known as the Compound Annual Growth Rate (CAGR).</p>
+
+        <h3>Annualized ROI (CAGR) Formula</h3>
+        <p>Annualized ROI tells you the steady, equivalent annual rate of return you would need to achieve your final value over the given time period.</p>
+
+        <div style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; margin-bottom: 0;"><strong>Annualized ROI = [(Ending Value / Beginning Value) ^ (1 / Number of Years)] - 1</strong></p>
+        </div>
+
+        <p>Going back to our previous example: you turned $5,000 into $7,500 (a 50% total ROI). But let's look at how the <em>timeframe</em> completely changes the reality of that investment:</p>
+
+        <ul style="margin-left: 2rem; margin-bottom: 1.5rem; color: var(--text-secondary);">
+          <li>If it took <strong>1 year</strong>: Annualized ROI is 50.0%.</li>
+          <li>If it took <strong>3 years</strong>: Annualized ROI is 14.47%.</li>
+          <li>If it took <strong>10 years</strong>: Annualized ROI is 4.14%.</li>
+        </ul>
+
+        <p>At 10 years, that "amazing" 50% return is actually underperforming the <a href="/average-stock-market-return">average stock market return</a> significantly.</p>
+
+        <h2>Common Mistakes When Calculating Returns</h2>
+        <p>When investors use our <a href="/investment-calculator">investing calculator</a> tools, we often see these common calculation errors that drastically skew their perceived returns:</p>
+
+        <ol style="margin-left: 2rem; margin-bottom: 1.5rem; color: var(--text-secondary);">
+          <li style="margin-bottom: 1rem;"><strong>Forgetting to include transaction costs:</strong> When calculating your initial cost basis, you must include broker fees, commissions, and any maintenance costs. In real estate, this includes closing costs, repairs, and property taxes. Leaving these out artificially inflates your ROI.</li>
+          <li style="margin-bottom: 1rem;"><strong>Ignoring dividends and interest:</strong> The "Current Value" of an investment shouldn't just be the stock price. If the stock paid you a 3% dividend every year, those cash payments are part of your net profit. If you reinvest those dividends, the math becomes more complex, which is why utilizing a <a href="/ramsey-investment-calculator">ramsey investment calculator</a> can help project long-term compounding effects.</li>
+          <li style="margin-bottom: 1rem;"><strong>Not accounting for stock splits:</strong> If you bought 100 shares at $100, and the stock undergoes a 2-for-1 split, you now have 200 shares at $50. The total value is exactly the same. Beginners sometimes see the price drop to $50 and mistakenly calculate a -50% ROI. (Use our <a href="/stock-split-calculator">stock split calculator</a> if you're unsure how a recent corporate action affected your basis).</li>
+          <li style="margin-bottom: 1rem;"><strong>Confusing ROI with Profit Margin:</strong> ROI measures the return on the money you invested. Profit margin measures how much profit a business keeps from its revenue. They are related but fundamentally different metrics.</li>
+        </ol>
+
+        <h2>Rules of Thumb for Investors</h2>
+        <p>As you build out your strategy using an <a href="/investment-planner">investment planner</a>, keep these professional benchmarks in mind when evaluating your ROI:</p>
+
+        <ul>
+          <li><strong>The Rule of 72:</strong> Want to know how long it will take to double your money? Divide 72 by your expected Annualized ROI. At an 8% return, your money doubles in 9 years (72 / 8 = 9). At a 10% return, it doubles in 7.2 years.</li>
+          <li><strong>The Risk-Free Rate Benchmark:</strong> You should never accept an investment that offers an expected ROI lower than the current "risk-free rate" (typically the yield on a 1-month or 3-month US Treasury Bill). If Treasuries are paying 5% guaranteed, taking on stock market risk for a projected 4% return makes no mathematical sense.</li>
+          <li><strong>The S&P 500 Benchmark:</strong> Over the last century, large-cap US stocks have returned an average annualized ROI of roughly 9-10% (before inflation). If an active fund manager or a real estate syndication is charging high fees but failing to beat an annualized 10% return over a 5-10 year period, you are likely better off buying a low-cost index fund.</li>
+        </ul>
+
+        <p>Remember, ROI is a backward-looking metric. It tells you exactly what happened in the past, but it cannot guarantee what will happen in the future. Always adjust your expectations for current market conditions, inflation, and your personal risk tolerance.</p>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", function() {
+      const inputs = [
+        document.getElementById('initial-investment'),
+        document.getElementById('final-value'),
+        document.getElementById('time-period')
+      ];
+
+      const elements = {
+        roiPercentage: document.getElementById('roi-percentage'),
+        annualizedRoi: document.getElementById('annualized-roi'),
+        tableInitial: document.getElementById('table-initial'),
+        tableFinal: document.getElementById('table-final'),
+        tableProfit: document.getElementById('table-profit')
+      };
+
+      function formatCurrency(num) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num);
+      }
+
+      function formatPercent(num) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'percent',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num / 100);
+      }
+
+      function calculate() {
+        const initial = parseFloat(inputs[0].value) || 0;
+        const final = parseFloat(inputs[1].value) || 0;
+        const years = parseFloat(inputs[2].value) || 0;
+
+        // Prevent division by zero
+        if (initial <= 0) {
+          elements.roiPercentage.textContent = 'N/A';
+          elements.annualizedRoi.textContent = 'N/A';
+          elements.roiPercentage.className = 'result-value';
+          elements.annualizedRoi.className = 'result-value';
+
+          elements.tableInitial.textContent = formatCurrency(initial);
+          elements.tableFinal.textContent = formatCurrency(final);
+          elements.tableProfit.textContent = formatCurrency(final - initial);
+          return;
+        }
+
+        const profit = final - initial;
+        let roi = (profit / initial) * 100;
+
+        // Float precision fix
+        let fixedRoi = parseFloat(roi.toPrecision(14));
+        if (Math.abs(fixedRoi - Math.round(fixedRoi)) < 1e-14) {
+          roi = Math.round(fixedRoi);
+        } else {
+          roi = fixedRoi;
+        }
+
+        elements.roiPercentage.textContent = formatPercent(roi);
+
+        // Update colors
+        elements.roiPercentage.className = 'result-value ' + (roi > 0 ? 'positive' : (roi < 0 ? 'negative' : ''));
+
+        if (years > 0) {
+          let cagr = 0;
+          if (final > 0) {
+              cagr = (Math.pow(final / initial, 1 / years) - 1) * 100;
+          } else if (final === 0) {
+              cagr = -100;
+          }
+
+          let fixedCagr = parseFloat(cagr.toPrecision(14));
+          if (Math.abs(fixedCagr - Math.round(fixedCagr)) < 1e-14) {
+            cagr = Math.round(fixedCagr);
+          } else {
+            cagr = fixedCagr;
+          }
+
+          elements.annualizedRoi.textContent = formatPercent(cagr);
+          elements.annualizedRoi.className = 'result-value ' + (cagr > 0 ? 'positive' : (cagr < 0 ? 'negative' : ''));
+        } else {
+          elements.annualizedRoi.textContent = 'N/A';
+          elements.annualizedRoi.className = 'result-value';
+        }
+
+        elements.tableInitial.textContent = formatCurrency(initial);
+        elements.tableFinal.textContent = formatCurrency(final);
+        elements.tableProfit.textContent = formatCurrency(profit);
+
+        const profitCell = elements.tableProfit;
+        profitCell.style.color = profit > 0 ? 'var(--accent-color)' : (profit < 0 ? 'var(--text-secondary)' : 'var(--text-primary)');
+      }
+
+      inputs.forEach(input => {
+        if (input) {
+          input.addEventListener('input', calculate);
+        }
+      });
+
+      // Initial calculation
+      calculate();
+    });
+  </script>
+</SiteLayout>

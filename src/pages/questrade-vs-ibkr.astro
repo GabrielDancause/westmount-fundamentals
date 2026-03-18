@@ -1,0 +1,140 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Questrade vs Interactive Brokers (IBKR): Which is Better for Active Traders?",
+    "description": "An exhaustive comparison of Questrade and Interactive Brokers for Canadian investors. We analyze fees, platforms, currency conversion, and margin rates.",
+    "url": "https://westmountfundamentals.com/questrade-vs-ibkr"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Should I use Questrade or IBKR for buying ETFs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If your primary strategy is passively buying Canadian-listed ETFs (like Vanguard or iShares asset allocation ETFs), Questrade is generally better because ETF purchases are entirely commission-free (excluding tiny ECN fees). IBKR charges a small commission on ETF purchases. However, if you are actively trading US-listed ETFs and need to convert CAD to USD frequently, IBKR's spot-rate currency conversion will save you significantly more than Questrade's free ETF purchases."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which platform has better margin rates: Questrade or IBKR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Interactive Brokers (IBKR) has significantly better margin rates than Questrade. IBKR is widely considered the industry leader for low borrowing costs in Canada, offering tiered rates that are fundamentally designed for institutional and professional use, but accessible to retail investors. Questrade's margin rates are substantially higher and act as a deterrent to active leverage strategies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do both Questrade and IBKR allow Norbert's Gambit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Questrade allows Norbert's Gambit, and it is a popular method on their platform to convert CAD to USD cheaply. IBKR, however, does not require Norbert's Gambit. IBKR allows you to convert currency directly at the real-time spot exchange rate for a very small flat fee (usually around $2 USD), making Norbert's Gambit unnecessary and saving you the time and bid-ask spread involved."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Questrade vs Interactive Brokers (IBKR) 2026 Comparison",
+  description: "An exhaustive comparison of Questrade and Interactive Brokers for Canadian investors. We analyze fees, platforms, currency conversion, and margin rates.",
+  category: "study",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Questrade vs Interactive Brokers (IBKR) 2026 Comparison"
+  description="An exhaustive comparison of Questrade and Interactive Brokers for Canadian investors. We analyze fees, platforms, currency conversion, and margin rates."
+  canonical="https://westmountfundamentals.com/questrade-vs-ibkr"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Questrade vs Interactive Brokers (IBKR): The Advanced Showdown</h1>
+      <p>Comparing Canada's top platforms for serious investors, active traders, and margin users.</p>
+    </div>
+
+    <div class="content-section">
+      <p>While the debate for beginners usually centers around Wealthsimple and Questrade, the conversation for advanced investors—those who trade frequently, utilize options, require margin, or hold heavily US-weighted portfolios—is entirely different. For this demographic, the decision almost always boils down to Questrade versus Interactive Brokers Canada (IBKR).</p>
+
+      <p>Both are formidable independent brokerages that drastically undercut the big Canadian banks. However, they serve very different niches within the advanced investor spectrum. In this detailed comparison, we will dissect their fee structures, their handling of US dollars (the crux of the debate), their options pricing, and their trading platforms. If you want to see how these two stack up against the entire Canadian brokerage landscape, consult our definitive guide on the <a href="/canadian-brokerages-2026">Best Canadian Brokerages for 2026</a>.</p>
+
+      <h2>The Fee Structure: Free ETFs vs Micro-Commissions</h2>
+      <p>The primary battleground between these two platforms lies in how they charge you to trade stocks and exchange-traded funds.</p>
+
+      <p><strong>Questrade:</strong> Questrade's defining feature is free ETF purchases. When you buy any North American ETF, you pay no commission, only fractional ECN (Electronic Communication Network) fees. This makes Questrade exceptional for dollar-cost averaging into a passive index portfolio. However, selling an ETF, or buying/selling an individual stock, incurs a commission of 1 cent per share, bounded by a minimum of $4.95 and a maximum of $9.95. For a passive investor, this is negligible. For an active trader moving in and out of individual stocks daily, $4.95 per trade becomes a massive drag on alpha.</p>
+
+      <p><strong>IBKR:</strong> Interactive Brokers operates on a micro-commission model. They do not offer "free" ETF purchases. Instead, they offer two pricing tiers: Fixed and Tiered. The Fixed model charges $0.01 CAD per share for Canadian stocks (min $1.00) and $0.005 USD per share for US stocks (min $1.00). The Tiered model is more complex, scaling down as your volume increases, often resulting in commissions well under a dollar for typical retail sizes. For active stock traders, IBKR is mathematically vastly superior. For passive ETF buyers, IBKR is slightly more expensive on the buy-side, but usually cheaper on the sell-side.</p>
+
+      <p>If you are trying to decide which fee model suits you, read our detailed analysis of <a href="/interactive-brokers-canada">Interactive Brokers Canada</a> or check out our <a href="/wealthsimple-vs-questrade">Wealthsimple vs Questrade</a> guide to see how a true zero-commission platform compares.</p>
+
+      <h2>The USD Dilemma: Norbert's Gambit vs Spot Conversion</h2>
+      <p>For Canadian investors, the biggest hidden cost is currency conversion. Most brokerages charge a 1.5% to 2% "markup" on the exchange rate when you convert CAD to USD to buy American stocks. This is where the divergence between Questrade and IBKR is most profound.</p>
+
+      <p><strong>Questrade and Norbert's Gambit:</strong> Questrade charges a standard FX markup (around 1.5%). However, they allow a loophole known as Norbert's Gambit. This strategy involves buying a dual-listed ETF (like DLR.TO) with Canadian dollars, asking Questrade to journal those shares over to the US side (DLR.U.TO), and then selling them for US dollars. This bypasses the 1.5% markup entirely, costing only the $4.95 commission to sell the ETF and a few days of waiting for settlement. It is highly effective but tedious.</p>
+
+      <p><strong>IBKR's Unfair Advantage:</strong> Interactive Brokers makes Norbert's Gambit completely obsolete. As a global brokerage, IBKR allows you to convert currency directly at the real-time interbank spot rate, charging a tiny flat fee (typically around $2.00 USD), regardless of the size of the conversion. Whether you convert $1,000 or $100,000, you pay roughly $2.00 and get the true market rate instantly. For investors frequently moving money across borders or trading US equities, IBKR's forex capability alone makes it the <a href="/best-brokerage-for-usd">best brokerage for USD trading</a>.</p>
+
+      <h2>Options Trading and Margin Rates</h2>
+      <p>If your strategy involves derivatives or leverage, the comparison is overwhelmingly one-sided.</p>
+
+      <p><strong>Options Trading:</strong> Questrade charges $9.95 + $1.00 per options contract. This is standard for Canadian discount brokers but prohibitively expensive for complex, multi-leg options strategies (like iron condors or strangles) where you are trading multiple contracts simultaneously. IBKR's options pricing is significantly cheaper, often costing less than $1.00 per contract depending on the premium and volume. For serious options traders, Questrade is not viable.</p>
+
+      <p><strong>Margin Rates:</strong> Margin is borrowed money used to buy securities. The interest rate on that loan dictates whether leverage is profitable. Questrade's margin rates are historically high—often hovering around the Canadian prime rate plus several percentage points (e.g., 7% to 9%). IBKR is famous globally for its incredibly low margin rates. Their tiered structure often provides rates that are just slightly above the benchmark overnight rate (e.g., 5% to 6.5%). If you use margin, IBKR is the only logical choice in Canada.</p>
+
+      <h2>Trading Platforms: Intuitive vs Institutional</h2>
+      <p>The final consideration is the user experience and the tools provided to execute your strategy.</p>
+
+      <p><strong>Questrade:</strong> Questrade offers a solid web platform and a downloadable desktop application called Questrade Edge. It strikes a good balance—it provides advanced charting, level 2 data, and complex order types, but it remains relatively intuitive to learn. It is a massive step up from a beginner app like Wealthsimple, but it won't overwhelm an intermediate investor. It is arguably the <a href="/best-brokerage-for-beginners">best brokerage for beginners</a> who want to graduate from a basic app to a real trading platform.</p>
+
+      <p><strong>IBKR (Trader Workstation):</strong> IBKR's flagship platform, Trader Workstation (TWS), is an absolute beast. It is a Java-based desktop application that looks and functions like professional institutional software. It offers unparalleled customization, deep options analytics (Volatility Labs, Probability Labs), algorithmic routing, and API access. However, the learning curve is notoriously steep. It is intimidating, visually outdated, and highly complex. If you do not need these advanced features, TWS will be a source of constant frustration. (Note: IBKR does offer a simpler web portal for basic trading).</p>
+
+      <h2>The Verdict: Which is Better?</h2>
+      <p>The choice between Questrade and Interactive Brokers depends entirely on your specific strategy and trading volume.</p>
+
+      <p><strong>Choose Questrade if:</strong></p>
+      <ul>
+        <li>You are a passive investor who primarily buys Canadian or US-listed ETFs using a buy-and-hold strategy. The free ETF purchases are perfect for this.</li>
+        <li>You trade infrequently, so the occasional $4.95 commission or the hassle of Norbert's Gambit doesn't bother you.</li>
+        <li>You want a capable trading platform that is relatively easy to learn and use.</li>
+        <li>You need specific account types not heavily supported elsewhere, like Spousal RRSPs.</li>
+      </ul>
+
+      <p><strong>Choose Interactive Brokers if:</strong></p>
+      <ul>
+        <li>You are an active trader buying and selling individual stocks frequently (the micro-commissions will save you a fortune).</li>
+        <li>You frequently convert CAD to USD (the spot-rate forex is unbeatable).</li>
+        <li>You trade options or utilize complex multi-leg strategies.</li>
+        <li>You trade on margin and require the lowest borrowing rates available in Canada.</li>
+        <li>You require institutional-grade execution, algorithmic routing, or API access via TWS.</li>
+      </ul>
+
+      <p>For many advanced Canadian investors, the optimal setup is actually utilizing both: Questrade for their RRSP holding long-term ETFs, and Interactive Brokers for their margin account dedicated to active stock and options trading.</p>
+
+    </div>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+    .content-section { margin-top: 2rem; }
+    .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+    .content-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+    .content-section ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    .content-section li { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .content-section a:hover { text-decoration: underline; }
+    .content-section strong { color: var(--text-primary); font-weight: 700; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

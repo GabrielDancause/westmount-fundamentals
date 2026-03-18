@@ -1,0 +1,209 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The Difference Between Stocks and Bonds: A Guide for Investors",
+    "description": "Understand the fundamental difference between stocks and bonds, how they balance risk and reward, and how to allocate them in your portfolio.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/difference-between-stocks-and-bonds"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the main difference between a stock and a bond?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The main difference is ownership versus debt. Buying a stock means you buy a piece of the company. Buying a bond means you are lending money to the company or government in exchange for regular interest payments."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which is safer, stocks or bonds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bonds are generally much safer than stocks. They provide guaranteed, fixed interest payments and a return of principal. Stocks are volatile, and if a company goes bankrupt, stockholders usually lose their entire investment, while bondholders are first in line to be repaid."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why would anyone buy stocks if bonds are safer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because stocks historically offer significantly higher long-term returns. While bonds are safe, their returns are often very low and may struggle to keep up with inflation. Stocks are required to generate meaningful wealth over long periods."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do bonds pay dividends?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, bonds pay \"interest\" (specifically called a coupon). Dividends are a share of corporate profits paid only to stockholders. Bond interest is a legal obligation; stock dividends are optional."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much of my money should be in stocks vs. bonds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This depends on your age and risk tolerance. Younger investors saving for a distant retirement should generally hold a high percentage of stocks (80-90%). Older investors nearing retirement should hold more bonds to protect their capital and generate steady income."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "The Difference Between Stocks and Bonds: A Guide for Investors",
+  description: "Understand the fundamental difference between stocks and bonds, how they balance risk and reward, and how to allocate them in your portfolio.",
+  category: "guide",
+  published: "2026-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="The Difference Between Stocks and Bonds: A Guide for Investors"
+  description="Understand the fundamental difference between stocks and bonds, how they balance risk and reward, and how to allocate them in your portfolio."
+  canonical="https://westmountfundamentals.com/difference-between-stocks-and-bonds"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>The Difference Between Stocks and Bonds</h1>
+      <p class="subtitle">Understanding the two fundamental pillars of investing</p>
+    </div>
+
+    <section id="content">
+
+      <p>When you strip away the complex financial jargon, all <a href="/stock-market-fundamentals-guide">stock market fundamentals</a> eventually boil down to two primary ways that money flows from investors to entities that need capital: you can either buy a piece of a business, or you can lend money to it. This profound distinction is the core difference between stocks and bonds. Understanding how these two distinct asset classes behave, and how they interact with each other in a diversified portfolio, is the most important lesson any investor can learn.</p>
+
+      <h2>What is a Stock? (The Ownership Stake)</h2>
+      <p>A stock, also known simply as equity, represents fractional ownership in a corporation. When a company wants to raise money to expand—perhaps to build a new factory, hire more software engineers, or enter an international market—it can choose to sell pieces of itself to the public. If you buy those shares, you become a part-owner of that business.</p>
+
+      <h3>How Stocks Generate Returns</h3>
+      <p>As a part-owner, your financial fate is directly tied to the success or failure of the company. You generate returns in two primary ways:</p>
+      <ul>
+        <li><strong>Capital Appreciation:</strong> If the company successfully grows its revenues and profits over time (characteristic of <a href="/what-are-growth-stocks">growth stocks</a>), the underlying value of the business increases. Other investors will be willing to pay a higher price for your shares than you initially paid. You profit by selling the shares at this higher price.</li>
+        <li><strong>Dividends:</strong> If the company is mature and generates more cash than it needs to reinvest in the business, the board of directors may choose to distribute a portion of those profits directly to shareholders in the form of regular cash payments called dividends.</li>
+      </ul>
+
+      <h3>The Risk Profile of Stocks</h3>
+      <p>Stocks are inherently risky because there is absolutely no guarantee of a return. A company's stock price fluctuates daily based on market sentiment, economic conditions, and corporate performance. <a href="/what-are-the-most-volatile-stocks">The most volatile stocks</a> can lose 50% or more of their value in a very short period. Furthermore, if a company goes completely bankrupt, common stockholders are at the very bottom of the corporate hierarchy and will almost certainly lose their entire investment.</p>
+
+      <h2>What is a Bond? (The Loan)</h2>
+      <p>A bond represents debt. When you buy a bond, you are not buying a piece of a company; you are acting as a bank. You are lending your money to an entity—which could be a corporation, a municipality, or a national government—for a specified period of time.</p>
+
+      <h3>How Bonds Generate Returns</h3>
+      <p>Because you are lending money, you expect to be compensated for the temporary loss of that capital and the risk you are taking. Bonds generate returns primarily through interest payments:</p>
+      <ul>
+        <li><strong>The Coupon Rate:</strong> When the bond is issued, the borrower agrees to pay you a fixed, regular interest payment (usually twice a year) called the "coupon." If you buy a $10,000 bond with a 5% coupon rate, you will receive $500 a year in interest.</li>
+        <li><strong>Return of Principal:</strong> At the end of the loan term, known as the "maturity date," the borrower is legally obligated to return your original $10,000 investment in full.</li>
+      </ul>
+
+      <h3>The Risk Profile of Bonds</h3>
+      <p>Bonds are generally much safer than stocks. Assuming you hold the bond to its maturity date, your returns are mathematically fixed and highly predictable. The primary risk associated with a bond is "default risk"—the chance that the borrower goes bankrupt and cannot repay the loan. However, even in a corporate bankruptcy scenario, bondholders are legally required to be paid back before stockholders receive a single penny.</p>
+
+      <p>Bonds also carry "interest rate risk." If you buy a bond paying 3% interest, and the central bank subsequently raises interest rates so that new bonds are paying 5%, the market value of your older 3% bond will decrease if you try to sell it before it matures. (Why would someone buy your 3% bond when they can buy a new one paying 5%?)</p>
+
+      <div class="callout">
+        <strong>The Hierarchy of Risk and Reward:</strong> In the financial world, risk and reward are always intertwined. Because stocks carry a high risk of total loss and extreme volatility, they historically offer much higher average returns over the long term. Because bonds offer legal protection and guaranteed fixed payments, their long-term average returns are significantly lower.
+      </div>
+
+      <h2>Stocks vs. Bonds: A Direct Comparison</h2>
+      <p>To fully grasp the difference, let's contrast them across several key dimensions:</p>
+
+      <h3>1. Ownership vs. Debt</h3>
+      <p>As previously established, owning a stock means you own a tiny fraction of the company's assets and future earnings. Owning a bond simply means you hold an IOU from the company.</p>
+
+      <h3>2. Voting Rights</h3>
+      <p>Because they are owners, common stockholders typically receive voting rights. They can vote on the board of directors and major corporate actions (like mergers). Bondholders are merely lenders and have absolutely no say in how the company is run.</p>
+
+      <h3>3. Income Predictability</h3>
+      <p>Bond income is highly predictable. You know exactly how much interest you will receive and exactly when you will receive it. Stock income (dividends) is entirely at the discretion of the company's management. They can cut or suspend the dividend at any time, a common occurrence among <a href="/what-are-cyclical-stocks">cyclical stocks</a> during economic recessions.</p>
+
+      <h3>4. Inflation Protection</h3>
+      <p>Stocks generally provide an excellent hedge against inflation. When the cost of living rises, companies can simply raise the prices of the goods and services they sell, allowing their revenues and earnings to keep pace with inflation. Bonds are highly vulnerable to inflation. If inflation rises to 4% per year, and your bond is only paying a fixed 3% interest rate, you are actually losing purchasing power every year.</p>
+
+      <h2>How to Combine Stocks and Bonds in a Portfolio</h2>
+      <p>The most successful long-term investors do not choose exclusively between stocks or bonds; they utilize both to create a balanced portfolio through a process known as asset allocation.</p>
+
+      <p>Stocks act as the "engine" of your portfolio. They provide the high growth necessary to compound your wealth over time and outpace inflation. If you want your money to grow significantly, you must own stocks.</p>
+
+      <p>Bonds act as the "shock absorbers." Because bond prices often remain stable or even rise when the stock market crashes, holding a portion of your portfolio in bonds dramatically reduces the overall volatility of your investments. This makes it psychologically much easier to endure brutal stock market recessions without panicking and selling at the bottom.</p>
+
+      <h3>Determining Your Allocation</h3>
+      <p>Your ideal mix of stocks and bonds depends entirely on your age, your investment goals, and your personal tolerance for risk.</p>
+      <ul>
+        <li><strong>Young Investors (Aggressive):</strong> If you are in your 20s or 30s and saving for retirement, you have decades to recover from stock market crashes. Your portfolio should be heavily weighted toward stocks (e.g., 80% to 90%), perhaps focusing on <a href="/what-are-mid-cap-stocks">mid-cap stocks</a> and large-cap growth companies to maximize long-term compounding.</li>
+        <li><strong>Investors Nearing Retirement (Conservative):</strong> If you are retiring in a few years, a sudden 40% drop in the stock market could ruin your plans. You should shift a significant portion of your wealth into high-quality bonds (e.g., 40% to 60%) to preserve your capital and generate a steady, reliable stream of income that you can live on.</li>
+      </ul>
+
+      <h2>Conclusion</h2>
+      <p>Understanding the fundamental difference between stocks and bonds is the bedrock upon which all successful investing is built. Stocks offer unlimited upside potential and ownership in the global economy, but demand a high tolerance for terrifying volatility. Bonds offer safety, predictability, and capital preservation, but cap your potential upside and leave you vulnerable to inflation. By thoughtfully combining these two entirely different asset classes, you can tailor a portfolio that perfectly balances your need for long-term growth with your need for short-term stability, ensuring you reach your financial goals with confidence.</p>
+
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the main difference between a stock and a bond?</summary>
+        <p>The main difference is ownership versus debt. Buying a stock means you buy a piece of the company. Buying a bond means you are lending money to the company or government in exchange for regular interest payments.</p>
+      </details>
+      <details>
+        <summary>Which is safer, stocks or bonds?</summary>
+        <p>Bonds are generally much safer than stocks. They provide guaranteed, fixed interest payments and a return of principal. Stocks are volatile, and if a company goes bankrupt, stockholders usually lose their entire investment, while bondholders are first in line to be repaid.</p>
+      </details>
+      <details>
+        <summary>Why would anyone buy stocks if bonds are safer?</summary>
+        <p>Because stocks historically offer significantly higher long-term returns. While bonds are safe, their returns are often very low and may struggle to keep up with inflation. Stocks are required to generate meaningful wealth over long periods.</p>
+      </details>
+      <details>
+        <summary>Do bonds pay dividends?</summary>
+        <p>No, bonds pay "interest" (specifically called a coupon). Dividends are a share of corporate profits paid only to stockholders. Bond interest is a legal obligation; stock dividends are optional.</p>
+      </details>
+      <details>
+        <summary>How much of my money should be in stocks vs. bonds?</summary>
+        <p>This depends on your age and risk tolerance. Younger investors saving for a distant retirement should generally hold a high percentage of stocks (80-90%). Older investors nearing retirement should hold more bonds to protect their capital and generate steady income.</p>
+      </details>
+
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    p { line-height: 1.6; margin-bottom: 1rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    ol { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+    li { margin-bottom: 0.5rem; }
+    ul { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+  </style>
+</SiteLayout>

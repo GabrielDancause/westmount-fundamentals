@@ -1,0 +1,335 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is an Expense Ratio? Guide & Calculator",
+  description: "Are hidden fees silently destroying your portfolio's growth? Learn exactly how expense ratios work and calculate the long-term impact on your investments.",
+  category: "tool",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/expense-ratio"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a good expense ratio for an ETF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For a broad-market index fund or ETF (like one tracking the S&P 500), a good expense ratio is typically below 0.10%. Many popular low-cost index funds charge 0.05% or even less. Actively managed funds will charge more, often between 0.50% and 1.00%, though it is heavily debated whether they justify the higher cost."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is an expense ratio deducted from my account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You will never see a direct bill or a line-item deduction for an expense ratio on your brokerage statement. The fee is accrued daily and deducted directly from the fund's total assets. This means the price of the ETF or mutual fund you see on your screen already has the expense ratio priced in."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does a higher expense ratio mean better performance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. In fact, decades of financial research have consistently shown the opposite: higher expense ratios are one of the strongest predictors of lower future returns. Actively managed funds with high fees frequently fail to outperform low-cost, passive index funds over long periods."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is considered a high expense ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generally, any expense ratio over 1.00% is considered very high by modern standards. For passive index funds, anything over 0.20% might be considered high compared to cheaper alternatives. Specialized or thematic ETFs might charge between 0.50% and 0.75%, which is average for their niche but high compared to broad market funds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do expense ratios change over time?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, expense ratios can and do change. Fortunately, the long-term trend in the investment industry has been a 'race to the bottom,' with major fund providers consistently lowering their fees to remain competitive. However, a fund company can technically increase the fee, though they must notify shareholders if they do."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/expense-ratio" schema={JSON.stringify(schema)}>
+  <div class="container page-content">
+    <div class="hero">
+      <h1>What is an Expense Ratio?</h1>
+      <p class="subtitle">Are hidden fees silently destroying your portfolio's growth? Learn exactly how expense ratios work and calculate the long-term impact on your investments.</p>
+    </div>
+
+    <section>
+      <div class="calculator-container card">
+        <h2>Expense Ratio Impact Calculator</h2>
+        <p>Calculate how much your fund's expense ratio is actually costing you over time.</p>
+
+        <div class="input-group">
+          <label for="initialInvestment">Initial Investment ($)</label>
+          <input type="number" id="initialInvestment" value="10000" min="0" step="100">
+        </div>
+
+        <div class="input-group">
+          <label for="monthlyContribution">Monthly Contribution ($)</label>
+          <input type="number" id="monthlyContribution" value="500" min="0" step="50">
+        </div>
+
+        <div class="input-group">
+          <label for="annualReturn">Expected Annual Return (%)</label>
+          <input type="number" id="annualReturn" value="8" min="0" max="30" step="0.1">
+        </div>
+
+        <div class="input-group">
+          <label for="expenseRatio">Expense Ratio (%)</label>
+          <input type="number" id="expenseRatio" value="0.5" min="0" max="10" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label for="years">Years to Invest</label>
+          <input type="number" id="years" value="30" min="1" max="100" step="1">
+        </div>
+
+        <div class="results-grid">
+          <div class="result-box">
+            <h4>Final Portfolio Value (No Fees)</h4>
+            <p id="totalValueNoFee" class="highlight-good">$0.00</p>
+          </div>
+          <div class="result-box">
+            <h4>Final Portfolio Value (With Fees)</h4>
+            <p id="totalValueWithFee" class="highlight-neutral">$0.00</p>
+          </div>
+          <div class="result-box full-width">
+            <h4>Total Cost of Expense Ratio</h4>
+            <p id="totalFeesPaid" class="highlight-bad">$0.00</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p>
+        When you invest in a mutual fund or an Exchange-Traded Fund (ETF), you aren't just buying the underlying stocks or bonds. You are also paying for the fund to be managed, marketed, and administered. The cost of running that fund is passed onto you, the investor, in the form of an <strong>expense ratio</strong>.
+      </p>
+
+      <p>
+        An expense ratio is an annual fee expressed as a percentage of your total investment. It represents the cost of owning the fund for a year. While the numbers might seem trivially small—often less than 1%—the long-term impact on your wealth can be staggering.
+      </p>
+
+      <h2>How the Expense Ratio Works</h2>
+
+      <p>
+        If a mutual fund has an expense ratio of 1.00%, it means that for every $10,000 you invest, the fund will deduct $100 annually to cover its operating costs. If the fund has an expense ratio of 0.05%, you would only pay $5 per year on that same $10,000 investment.
+      </p>
+
+      <div class="callout">
+        <h3>The Invisible Fee</h3>
+        <p>You never write a check for the expense ratio. It is deducted daily from the fund's total assets, meaning it is seamlessly priced into the Net Asset Value (NAV) of your shares. This "invisible" nature is exactly why so many investors ignore it.</p>
+      </div>
+
+      <p>
+        Consider this real-world analogy: Imagine buying a massive apartment building to rent out to tenants. You don't have the time to manage it, so you hire a property manager. The property manager charges an annual fee of 1% of the building's total value to handle the plumbing, marketing, and collecting rent. Whether your building appreciates in value or drops by 20% that year, the property manager still takes their 1% cut.
+      </p>
+
+      <p>
+        An ETF or mutual fund works the exact same way. The management company takes their cut regardless of whether the fund makes you money or loses you money.
+      </p>
+
+      <h2>The Components of an Expense Ratio</h2>
+
+      <p>
+        When you look at an expense ratio on a fund's prospectus, it is a single, aggregated number. However, this number is a combination of several different internal costs:
+      </p>
+
+      <ul>
+        <li><strong>Management Fees:</strong> This is the cost paid to the portfolio managers who decide which assets to buy and sell. For active funds trying to beat the market, this is the largest portion of the fee. For passive index funds, this fee is virtually zero.</li>
+        <li><strong>Administrative Fees:</strong> Recordkeeping, customer service, legal expenses, and accounting costs fall under this category. Running a fund that complies with SEC regulations is expensive.</li>
+        <li><strong>12b-1 Fees:</strong> A highly controversial charge found in many mutual funds. This fee pays for marketing and distributing the fund. Essentially, you are paying for the fund to run advertisements to attract other investors.</li>
+      </ul>
+
+      <h2>Why It Matters: The Tyranny of Compounding Fees</h2>
+
+      <p>
+        The danger of the expense ratio lies in the fact that it compounds right alongside your investment returns. While earning an 8% return instead of a 9% return might not seem catastrophic over a single year, projecting that difference over thirty or forty years reveals a massive chasm in wealth.
+      </p>
+
+      <p>
+        Let's look at a practical example. Imagine investing $100,000 for 30 years with an expected market return of 8% annually.
+      </p>
+
+      <p>
+        <strong>Scenario A (Low-Cost Index Fund - 0.05% Fee):</strong><br>
+        Your net return is 7.95%. After 30 years, your portfolio grows to roughly <strong>$993,000</strong>.
+      </p>
+
+      <p>
+        <strong>Scenario B (Actively Managed Mutual Fund - 1.00% Fee):</strong><br>
+        Your net return drops to 7.00%. After 30 years, your portfolio grows to only <strong>$761,000</strong>.
+      </p>
+
+      <p>
+        In this scenario, a seemingly innocent 1% fee didn't just cost you 1% of your final balance. It cost you over <strong>$232,000</strong>, or nearly a quarter of your potential wealth. This happens because the money taken out for fees in year one was not there to compound and grow in years two, three, and beyond.
+      </p>
+
+      <p>
+        This is why financial advisors, including legends like Warren Buffett and John Bogle, stress the importance of prioritizing low-cost, broad-market index funds over high-fee actively managed alternatives. In the world of investing, you get what you <em>don't</em> pay for.
+      </p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is a good expense ratio for an ETF?</summary>
+        <p>For a broad-market index fund or ETF (like one tracking the S&P 500), a good expense ratio is typically below 0.10%. Many popular low-cost index funds charge 0.05% or even less. Actively managed funds will charge more, often between 0.50% and 1.00%, though it is heavily debated whether they justify the higher cost.</p>
+      </details>
+
+      <details>
+        <summary>How is an expense ratio deducted from my account?</summary>
+        <p>You will never see a direct bill or a line-item deduction for an expense ratio on your brokerage statement. The fee is accrued daily and deducted directly from the fund's total assets. This means the price of the ETF or mutual fund you see on your screen already has the expense ratio priced in.</p>
+      </details>
+
+      <details>
+        <summary>Does a higher expense ratio mean better performance?</summary>
+        <p>No. In fact, decades of financial research have consistently shown the opposite: higher expense ratios are one of the strongest predictors of lower future returns. Actively managed funds with high fees frequently fail to outperform low-cost, passive index funds over long periods.</p>
+      </details>
+
+      <details>
+        <summary>What is considered a high expense ratio?</summary>
+        <p>Generally, any expense ratio over 1.00% is considered very high by modern standards. For passive index funds, anything over 0.20% might be considered high compared to cheaper alternatives. Specialized or thematic ETFs might charge between 0.50% and 0.75%, which is average for their niche but high compared to broad market funds.</p>
+      </details>
+
+      <details>
+        <summary>Do expense ratios change over time?</summary>
+        <p>Yes, expense ratios can and do change. Fortunately, the long-term trend in the investment industry has been a 'race to the bottom,' with major fund providers consistently lowering their fees to remain competitive. However, a fund company can technically increase the fee, though they must notify shareholders if they do.</p>
+      </details>
+    </section>
+  </div>  <script>
+    function initCalculator() {
+      const container = document.querySelector('.calculator-container');
+      if (!container || container.dataset.initialized) return;
+      container.dataset.initialized = 'true';
+
+      const inputs = {
+        initialInvestment: document.getElementById('initialInvestment'),
+        monthlyContribution: document.getElementById('monthlyContribution'),
+        annualReturn: document.getElementById('annualReturn'),
+        expenseRatio: document.getElementById('expenseRatio'),
+        years: document.getElementById('years')
+      };
+
+      const outputs = {
+        totalValueNoFee: document.getElementById('totalValueNoFee'),
+        totalValueWithFee: document.getElementById('totalValueWithFee'),
+        totalFeesPaid: document.getElementById('totalFeesPaid')
+      };
+
+      function calculate() {
+        const principal = parseFloat(inputs.initialInvestment.value) || 0;
+        const monthly = parseFloat(inputs.monthlyContribution.value) || 0;
+        const grossReturn = (parseFloat(inputs.annualReturn.value) || 0) / 100;
+        const fee = (parseFloat(inputs.expenseRatio.value) || 0) / 100;
+        const years = parseInt(inputs.years.value) || 0;
+
+        const months = years * 12;
+        const monthlyGrossRate = grossReturn / 12;
+
+        const netReturn = Math.max(0, grossReturn - fee);
+        const monthlyNetRate = netReturn / 12;
+
+        let valueNoFee = principal;
+        let valueWithFee = principal;
+
+        for (let i = 0; i < months; i++) {
+          valueNoFee = (valueNoFee + monthly) * (1 + monthlyGrossRate);
+          valueWithFee = (valueWithFee + monthly) * (1 + monthlyNetRate);
+        }
+
+        const feesPaid = valueNoFee - valueWithFee;
+
+        outputs.totalValueNoFee.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valueNoFee);
+        outputs.totalValueWithFee.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valueWithFee);
+        outputs.totalFeesPaid.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(feesPaid);
+      }
+
+      Object.values(inputs).forEach(input => {
+        if(input) input.addEventListener('input', calculate);
+      });
+
+      calculate();
+    }
+
+    document.addEventListener('DOMContentLoaded', initCalculator);
+    document.addEventListener('astro:page-load', initCalculator);
+  </script>  <style>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+
+    .calculator-container { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+    .calculator-container h2 { margin-top: 0; }
+
+    .input-group { margin-bottom: 1rem; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .input-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-color); color: var(--text-primary); font-size: 1rem; }
+    .input-group input:focus { outline: none; border-color: var(--accent-color); }
+
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+    .result-box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 8px; text-align: center; }
+    .result-box.full-width { grid-column: 1 / -1; }
+    .result-box h4 { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+    .result-box p { margin: 0; font-size: 1.5rem; font-weight: 700; }
+
+    .highlight-good { color: color-mix(in srgb, var(--text-primary) 70%, green); }
+    .highlight-neutral { color: var(--text-primary); }
+    .highlight-bad { color: color-mix(in srgb, var(--text-primary) 50%, red); }
+
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .callout h3 { margin-top: 0; color: var(--accent-color); }
+
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+
+    h2 { margin-top: 2.5rem; }
+    h3 { margin-top: 2rem; }
+    p { margin-bottom: 1.2rem; line-height: 1.6; }
+    ul { margin-bottom: 1.2rem; line-height: 1.6; padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+
+    @media (max-width: 600px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</SiteLayout>

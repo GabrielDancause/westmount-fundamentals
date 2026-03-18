@@ -1,0 +1,238 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Topstep Dashboard Explained: Track Your Funded Trading",
+  description: "Navigate your Topstep dashboard like a pro. Learn how to track the Trading Combine rules, daily loss limits, and consistency targets.",
+  category: "guide",
+  published: "2024-03-21",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Daily Loss Limit on the Topstep dashboard?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Daily Loss Limit is a crucial metric shown on your dashboard. It dictates the maximum amount your account balance can drop in a single trading day. If you hit or exceed this limit, you break a rule and may fail the Combine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the Consistency Rule calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Consistency Rule requires that your best trading day cannot account for more than 50% of your total required profits. The dashboard automatically calculates this percentage to show if you are trading consistently rather than getting lucky on a single trade."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does the Maximum Drawdown metric mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Trailing Maximum Drawdown tracks the lowest point your account can reach relative to your highest high water mark. As your account balance grows, the drawdown limit trails behind it until it reaches your initial starting balance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why did my rule break icon turn red on the dashboard?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A red icon indicates a hard rule break, such as hitting the daily loss limit or trailing maximum drawdown. This means the current Trading Combine has been failed and will require a reset to continue."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does the Topstep dashboard update?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Topstep dashboard typically updates in real-time or near real-time during the trading session, reflecting your current open equity, closed PnL, and live rule tracking."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/topstep-dashboard" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Topstep Dashboard Explained</h1>
+      <p class="subtitle">A visual guide to understanding your Trading Combine metrics, rules, and progress.</p>
+    </div>
+
+    <!-- Visualizer implementation will go here -->
+    <div id="visualizer-container" class="calculator-card">
+      <div class="dashboard-mockup">
+        <div class="mockup-header">
+          <div>
+            <div class="metric-label">Account Name</div>
+            <div style="font-weight: 600;">TST_150K_COMBINE</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="metric-label">Account Balance</div>
+            <div class="account-balance" id="mock-balance">$150,000.00</div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label"><span class="metric-status status-pass"></span> Daily Loss Limit</div>
+            <div class="metric-value" id="mock-dll">-$3,000</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Must not reach $147,000</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label"><span class="metric-status status-warn"></span> Trailing Max Drawdown</div>
+            <div class="metric-value" id="mock-tmd">-$4,500</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Must not reach $145,500</div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-label"><span class="metric-status status-pass"></span> Consistency Target</div>
+            <div class="metric-value" id="mock-consistency">32%</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;">Best day is &lt; 50% of total profit</div>
+          </div>
+        </div>
+      </div>
+      <p style="text-align: center; font-size: 0.9rem; color: var(--text-secondary);">Interactive mockup illustrating key combine rules tracking.</p>
+    </div>
+
+    <!-- Content will go here -->
+    <div id="content-container">
+      <h2>Why the Topstep Dashboard Matters</h2>
+      <p>Passing a prop firm evaluation like the Topstep Trading Combine requires more than just good technical analysis. It requires impeccable risk management. The <strong>Topstep dashboard</strong> is your command center—the single source of truth for whether you are on track to get funded or on the verge of breaking a rule.</p>
+
+      <p>Many new traders focus entirely on their trading charts, executing scalps and day trades while completely ignoring the vital metrics ticking away on their dashboard. Just as a runner needs a timer to pace a sprint, a trader needs the dashboard to pace their risk.</p>
+
+      <h3>The Science of Rules-Based Trading</h3>
+      <p>Proprietary trading firms don't just want traders who can make money; they want traders who can make money <em>consistently</em> without blowing up accounts. The Topstep dashboard is specifically designed to enforce this discipline visually.</p>
+
+      <p>When you log in, you aren't just looking at your profit and loss (P&L). You are looking at a complex set of interrelated rules calculated in real-time. If you don't understand how these metrics interact, you will inevitably hit a drawdown limit and fail the combine, even if your overall strategy is profitable.</p>
+
+      <div class="callout">
+        <strong>The Psychological Anchor:</strong> The dashboard acts as a psychological anchor. Seeing your Daily Loss Limit approach the red zone triggers a physiological response. Professional traders use this dashboard feedback loop to step away from the desk before "tilt" sets in.
+      </div>
+
+      <h2>Navigating the Key Dashboard Metrics</h2>
+      <p>To succeed, you must understand the exact mechanics of the dashboard's primary indicators:</p>
+
+      <ol>
+        <li><strong>Account Balance vs. Open Equity:</strong> Your account balance is closed trades. Your open equity includes floating P&L. Topstep rules often calculate drawdown based on intraday open equity, meaning a trade that goes deeply red but closes green might still fail you.</li>
+        <li><strong>The Daily Loss Limit (DLL):</strong> This is your daily safety net. The dashboard clearly displays how close you are to this limit. If your open equity touches this number, your account is immediately liquidated for the day.</li>
+        <li><strong>Trailing Maximum Drawdown:</strong> This is the most misunderstood metric on the Topstep dashboard. It trails your highest high water mark. If you make $1,000, your drawdown limit moves up by $1,000. It only stops trailing once it reaches your initial starting balance.</li>
+        <li><strong>The Consistency Rule:</strong> Topstep wants steady traders, not gamblers. The dashboard tracks the percentage of your total profit that comes from your best day. If one lucky trade accounts for 60% of your profits, the dashboard will flag you for inconsistency.</li>
+      </ol>
+
+      <div class="card">
+        <h3>Real-World Analogy: The Speedometer and the Fuel Gauge</h3>
+        <p>If your trading platform (like NinjaTrader or Quantower) is the steering wheel and accelerator, the Topstep dashboard is your car's instrument cluster. You might be driving fast (making profitable trades), but if you aren't watching your fuel gauge (Trailing Drawdown) or your engine temperature (Daily Loss Limit), you are going to break down before reaching the finish line.</p>
+      </div>
+
+      <h2>Practical Implications: Why It Matters</h2>
+      <p>Failing to monitor the Topstep dashboard has devastating practical implications for traders:</p>
+
+      <ul>
+        <li><strong>Wasted Evaluation Fees:</strong> Blowing past a daily loss limit because you weren't watching the dashboard means you have to pay for a reset. This turns a relatively cheap evaluation into an expensive endeavor.</li>
+        <li><strong>Emotional Burnout:</strong> Getting caught in a cycle of passing and failing evaluations takes a massive psychological toll. Understanding the dashboard helps you trade defensively.</li>
+        <li><strong>Transition to Funded:</strong> The habits you build while monitoring the Combine dashboard are the exact habits required to keep a Funded Account. The rules exist to protect the firm's capital, but ultimately, they protect the trader from themselves.</li>
+      </ul>
+
+      <p>In the same way that a simple visual aesthetic can dictate internet culture, the visual design of the dashboard dictates your trading behavior. Red numbers induce panic; green numbers induce greed. Learning to read the dashboard objectively is the hallmark of a professional trader.</p>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <details>
+          <summary>What is the Daily Loss Limit on the Topstep dashboard?</summary>
+          <p>The Daily Loss Limit is a crucial metric shown on your dashboard. It dictates the maximum amount your account balance can drop in a single trading day. If you hit or exceed this limit, you break a rule and may fail the Combine.</p>
+        </details>
+        <details>
+          <summary>How is the Consistency Rule calculated?</summary>
+          <p>The Consistency Rule requires that your best trading day cannot account for more than 50% of your total required profits. The dashboard automatically calculates this percentage to show if you are trading consistently rather than getting lucky on a single trade.</p>
+        </details>
+        <details>
+          <summary>What does the Maximum Drawdown metric mean?</summary>
+          <p>The Trailing Maximum Drawdown tracks the lowest point your account can reach relative to your highest high water mark. As your account balance grows, the drawdown limit trails behind it until it reaches your initial starting balance.</p>
+        </details>
+        <details>
+          <summary>Why did my rule break icon turn red on the dashboard?</summary>
+          <p>A red icon indicates a hard rule break, such as hitting the daily loss limit or trailing maximum drawdown. This means the current Trading Combine has been failed and will require a reset to continue.</p>
+        </details>
+        <details>
+          <summary>How often does the Topstep dashboard update?</summary>
+          <p>The Topstep dashboard typically updates in real-time or near real-time during the trading session, reflecting your current open equity, closed PnL, and live rule tracking.</p>
+        </details>
+      </section>
+
+    </div>
+
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+
+    /* Dashboard specific styles */
+    .dashboard-mockup {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .mockup-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    .account-balance {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      font-family: var(--font-mono);
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 6px;
+    }
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-value {
+      font-size: 1.5rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .metric-status {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status-pass { background: #22c55e; }
+    .status-warn { background: #eab308; }
+    .status-fail { background: #ef4444; }
+  </style>
+</SiteLayout>

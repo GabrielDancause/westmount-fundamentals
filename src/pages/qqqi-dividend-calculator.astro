@@ -1,0 +1,249 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "QQQI Dividend Income Calculator & Yield Projector",
+  description: "Calculate your projected monthly and annual dividend income from the NEOS Nasdaq-100 High Income ETF (QQQI) using our free interactive calculator.",
+  category: "tool",
+  published: "2026-03-25",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does QQQI generate its high dividend yield?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "QQQI employs an actively managed options strategy, specifically utilizing covered calls and options spreads on the Nasdaq-100 Index. By selling these options, the fund collects premium income, which it then distributes to shareholders on a monthly basis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the primary risks of investing in QQQI for income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The main risk is capped upside potential. Because the fund sells call options, if the Nasdaq-100 experiences a rapid bull market, QQQI's capital appreciation will be limited. Additionally, in a down market, the premium collected may not fully offset the decline in the underlying index's value, potentially leading to NAV decay over time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How often does the QQQI ETF pay dividends?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The NEOS Nasdaq-100 High Income ETF (QQQI) distributes its dividend payments on a monthly schedule, making it an attractive option for investors seeking regular cash flow."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the QQQI dividend calculator account for expense ratios?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our calculator uses the net distribution yield, meaning the management fees and the fund's expense ratio (approximately 0.68%) are already factored out of the yield percentages shown. The projected income reflects what an investor can expect to receive."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the QQQI distribution considered qualified dividend income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because a significant portion of QQQI's payout is derived from options premiums rather than traditional corporate dividends, a large percentage of its distribution may be taxed as ordinary income or classified as a return of capital (ROC). Investors should consult a tax professional regarding their specific situation."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/qqqi-dividend-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>QQQI Dividend Income Calculator</h1>
+      <p class="subtitle">Project your potential monthly and annual distributions from the NEOS Nasdaq-100 High Income ETF.</p>
+    </div>
+
+    <div class="calculator-container card">
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="sharesInput">Number of Shares</label>
+          <input type="number" id="sharesInput" min="1" step="1" value="100" placeholder="e.g. 100" />
+        </div>
+        <div class="input-group">
+          <label for="priceInput">Current Share Price ($)</label>
+          <input type="number" id="priceInput" min="0.01" step="0.01" value="51.45" placeholder="e.g. 51.45" />
+        </div>
+      </div>
+
+      <div id="error-message" class="error-state" style="display: none;">
+        Please enter valid positive numbers for both fields.
+      </div>
+
+      <div class="results-grid" id="results-container">
+        <div class="result-card">
+          <div class="result-label">Total Investment Value</div>
+          <div class="result-value" id="totalValue">$0.00</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Projected Monthly Income</div>
+          <div class="result-value positive" id="monthlyIncome">$0.00</div>
+        </div>
+        <div class="result-card highlight">
+          <div class="result-label">Projected Annual Income</div>
+          <div class="result-value positive" id="annualIncome">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="content-section">
+      <h2>Understanding the QQQI Options Strategy</h2>
+      <p>The NEOS Nasdaq-100 High Income ETF (QQQI) represents a distinct approach to generating yield in an otherwise growth-focused sector. Unlike standard index funds that rely purely on capital appreciation and nominal corporate dividends, QQQI utilizes a specialized derivative overlay. The fund writes (sells) options—specifically covered calls and call spreads—against the Nasdaq-100 Index. By collecting the premiums from these option contracts, the fund creates a synthetic yield that is distributed to investors monthly.</p>
+
+      <p>This systematic income generation mechanism is highly attractive for investors seeking regular cash flow without needing to actively manage their own <a href="/options-calculator">options trades</a>. The strategy effectively monetizes the inherent volatility of the technology and communications sectors housed within the Nasdaq-100. When volatility expands, option premiums generally increase, allowing the fund to potentially capture higher yields.</p>
+
+      <h2>Analyzing the Risks and Trade-offs</h2>
+      <p>While the double-digit yields projected by our QQQI dividend calculator are compelling, they are not without significant structural trade-offs. The primary mechanism that generates this income—selling call options—inherently caps the upside potential of the underlying portfolio. If the Nasdaq-100 experiences a rapid, aggressive bull run, the call options sold by the fund will likely end up in-the-money. This forces the fund to forfeit gains above the strike price, meaning QQQI will underperform the raw index during strong market rallies.</p>
+
+      <p>Furthermore, investors must be vigilant regarding NAV (Net Asset Value) preservation. In a bear market or a prolonged sideways market with downward bias, the premium collected may not be sufficient to offset the decline in the underlying index. Over time, this can lead to capital erosion. It is critical to review the historical distribution breakdown to understand if the high yield is being supported by actual earned income or if it includes a significant Return of Capital (ROC), which mathematically depreciates the NAV. For a deeper look into historical payouts, review our <a href="/qqqi-dividend-history">QQQI Dividend History analysis</a>.</p>
+
+      <h2>Tax Considerations and Expense Ratios</h2>
+      <p>When projecting your total return, gross yield is only one part of the equation. QQQI carries an expense ratio of approximately 0.68%, which compensates the management team for actively executing the options overlay. While our calculator above already uses a net yield figure to project your payout, it is important to factor this management cost into your broader portfolio allocation strategy.</p>
+
+      <p>Taxation is another critical variable. Because the income is primarily derived from short-term options premiums rather than qualified dividends from standard corporations, a large portion of the monthly distribution is typically taxed as ordinary income. For investors in higher tax brackets, holding this asset in a taxable brokerage account can significantly reduce the effective after-tax yield. Holding such high-yielding, tax-inefficient assets in tax-advantaged accounts like an IRA or Roth IRA is a common strategy employed to maximize retained earnings.</p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>How does QQQI generate its high dividend yield?</summary>
+        <p>QQQI employs an actively managed options strategy, specifically utilizing covered calls and options spreads on the Nasdaq-100 Index. By selling these options, the fund collects premium income, which it then distributes to shareholders on a monthly basis.</p>
+      </details>
+      <details>
+        <summary>What are the primary risks of investing in QQQI for income?</summary>
+        <p>The main risk is capped upside potential. Because the fund sells call options, if the Nasdaq-100 experiences a rapid bull market, QQQI's capital appreciation will be limited. Additionally, in a down market, the premium collected may not fully offset the decline in the underlying index's value, potentially leading to NAV decay over time.</p>
+      </details>
+      <details>
+        <summary>How often does the QQQI ETF pay dividends?</summary>
+        <p>The NEOS Nasdaq-100 High Income ETF (QQQI) distributes its dividend payments on a monthly schedule, making it an attractive option for investors seeking regular cash flow.</p>
+      </details>
+      <details>
+        <summary>Does the QQQI dividend calculator account for expense ratios?</summary>
+        <p>Our calculator uses the net distribution yield, meaning the management fees and the fund's expense ratio (approximately 0.68%) are already factored out of the yield percentages shown. The projected income reflects what an investor can expect to receive.</p>
+      </details>
+      <details>
+        <summary>Is the QQQI distribution considered qualified dividend income?</summary>
+        <p>Because a significant portion of QQQI's payout is derived from options premiums rather than traditional corporate dividends, a large percentage of its distribution may be taxed as ordinary income or classified as a return of capital (ROC). Investors should consult a tax professional regarding their specific situation.</p>
+      </details>
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.6; color: var(--text-primary); }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+
+    .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+    .input-group { display: flex; flex-direction: column; }
+    .input-group label { font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .input-group input { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px; font-size: 1rem; width: 100%; }
+    .input-group input:focus { outline: none; border-color: var(--accent-color); }
+
+    .error-state { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 500; }
+
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
+    .result-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-align: center; }
+    .result-card.highlight { background: color-mix(in srgb, var(--accent-color) 5%, transparent); border-color: var(--accent-color); grid-column: 1 / -1; }
+
+    .result-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .result-value { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); }
+    .result-value.positive { color: #22c55e; }
+
+    .content-section { margin-top: 3rem; }
+    .content-section h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary); }
+    .content-section p { margin-bottom: 1rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 500; }
+    .content-section a:hover { text-decoration: underline; }
+
+    .faq-section { margin-top: 3rem; }
+    .faq-section h2 { margin-bottom: 1.5rem; color: var(--text-primary); }
+    .faq-section details { margin: 1rem 0; padding: 1.25rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; font-size: 1.1rem; cursor: pointer; color: var(--text-primary); }
+    .faq-section details p { margin-top: 1rem; margin-bottom: 0; color: var(--text-secondary); }
+  </style>
+
+  <script is:inline>
+    function calculateIncome() {
+      const sharesInput = document.getElementById('sharesInput');
+      const priceInput = document.getElementById('priceInput');
+      const errorMsg = document.getElementById('error-message');
+      const resultsContainer = document.getElementById('results-container');
+
+      const totalValueEl = document.getElementById('totalValue');
+      const monthlyIncomeEl = document.getElementById('monthlyIncome');
+      const annualIncomeEl = document.getElementById('annualIncome');
+
+      // Check if inputs are cleared
+      if (sharesInput.value === '' && priceInput.value === '') {
+        errorMsg.style.display = 'none';
+        resultsContainer.style.display = 'none';
+        return;
+      }
+
+      const shares = parseFloat(sharesInput.value);
+      const price = parseFloat(priceInput.value);
+
+      if (isNaN(shares) || isNaN(price) || shares < 0 || price < 0) {
+        errorMsg.style.display = 'block';
+        resultsContainer.style.display = 'none';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+      resultsContainer.style.display = 'grid';
+
+      // Hardcoded metrics based on recent data for QQQI
+      const hardcodedAnnualYieldPercent = 14.22;
+      const annualYieldDecimal = hardcodedAnnualYieldPercent / 100;
+
+      const totalValue = shares * price;
+      const annualIncome = totalValue * annualYieldDecimal;
+      const monthlyIncome = annualIncome / 12;
+
+      const formatCurrency = (val) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+      };
+
+      totalValueEl.innerText = formatCurrency(totalValue);
+      monthlyIncomeEl.innerText = formatCurrency(monthlyIncome);
+      annualIncomeEl.innerText = formatCurrency(annualIncome);
+    }
+
+    // Attach event listeners
+    document.getElementById('sharesInput').addEventListener('input', calculateIncome);
+    document.getElementById('priceInput').addEventListener('input', calculateIncome);
+
+    // Initial calculation on load
+    document.addEventListener('DOMContentLoaded', calculateIncome);
+  </script>
+</SiteLayout>

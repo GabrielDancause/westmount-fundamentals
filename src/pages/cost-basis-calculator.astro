@@ -1,0 +1,576 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Cost Basis Calculator: Track Stock & Crypto Purchase Lots (2026)",
+  description: "Calculate your average cost basis for stocks, crypto, and ETFs. Free interactive calculator supporting multiple purchase lots, dividends, and real-time...",
+  category: "tool",
+  published: "2026-03-20",
+};
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Cost Basis Calculator: Track Stock & Crypto Purchase Lots",
+    "description": "Calculate your average cost basis for stocks, crypto, and ETFs. Free interactive calculator supporting multiple purchase lots, dividends, and real-time average price.",
+    "url": "https://westmountfundamentals.com/cost-basis-calculator"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a cost basis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your cost basis is the original value of an asset for tax purposes, usually the purchase price, adjusted for stock splits, dividends, and return of capital distributions. It is used to determine your capital gain or loss when you sell the asset."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate average cost basis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To calculate your average cost basis, divide the total amount of money invested by the total number of shares owned. For example, if you buy 100 shares at $10 and 100 shares at $20, your total investment is $3,000 for 200 shares, making your average cost basis $15 per share."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do trading commissions affect cost basis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. When calculating your cost basis for tax purposes, you must include any trading commissions or fees paid to acquire the asset. These fees increase your cost basis, which ultimately reduces your taxable capital gain when you sell."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between FIFO and average cost basis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "FIFO (First-In, First-Out) assumes the first shares you bought are the first ones you sell, which can result in higher taxes if those older shares have the largest gains. Average cost basis blends the purchase price of all shares into a single average price, which is common for mutual funds but requires specific election for individual stocks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do stock splits affect my cost basis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A stock split does not change your total investment value, but it does change your cost basis per share. In a 2-for-1 split, the number of shares you own doubles, and your cost basis per share is cut in half."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/cost-basis-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+
+    <div class="hero">
+      <h1>Cost Basis Calculator</h1>
+      <p>Calculate your exact average cost per share across multiple purchase lots for stocks, ETFs, and crypto.</p>
+    </div>
+
+    <div class="content-section">
+      <p>Whether you are dollar-cost averaging into an index fund or buying the dip on individual stocks, knowing your exact <strong>average cost basis</strong> is critical. It determines your break-even point and is mathematically necessary for calculating your true <a href="/roi-calculator">return on investment (ROI)</a>.</p>
+
+      <p>Our interactive cost basis calculator below allows you to input an unlimited number of purchase lots (individual trades) to determine your weighted average cost per share, total investment value, and current profit or loss if you provide a current market price.</p>
+
+      <div class="calculator-card">
+        <h3>Average Cost per Share Calculator</h3>
+
+        <div class="lots-container" id="lots-container">
+          <!-- Initial 2 lots -->
+          <div class="lot-row" data-index="0">
+            <div class="lot-header">
+              <span class="lot-title">Purchase #1</span>
+              <button class="remove-lot-btn" style="display: none;" aria-label="Remove purchase lot">×</button>
+            </div>
+            <div class="lot-inputs">
+              <div class="input-group">
+                <label>Shares / Quantity</label>
+                <input type="number" class="calc-input lot-shares" value="100" min="0" step="any" />
+              </div>
+              <div class="input-group">
+                <label>Price per Share ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-price" value="50.00" min="0" step="any" />
+                </div>
+              </div>
+              <div class="input-group">
+                <label>Commissions ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-fee" value="0.00" min="0" step="any" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lot-row" data-index="1">
+            <div class="lot-header">
+              <span class="lot-title">Purchase #2</span>
+              <button class="remove-lot-btn" aria-label="Remove purchase lot">×</button>
+            </div>
+            <div class="lot-inputs">
+              <div class="input-group">
+                <label>Shares / Quantity</label>
+                <input type="number" class="calc-input lot-shares" value="50" min="0" step="any" />
+              </div>
+              <div class="input-group">
+                <label>Price per Share ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-price" value="45.00" min="0" step="any" />
+                </div>
+              </div>
+              <div class="input-group">
+                <label>Commissions ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-fee" value="0.00" min="0" step="any" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="add-lot-btn" class="secondary-btn">+ Add Another Purchase</button>
+
+        <div class="current-price-section">
+          <div class="input-group">
+            <label for="current-price">Current Market Price (Optional)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="current-price" class="calc-input" value="48.50" min="0" step="any" />
+            </div>
+            <small class="helper-text">Enter the current price to calculate live profit/loss.</small>
+          </div>
+        </div>
+
+        <div class="results-grid">
+          <div class="result-box primary">
+            <span class="calc-result-label">Average Cost Basis</span>
+            <div class="calc-result-value" id="res-avg-cost">$0.00</div>
+          </div>
+          <div class="result-box">
+            <span class="calc-result-label">Total Shares Owned</span>
+            <div class="calc-result-value" id="res-total-shares">0</div>
+          </div>
+          <div class="result-box">
+            <span class="calc-result-label">Total Invested</span>
+            <div class="calc-result-value" id="res-total-cost">$0.00</div>
+          </div>
+          <div class="result-box" id="pl-box">
+            <span class="calc-result-label">Total Profit / Loss</span>
+            <div class="calc-result-value" id="res-pl">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>How is Cost Basis Calculated?</h2>
+      <p>The mathematical formula for calculating your average cost basis per share across multiple purchases is straight-forward. It is simply your total capital invested divided by your total number of shares.</p>
+
+      <div class="highlight-box">
+        <strong>Average Cost Basis = (Total Capital Invested + Total Fees) / Total Shares Owned</strong>
+      </div>
+
+      <p>To find your "Total Capital Invested", you must multiply the number of shares bought in each individual lot by the price paid for that lot, and add them all together.</p>
+
+      <h3>Cost Basis Example Calculation</h3>
+      <p>Let's say you are buying shares of Apple (AAPL) over several months:</p>
+      <ul>
+        <li><strong>Lot 1:</strong> You buy 10 shares at $150 each ($1,500 total).</li>
+        <li><strong>Lot 2:</strong> The price drops. You buy 20 shares at $130 each ($2,600 total).</li>
+        <li><strong>Lot 3:</strong> The price drops further. You buy 10 shares at $120 each ($1,200 total).</li>
+      </ul>
+
+      <p>First, calculate your total capital invested: $1,500 + $2,600 + $1,200 = <strong>$5,300</strong>.</p>
+      <p>Next, calculate your total shares owned: 10 + 20 + 10 = <strong>40 shares</strong>.</p>
+      <p>Finally, divide your total capital by total shares: $5,300 / 40 = <strong>$132.50 per share</strong>.</p>
+
+      <p>Even though you paid $150 for your first batch of shares, your <a href="/guide-dollar-cost-averaging">dollar-cost averaging</a> strategy successfully lowered your break-even point to $132.50.</p>
+
+      <h2>Why Do Commissions Matter?</h2>
+      <p>If you are using a modern zero-commission broker (like <a href="/best-brokerage-for-beginners">Wealthsimple Trade</a> in Canada or Robinhood in the US), you can likely ignore trading fees.</p>
+      <p>However, if you are paying flat fees (e.g., $9.99 per trade at a big bank), those commissions legally increase your cost basis. By factoring them into your purchase cost, you lower your calculated profit, which ultimately saves you money on capital gains taxes when you eventually sell.</p>
+      <p>You can use our <a href="/brokerage-fee-calculator">Brokerage Fee Calculator</a> to see exactly how much commissions are dragging down your portfolio returns over time.</p>
+
+      <h2>Cost Basis vs. FIFO (First-In, First-Out)</h2>
+      <p>It is important to understand that while an "average" cost basis is useful for tracking your personal break-even point, it is not always how the government taxes you.</p>
+
+      <p>In the United States, the IRS default accounting method for individual stocks is <strong>FIFO (First-In, First-Out)</strong>. If you own 100 shares of a stock bought at different times and decide to sell 50 shares, the IRS assumes you are selling the <em>oldest</em> 50 shares you bought. Your tax bill will be based on the cost basis of those specific 50 shares, not your average across the 100.</p>
+
+      <p>In Canada, however, the CRA <em>requires</em> you to use the Adjusted Cost Base (ACB) method—which is essentially a rolling average cost basis calculation across all identical properties (shares) you hold in non-registered accounts.</p>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('lots-container');
+      const addBtn = document.getElementById('add-lot-btn');
+      const currentPriceInput = document.getElementById('current-price');
+
+      const resAvgCost = document.getElementById('res-avg-cost');
+      const resTotalShares = document.getElementById('res-total-shares');
+      const resTotalCost = document.getElementById('res-total-cost');
+      const resPl = document.getElementById('res-pl');
+
+      let lotCount = 2; // Starts with 2 lots
+
+      function formatCurrency(val) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+      }
+
+      function updateCalculations() {
+        const rows = document.querySelectorAll('.lot-row');
+        let totalShares = 0;
+        let totalCost = 0;
+
+        rows.forEach(row => {
+          const sharesInput = row.querySelector('.lot-shares');
+          const priceInput = row.querySelector('.lot-price');
+          const feeInput = row.querySelector('.lot-fee');
+
+          let shares = parseFloat(sharesInput.value);
+          let price = parseFloat(priceInput.value);
+          let fee = parseFloat(feeInput.value);
+
+          let valid = true;
+          if (isNaN(shares) || shares < 0) { sharesInput.classList.add('input-error'); valid = false; shares = 0; } else { sharesInput.classList.remove('input-error'); }
+          if (isNaN(price) || price < 0) { priceInput.classList.add('input-error'); valid = false; price = 0; } else { priceInput.classList.remove('input-error'); }
+          if (isNaN(fee) || fee < 0) { feeInput.classList.add('input-error'); fee = 0; } else { feeInput.classList.remove('input-error'); }
+
+          if (valid && shares > 0) {
+            totalShares += shares;
+            totalCost += (shares * price) + fee;
+          }
+        });
+
+        // Handle floating point precision errors
+        totalCost = Math.round(totalCost * 100) / 100;
+
+        const avgCost = totalShares > 0 ? (totalCost / totalShares) : 0;
+        const currentPriceText = currentPriceInput.value.trim();
+        const currentPrice = currentPriceText !== '' ? parseFloat(currentPriceText) : null;
+
+        resTotalShares.textContent = totalShares.toLocaleString('en-US', { maximumFractionDigits: 4 });
+        resTotalCost.textContent = formatCurrency(totalCost);
+        resAvgCost.textContent = formatCurrency(avgCost);
+
+        if (currentPrice !== null && !isNaN(currentPrice) && totalShares > 0) {
+          const currentValue = totalShares * currentPrice;
+          const pl = currentValue - totalCost;
+
+          resPl.textContent = formatCurrency(pl);
+
+          if (pl > 0) {
+            resPl.style.color = 'var(--buy-color, #22c55e)'; // Fallback if var missing
+          } else if (pl < 0) {
+            resPl.style.color = 'var(--sell-color, #ef4444)';
+          } else {
+            resPl.style.color = 'var(--text-primary)';
+          }
+        } else {
+          resPl.textContent = '$0.00';
+          resPl.style.color = 'var(--text-primary)';
+        }
+      }
+
+      function bindInputs() {
+        const inputs = document.querySelectorAll('.calc-input');
+        inputs.forEach(input => {
+          // Remove old listeners to avoid duplicates
+          input.removeEventListener('input', updateCalculations);
+          input.addEventListener('input', updateCalculations);
+        });
+
+        const removeBtns = document.querySelectorAll('.remove-lot-btn');
+        removeBtns.forEach(btn => {
+          btn.removeEventListener('click', removeLot);
+          btn.addEventListener('click', removeLot);
+        });
+
+        // Hide remove button if only one row
+        const rows = document.querySelectorAll('.lot-row');
+        rows.forEach((row, idx) => {
+          const btn = row.querySelector('.remove-lot-btn');
+          if (rows.length === 1) {
+            btn.style.display = 'none';
+          } else {
+            btn.style.display = 'block';
+          }
+        });
+      }
+
+      function removeLot(e) {
+        const rows = document.querySelectorAll('.lot-row');
+        if (rows.length > 1) {
+          e.target.closest('.lot-row').remove();
+          updateRowLabels();
+          updateCalculations();
+          bindInputs();
+        }
+      }
+
+      function updateRowLabels() {
+        const rows = document.querySelectorAll('.lot-row');
+        rows.forEach((row, idx) => {
+          const title = row.querySelector('.lot-title');
+          title.textContent = `Purchase #${idx + 1}`;
+        });
+      }
+
+      addBtn.addEventListener('click', () => {
+        lotCount++;
+        const newRow = document.createElement('div');
+        newRow.className = 'lot-row';
+        newRow.innerHTML = `
+            <div class="lot-header">
+              <span class="lot-title">Purchase #${document.querySelectorAll('.lot-row').length + 1}</span>
+              <button class="remove-lot-btn" aria-label="Remove purchase lot">×</button>
+            </div>
+            <div class="lot-inputs">
+              <div class="input-group">
+                <label>Shares / Quantity</label>
+                <input type="number" class="calc-input lot-shares" value="0" min="0" step="any" />
+              </div>
+              <div class="input-group">
+                <label>Price per Share ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-price" value="0" min="0" step="any" />
+                </div>
+              </div>
+              <div class="input-group">
+                <label>Commissions ($)</label>
+                <div class="input-wrapper">
+                  <span class="prefix">$</span>
+                  <input type="number" class="calc-input lot-fee" value="0" min="0" step="any" />
+                </div>
+              </div>
+            </div>
+        `;
+        container.appendChild(newRow);
+
+        // Expose new element globally to fix Playwright test event dispatching on new inputs
+        window.latestLotRow = newRow;
+
+        bindInputs();
+        updateRowLabels();
+        updateCalculations(); // In case default values impact total
+      });
+
+      // Initial setup
+      bindInputs();
+      updateCalculations();
+    });
+  </script>
+
+</SiteLayout>
+
+<style is:global>
+  .hero { text-align: center; padding: 3rem 0 2rem; }
+  .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-color); }
+  .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+
+  .content-section { margin-top: 2rem; }
+  .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+  .content-section h3 { font-size: 1.4rem; font-weight: 700; margin: 1.5rem 0 1rem; color: var(--text-primary); }
+  .content-section p, .content-section ul, .content-section li { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+
+  .calculator-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .lots-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lot-row {
+    background: color-mix(in srgb, var(--card-bg) 95%, var(--border-color));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .lot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .lot-title {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .remove-lot-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 0.5rem;
+  }
+
+  .remove-lot-btn:hover {
+    color: var(--sell-color, #ef4444);
+  }
+
+
+  :global(input.input-error) {
+    border-color: var(--sell-color, #ef4444) !important;
+    background-color: color-mix(in srgb, var(--sell-color, #ef4444) 10%, transparent) !important;
+  }
+  .lot-inputs {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .input-wrapper input {
+    padding-left: 2rem;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .secondary-btn {
+    background: transparent;
+    border: 1px dashed var(--border-color);
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+  }
+
+  .secondary-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+
+  .current-price-section {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+  }
+
+  .helper-text {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .result-box {
+    background: color-mix(in srgb, var(--bg-color) 80%, transparent);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .result-box.primary {
+    border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+  }
+
+  .calc-result-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .primary .calc-result-value {
+    color: var(--accent-color);
+  }
+
+  @media (max-width: 600px) {
+    .results-grid {
+      grid-template-columns: 1fr;
+    }
+  .lot-inputs {
+
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,420 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Stocks 101: The Definitive Guide to How the Stock Market Works",
+  description: "Everyone talks about buying stocks, but few understand what they actually own. Discover the underlying mechanics of shares, how they generate value, and the...",
+  category: "guide",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/stocks-101"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What exactly is a stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A stock represents fractional ownership in a business. When you buy a share of stock, you are buying a tiny, proportional slice of that company's assets and future earnings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you make money from stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Investors make money from stocks in two primary ways: capital appreciation (the price of the stock goes up, allowing you to sell it for more than you paid) and dividends (cash payments distributed by the company to its shareholders)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are stocks a safe investment for beginners?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "While historically stocks have provided strong long-term returns, they are volatile in the short term. They are generally considered riskier than bonds or cash, but the risk can be mitigated through diversification, such as buying broad market index funds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much money do you need to start investing in stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Thanks to fractional shares, you can start investing in stocks with as little as $1 to $5 through most modern brokerage platforms, making it highly accessible for beginners."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between a stock and an ETF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A stock is ownership in one single company. An ETF (Exchange-Traded Fund) is a basket of many different stocks bundled together. ETFs offer instant diversification, which reduces the risk of investing in just one company."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/stocks-101"
+  schema={schema}
+>
+  <div class="page-content container">
+    <header style="margin-bottom: 3rem; text-align: center;">
+      <h1>Stocks 101: The Definitive Guide to How the Stock Market Works</h1>
+      <p style="font-size: 1.25rem; color: var(--text-secondary);">Everything you need to know about stocks, how they generate wealth, and how to get started on the right foot.</p>
+    </header>
+
+    <section class="content-section">
+      <h2>1. The Definition: What Exactly is a Stock?</h2>
+      <p>When people talk about entering the financial markets, the phrase "stocks 101" is usually where they begin. But what is a stock, truly? Stripped of the jargon, a stock is simply a unit of ownership in a business. When a company wants to raise money to expand its operations, buy new equipment, or enter new markets, it can borrow money (issue debt) or sell a portion of itself (issue equity). Stocks represent that equity.</p>
+
+      <p>If you buy a single share of stock in a company, you are a part-owner of that business. Granted, your ownership stake might be a tiny fraction of a percent, but legally and financially, you are entitled to a proportionate share of the company's assets and its future profits. This is the fundamental premise of <a href="/stocks-for-beginners">stocks for beginners</a>: you are not buying a ticker symbol on a screen; you are buying a piece of a real, living, breathing business that employs people, creates products, and generates cash flow.</p>
+
+      <p>Consider the alternative. You could start your own business from scratch. You would take on all the risk, do all the work, and hopefully reap the rewards. Buying stocks allows you to participate in the financial rewards of a successful business without having to manage its day-to-day operations. You are effectively hiring the CEO and the management team to work for you.</p>
+
+      <div class="highlight-box">
+        <h3>The Two Types of Stocks</h3>
+        <p>There are generally two types of stocks: Common and Preferred.</p>
+        <ul>
+          <li><strong>Common Stock:</strong> This is what most people mean when they say "stock." It represents ownership, gives you the right to vote at shareholder meetings, and allows you to receive dividends if the company pays them. In the event of bankruptcy, common stockholders are the last to be paid.</li>
+          <li><strong>Preferred Stock:</strong> This functions more like a bond. Preferred stockholders typically do not have voting rights, but they receive a fixed dividend that must be paid out before any dividends are paid to common stockholders. They also have a higher claim on assets in the event of bankruptcy.</li>
+        </ul>
+      </div>
+
+      <p>For almost all retail investors asking about stocks 101, common stock is the focus. It offers the highest potential for long-term growth, which is the primary reason people learn <a href="/how-to-start-investing">how to start investing</a>.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>2. How the Stock Market Actually Works in Practice</h2>
+      <p>Many beginners view the stock market as a casino, a giant roulette wheel where prices bounce up and down based on luck or secret information. In reality, the stock market is simply an auction house. It is a highly regulated, highly efficient network of exchanges where buyers and sellers come together to negotiate prices.</p>
+
+      <p>When you place an order to buy a stock on your brokerage app, your broker routes that order to a stock exchange, such as the New York Stock Exchange (NYSE) or the Nasdaq. There, your buy order (the "bid") is matched with a seller's sell order (the "ask"). The difference between the highest price a buyer is willing to pay and the lowest price a seller is willing to accept is known as the bid-ask spread.</p>
+
+      <p>But why do prices change every second? Prices change because the collective opinion of millions of investors changes. If a company announces that it discovered a cure for a disease, demand for its stock will skyrocket. Buyers will be willing to pay more, and sellers will demand more. The price will rise until buyers and sellers find a new equilibrium. Conversely, if a company reports terrible earnings, sellers will outnumber buyers, and the price will fall until it attracts new buyers.</p>
+
+      <p>Over the short term, stock prices are driven by human emotion—fear and greed, news headlines, and macroeconomic data. But over the long term, a stock's price is driven by one thing and one thing only: corporate earnings. If a company consistently grows its profits year after year, its stock price will almost certainly follow. As the legendary investor Benjamin Graham said, "In the short run, the market is a voting machine but in the long run, it is a weighing machine." Understanding this distinction is critical for anyone learning <a href="/how-to-invest-in-stocks">how to invest in stocks</a>.</p>
+
+      <p>This is where the concept of market capitalization comes in. Market cap is the total value of all a company's shares combined. You calculate it by multiplying the stock price by the total number of outstanding shares. A $10 stock with 1 billion shares is worth exactly the same as a $100 stock with 100 million shares ($10 billion). Beginners often make the mistake of thinking a $5 stock is "cheaper" than a $500 stock. Without knowing the number of shares, the price alone tells you absolutely nothing about the company's value.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>3. Real Examples: Understanding Value Through Real Companies</h2>
+      <p>To truly grasp stocks 101, we must look at real data. Let's examine two of the most widely held companies in the world: Apple Inc. (AAPL) and Microsoft Corporation (MSFT). We will look at how their business models translate into stock market returns.</p>
+
+      <h3>Case Study: Apple Inc. (AAPL)</h3>
+      <p>Apple designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories. When you buy a share of Apple, you are buying a slice of the profits from every iPhone, iPad, and Mac sold globally, as well as the recurring revenue from services like the App Store and Apple Music.</p>
+      <p>Apple has historically been a cash-generating machine. Because it produces more cash than it needs to run its daily operations, it returns that cash to shareholders in two ways:</p>
+      <ul>
+        <li><strong>Dividends:</strong> Apple pays a regular cash dividend to its shareholders. It is a tangible return on your investment, deposited directly into your brokerage account.</li>
+        <li><strong>Share Repurchases (Buybacks):</strong> Apple frequently uses its cash to buy its own shares on the open market and retire them. By reducing the total number of shares in existence, each remaining share becomes more valuable because it represents a larger percentage of the company's earnings. This is financial engineering that greatly benefits long-term holders.</li>
+      </ul>
+      <p>When evaluating a company like Apple, investors look at its Price-to-Earnings (P/E) ratio. If Apple earns $6 per share in a year, and the stock trades at $180, its P/E ratio is 30 ($180 / $6). This means investors are willing to pay $30 for every $1 of Apple's current earnings, reflecting their confidence in its future growth.</p>
+
+      <h3>Case Study: Microsoft Corporation (MSFT)</h3>
+      <p>Microsoft operates a different business model. It is heavily reliant on enterprise software, cloud computing (Azure), and subscription services (Microsoft 365). This model creates highly predictable, recurring revenue. Businesses rarely cancel their fundamental software subscriptions, even during economic downturns.</p>
+      <p>When you own Microsoft stock, you own a share of the global infrastructure that powers modern business. Like Apple, Microsoft uses its massive cash flows to pay dividends and buy back stock. However, its stock price also moves based on its growth in cloud computing and its investments in artificial intelligence.</p>
+      <p>Both Apple and Microsoft demonstrate the core principle of stocks: you are buying future cash flows. The reason their stock prices have appreciated massively over the last two decades is that their underlying businesses have grown their earnings consistently. They are not lottery tickets; they are massive, highly profitable enterprises.</p>
+      <p>For more on how companies manage their share counts over time to adjust prices, you might find a <a href="/stock-split-calculator">stock split calculator</a> useful in understanding the math.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>4. Step-by-Step Breakdown: How to Buy Your First Share</h2>
+      <p>Understanding the theory of stocks is one thing; executing a trade is another. The process of buying your first stock is simpler than ever, but it requires a few deliberate steps to ensure you are doing it safely and efficiently. This is a crucial part of <a href="/investing-for-beginners">how to invest in stocks for beginners</a>.</p>
+
+      <ol>
+        <li><strong>Open a Brokerage Account:</strong> You cannot buy stocks directly from the stock exchange. You need an intermediary called a broker. Today, there are dozens of excellent, fee-free online brokers (such as Fidelity, Charles Schwab, or Vanguard). Opening an account is entirely digital and usually takes less than 15 minutes.</li>
+        <li><strong>Fund Your Account:</strong> Once your account is open, you must link it to your bank account and transfer cash. This process can take a few days for the funds to fully settle and become available for trading.</li>
+        <li><strong>Research Your Investment:</strong> Before buying a single stock, you must know what you are buying. Are you buying an individual company like Microsoft, or are you buying a broad market index fund (ETF) that owns hundreds of companies at once? For most beginners, broad market index funds are the recommended starting point due to their built-in diversification.</li>
+        <li><strong>Locate the Ticker Symbol:</strong> Every publicly traded asset has a unique ticker symbol (e.g., TSLA for Tesla, VOO for Vanguard S&P 500 ETF). Use your broker's search function to find the exact asset you wish to purchase.</li>
+        <li><strong>Place an Order:</strong> This is where you execute the trade. You will typically choose between two main order types:
+          <ul>
+            <li><em>Market Order:</em> You instruct the broker to buy the stock immediately at the best available current price. This guarantees execution but not a specific price.</li>
+            <li><em>Limit Order:</em> You instruct the broker to buy the stock only at a specific price (or lower). This guarantees your price, but if the stock never drops to your specified limit, the trade will never execute.</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Once the order is filled, the stock will appear in your portfolio, and you will officially be a shareholder. You can track its performance, reinvest its dividends, and hold it for the long term.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>5. The Pros, Cons, and Common Misconceptions</h2>
+      <p>No asset class is perfect, and stocks are no exception. To build a robust financial plan, you must understand both the advantages and the inherent risks of stock market investing.</p>
+
+      <h3>The Pros of Investing in Stocks</h3>
+      <ul>
+        <li><strong>High Historical Returns:</strong> Over the long term (decades), stocks have historically outperformed almost every other asset class, including bonds, real estate, and precious metals. They are one of the few reliable ways to grow wealth faster than the rate of inflation. Check the <a href="/average-stock-market-return">average stock market return</a> for historical context.</li>
+        <li><strong>Liquidity:</strong> Unlike real estate, which can take months to sell, stocks are highly liquid. You can convert your stock holdings into cash in seconds during market hours.</li>
+        <li><strong>Passive Income:</strong> Dividend-paying stocks provide a regular stream of passive income, which can be reinvested to buy more shares or used to cover living expenses.</li>
+        <li><strong>Limited Liability:</strong> The maximum amount of money you can lose when buying a stock is your initial investment. If the company goes bankrupt, creditors cannot come after your personal assets.</li>
+      </ul>
+
+      <h3>The Cons and Risks</h3>
+      <ul>
+        <li><strong>Volatility:</strong> Stock prices fluctuate wildly in the short term. It is common for the market to drop 10% or even 20% in a given year. If you panic and sell during a downturn, you lock in your losses.</li>
+        <li><strong>Risk of Complete Loss:</strong> If you invest in a single company and that company goes bankrupt, your stock becomes worthless. This is why diversification is paramount.</li>
+        <li><strong>Emotional Stress:</strong> Watching your portfolio value swing by thousands of dollars can be emotionally taxing. Successful investing requires a strong psychological constitution.</li>
+      </ul>
+
+      <h3>Common Misconceptions</h3>
+      <p>The biggest misconception beginners have is that investing in stocks is a "get-rich-quick" scheme. Media headlines often highlight individuals who made millions betting on a highly speculative stock or cryptocurrency. These are the exceptions, akin to lottery winners. True wealth in the stock market is built slowly, over decades, through consistent investing, dividend reinvestment, and the miracle of compound interest. Another major misconception is that you need a lot of money to start. With fractional shares, you can literally begin with five dollars. The barrier to entry has completely vanished.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>6. What Experienced Investors Know That Beginners Don't</h2>
+      <p>There is a vast chasm between how a novice views the market and how a seasoned professional views it. Bridging this gap is the essence of mastering stocks 101.</p>
+
+      <p><strong>1. They don't try to time the market.</strong> Beginners constantly try to guess when the market will peak or bottom out. Experienced investors know this is a fool's errand. Instead of "timing the market," they focus on "time in the market." They invest consistently, regardless of whether the market is at an all-time high or in a deep recession, utilizing a strategy called Dollar-Cost Averaging.</p>
+
+      <p><strong>2. They understand the difference between price and value.</strong> A beginner sees a stock drop 20% and panics, assuming something is terribly wrong. An experienced investor looks at the underlying business. If the company's earnings and competitive advantage are intact, they view the 20% drop as a discount—a sale on a great asset—and they buy more.</p>
+
+      <p><strong>3. They respect the power of compound interest.</strong> Experienced investors know that the real money is made in the later decades of investing. Earning 10% on $10,000 is $1,000. Earning 10% on $1,000,000 is $100,000. They have the patience to let their investments snowball over long periods without interrupting the compounding process.</p>
+
+      <p><strong>4. They minimize taxes and fees.</strong> Beginners often overtrade, racking up short-term capital gains taxes and bid-ask spread costs. Professionals trade as little as possible. They utilize tax-advantaged accounts (like IRAs or 401(k)s) and buy low-cost index funds to ensure they keep as much of their returns as legally possible.</p>
+
+      <p><strong>5. They embrace boring.</strong> The most successful investments are rarely the exciting, headline-grabbing tech startups. They are often boring companies that make toothpaste, collect garbage, or process payments. These companies generate massive, reliable cash flows year after year, rewarding patient shareholders while the speculative fads burn out and fade away.</p>
+    </section>
+
+    <div class="calculator-card">
+      <h3>Investment Growth Calculator</h3>
+      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">See how a stock portfolio might grow over time with compound interest.</p>
+
+      <div class="input-group">
+        <label for="initialDeposit">Initial Investment</label>
+        <div class="input-wrapper">
+          <input type="number" id="initialDeposit" value="1000" min="0" step="100">
+          <span class="suffix">$</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="monthlyContribution">Monthly Contribution</label>
+        <div class="input-wrapper">
+          <input type="number" id="monthlyContribution" value="200" min="0" step="50">
+          <span class="suffix">$</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="annualReturn">Expected Annual Return</label>
+        <div class="input-wrapper">
+          <input type="number" id="annualReturn" value="8" min="0" step="0.1">
+          <span class="suffix">%</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="years">Years to Grow</label>
+        <div class="input-wrapper">
+          <input type="number" id="years" value="20" min="1" step="1">
+          <span class="suffix">Yrs</span>
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <span class="calc-result-label">Future Portfolio Value</span>
+        <div class="calc-result-value" id="futureValueResult">$121,500.00</div>
+      </div>
+    </div>
+
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const initialInput = document.getElementById('initialDeposit');
+        const monthlyInput = document.getElementById('monthlyContribution');
+        const returnInput = document.getElementById('annualReturn');
+        const yearsInput = document.getElementById('years');
+        const resultDisplay = document.getElementById('futureValueResult');
+
+        function calculateGrowth() {
+          const p = parseFloat(initialInput.value) || 0;
+          const pmt = parseFloat(monthlyInput.value) || 0;
+          const r = (parseFloat(returnInput.value) || 0) / 100;
+          const t = parseFloat(yearsInput.value) || 0;
+          const n = 12; // Monthly compounding
+
+          if (t <= 0) {
+            resultDisplay.textContent = '$0.00';
+            return;
+          }
+
+          // Compound interest for principal: A = P(1 + r/n)^(nt)
+          const principalGrowth = p * Math.pow(1 + r/n, n * t);
+
+          // Future value of a series (monthly contributions): PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+          let contributionsGrowth = 0;
+          if (r > 0) {
+            contributionsGrowth = pmt * ((Math.pow(1 + r/n, n * t) - 1) / (r / n));
+          } else {
+            contributionsGrowth = pmt * n * t;
+          }
+
+          let total = principalGrowth + contributionsGrowth;
+
+          // Fix JS floating point issues
+          let fixed = parseFloat(total.toPrecision(14));
+          if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+            total = Math.round(fixed);
+          } else {
+            total = fixed;
+          }
+
+          // Format as currency
+          const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+
+          resultDisplay.textContent = formatter.format(total);
+        }
+
+        initialInput.addEventListener('input', calculateGrowth);
+        monthlyInput.addEventListener('input', calculateGrowth);
+        returnInput.addEventListener('input', calculateGrowth);
+        yearsInput.addEventListener('input', calculateGrowth);
+
+        // Initial calculation
+        calculateGrowth();
+      });
+    </script>
+
+    <section class="content-section">
+      <h2>7. Conclusion & Next Steps</h2>
+      <p>The journey from a beginner asking about stocks 101 to a confident, successful investor is a marathon, not a sprint. The stock market is the greatest wealth-creation engine in human history, but it requires patience, discipline, and a fundamental understanding of what you are actually buying. You are not trading abstract numbers; you are accumulating ownership in real businesses that serve real customers.</p>
+
+      <p>Your next step is to put this knowledge into practice. Review your finances, open a brokerage account, and consider starting with a broad, low-cost index fund to establish your foundation. Continue your education by reading about asset allocation, analyzing financial statements, and understanding your own risk tolerance. The fact that you are taking the time to learn these foundational concepts puts you ahead of the vast majority of people. Welcome to the world of investing.</p>
+    </section>
+
+  </div>
+</SiteLayout>
+
+<style>
+  .content-section {
+    margin-bottom: 3rem;
+  }
+  .content-section h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+  .content-section h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+  .highlight-box {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+  }
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 3rem auto;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .calculator-card h3 {
+    text-align: center;
+    color: var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+  .input-group {
+    margin-bottom: 1.25rem;
+  }
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .input-wrapper input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+  .input-wrapper input:focus {
+    outline: none;
+  }
+  .input-wrapper input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  .input-wrapper input[type="number"]::-webkit-outer-spin-button,
+  .input-wrapper input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .input-wrapper .suffix {
+    padding: 0.75rem 1rem;
+    color: var(--text-secondary);
+    background-color: var(--card-bg);
+    border-left: 1px solid var(--border-color);
+    font-weight: 600;
+  }
+  .calc-result {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+  }
+  .calc-result-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  .calc-result-value {
+    color: var(--accent-color);
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+</style>

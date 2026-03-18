@@ -1,0 +1,166 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Best International ETFs in Canada 2026: VIU, XEF, ZEA",
+    "description": "Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does an international ETF cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In the Canadian context, \"international\" typically refers to developed markets outside of North America (EAFE: Europe, Australasia, and the Far East). It usually excludes the US, Canada, and emerging markets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are international ETFs tax-efficient?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends on how the fund is structured. ETFs like XEF that hold the underlying foreign stocks directly are generally more tax-efficient than those that hold a US-listed wrap ETF, as they avoid an extra layer of foreign withholding tax."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I invest in emerging markets?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Emerging markets offer higher potential growth but come with significantly higher political and economic volatility. They usually make up a small portion (5-10%) of a well-diversified global portfolio."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Best International ETFs in Canada 2026: VIU, XEF, ZEA",
+  description: "Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio.",
+  category: "list",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Best International ETFs in Canada 2026: VIU, XEF, ZEA"
+  description="Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio."
+  canonical="https://westmountfundamentals.com/best-international-etfs-canada"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Best International ETFs in Canada</h1>
+      <p>Expand your portfolio beyond North America with the top developed and emerging market ETFs.</p>
+    </div>
+
+    <h2>Completing the Global Picture</h2>
+    <p>A portfolio consisting only of Canadian and US stocks misses out on nearly a third of the global equity market. International ETFs provide exposure to massive global corporations based in Europe, Japan, Australia, and beyond—companies like Nestlé, Toyota, Samsung, and LVMH.</p>
+
+    <h2>Top Developed Market ETFs (EAFE)</h2>
+    <p>When Canadian brokerages refer to "international" markets, they are usually talking about the EAFE index (Europe, Australasia, and Far East). These are highly developed, stable economies.</p>
+
+    <div class="card">
+      <h3>1. XEF - iShares Core MSCI EAFE IMI Index ETF</h3>
+      <p>XEF is often considered the gold standard for Canadian investors looking for international exposure. Crucially, it holds its underlying stocks directly rather than holding a US-listed ETF. This structure prevents a second layer of foreign withholding tax on dividends.</p>
+      <ul>
+        <li><strong>MER:</strong> ~0.22%</li>
+        <li><strong>Holdings:</strong> ~2,500 companies</li>
+        <li><strong>Best for:</strong> Broad, tax-efficient exposure to developed markets outside North America.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>2. VIU - Vanguard FTSE Developed All Cap ex North America Index ETF</h3>
+      <p>VIU is Vanguard's main international offering for Canadians. Like XEF, it holds stocks directly to improve tax efficiency. It tracks a slightly different index but offers similar performance and regional exposure.</p>
+      <ul>
+        <li><strong>MER:</strong> ~0.23%</li>
+        <li><strong>Holdings:</strong> ~3,900 companies</li>
+        <li><strong>Best for:</strong> Investors who prefer the FTSE index methodology or want to pair it with other Vanguard funds.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>3. ZEA - BMO MSCI EAFE Index ETF</h3>
+      <p>ZEA is BMO's highly liquid international offering. While its MER is slightly lower than XEF and VIU, it only tracks large and mid-cap companies, missing out on the small-cap exposure the others provide.</p>
+      <ul>
+        <li><strong>MER:</strong> ~0.20%</li>
+        <li><strong>Holdings:</strong> ~800 companies</li>
+        <li><strong>Best for:</strong> A slightly cheaper, large-cap focused international holding.</li>
+      </ul>
+    </div>
+
+    <h2>Emerging Markets: High Risk, High Reward</h2>
+    <p>Emerging markets (EM) include countries like China, India, Brazil, and Taiwan. These economies are growing rapidly but face higher political, regulatory, and currency risks.</p>
+
+    <div class="card">
+      <h3>XEC - iShares Core MSCI Emerging Markets IMI Index ETF</h3>
+      <p>XEC is a popular choice for capturing EM growth. Note that, unlike XEF, XEC holds a US-listed ETF (IEMG) internally, meaning you do lose some dividend yield to US withholding taxes.</p>
+      <ul>
+        <li><strong>MER:</strong> ~0.27%</li>
+        <li><strong>Holdings:</strong> Exposure to ~3,000 EM companies</li>
+        <li><strong>Best for:</strong> Adding a 5-10% growth kicker to a fully diversified portfolio.</li>
+      </ul>
+    </div>
+
+    <h2>The All-World ex-Canada Approach</h2>
+    <p>If managing US, Developed International, and Emerging Market ETFs sounds too complicated, you can buy an ETF that holds everything in the world <em>except</em> Canada.</p>
+    <div class="card">
+      <h3>XAW - iShares Core MSCI All Country World ex Canada Index ETF</h3>
+      <p>XAW is a "fund of funds" that holds the US market (approx. 60%), developed international (approx. 28%), and emerging markets (approx. 12%). Pair XAW with a Canadian equity ETF (like VCN), and your global equity portfolio is complete in just two steps.</p>
+    </div>
+
+    <h2>Explore More</h2>
+    <p>Discover how international stocks fit into a broader portfolio strategy:</p>
+    <ul>
+      <li><a href="/best-canadian-etfs-2026">Back to the Best Canadian ETFs in 2026 Master Guide</a></li>
+      <li><a href="/best-us-equity-etfs-canada">Explore Best US Equity ETFs for Canadians</a></li>
+      <li><a href="/best-all-in-one-etfs">Discover All-in-One ETFs that handle international exposure for you</a></li>
+    </ul>
+
+    <div class="faq-section" style="margin-top: 3rem;">
+      <h2>Frequently Asked Questions</h2>
+      <div class="card">
+        <h4>What does an international ETF cover?</h4>
+        <p>In the Canadian context, "international" typically refers to developed markets outside of North America (EAFE: Europe, Australasia, and the Far East). It usually excludes the US, Canada, and emerging markets.</p>
+      </div>
+      <div class="card">
+        <h4>Are international ETFs tax-efficient?</h4>
+        <p>It depends on how the fund is structured. ETFs like XEF that hold the underlying foreign stocks directly are generally more tax-efficient than those that hold a US-listed wrap ETF, as they avoid an extra layer of foreign withholding tax.</p>
+      </div>
+      <div class="card">
+        <h4>Should I invest in emerging markets?</h4>
+        <p>Emerging markets offer higher potential growth but come with significantly higher political and economic volatility. They usually make up a small portion (5-10%) of a well-diversified global portfolio.</p>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    // JS functionality here
+  </script>
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    h2 { margin-top: 2.5rem; margin-bottom: 1rem; color: var(--text-primary); }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text-primary); }
+    p { margin-bottom: 1.2rem; line-height: 1.6; color: var(--text-primary); }
+    ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; color: var(--text-primary); }
+    a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+  </style>
+</SiteLayout>

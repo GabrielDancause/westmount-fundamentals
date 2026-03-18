@@ -1,0 +1,513 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Position Size Calculator: Manage Your Trading Risk",
+  description: "Stop blowing up your trading account. How many shares should you actually buy? Use our position size calculator to enforce strict risk management.",
+  category: "tool",
+  published: "2026-03-20"
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is position sizing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Position sizing is the process of determining exactly how many shares or units of an asset you should buy in a given trade to ensure you only risk a predetermined percentage of your total account capital."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is position sizing important in trading?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is the core of risk management. Proper position sizing ensures that a single losing trade, or even a streak of losing trades, does not devastate your trading account, allowing you to survive long enough for your winning edge to play out."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much of my account should I risk per trade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A widely accepted rule among professional traders is the '1% to 2% Rule'. This means you should structure your position size and stop loss so that if the trade hits your stop loss, you lose no more than 1% to 2% of your total account equity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you calculate position size?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The formula is: Account Risk Amount / Trade Risk per Share. For example, if you are willing to risk $100 on a trade, and the difference between your entry price and stop loss is $2 per share, your position size should be 50 shares ($100 / $2)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does position size change if I use leverage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculation of how much capital you are putting at risk remains the same, but leverage allows you to control that position size with less upfront cash. However, you must be extremely precise with stop losses when using leverage, as it magnifies both gains and losses."
+      }
+    }
+  ]
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals",
+    "url": "https://westmountfundamentals.com/"
+  }
+};
+
+const schema = [faqSchema, articleSchema];
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/position-size-calculator" schema={JSON.stringify(schema)}>
+  <div class="container page-content">
+    <div class="hero">
+      <h1>Position Size Calculator</h1>
+      <p class="subtitle">Determine the exact number of shares to buy based on strict risk management rules.</p>
+    </div>
+
+    <div class="calculator-container" id="pos-calc-container">
+      <div class="calc-grid">
+        <div class="input-group">
+          <label for="account-size">Total Account Balance ($)</label>
+          <input type="number" id="account-size" min="0" value="10000" step="100">
+        </div>
+
+        <div class="input-group">
+          <label for="risk-percentage">Risk per Trade (%)</label>
+          <input type="number" id="risk-percentage" min="0.1" max="100" value="1.0" step="0.1">
+        </div>
+
+        <div class="input-group">
+          <label for="entry-price">Entry Price per Share ($)</label>
+          <input type="number" id="entry-price" min="0.01" value="50.00" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label for="stop-loss">Stop Loss Price ($)</label>
+          <input type="number" id="stop-loss" min="0" value="48.00" step="0.01">
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card main-result">
+          <h3>Position Size (Shares)</h3>
+          <div class="result-value" id="position-shares">0</div>
+        </div>
+
+        <div class="secondary-results">
+          <div class="result-box">
+            <h4>Total Capital Required</h4>
+            <div id="capital-required" class="sub-value">$0.00</div>
+          </div>
+          <div class="result-box">
+            <h4>Amount at Risk</h4>
+            <div id="risk-amount" class="sub-value">$0.00</div>
+          </div>
+          <div class="result-box">
+            <h4>Risk per Share</h4>
+            <div id="risk-per-share" class="sub-value">$0.00</div>
+          </div>
+          <div class="result-box">
+            <h4>Distance to Stop</h4>
+            <div id="distance-to-stop" class="sub-value">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-state" style="display: none;"></div>
+    </div>
+
+    <div class="explainer">
+      <h2>Why Professional Traders Rely on Position Sizing</h2>
+      <p>In the world of investing and trading, survival is more important than massive immediate profits. Position sizing is the critical practice of determining precisely how many units of an asset—like shares of a stock or contracts of a derivative—you should trade to ensure that no single mistake wipes out your trading capital. By controlling the amount of risk taken on each individual trade, you preserve your bankroll during cold streaks and allow your statistical edge to play out over a large number of trades.</p>
+
+      <p>Many novice traders fail because they size their positions based on "gut feeling" or sheer excitement. They might have a $10,000 account and decide to buy $5,000 worth of a volatile stock just because they feel highly confident. If that stock suddenly drops 20% on bad news before they can exit, they instantly lose 10% of their entire account equity. Recovering from significant drawdowns is mathematically grueling; an account that loses 50% must gain 100% just to return to breakeven.</p>
+
+      <h3>The 1% Risk Rule: The Gold Standard</h3>
+      <p>The most widely accepted risk management principle among professional traders is the 1% to 2% Rule. This rule states that you should never risk more than 1% or 2% of your total account capital on a single trade. Note that "risking 1%" does not mean you only buy $100 worth of stock with a $10,000 account. It means that if your predefined stop loss is triggered, the total monetary loss realized on the trade will equal exactly $100.</p>
+
+      <p>By enforcing this discipline, you would have to suffer 100 consecutive losing trades to completely blow up your account. In a real-world scenario, this allows traders to comfortably weather the inevitable losing streaks that are an unavoidable part of engaging with the financial markets.</p>
+
+      <h3>How the Position Size Formula Works</h3>
+      <p>Calculating the correct position size manually requires basic arithmetic. Our calculator handles this for you instantly based on four key inputs:</p>
+      <ol>
+        <li><strong>Account Size:</strong> The total liquid capital available in your trading account.</li>
+        <li><strong>Risk Percentage:</strong> The percentage of your total account you are willing to lose if the trade goes wrong (typically 1%).</li>
+        <li><strong>Entry Price:</strong> The exact price at which you plan to purchase the asset.</li>
+        <li><strong>Stop Loss Price:</strong> The predetermined price level where you will exit the trade if the market moves against you, admitting you were wrong.</li>
+      </ol>
+
+      <p>The calculation happens in three distinct steps:</p>
+
+      <h4>Step 1: Determine the Risk Amount</h4>
+      <p>First, calculate exactly how many dollars you are willing to lose. If you have a $10,000 account and are using a 1% risk parameter:</p>
+      <p><code>Risk Amount = Account Size × Risk Percentage</code></p>
+      <p><code>$10,000 × 0.01 = $100</code></p>
+
+      <h4>Step 2: Calculate Risk Per Share</h4>
+      <p>Next, figure out how much money you stand to lose on a single share if your stop loss is hit. For example, if you plan to enter at $50.00 and set a stop loss at $48.00:</p>
+      <p><code>Risk Per Share = Entry Price - Stop Loss Price</code></p>
+      <p><code>$50.00 - $48.00 = $2.00</code></p>
+
+      <h4>Step 3: Calculate the Position Size</h4>
+      <p>Finally, divide the total Risk Amount by the Risk Per Share to determine the exact number of shares you should buy.</p>
+      <p><code>Position Size = Risk Amount / Risk Per Share</code></p>
+      <p><code>$100 / $2.00 = 50 Shares</code></p>
+
+      <p>In this scenario, to keep your risk strictly capped at $100, you should purchase exactly 50 shares. This means your total capital outlay (the position value) will be $2,500 (50 shares × $50 entry price). You are investing $2,500 of your capital, but you are only risking $100.</p>
+
+      <h3>Handling Edge Cases and Limitations</h3>
+      <p>While the formula is straightforward, real-world trading introduces several nuances that a strict mathematical calculation cannot always perfectly accommodate.</p>
+
+      <p><strong>Slippage and Gaps:</strong> The most dangerous threat to position sizing is market slippage or overnight gaps. If you hold a position overnight and catastrophic news breaks before the market opens, the stock might open violently lower than your stop loss price. For instance, if your stop loss was at $48.00 but the stock opens at $40.00, your broker will execute your market order at the first available price near $40.00. In this case, your actual loss would vastly exceed your planned $100 risk. Traders must adjust their position sizing or avoid holding through major catalysts (like earnings reports) to mitigate this overnight gap risk.</p>
+
+      <p><strong>Insufficient Capital:</strong> Sometimes, the formula will dictate a position size that requires more capital than you have available in your account. In the example above, if your stop loss was very tight (e.g., $49.50), the calculated position size might require $10,000 in capital to enforce a $100 risk. If your account size is exactly $10,000, you physically cannot afford the transaction fees or margin requirements to execute the trade safely. In these instances, you either need to widen your stop loss or use a margin account with leverage, though the latter significantly increases danger.</p>
+
+      <p><strong>Fractional Shares:</strong> Until recently, traders had to round down their position sizes to the nearest whole share to avoid risking slightly more than their calculated limit. Today, many brokerages support fractional share investing, allowing for extremely precise position sizing, even on expensive stocks trading at hundreds of dollars per share.</p>
+
+      <h3>Managing the Portfolio After the Entry</h3>
+      <p>Position sizing is only the first step in risk management. Once you are properly sized and in the trade, you must manage it effectively. Some traders choose to scale out of their position as the stock moves in their favor. For example, if you bought 50 shares, you might sell 25 shares (half your position) when the stock reaches a 1:1 risk/reward ratio. This locks in profits and essentially guarantees the trade cannot be a total loss if you simultaneously move your stop loss up to your original entry price. This strategy, known as taking partial profits or "scaling out," is highly effective for reducing emotional stress during volatile market conditions.</p>
+
+      <p>However, scaling out also reduces your total upside if the stock goes on a massive run. Conversely, some advanced traders will actually add to a winning position (scaling in) as it moves in their favor. The key here is that they only add to the position once their initial stop loss has been moved up to breakeven, ensuring they never increase their original $100 risk limit, even though they now hold more total shares.</p>
+
+      <h3>Position Sizing and Passive Income Portfolios</h3>
+      <p>While strict stop-loss position sizing is primarily a tool for active traders, the underlying concept of measuring your total exposure is also crucial for long-term investors. If you are building a passive dividend portfolio, you might not use hard stop losses, but you still need to ensure no single stock dictates your entire net worth.</p>
+
+      <p>For example, if you rely heavily on dividends for passive income, you want to ensure your capital is evenly distributed across multiple strong companies. If you are calculating the future value of your portfolio using a tool like our <a href="/drip-calculator" style="color: var(--accent-color); text-decoration: underline;">DRIP Calculator</a> to see how your dividend reinvestment plan will perform over 20 years, remember that those projections rely on survival. If you put 50% of your account into a single high-yield, extremely risky stock without considering position sizing, a dividend cut or bankruptcy could derail decades of expected compound interest.</p>
+
+      <p>Ultimately, position sizing is about longevity. It removes the emotional thrill of gambling from the equation and replaces it with the cold, calculated mathematics of professional risk management. Protect your downside first, and the upside will take care of itself over a large enough sample size of trades.</p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is position sizing?</summary>
+        <p>Position sizing is the process of determining exactly how many shares or units of an asset you should buy in a given trade to ensure you only risk a predetermined percentage of your total account capital.</p>
+      </details>
+
+      <details>
+        <summary>Why is position sizing important in trading?</summary>
+        <p>It is the core of risk management. Proper position sizing ensures that a single losing trade, or even a streak of losing trades, does not devastate your trading account, allowing you to survive long enough for your winning edge to play out.</p>
+      </details>
+
+      <details>
+        <summary>How much of my account should I risk per trade?</summary>
+        <p>A widely accepted rule among professional traders is the '1% to 2% Rule'. This means you should structure your position size and stop loss so that if the trade hits your stop loss, you lose no more than 1% to 2% of your total account equity.</p>
+      </details>
+
+      <details>
+        <summary>How do you calculate position size?</summary>
+        <p>The formula is: Account Risk Amount / Trade Risk per Share. For example, if you are willing to risk $100 on a trade, and the difference between your entry price and stop loss is $2 per share, your position size should be 50 shares ($100 / $2).</p>
+      </details>
+
+      <details>
+        <summary>Does position size change if I use leverage?</summary>
+        <p>The calculation of how much capital you are putting at risk remains the same, but leverage allows you to control that position size with less upfront cash. However, you must be extremely precise with stop losses when using leverage, as it magnifies both gains and losses.</p>
+      </details>
+    </section>
+  </div>
+  <script>
+    function initPositionCalculator() {
+      const container = document.getElementById('pos-calc-container');
+      if (!container || container.dataset.initialized) return;
+      container.dataset.initialized = 'true';
+
+      const inputs = {
+        account: document.getElementById('account-size'),
+        riskPct: document.getElementById('risk-percentage'),
+        entry: document.getElementById('entry-price'),
+        stop: document.getElementById('stop-loss')
+      };
+
+      const outputs = {
+        shares: document.getElementById('position-shares'),
+        capital: document.getElementById('capital-required'),
+        riskAmount: document.getElementById('risk-amount'),
+        riskPerShare: document.getElementById('risk-per-share'),
+        distance: document.getElementById('distance-to-stop'),
+        errorMsg: document.getElementById('error-message')
+      };
+
+      const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+      const formatNumber = (val) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(val);
+      const formatPct = (val) => new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(val / 100);
+
+      function calculatePosition() {
+        // Reset error state
+        outputs.errorMsg.style.display = 'none';
+        outputs.errorMsg.textContent = '';
+
+        // Parse inputs
+        const account = parseFloat(inputs.account.value) || 0;
+        const riskPct = parseFloat(inputs.riskPct.value) || 0;
+        const entry = parseFloat(inputs.entry.value) || 0;
+        const stop = parseFloat(inputs.stop.value) || 0;
+
+        // Validation
+        if (account <= 0 || riskPct <= 0 || entry <= 0 || stop <= 0) {
+          showError("All fields must be greater than zero.");
+          resetOutputs();
+          return;
+        }
+
+        if (stop >= entry) {
+          showError("Stop loss must be lower than entry price for a long position.");
+          resetOutputs();
+          return;
+        }
+
+        // Calculations
+        const riskAmount = account * (riskPct / 100);
+        const riskPerShare = entry - stop;
+        const shares = riskAmount / riskPerShare;
+        const capitalRequired = shares * entry;
+        const distancePct = (riskPerShare / entry) * 100;
+
+        // Display results
+        outputs.shares.textContent = formatNumber(Math.floor(shares)); // Conventionally round down shares to not exceed risk
+        outputs.capital.textContent = formatCurrency(capitalRequired);
+        outputs.riskAmount.textContent = formatCurrency(riskAmount);
+        outputs.riskPerShare.textContent = formatCurrency(riskPerShare);
+        outputs.distance.textContent = formatPct(distancePct);
+
+        // Warning if capital required exceeds account size
+        if (capitalRequired > account) {
+          outputs.capital.style.color = 'var(--error-color, #ef4444)';
+          showError(`Warning: Trade requires ${formatCurrency(capitalRequired)} which exceeds your account balance. You will need leverage/margin.`);
+        } else {
+          outputs.capital.style.color = 'var(--text-primary)';
+        }
+      }
+
+      function showError(msg) {
+        outputs.errorMsg.textContent = msg;
+        outputs.errorMsg.style.display = 'block';
+      }
+
+      function resetOutputs() {
+        outputs.shares.textContent = '0';
+        outputs.capital.textContent = '$0.00';
+        outputs.riskAmount.textContent = '$0.00';
+        outputs.riskPerShare.textContent = '$0.00';
+        outputs.distance.textContent = '0%';
+      }
+
+      // Attach event listeners
+      Object.values(inputs).forEach(input => {
+        if (input) {
+          input.addEventListener('input', calculatePosition);
+        }
+      });
+
+      // Initial calculation
+      calculatePosition();
+    }
+
+    document.addEventListener('DOMContentLoaded', initPositionCalculator);
+    document.addEventListener('astro:page-load', initPositionCalculator);
+  </script>
+  <style>
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .calculator-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .input-group input[type="number"] {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .results-grid {
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+    }
+
+    .main-result {
+      background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+      border: 1px solid var(--accent-color);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .main-result h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--text-primary);
+      font-size: 1.2rem;
+    }
+
+    .result-value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      line-height: 1.2;
+    }
+
+    .secondary-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .result-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .result-box h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .sub-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .error-state {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: color-mix(in srgb, var(--error-color, #ef4444) 10%, transparent);
+      border: 1px solid var(--error-color, #ef4444);
+      color: var(--error-color, #ef4444);
+      border-radius: 8px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .explainer {
+      margin-top: 3rem;
+    }
+
+    .explainer h2, .explainer h3, .explainer h4 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .explainer p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+
+    .explainer ul, .explainer ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+    }
+
+    .explainer li {
+      margin-bottom: 0.5rem;
+    }
+
+    .explainer code {
+      background: var(--card-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-section h2 {
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+    }
+
+    .faq-section details p {
+      margin-top: 1rem;
+      margin-bottom: 0;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+      .secondary-results {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .secondary-results {
+        grid-template-columns: 1fr;
+      }
+      .result-value {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</SiteLayout>

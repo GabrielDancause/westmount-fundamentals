@@ -1,0 +1,128 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Portfolio Visualizer: Backtesting and Risk Analysis",
+  description: "Stop guessing your asset allocation. Discover the hidden risk metrics that professional analysts use to pressure-test portfolios.",
+  category: "tool",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Portfolio Visualizer: Backtesting and Risk Analysis",
+      "description": "Stop guessing your asset allocation. Discover the hidden risk metrics that professional analysts use to pressure-test portfolios.",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a portfolio visualizer used for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A portfolio visualizer is used to backtest historical asset allocation, analyze risk and return metrics, and simulate future outcomes using Monte Carlo methods."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is backtesting in investing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Backtesting is the process of applying a specific investment strategy or asset allocation to historical data to see how it would have performed in the past."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Sharpe Ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Sharpe Ratio is a measure of risk-adjusted return. It helps investors understand if the excess returns of a portfolio are due to smart investment decisions or a result of taking on too much risk."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a portfolio visualizer predict future returns?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, a portfolio visualizer cannot predict the future. It can only show historical performance and provide statistical probabilities of future outcomes based on past data."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a Monte Carlo simulation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A Monte Carlo simulation uses random sampling and statistical modeling to generate thousands of possible future outcomes for a portfolio, helping to assess the probability of achieving a financial goal."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title="Portfolio Visualizer: Backtesting and Risk Analysis" description="Stop guessing your asset allocation. Discover the hidden risk metrics that professional analysts use to pressure-test portfolios." canonical="https://westmountfundamentals.com/portfolio-visualizer" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Portfolio Visualizer: Backtesting and Risk Analysis</h1>
+      <p class="subtitle">A comprehensive guide for investors</p>
+    </div>
+
+
+<section>
+  <h2>Understanding Portfolio Visualizers</h2>
+  <p>A portfolio visualizer is a powerful analytical tool that allows investors to backtest historical asset allocation, run Monte Carlo simulations, and analyze risk factors. By modeling how a specific mix of stocks, bonds, and other assets performed in the past, investors can set realistic expectations for the future.</p>
+
+  <p>Imagine trying to navigate a ship without a map. Investing without understanding historical correlations and drawdowns is similar. A portfolio visualizer acts as the map, revealing the hidden risks and potential rewards of your chosen asset mix.</p>
+
+  <div class="callout">
+    <strong>Key Metric: Compound Annual Growth Rate (CAGR)</strong>
+    <p>CAGR = (Ending Value / Beginning Value)^(1 / Years) - 1</p>
+    <p>Visualizers use CAGR to smooth out the volatility of returns and provide a single annualized growth rate for easy comparison between different portfolios.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Core Features and Use Cases</h2>
+  <p>Most visualizers offer several critical functions for equity research:</p>
+  <ul>
+    <li><strong>Backtesting:</strong> Seeing how a portfolio performed during specific historical periods, such as the 2008 financial crisis or the 2020 pandemic crash. This is crucial for planning your <a href="/portfolio-recovery">portfolio recovery</a> strategy.</li>
+    <li><strong>Factor Analysis:</strong> Breaking down returns to see if they were driven by market beta, size (small cap), value, or momentum.</li>
+    <li><strong>Monte Carlo Simulations:</strong> Running thousands of randomized scenarios based on historical statistical properties to forecast future outcomes and retirement success rates.</li>
+  </ul>
+
+  <div class="card">
+    <h3>The Danger of Overfitting</h3>
+    <p>While backtesting is valuable, investors must beware of "overfitting"—tweaking a portfolio until it looks perfect in hindsight. An optimized portfolio of past winners (like heavily weighting <a href="/adobe-portfolio">Adobe</a> or other tech giants after a decade of outperformance) does not guarantee future success.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Why It Matters</h2>
+  <p>Using a portfolio visualizer matters because it shifts an investor's focus from guessing what will happen tomorrow to mathematically preparing for a range of probabilities. It helps answer critical questions: "Can my portfolio survive a 40% market crash?" and "Am I taking on uncompensated risk?" By visualizing risk-adjusted metrics like the Sharpe Ratio and maximum drawdown, investors can build resilient portfolios tailored to their specific financial goals.</p>
+</section>
+
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details><summary>What is a portfolio visualizer used for?</summary><p>A portfolio visualizer is used to backtest historical asset allocation, analyze risk and return metrics, and simulate future outcomes using Monte Carlo methods.</p></details><details><summary>What is backtesting in investing?</summary><p>Backtesting is the process of applying a specific investment strategy or asset allocation to historical data to see how it would have performed in the past.</p></details><details><summary>What is the Sharpe Ratio?</summary><p>The Sharpe Ratio is a measure of risk-adjusted return. It helps investors understand if the excess returns of a portfolio are due to smart investment decisions or a result of taking on too much risk.</p></details><details><summary>Can a portfolio visualizer predict future returns?</summary><p>No, a portfolio visualizer cannot predict the future. It can only show historical performance and provide statistical probabilities of future outcomes based on past data.</p></details><details><summary>What is a Monte Carlo simulation?</summary><p>A Monte Carlo simulation uses random sampling and statistical modeling to generate thousands of possible future outcomes for a portfolio, helping to assess the probability of achieving a financial goal.</p></details>
+    </section>
+  </div>
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

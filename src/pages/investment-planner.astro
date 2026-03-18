@@ -1,0 +1,549 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Investment Planner & Calculator",
+  description: "Stop guessing your financial future. Discover exactly how much you need to save and what your money could be worth with this free investment planner.",
+  category: "tool",
+  published: "2026-03-17"
+};
+
+const canonical = "https://westmountfundamentals.com/investment-planner";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "url": canonical,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much should I be investing each month?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The ideal monthly investment depends on your income, expenses, and goals. A common rule of thumb is the 50/30/20 rule, where 20% of your income goes to savings and investments. However, starting with what you can comfortably afford—even $50 or $100 a month—is more important than waiting until you have more."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a realistic annual return on investments?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, the stock market (specifically the S&P 500) has returned an average of 9% to 10% per year before inflation. Adjusted for inflation, a realistic long-term expectation is around 6% to 7% per year. Conservative portfolios with more bonds will have lower expected returns."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it better to invest a lump sum or dollar-cost average?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Statistically, investing a lump sum immediately outperforms dollar-cost averaging (DCA) about two-thirds of the time because markets tend to rise over the long term. However, DCA can reduce the emotional stress of investing a large amount right before a market downturn."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does inflation affect my investment planner?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Inflation reduces the purchasing power of your money over time. When planning your investments, you can account for this by using an inflation-adjusted (real) rate of return. For example, if you expect an 8% return and 2% inflation, use a 6% return in your planner."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When should I start using an investment planner?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The best time to start using an investment planner is right now. Whether you're a beginner with zero savings or an experienced investor looking to optimize, planning helps you set clear goals and understand the power of compound interest."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical={canonical} schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Investment Planner</h1>
+      <p>Use this interactive investment planner to model your financial future. See how your initial investment, monthly contributions, and expected rate of return interact over time to build wealth through compound interest.</p>
+
+      <div class="calculator-card">
+        <h3>Interactive Planner</h3>
+        <div class="calc-grid">
+          <div class="input-section">
+            <div class="input-group">
+              <label for="initialInvestment">Initial Investment</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="initialInvestment" value="10000" min="0" step="100">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="monthlyContribution">Monthly Contribution</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="monthlyContribution" value="500" min="0" step="50">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="years">Years to Grow</label>
+              <div class="input-wrapper">
+                <input type="number" id="years" value="20" min="1" max="100" step="1">
+                <span class="suffix">Years</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="annualReturn">Expected Annual Return</label>
+              <div class="input-wrapper">
+                <input type="number" id="annualReturn" value="8" min="-20" max="50" step="0.1">
+                <span class="suffix">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-section">
+            <div class="calc-result">
+              <span class="calc-result-label">Future Value</span>
+              <div class="calc-result-value" id="futureValueResult">$0</div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="calc-result-label">Total Principal</span>
+                <div class="stat-value" id="totalPrincipalResult">$0</div>
+              </div>
+              <div class="stat-card">
+                <span class="calc-result-label">Total Interest</span>
+                <div class="stat-value" id="totalInterestResult">$0</div>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Scenario Comparison</th>
+                    <th>Your Plan</th>
+                    <th>Without Investing (0%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Initial Investment</td>
+                    <td id="tableInitial">$0</td>
+                    <td id="tableInitialNoInvest">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Total Contributions</td>
+                    <td id="tableContributions">$0</td>
+                    <td id="tableContributionsNoInvest">$0</td>
+                  </tr>
+                  <tr>
+                    <td>Total Interest Earned</td>
+                    <td id="tableInterest">$0</td>
+                    <td>$0</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <td><strong>Total Future Value</strong></td>
+                    <td id="tableTotal"><strong>$0</strong></td>
+                    <td id="tableTotalNoInvest"><strong>$0</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>Mastering Your Investment Plan</h2>
+      <p>Building wealth isn't magic; it's math. An investment planner is your compass in the complex world of finance, helping you map out exactly how to get from where you are today to where you want to be tomorrow. Whether you are saving for retirement, a down payment on a house, or simply seeking financial independence, understanding the mechanics of investing is critical. This comprehensive guide will explain the concepts behind the calculator, the formulas used, and the practical steps you can take to execute your plan.</p>
+
+      <h3>The Power of Compound Interest</h3>
+      <p>At the heart of any solid investment plan is the concept of compound interest. Albert Einstein supposedly called it the "eighth wonder of the world," and for good reason. Compound interest is the interest on your interest. When you earn a return on your initial investment, and then you leave those earnings invested, the next year you earn a return on both the original amount and the accumulated earnings.</p>
+
+      <p>Over long periods, this creates an exponential growth curve. In the early years, your contributions make up the bulk of your portfolio's growth. But as time goes on, the interest generated by your portfolio begins to outpace what you put in. This is why time is the most valuable asset an investor has.</p>
+
+      <h3>The Math Behind the Planner</h3>
+      <p>To truly understand how your money grows, let's break down the formula used by the investment planner. The calculator uses the future value formula for compound interest, combined with the future value of an annuity formula (to account for your monthly contributions). The calculations are typically compounded monthly to reflect real-world scenarios more accurately.</p>
+
+      <div class="highlight-box">
+        <h4>The Formula</h4>
+        <p><strong>Total Future Value = Future Value of Initial Investment + Future Value of Contributions</strong></p>
+        <p>Where:</p>
+        <ul>
+          <li><strong>FV Initial</strong> = P &times; (1 + r/n)<sup>(n&times;t)</sup></li>
+          <li><strong>FV Contributions</strong> = PMT &times; [((1 + r/n)<sup>(n&times;t)</sup> - 1) / (r/n)]</li>
+        </ul>
+        <p>Variables:</p>
+        <ul>
+          <li><strong>P</strong> = Principal (Initial Investment)</li>
+          <li><strong>PMT</strong> = Periodic Payment (Monthly Contribution)</li>
+          <li><strong>r</strong> = Annual Interest Rate (decimal)</li>
+          <li><strong>n</strong> = Number of times interest is compounded per year (12 for monthly)</li>
+          <li><strong>t</strong> = Number of years</li>
+        </ul>
+      </div>
+
+      <h4>A Worked Example</h4>
+      <p>Let's look at a concrete example. Suppose you start with $10,000, contribute $500 every month, and expect an 8% annual return over 20 years. We'll compound this monthly.</p>
+
+      <p><strong>Step 1: Calculate the future value of the initial investment</strong></p>
+      <ul>
+        <li>P = 10,000</li>
+        <li>r = 0.08</li>
+        <li>n = 12</li>
+        <li>t = 20</li>
+        <li>FV Initial = 10,000 &times; (1 + 0.08/12)<sup>(12&times;20)</sup> = 10,000 &times; (1.00666...)<sup>240</sup> &approx; <strong>$49,268.03</strong></li>
+      </ul>
+
+      <p><strong>Step 2: Calculate the future value of the monthly contributions</strong></p>
+      <ul>
+        <li>PMT = 500</li>
+        <li>FV Contributions = 500 &times; [((1 + 0.08/12)<sup>240</sup> - 1) / (0.08/12)] &approx; 500 &times; [(4.9268 - 1) / 0.00666...] &approx; 500 &times; 589.02 &approx; <strong>$294,510.21</strong></li>
+      </ul>
+
+      <p><strong>Step 3: Total Future Value</strong></p>
+      <p>Total = $49,268.03 + $294,510.21 = <strong>$343,778.24</strong></p>
+
+      <p>In this example, your total out-of-pocket investment was $130,000 ($10k initial + $120k in monthly contributions). The remaining $213,778.24 was generated entirely by compound interest. This perfectly illustrates why consistent investing is so powerful.</p>
+
+      <h3>Real-World Context: When to Use This Planner</h3>
+      <p>An investment planner is versatile. Here are the most common scenarios where this tool is indispensable:</p>
+      <ul>
+        <li><strong>Retirement Planning:</strong> By working backward from a target retirement number, you can determine exactly how much you need to set aside each month. You can also experiment with different expected return rates based on your asset allocation (e.g., heavily in stocks vs. a mix of stocks and bonds).</li>
+        <li><strong>Saving for a House:</strong> If you plan to buy a house in 5 to 10 years, you can use the planner to see how a more conservative portfolio (with a lower expected return, perhaps 4-5%) will grow your down payment fund.</li>
+        <li><strong>College Funds:</strong> Parents can forecast the growth of an RESP or 529 plan over 18 years, adjusting monthly contributions as their income grows.</li>
+        <li><strong>Financial Independence / Retire Early (FIRE):</strong> For those pursuing the FIRE movement, this planner is essential for calculating the "crossover point" where investment returns exceed living expenses.</li>
+      </ul>
+
+      <h3>Common Mistakes People Make</h3>
+      <p>While the math is straightforward, the application of investment planning is fraught with behavioral and logical pitfalls. Avoid these common mistakes:</p>
+
+      <h4>1. Overestimating Returns</h4>
+      <p>It's tempting to plug a 15% or 20% return into the calculator to see massive future numbers. However, over the long term, very few investors consistently achieve those returns. The S&P 500 has historically returned about 10% annually before inflation. Adjusting for inflation, a 6% to 7% "real" return is a much safer, more realistic assumption. Over-optimism can leave you severely short of your goals.</p>
+
+      <h4>2. Ignoring Inflation</h4>
+      <p>A million dollars today will not have the same purchasing power in 30 years. If you don't account for inflation, your "target number" might not be enough to sustain your lifestyle. You can handle this in the planner by using a lower, inflation-adjusted expected return.</p>
+
+      <h4>3. Underestimating the Impact of Fees</h4>
+      <p>Even a 1% management fee can consume a massive portion of your returns over 30 years due to the inverse effect of compounding. When using the planner, ensure the return you input is your <em>net</em> return after fees. This is why low-cost index funds and ETFs are so highly recommended.</p>
+
+      <h4>4. Inconsistent Contributions</h4>
+      <p>The math assumes you will invest that $500 every single month, without fail, for 20 years. Life happens—job losses, emergencies, or large expenses can derail your contributions. An investment plan must be paired with a solid emergency fund to protect your investing strategy from life's curveballs.</p>
+
+      <h3>Practical Tips and Rules of Thumb</h3>
+      <p>Professionals use several heuristics to quickly assess financial health and investment trajectories. Here are some you can apply alongside the planner:</p>
+
+      <ul>
+        <li><strong>The Rule of 72:</strong> Divide 72 by your expected annual rate of return. The result is roughly the number of years it will take for your money to double. (e.g., at an 8% return, 72 / 8 = 9 years to double).</li>
+        <li><strong>The 4% Rule:</strong> A guideline for retirement withdrawals. It suggests you can safely withdraw 4% of your portfolio's value in your first year of retirement, adjusting for inflation in subsequent years, without running out of money over a 30-year period. This helps you determine your target portfolio size (multiply your annual expenses by 25).</li>
+        <li><strong>The 50/30/20 Rule:</strong> A budgeting framework where 50% of your income goes to needs, 30% to wants, and 20% to savings and investments. If you can push the investment portion higher, you will accelerate your timeline significantly.</li>
+        <li><strong>Pay Yourself First:</strong> Automate your investments. Set up your accounts so that your monthly contribution is transferred to your brokerage account on the day you get paid. If you never see the money in your checking account, you won't be tempted to spend it.</li>
+      </ul>
+
+      <h3>Structuring Your Portfolio</h3>
+      <p>The "Expected Annual Return" you input into the calculator is entirely dependent on what you actually invest in. Cash under the mattress returns 0%. High-yield savings accounts might yield 4-5% currently, but historically average closer to 1-2%. Bonds offer moderate returns with lower volatility, while equities (stocks) offer the highest potential returns but come with significant short-term volatility.</p>
+
+      <p>A diversified portfolio is key. Consider exploring <a href="/average-stock-market-return">average stock market returns</a> to ground your expectations. You might also want to look into <a href="/investment-calculator">other investment calculators</a> to compare different scenarios, or see how strategies like a <a href="/stock-split-calculator">stock split</a> affect individual holdings.</p>
+
+      <p>For those following specific financial frameworks, you can also check out our <a href="/ramsey-investment-calculator">Ramsey investment calculator</a> or calculate your broader <a href="/roi-calculator">return on investment</a> across various asset classes.</p>
+
+      <p>If you're just starting, looking into a basic investing calculator can help simplify these concepts further. The most important step is simply beginning.</p>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <details class="faq-item">
+          <summary>How much should I be investing each month?</summary>
+          <p>The ideal monthly investment depends on your income, expenses, and goals. A common rule of thumb is the 50/30/20 rule, where 20% of your income goes to savings and investments. However, starting with what you can comfortably afford—even $50 or $100 a month—is more important than waiting until you have more.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>What is a realistic annual return on investments?</summary>
+          <p>Historically, the stock market (specifically the S&P 500) has returned an average of 9% to 10% per year before inflation. Adjusted for inflation, a realistic long-term expectation is around 6% to 7% per year. Conservative portfolios with more bonds will have lower expected returns.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is it better to invest a lump sum or dollar-cost average?</summary>
+          <p>Statistically, investing a lump sum immediately outperforms dollar-cost averaging (DCA) about two-thirds of the time because markets tend to rise over the long term. However, DCA can reduce the emotional stress of investing a large amount right before a market downturn.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>How does inflation affect my investment planner?</summary>
+          <p>Inflation reduces the purchasing power of your money over time. When planning your investments, you can account for this by using an inflation-adjusted (real) rate of return. For example, if you expect an 8% return and 2% inflation, use a 6% return in your planner.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>When should I start using an investment planner?</summary>
+          <p>The best time to start using an investment planner is right now. Whether you're a beginner with zero savings or an experienced investor looking to optimize, planning helps you set clear goals and understand the power of compound interest.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .page-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent-color);
+    text-align: center;
+  }
+
+  .page-content h2 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+  }
+
+  .page-content h3 {
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-content p {
+    margin-bottom: 1.25rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .page-content ul, .page-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+  }
+
+  .page-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .highlight-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .calculator-card h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  #initialInvestment, #monthlyContribution {
+    padding-left: 2rem;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 0.5rem;
+  }
+
+  table th, table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .highlight-row {
+    background-color: rgba(212, 160, 23, 0.05);
+  }
+  .highlight-row td {
+    color: var(--accent-color);
+  }
+
+  .faq-item {
+    margin-bottom: 1rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .faq-item summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    margin-top: 1rem;
+    color: var(--text-secondary);
+  }
+</style>
+
+<script is:inline>
+  function formatCurrency(num) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(num);
+  }
+
+  function formatPercent(num) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    }).format(num);
+  }
+
+  function calculateInvestment() {
+    const initialRaw = parseFloat(document.getElementById('initialInvestment').value);
+    const monthlyRaw = parseFloat(document.getElementById('monthlyContribution').value);
+    const yearsRaw = parseFloat(document.getElementById('years').value);
+    const rateRaw = parseFloat(document.getElementById('annualReturn').value);
+
+    // Handle edge cases
+    const initial = isNaN(initialRaw) || initialRaw < 0 ? 0 : initialRaw;
+    const monthly = isNaN(monthlyRaw) || monthlyRaw < 0 ? 0 : monthlyRaw;
+    const years = isNaN(yearsRaw) || yearsRaw <= 0 ? 1 : (yearsRaw > 100 ? 100 : yearsRaw);
+    const rate = isNaN(rateRaw) ? 0 : rateRaw;
+
+    const r = rate / 100;
+    const n = 12; // Monthly compounding
+    const t = years;
+
+    let futureValue = 0;
+    let fvInitial = 0;
+    let fvContributions = 0;
+
+    if (r === 0) {
+      fvInitial = initial;
+      fvContributions = monthly * 12 * t;
+      futureValue = fvInitial + fvContributions;
+    } else {
+      const rn = r / n;
+      const nt = n * t;
+      fvInitial = initial * Math.pow(1 + rn, nt);
+      fvContributions = monthly * ((Math.pow(1 + rn, nt) - 1) / rn);
+      futureValue = fvInitial + fvContributions;
+    }
+
+    const totalContributions = monthly * 12 * t;
+    const totalPrincipal = initial + totalContributions;
+    const totalInterest = Math.max(0, futureValue - totalPrincipal);
+
+    // Update DOM
+    document.getElementById('futureValueResult').textContent = formatCurrency(futureValue);
+    document.getElementById('totalPrincipalResult').textContent = formatCurrency(totalPrincipal);
+    document.getElementById('totalInterestResult').textContent = formatCurrency(totalInterest);
+
+    // Table updates
+    document.getElementById('tableInitial').textContent = formatCurrency(initial);
+    document.getElementById('tableContributions').textContent = formatCurrency(totalContributions);
+    document.getElementById('tableInterest').textContent = formatCurrency(totalInterest);
+    document.getElementById('tableTotal').innerHTML = `<strong>${formatCurrency(futureValue)}</strong>`;
+
+    document.getElementById('tableInitialNoInvest').textContent = formatCurrency(initial);
+    document.getElementById('tableContributionsNoInvest').textContent = formatCurrency(totalContributions);
+    document.getElementById('tableTotalNoInvest').innerHTML = `<strong>${formatCurrency(totalPrincipal)}</strong>`;
+  }
+
+  function initCalculator() {
+    const inputs = ['initialInvestment', 'monthlyContribution', 'years', 'annualReturn'];
+    inputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', calculateInvestment);
+      }
+    });
+
+    // Initial calculation
+    calculateInvestment();
+  }
+
+  // Handle View Transitions
+  document.addEventListener('astro:page-load', initCalculator);
+
+  // Fallback for direct loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalculator);
+  } else {
+    initCalculator();
+  }
+</script>

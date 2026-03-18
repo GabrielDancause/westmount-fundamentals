@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Spousal RRSP Guide",
+    "description": "Income splitting, attribution rules, and withdrawal strategies.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a spousal RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A spousal RRSP is an account where one spouse contributes the funds and receives the tax deduction, but the other spouse is the legal annuitant (owner) of the plan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does income splitting work with a spousal RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It allows a higher-earning spouse to claim a tax deduction today, while the lower-earning spouse is eventually taxed on the withdrawals in retirement, ideally at a much lower marginal tax rate."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the spousal RRSP attribution rules?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If funds are withdrawn from a spousal RRSP within three calendar years of a contribution, the withdrawal is taxed in the hands of the contributing spouse, defeating the purpose of income splitting."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Spousal RRSP Guide",
+  description: "Income splitting, attribution rules, and withdrawal strategies.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="Spousal RRSP Guide" description="Income splitting, attribution rules, and withdrawal strategies." canonical="https://westmountfundamentals.com/spousal-rrsp-guide" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>Spousal RRSP Guide</h1><p>Income splitting, attribution rules, and withdrawal strategies.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-vs-tfsa-decision">Rrsp Vs Tfsa Decision</a></li>
+        <li><a href="/rrsp-withdrawal-strategies">Rrsp Withdrawal Strategies</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>What is a spousal RRSP?</h3>
+      <p>A spousal RRSP is an account where one spouse contributes the funds and receives the tax deduction, but the other spouse is the legal annuitant (owner) of the plan.</p>
+      <h3>How does income splitting work with a spousal RRSP?</h3>
+      <p>It allows a higher-earning spouse to claim a tax deduction today, while the lower-earning spouse is eventually taxed on the withdrawals in retirement, ideally at a much lower marginal tax rate.</p>
+      <h3>What are the spousal RRSP attribution rules?</h3>
+      <p>If funds are withdrawn from a spousal RRSP within three calendar years of a contribution, the withdrawal is taxed in the hands of the contributing spouse, defeating the purpose of income splitting.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Mechanics of Income Splitting</h2>
+      <p>The Spousal RRSP is designed specifically to facilitate income splitting between partners, particularly in households where there is a significant disparity in earnings. Income splitting is a tax minimization strategy where income is shifted from a higher-taxed individual to a lower-taxed individual, thereby reducing the total overall tax burden for the household. In Canada, individual taxation applies, meaning two people earning $50,000 each pay less total tax than one person earning $100,000.</p>
+
+      <p>Here is how it works: The higher-earning spouse makes a contribution to the Spousal RRSP. This contribution uses the higher earner's available RRSP deduction limit. The higher earner then claims the tax deduction on their own tax return, which generates the largest possible tax refund because they are in a higher marginal tax bracket. However, the critical detail is that the lower-earning spouse is the legal annuitant (owner) of the account.</p>
+    </div>
+
+    <div class="card">
+      <h2>Long-Term Benefits and the RRIF Conversion</h2>
+      <p>The true benefit of a Spousal RRSP is realized in retirement. The goal is to equalize the retirement income of both spouses. When the time comes to begin withdrawing funds, usually by converting the account to a Registered Retirement Income Fund (RRIF), the withdrawals are taxed in the hands of the lower-earning spouse (the annuitant). Because this spouse presumably has less overall income, they will pay a lower marginal tax rate on those withdrawals compared to what the higher earner would have paid.</p>
+
+      <p>This strategy is particularly effective for couples where one spouse expects a substantial defined benefit pension and the other does not. Without a Spousal RRSP, the partner with the pension would be pushed into a high tax bracket in retirement, while the other partner might have very little taxable income. The Spousal RRSP bridges this gap, allowing the household to extract funds from registered accounts in the most tax-efficient manner possible.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Three-Year Attribution Rule Warning</h2>
+      <p>The Canada Revenue Agency (CRA) is well aware of the potential for exploiting Spousal RRSPs for short-term tax arbitrage. To prevent this, they implemented the stringent "three-year attribution rule." This rule dictates that if funds are withdrawn from a Spousal RRSP within three calendar years of any contribution made to any Spousal RRSP by the contributing partner, the withdrawal will be attributed back to the contributor.</p>
+
+      <p>This means the withdrawal will be added to the higher earner's taxable income, completely nullifying the income-splitting advantage and likely triggering a significant tax bill. It is vital to understand that this rule operates on calendar years, not 365-day periods, and applies to the last contribution made. Because of this rule, Spousal RRSPs are strictly long-term retirement planning vehicles and should never be used if there is any possibility the funds will be needed in the short term.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

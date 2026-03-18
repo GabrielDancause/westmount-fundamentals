@@ -1,0 +1,430 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Present Value Calculator",
+  description: "Curious what future cash is actually worth today? Discover the true value of tomorrow's money right now and stop overpaying for investments.",
+  category: "tool",
+  published: "2026-03-17",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is present value and why does it matter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Present value (PV) is the current worth of a future sum of money or stream of cash flows given a specified rate of return. It matters because money today is worth more than the same amount in the future due to its potential earning capacity, a core principle known as the time value of money."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I choose the right discount rate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The discount rate often represents your required rate of return or the opportunity cost of capital. If you could easily earn 7% annually in a broad market index fund, you might use 7% as your discount rate to evaluate an alternative investment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is present value different from future value?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Present value works backwards, discounting future cash flows to determine what they are worth today. Future value works forwards, compounding current money to see what it will be worth at a future date."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does inflation affect present value calculations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, indirectly. You can account for inflation by using a real discount rate (nominal rate minus inflation rate) or by adjusting the future cash flows for inflation and using a nominal discount rate. Either way, inflation erodes purchasing power, reducing present value."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can present value be negative?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Present value itself is usually positive if the future value is positive. However, in concepts like Net Present Value (NPV), which subtracts the initial cost of an investment from the present value of its future cash flows, the result can be negative, indicating a bad investment."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Present Value Calculator",
+      "description": "Curious what future cash is actually worth today? Discover the true value of tomorrow's money right now and stop overpaying for investments.",
+      "datePublished": "2026-03-17",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/present-value-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Present Value Calculator</h1>
+      <p class="subtitle">Find out exactly what future money is worth today.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="calc-grid">
+        <div class="input-section">
+          <div class="calc-row">
+            <label for="futureValue">Future Value (FV)</label>
+            <div class="input-wrapper">
+              <span class="currency-symbol">$</span>
+              <input type="number" id="futureValue" min="0" step="1000" placeholder="e.g. 10000" value="10000" />
+            </div>
+            <div class="error-msg" id="fvError"></div>
+          </div>
+
+          <div class="calc-row">
+            <label for="discountRate">Discount Rate (%)</label>
+            <div class="input-wrapper">
+              <input type="number" id="discountRate" min="0" step="0.1" placeholder="e.g. 7" value="7" />
+              <span class="percent-symbol">%</span>
+            </div>
+            <div class="error-msg" id="rateError"></div>
+          </div>
+
+          <div class="calc-row">
+            <label for="years">Years to Wait (n)</label>
+            <div class="input-wrapper">
+              <input type="number" id="years" min="0" step="1" placeholder="e.g. 10" value="10" />
+            </div>
+            <div class="error-msg" id="yearsError"></div>
+          </div>
+
+          <div class="calc-row">
+            <label for="compounding">Compounding Frequency</label>
+            <select id="compounding">
+              <option value="1">Annually</option>
+              <option value="2">Semi-Annually</option>
+              <option value="4">Quarterly</option>
+              <option value="12">Monthly</option>
+              <option value="365">Daily</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-card">
+            <h3>Present Value Today</h3>
+            <div class="result-value" id="presentValueResult">$5,083.49</div>
+            <p class="result-subtext" id="discountText">Total Discount: $4,916.51</p>
+          </div>
+          <div class="summary-stats">
+            <div class="stat-box">
+              <span class="stat-label">Initial Worth Ratio</span>
+              <span class="stat-val" id="worthRatio">50.8%</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Lost to Time</span>
+              <span class="stat-val" id="lostToTime">49.2%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <h3>Value Breakdown Over Time</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Present Value Required</th>
+              <th>Growth (Interest Earned)</th>
+              <th>Target Value</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <article class="educational-content">
+      <h2>The Time Value of Money: Understanding Present Value</h2>
+      <p>Imagine someone offers you a choice: $10,000 today or $10,000 in exactly ten years. Most people intuitively take the money today. Why? Because you can invest that money right now and, ten years from now, have much more than the original amount.</p>
+
+      <p>This intuitive feeling represents the foundational concept of finance: the <strong>Time Value of Money (TVM)</strong>. Simply put, a dollar today is worth more than a dollar tomorrow. But <em>exactly how much more</em>? That's where Present Value (PV) calculations come into play.</p>
+
+      <p>The <strong>present value calculator</strong> helps you work backward. Instead of starting with money today and calculating what it will become (which you can do using our <a href="/future-value-calculator">future value calculator</a>), it starts with a future goal and determines exactly how much you need to set aside today to reach it.</p>
+
+      <h3>The Core Formula: Unlocking the Math</h3>
+      <p>While the calculator does the heavy lifting, understanding the math helps demystify financial planning. The formula for Present Value is surprisingly straightforward:</p>
+
+      <div class="formula-box">
+        <strong>PV = FV / (1 + r)<sup>n</sup></strong>
+      </div>
+
+      <ul class="formula-list">
+        <li><strong>PV</strong> = Present Value (what the future sum is worth today)</li>
+        <li><strong>FV</strong> = Future Value (the amount you expect to receive or need in the future)</li>
+        <li><strong>r</strong> = Discount Rate (the interest rate per compounding period)</li>
+        <li><strong>n</strong> = Number of periods (typically years)</li>
+      </ul>
+
+      <h4>A Worked Example</h4>
+      <p>Let's say your child is heading to college in 10 years, and you estimate you will need $50,000 for their tuition. If you believe you can safely earn a 7% annual return on your investments, how much do you need to invest today in a lump sum?</p>
+
+      <ul>
+        <li>FV = $50,000</li>
+        <li>r = 7% or 0.07</li>
+        <li>n = 10</li>
+      </ul>
+
+      <p>PV = 50,000 / (1 + 0.07)<sup>10</sup></p>
+      <p>PV = 50,000 / (1.07)<sup>10</sup></p>
+      <p>PV = 50,000 / 1.96715</p>
+      <p>PV = <strong>$25,417.48</strong></p>
+
+      <p>In this scenario, setting aside roughly $25,417 today at a 7% return will ensure you hit your $50,000 target in exactly ten years.</p>
+
+      <div class="pro-tip">
+        <strong>Note on Compounding:</strong> If compounding happens more than once a year (e.g., monthly), the formula adapts. You divide the annual rate by the number of compounding periods (r/12) and multiply the years by the same number (n*12). Our calculator handles this adjustment automatically when you change the compounding frequency.
+      </div>
+
+      <h3>Real-World Context: When Do Investors Actually Use This?</h3>
+      <p>Present value isn't just a theoretical academic exercise; it is used every single day on Wall Street and in corporate finance. Here's how:</p>
+
+      <h4>1. Evaluating Business Projects and Capital Expenditures</h4>
+      <p>Companies use a variation called Net Present Value (NPV) to decide whether to build a new factory or launch a product line. They estimate the future cash flows the project will generate, discount them back to today's dollars, and compare that to the upfront cost. If the present value of future profits is greater than the cost today, they greenlight the project.</p>
+
+      <h4>2. Valuing Stocks (DCF Models)</h4>
+      <p>Equity research analysts use Discounted Cash Flow (DCF) models to find the intrinsic value of a company. They project a company's free cash flow years into the future and discount it back to the present. If the total present value divided by outstanding shares is higher than the current stock price, the stock might be undervalued. Understanding PV is essential before moving on to complex <a href="/stock-market-fundamentals-guide">stock market fundamentals</a>.</p>
+
+      <h4>3. Pricing Bonds</h4>
+      <p>A bond is essentially a promise to pay regular interest (coupons) and return the principal at maturity. The price of a bond today is simply the present value of all those future coupon payments plus the present value of the final principal repayment.</p>
+
+      <h4>4. Settlement Choices</h4>
+      <p>If you win the lottery or settle a lawsuit, you are often given a choice: a lump sum today or an annuity (steady payments over time). By calculating the present value of the annuity payments using a reasonable discount rate, you can mathematically determine which option is better.</p>
+
+      <h3>Choosing the Right Discount Rate: The Tricky Part</h3>
+      <p>The math is easy; choosing the right discount rate is hard. The discount rate represents your <em>opportunity cost</em> or required rate of return.</p>
+      <p>If you have $10,000 tied up in a bond yielding 4%, your opportunity cost might be the 10% you could historically earn in an S&P 500 index fund (see <a href="/average-stock-market-return">average stock market return</a> for context). The higher the risk of the future cash flow not materializing, the higher your discount rate should be. A risk-free Treasury bond might be discounted at 4%, while a speculative tech startup's future earnings might be discounted at 15% or 20%.</p>
+
+      <h3>Common Mistakes People Make</h3>
+      <p>When investors start applying TVM formulas, a few common traps emerge:</p>
+      <ol>
+        <li><strong>Ignoring Inflation:</strong> A million dollars in 30 years won't buy what a million dollars buys today. You must either use a real return rate (nominal rate minus inflation) or adjust your target Future Value to account for higher prices.</li>
+        <li><strong>Being Overly Optimistic:</strong> If you use a 15% discount rate to calculate how much you need to save for retirement, your required Present Value will look temptingly low. However, consistently earning 15% over decades is incredibly rare. Using realistic, conservative rates (like 6-8%) is crucial.</li>
+        <li><strong>Confusing PV and FV:</strong> Present value works <em>backwards</em> to find what you need today. Future value works <em>forwards</em> to see what you will have tomorrow.</li>
+      </ol>
+
+      <h3>Rules of Thumb from Finance Professionals</h3>
+      <p>While calculators provide precision, mental models are great for quick estimates:</p>
+      <ul>
+        <li><strong>The Rule of 72:</strong> Divide 72 by your expected interest rate. The result is roughly how many years it takes for your money to double. If you earn 7%, your money doubles in about 10.2 years. So, the present value of $200,000 needed in 10 years at a 7% rate is roughly $100,000.</li>
+        <li><strong>The Opportunity Cost Check:</strong> Always ask, <em>"What else could I do with this money?"</em> If you are paying off a 3% mortgage instead of investing in a broad market index fund yielding 8%, your opportunity cost is the 5% difference. You can use a <a href="/cagr-calculator">CAGR calculator</a> to analyze historical compound growth rates of different assets.</li>
+      </ul>
+
+      <p>Understanding the time value of money fundamentally shifts how you view capital. Every dollar spent today isn't just a dollar lost; it's the loss of what that dollar could have grown into decades from now. By mastering present value, you can make more informed, rational decisions about saving, investing, and evaluating complex financial opportunities.</p>
+
+      <p>Ready to see the other side of the equation? Head over to our <a href="/future-value-calculator">future value calculator</a> or explore how corporate actions affect your shares with our <a href="/stock-split-calculator">stock split calculator</a>.</p>
+    </article>
+  </div>
+</SiteLayout>
+
+<style is:inline>
+  .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .hero { text-align: center; padding: 3rem 0 2rem; }
+  .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-primary); }
+  .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+  .calculator-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .calc-row { margin-bottom: 1.5rem; }
+  .input-wrapper { position: relative; display: flex; align-items: center; }
+
+  label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-primary); }
+
+  input, select {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .currency-symbol { position: absolute; left: 1rem; color: var(--text-secondary); z-index: 10; }
+  #futureValue { padding-left: 2rem; }
+
+  .percent-symbol { position: absolute; right: 1rem; color: var(--text-secondary); z-index: 10; }
+  #discountRate { padding-right: 2rem; }
+
+  input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+
+  .error-msg { color: var(--accent-color); font-size: 0.875rem; margin-top: 0.25rem; display: none; }
+
+  .result-section { display: flex; flex-direction: column; justify-content: center; }
+  .result-card { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; margin-bottom: 1.5rem; }
+  .result-card h3 { margin-top: 0; color: var(--text-primary); font-size: 1.1rem; }
+  .result-value { font-size: 3rem; font-weight: 800; color: var(--accent-color); line-height: 1; margin: 1rem 0; word-break: break-all; }
+  .result-subtext { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0; }
+
+  .summary-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-box { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center; }
+  .stat-label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+  .stat-val { display: block; font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
+
+  .table-container { margin-top: 3rem; overflow-x: auto; }
+  .table-container h3 { margin-bottom: 1rem; color: var(--text-primary); }
+  .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+  .data-table th, .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); }
+  .data-table th { background: var(--bg-color); font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+  .data-table tr:hover td { background: color-mix(in srgb, var(--accent-color) 5%, transparent); }
+  .data-table td:first-child { font-weight: 600; }
+  .data-table td { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  .educational-content { margin-top: 4rem; line-height: 1.8; color: var(--text-primary); }
+  .educational-content h2 { color: var(--text-primary); margin: 3rem 0 1.5rem; font-size: 1.8rem; }
+  .educational-content h3 { color: var(--text-primary); margin: 2.5rem 0 1rem; font-size: 1.4rem; }
+  .educational-content h4 { color: var(--text-primary); margin: 1.5rem 0 0.75rem; font-size: 1.1rem; }
+  .educational-content p { margin-bottom: 1.5rem; color: var(--text-secondary); }
+  .educational-content ul, .educational-content ol { margin-bottom: 1.5rem; padding-left: 1.5rem; color: var(--text-secondary); }
+  .educational-content li { margin-bottom: 0.5rem; }
+  .educational-content a { color: var(--accent-color); text-decoration: underline; }
+
+  .formula-box { background: var(--bg-color); border: 1px solid var(--border-color); border-left: 4px solid var(--accent-color); padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; font-size: 1.2rem; text-align: center; font-family: monospace; }
+  .formula-list { list-style: none !important; padding-left: 0 !important; }
+  .formula-list li { margin-bottom: 0.75rem; background: var(--bg-color); padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); }
+
+  .pro-tip { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; font-size: 0.95rem; color: var(--text-primary); }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fvInput = document.getElementById('futureValue');
+    const rateInput = document.getElementById('discountRate');
+    const yearsInput = document.getElementById('years');
+    const compoundingSelect = document.getElementById('compounding');
+
+    const presentValueResult = document.getElementById('presentValueResult');
+    const discountText = document.getElementById('discountText');
+    const worthRatio = document.getElementById('worthRatio');
+    const lostToTime = document.getElementById('lostToTime');
+    const tableBody = document.getElementById('tableBody');
+
+    const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    const formatPercent = (val) => new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(val);
+
+    function calculate() {
+      const fv = parseFloat(fvInput.value);
+      const annualRate = parseFloat(rateInput.value) / 100;
+      const years = parseFloat(yearsInput.value);
+      const periodsPerYear = parseInt(compoundingSelect.value);
+
+      let hasError = false;
+
+      // Basic validation
+      if (isNaN(fv) || fv < 0) { document.getElementById('fvError').textContent = 'Please enter a valid positive number'; document.getElementById('fvError').style.display = 'block'; hasError = true; }
+      else { document.getElementById('fvError').style.display = 'none'; }
+
+      if (isNaN(annualRate) || annualRate < 0) { document.getElementById('rateError').textContent = 'Rate cannot be negative'; document.getElementById('rateError').style.display = 'block'; hasError = true; }
+      else { document.getElementById('rateError').style.display = 'none'; }
+
+      if (isNaN(years) || years < 0 || years > 100) { document.getElementById('yearsError').textContent = 'Years must be between 0 and 100'; document.getElementById('yearsError').style.display = 'block'; hasError = true; }
+      else { document.getElementById('yearsError').style.display = 'none'; }
+
+      if (hasError) return;
+
+      if (years === 0) {
+         presentValueResult.textContent = formatCurrency(fv);
+         discountText.textContent = `Total Discount: $0.00`;
+         worthRatio.textContent = "100.0%";
+         lostToTime.textContent = "0.0%";
+         tableBody.innerHTML = `<tr><td>0</td><td>${formatCurrency(fv)}</td><td>$0.00</td><td>${formatCurrency(fv)}</td></tr>`;
+         return;
+      }
+      if (fv === 0) {
+         presentValueResult.textContent = formatCurrency(0);
+         discountText.textContent = `Total Discount: $0.00`;
+         worthRatio.textContent = "0.0%";
+         lostToTime.textContent = "0.0%";
+         tableBody.innerHTML = "";
+         return;
+      }
+
+      // Calculate Present Value
+      // PV = FV / (1 + r/n)^(n*t)
+      const r_n = annualRate / periodsPerYear;
+      const nt = periodsPerYear * years;
+
+      // Handle floating point precision using the fix from agent memory
+      let pvRaw = fv / Math.pow(1 + r_n, nt);
+      let fixed = parseFloat(pvRaw.toPrecision(14));
+      let pv = pvRaw;
+      if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+          pv = Math.round(fixed);
+      }
+
+      const totalDiscount = fv - pv;
+
+      presentValueResult.textContent = formatCurrency(pv);
+      discountText.textContent = `Total Discount: ${formatCurrency(totalDiscount)}`;
+
+      const ratio = pv / fv;
+      worthRatio.textContent = formatPercent(ratio);
+      lostToTime.textContent = formatPercent(1 - ratio);
+
+      // Generate Table
+      let tableHTML = '';
+
+      // Limit rows to avoid huge tables. If years > 30, maybe just show every 5 years?
+      // For simplicity, let's show yearly breakdown
+
+      let currentVal = pv;
+      const effectiveAnnualRate = Math.pow(1 + r_n, periodsPerYear) - 1;
+
+      for (let y = 1; y <= Math.min(years, 50); y++) {
+          const beginningVal = currentVal;
+          const interestEarned = beginningVal * effectiveAnnualRate;
+          currentVal = beginningVal + interestEarned;
+
+          // last year snap to FV to clear out floating point
+          if (y === years) currentVal = fv;
+
+          tableHTML += `
+            <tr>
+              <td>Year ${y}</td>
+              <td>${formatCurrency(beginningVal)}</td>
+              <td>${formatCurrency(interestEarned)}</td>
+              <td>${formatCurrency(currentVal)}</td>
+            </tr>
+          `;
+      }
+
+      if (years > 50) {
+          tableHTML += `<tr><td colspan="4" style="text-align:center; color: var(--text-secondary); font-style: italic;">Table truncated to 50 years. Final value at year ${years} is ${formatCurrency(fv)}.</td></tr>`;
+      }
+
+      tableBody.innerHTML = tableHTML;
+    }
+
+    [fvInput, rateInput, yearsInput, compoundingSelect].forEach(el => {
+      el.addEventListener('input', calculate);
+      el.addEventListener('change', calculate);
+    });
+
+    calculate();
+  });
+</script>

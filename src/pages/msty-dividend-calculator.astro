@@ -1,0 +1,290 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MSTY Dividend Calculator",
+    "operatingSystem": "Web",
+    "applicationCategory": "FinanceApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Calculate estimated monthly and annual income from the YieldMax MSTR Option Income Strategy ETF (MSTY).",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the MSTY dividend calculator work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The MSTY dividend calculator estimates your potential monthly and annual income by taking either your total number of shares or your total investment amount and multiplying it by a projected annualized yield. Because MSTY's distributions are highly variable, we use a hardcoded reasonable estimate, which you can adjust based on recent declarations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is the MSTY dividend yield so high?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "MSTY generates income through a synthetic covered call strategy on MicroStrategy (MSTR). Because MSTR is an extremely volatile stock closely tied to Bitcoin, the option premiums that MSTY harvests are exceptionally large, resulting in massive, though unpredictable, monthly distributions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are MSTY's monthly distributions guaranteed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, MSTY's distributions are not guaranteed and fluctuate wildly from month to month. The payout depends entirely on the implied volatility of MSTR and the success of the fund's option writing strategy during that specific period. Past performance is not indicative of future yields."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the primary risk of investing in MSTY for income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The primary risk is severe Net Asset Value (NAV) decay. By selling covered calls, MSTY caps its upside potential while remaining exposed to MSTR's downside. Over time, volatile downward swings can erode the fund's principal, meaning your high 'yield' might just be a return of your own shrinking capital."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is MSTY suitable for long-term buy-and-hold investors?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Generally, no. MSTY is a specialized, tactical instrument designed for aggressive current income, not long-term capital appreciation. It requires active management, and investors often use the massive payouts to diversify into more stable assets rather than reinvesting into the depreciating NAV."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "MSTY Dividend Calculator | Estimate Your YieldMax MSTR Income",
+  description: "Calculate your estimated monthly and annual income from the YieldMax MSTR Option Income Strategy ETF (MSTY) based on your shares or investment amount.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/msty-dividend-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>MSTY Dividend Calculator</h1>
+      <p class="subtitle">Estimate Your YieldMax MSTR Option Income Strategy ETF Returns</p>
+    </div>
+
+    <section>
+      <div class="card" id="calculator-card">
+        <h2>Income Estimator</h2>
+        <div class="input-group">
+          <label for="calc-mode">Calculate By:</label>
+          <select id="calc-mode">
+            <option value="shares">Shares Owned</option>
+            <option value="investment">Total Investment Amount ($)</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="shares-group">
+          <label for="shares-owned">Shares Owned:</label>
+          <input type="number" id="shares-owned" value="100" min="0" step="1">
+        </div>
+
+        <div class="input-group" id="investment-group" style="display: none;">
+          <label for="investment-amount">Investment Amount ($):</label>
+          <input type="number" id="investment-amount" value="10000" min="0" step="100">
+        </div>
+
+        <div class="input-group" id="price-group" style="display: none;">
+          <label for="share-price">Current MSTY Share Price ($):</label>
+          <input type="number" id="share-price" value="25.00" min="0.01" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label for="annual-yield">Estimated Annualized Yield (%):</label>
+          <input type="number" id="annual-yield" value="80" min="0" step="0.1">
+        </div>
+
+        <div class="results" id="calculator-results">
+          <div class="result-row">
+            <span class="result-label">Estimated Monthly Income:</span>
+            <span class="result-value" id="est-monthly-income">$0.00</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Estimated Annual Income:</span>
+            <span class="result-value" id="est-annual-income">$0.00</span>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <strong>Risk Disclaimer:</strong> MSTY's distributions are derived from volatile option premiums, not corporate earnings. The yield fluctuates heavily from month to month based on the underlying volatility of MicroStrategy (MSTR). The hardcoded yield of 80% is an arbitrary estimate for calculation purposes; actual yields may be significantly higher or lower. Past distributions absolutely do not guarantee future results. Proceed with extreme caution.
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Understanding the YieldMax MSTR Option Income Strategy ETF</h2>
+      <p>The YieldMax MSTR Option Income Strategy ETF (MSTY) has captivated income-focused investors by offering staggering distribution yields that frequently outpace traditional dividend-paying equities. To achieve these massive payouts, the fund employs a synthetic covered call strategy on MicroStrategy Incorporated (MSTR). Since MicroStrategy acts as a highly volatile proxy for Bitcoin, the option premiums generated by writing short-dated call against it are exceptionally lucrative. This complex derivative maneuver is the engine driving the enormous distributions.</p>
+
+      <p>However, generating such massive income comes with intense trade-offs. The covered call structure inherently caps the upside appreciation of the fund's net asset value (NAV) during fierce bull runs in the underlying stock. Meanwhile, the fund absorbs the full impact of severe downturns. This asymmetric return profile often results in steady NAV erosion over prolonged holding periods. Investors drawn to the high yield must carefully consider whether the cash distributions outweigh the near-certainty of principal depreciation.</p>
+
+      <p>A crucial factor to grasp is that MSTY's payouts are entirely dependent on the implied volatility of MSTR. When the crypto markets are turbulent and MicroStrategy experiences wild price swings, the option premiums swell, translating into larger dividends for MSTY shareholders. Conversely, if the underlying stock enters a prolonged period of consolidation or low volatility, the income generated from the strategy will inevitably contract. Therefore, the current stated yield is always a backward-looking metric rather than a reliable forward-looking guarantee.</p>
+
+      <p>Because the distributions fluctuate heavily, utilizing a tool like the calculator above requires managing expectations. We have provided a default annualized yield estimate of 80% to illustrate the mechanics, but this number is merely a baseline for hypothetical modeling. You must manually adjust the yield input based on the fund's most recent declarations to get a closer approximation of your potential near-term income. For a deeper analysis of past payouts, review our <a href="/msty-dividend-calculator">MSTY Dividend History</a> page.</p>
+
+      <p>Finally, the tax implications of investing in synthetic covered call funds can be vastly different from holding traditional dividend growth stocks. The majority of the cash distributed by MSTY is typically classified as ordinary income due to the short-term nature of the option trades, meaning it is taxed at your highest marginal rate in a taxable account. Given the intense volatility, NAV decay risks, and complex tax profile, MSTY remains a specialized tactical instrument rather than a core, long-term portfolio holding.</p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>How does the MSTY dividend calculator work?</summary>
+        <p>The MSTY dividend calculator estimates your potential monthly and annual income by taking either your total number of shares or your total investment amount and multiplying it by a projected annualized yield. Because MSTY's distributions are highly variable, we use a hardcoded reasonable estimate, which you can adjust based on recent declarations.</p>
+      </details>
+      <details>
+        <summary>Why is the MSTY dividend yield so high?</summary>
+        <p>MSTY generates income through a synthetic covered call strategy on MicroStrategy (MSTR). Because MSTR is an extremely volatile stock closely tied to Bitcoin, the option premiums that MSTY harvests are exceptionally large, resulting in massive, though unpredictable, monthly distributions.</p>
+      </details>
+      <details>
+        <summary>Are MSTY's monthly distributions guaranteed?</summary>
+        <p>No, MSTY's distributions are not guaranteed and fluctuate wildly from month to month. The payout depends entirely on the implied volatility of MSTR and the success of the fund's option writing strategy during that specific period. Past performance is not indicative of future yields.</p>
+      </details>
+      <details>
+        <summary>What is the primary risk of investing in MSTY for income?</summary>
+        <p>The primary risk is severe Net Asset Value (NAV) decay. By selling covered calls, MSTY caps its upside potential while remaining exposed to MSTR's downside. Over time, volatile downward swings can erode the fund's principal, meaning your high 'yield' might just be a return of your own shrinking capital.</p>
+      </details>
+      <details>
+        <summary>Is MSTY suitable for long-term buy-and-hold investors?</summary>
+        <p>Generally, no. MSTY is a specialized, tactical instrument designed for aggressive current income, not long-term capital appreciation. It requires active management, and investors often use the massive payouts to diversify into more stable assets rather than reinvesting into the depreciating NAV.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modeSelect = document.getElementById('calc-mode');
+      const sharesGroup = document.getElementById('shares-group');
+      const investmentGroup = document.getElementById('investment-group');
+      const priceGroup = document.getElementById('price-group');
+      const sharesInput = document.getElementById('shares-owned');
+      const investmentInput = document.getElementById('investment-amount');
+      const priceInput = document.getElementById('share-price');
+      const yieldInput = document.getElementById('annual-yield');
+      const monthlyResult = document.getElementById('est-monthly-income');
+      const annualResult = document.getElementById('est-annual-income');
+      const resultsContainer = document.getElementById('calculator-results');
+
+      function calculate() {
+        const mode = modeSelect.value;
+        const yld = parseFloat(yieldInput.value) / 100;
+        let valid = false;
+        let annualIncome = 0;
+
+        if (mode === 'shares') {
+            const shares = parseFloat(sharesInput.value);
+            const price = parseFloat(priceInput.value);
+            if (!isNaN(shares) && !isNaN(price) && !isNaN(yld) && sharesInput.value !== '' && priceInput.value !== '' && yieldInput.value !== '') {
+                annualIncome = shares * price * yld;
+                valid = true;
+            }
+        } else {
+            const investment = parseFloat(investmentInput.value);
+            if (!isNaN(investment) && !isNaN(yld) && investmentInput.value !== '' && yieldInput.value !== '') {
+                annualIncome = investment * yld;
+                valid = true;
+            }
+        }
+
+        if (valid) {
+          const monthlyIncome = annualIncome / 12;
+          annualResult.textContent = '$' + annualIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          monthlyResult.textContent = '$' + monthlyIncome.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          resultsContainer.style.display = 'block';
+        } else {
+          resultsContainer.style.display = 'none';
+        }
+      }
+
+      function updateMode() {
+        if (modeSelect.value === 'shares') {
+          sharesGroup.style.display = 'block';
+          priceGroup.style.display = 'block';
+          investmentGroup.style.display = 'none';
+        } else {
+          sharesGroup.style.display = 'none';
+          priceGroup.style.display = 'none';
+          investmentGroup.style.display = 'block';
+        }
+        calculate();
+      }
+
+      modeSelect.addEventListener('change', updateMode);
+      sharesInput.addEventListener('input', calculate);
+      investmentInput.addEventListener('input', calculate);
+      priceInput.addEventListener('input', calculate);
+      yieldInput.addEventListener('input', calculate);
+
+      updateMode(); // Initial setup
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .card h2 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;}
+
+    .input-group { margin-bottom: 1.25rem; }
+    .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary); }
+    .input-group input, .input-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 1rem;
+    }
+    .input-group input:focus, .input-group select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+
+    .results { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); }
+    .result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 1rem; background: rgba(74, 143, 231, 0.05); border-radius: 8px;}
+    .result-label { font-weight: 600; color: var(--text-secondary); }
+    .result-value { font-size: 1.5rem; font-weight: 800; color: var(--accent-color); font-family: 'JetBrains Mono', monospace;}
+
+    .callout { padding: 1rem; border-radius: 8px; margin-top: 1.5rem; line-height: 1.5; font-size: 0.95rem; }
+    .callout.warning { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+
+    .faq-section { margin-top: 3rem;}
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; color: var(--text-primary); }
+    .faq-section summary:hover { color: var(--accent-color); }
+    .faq-section p { margin-top: 0.75rem; margin-bottom: 0; color: var(--text-secondary); }
+
+    a { color: var(--accent-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    section h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    p { line-height: 1.6; margin-bottom: 1rem; color: var(--text-secondary); }
+  </style>
+</SiteLayout>

@@ -1,0 +1,336 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is EPS in Stocks? | Earnings Per Share Explained",
+  description: "Want to know if a company is truly profitable? Learn what EPS (Earnings Per Share) means, how to calculate it, and why it's crucial for stock market investors.",
+  category: "guide",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a good EPS for a stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There is no single 'good' EPS number because it depends heavily on the industry, the company's growth stage, and its total number of shares. Instead of looking for a specific number, investors look for an EPS that is consistently growing year over year and beating Wall Street estimates."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between basic EPS and diluted EPS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Basic EPS only counts the shares currently available in the open market. Diluted EPS takes a more conservative approach by including all potential shares that could be created from stock options, convertible bonds, or warrants. Investors usually prefer diluted EPS as it shows the worst-case scenario for their ownership percentage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a company have a negative EPS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. A negative EPS means the company is currently losing money (experiencing a net loss). This is common for new, fast-growing tech or biotech companies that are spending heavily on research and development before they turn a profit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is EPS different from the P/E ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "EPS (Earnings Per Share) is an absolute dollar amount showing how much profit is attributed to one share. The P/E (Price-to-Earnings) ratio takes the stock's current price and divides it by the EPS. EPS tells you profitability; P/E ratio tells you how expensive that profitability is to buy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why would a company's EPS drop even if total profits increased?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This usually happens when a company issues new shares to the public (share dilution). If a company's total profit goes up by 10%, but they issue 20% more shares, the profit is spread across a wider base, causing the EPS (the profit per individual share) to go down."
+          }
+        }
+      ]
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-eps" schema={schema}>
+  <div class="page-content">
+    <header class="hero-section">
+      <h1>What is EPS in Stocks?</h1>
+      <p class="subtitle">The foundational metric for profitability: understanding Earnings Per Share, how to calculate it, and why it's the bedrock of stock valuation.</p>
+    </header>
+
+    <section class="content-section">
+      <h2>The Jargon-Free Definition</h2>
+      <p>
+        Imagine you and three friends start a highly successful lemonade stand. At the end of the summer, after paying for the lemons, sugar, cups, and the city permit, you look in the cashbox and see $100 in pure profit. Since there are four of you, and you all own an equal share of the business, your individual "profit per owner" is $25.
+      </p>
+      <p>
+        In the world of finance, this concept is called <strong>Earnings Per Share (EPS)</strong>.
+      </p>
+      <p>
+        EPS is the portion of a company's total profit that is allocated to each outstanding share of common stock. It is the most direct way to answer a very simple question: "If I buy one share of this company, how much of the company's profit actually belongs to me?"
+      </p>
+      <p>
+        While total revenue (how much a company sells) and total net income (the massive total profit number) grab the headlines, EPS is what Wall Street truly cares about. A company can make billions in profit, but if it has issued billions of shares to the public, the actual profit generated for each individual shareholder might be pennies.
+      </p>
+
+      <h2>How is EPS Calculated? (The Formula)</h2>
+      <p>
+        Calculating basic EPS is straightforward division. You take the company's net income, subtract any special dividends paid to preferred shareholders (since regular investors buy common stock, not preferred stock), and divide that number by the total number of shares that exist in the open market.
+      </p>
+
+      <div class="formula-box">
+        <strong>EPS = (Net Income − Preferred Dividends) / Average Outstanding Shares</strong>
+      </div>
+
+      <p>
+        Let's break down those components:
+      </p>
+      <ul>
+        <li><strong>Net Income:</strong> Often called the "bottom line." This is the total profit the company made after paying all expenses, taxes, and interest.</li>
+        <li><strong>Preferred Dividends:</strong> Some companies issue special "preferred stock" that pays a fixed dividend before common stockholders see any money. This must be subtracted because that cash isn't available to regular shareholders.</li>
+        <li><strong>Average Outstanding Shares:</strong> Because companies constantly buy back their own stock or issue new stock throughout the year, accountants use a weighted average of how many shares existed during the period.</li>
+      </ul>
+
+      <h3>A Real-World Example: "Tech Titan Corp"</h3>
+      <p>
+        Let's create a hypothetical company, Tech Titan Corp.
+      </p>
+      <div class="card">
+        <h4>Tech Titan Corp Financials (Hypothetical Year 1)</h4>
+        <ul>
+          <li><strong>Total Net Income:</strong> $500 Million</li>
+          <li><strong>Preferred Dividends Paid:</strong> $0</li>
+          <li><strong>Total Shares Outstanding:</strong> 100 Million shares</li>
+        </ul>
+        <p><strong>The Math:</strong> $500,000,000 / 100,000,000 = $5.00</p>
+        <p><strong>The EPS is $5.00.</strong> This means for every share of Tech Titan Corp you own, the company generated $5.00 in profit.</p>
+      </div>
+
+      <h2>The Three Types of EPS You Must Know</h2>
+      <p>
+        If you look up a stock on a financial website, you rarely just see one EPS number. Companies are complex, and accountants need different ways to measure profitability depending on what an investor is looking for.
+      </p>
+
+      <h3>1. Trailing EPS (TTM)</h3>
+      <p>
+        TTM stands for "Trailing Twelve Months." This is the most common EPS figure you will see quoted on finance sites like Yahoo Finance or Google Finance.
+      </p>
+      <p>
+        Trailing EPS looks <em>backward</em>. It takes the actual, reported profit from the last four quarters (one full year) and calculates the EPS based on what has already happened. It is highly reliable because it is based on hard, audited data, but it doesn't tell you anything about where the company is going next year.
+      </p>
+
+      <h3>2. Forward EPS</h3>
+      <p>
+        Forward EPS looks <em>forward</em>. Instead of using past data, it uses estimated numbers. This EPS is calculated using the projected earnings for the upcoming 12 months, based on guidance from the company's management and the consensus estimates of Wall Street analysts.
+      </p>
+      <p>
+        Investors love Forward EPS because the stock market is a forward-looking machine; it prices stocks based on what will happen tomorrow, not what happened yesterday. However, it carries significant risk: it is ultimately just an educated guess. If the company hits a recession or a product fails, the Forward EPS estimate will be completely wrong.
+      </p>
+
+      <h3>3. Basic vs. Diluted EPS</h3>
+      <p>
+        This is a critical distinction that trips up many beginners.
+      </p>
+      <p>
+        <strong>Basic EPS</strong> uses the exact number of shares currently trading in the open market right now.
+      </p>
+      <p>
+        <strong>Diluted EPS</strong> is the "worst-case scenario." It assumes that every single stock option given to employees, every convertible bond, and every warrant is immediately turned into regular stock. Doing this artificially inflates the number of shares. Because you are dividing the same amount of profit by a much larger number of shares, Diluted EPS is almost always lower than Basic EPS.
+      </p>
+      <p>
+        Conservative investors almost exclusively use Diluted EPS because it shows the truest picture of their ownership stake if the company executes all its financial obligations.
+      </p>
+      <h2>Why EPS is the Bedrock of Stock Valuation</h2>
+      <p>
+        EPS isn't just a number to pat a company on the back. It is the core input for nearly every valuation model used by professional investors, from simple ratios to complex discounted cash flow analyses.
+      </p>
+
+      <h3>1. The Price-to-Earnings (P/E) Ratio</h3>
+      <p>
+        The most famous valuation metric in the world, the <a href="/guide-understanding-pe-ratio">P/E Ratio</a>, is built entirely on EPS.
+      </p>
+      <div class="formula-box">
+        <strong>P/E Ratio = Stock Price / Earnings Per Share (EPS)</strong>
+      </div>
+      <p>
+        If Tech Titan Corp's stock price is $100 and its EPS is $5.00, its P/E Ratio is 20 ($100 / $5). This tells an investor: "I am paying $20 for every $1 of profit this company makes." Without EPS, you have absolutely no idea if a $100 stock is incredibly cheap or outrageously expensive. A $100 stock with an EPS of $20 (P/E of 5) is a massive bargain. A $100 stock with an EPS of $0.10 (P/E of 1000) is a bubble waiting to burst.
+      </p>
+
+      <h3>2. Dividend Payout Ratios</h3>
+      <p>
+        If a company pays a dividend, EPS is how you know if that dividend is safe. Companies cannot sustainably pay out more money in dividends than they make in profit.
+      </p>
+      <p>
+        If a company has an EPS of $4.00, and pays an annual dividend of $2.00 per share, its <a href="/dividend-payout-ratios">Dividend Payout Ratio</a> is 50%. This is extremely safe. They have plenty of buffer room if earnings drop next year.
+      </p>
+      <p>
+        However, if their EPS is $1.00 and they pay a dividend of $2.00, their payout ratio is 200%. This is a massive red flag. They are borrowing money or selling assets just to pay the dividend, and a devastating dividend cut is almost certainly coming.
+      </p>
+
+      <h2>The Dark Side: How Companies Manipulate EPS</h2>
+      <p>
+        EPS is crucial, but it is not flawless. Because Wall Street obsesses over companies "beating EPS estimates" every quarter, management teams have enormous incentives to make the number look as good as possible, sometimes using financial engineering rather than actual business growth.
+      </p>
+
+      <h3>1. The Share Buyback Illusion</h3>
+      <p>
+        Look back at the EPS formula: <strong>Net Income / Total Shares.</strong>
+      </p>
+      <p>
+        There are two ways to make EPS go up. The hard way is to sell more products, cut costs, and increase Net Income (the numerator). The easy way is to decrease the number of shares (the denominator) by using company cash to buy back stock from the open market.
+      </p>
+      <p>
+        Imagine a company makes $100 in profit with 100 shares outstanding. The EPS is $1.00. The next year, the company has a terrible year and net income drops 20% to $80. But, the CEO aggressively bought back 50 shares of stock, leaving only 50 shares outstanding.
+      </p>
+      <p>
+        <strong>New EPS:</strong> $80 / 50 shares = <strong>$1.60.</strong>
+      </p>
+      <p>
+        The company's actual profit plummeted by 20%, but the EPS skyrocketed by 60%. A lazy investor looking only at EPS growth will think the company had an amazing year, while the underlying business is actually deteriorating. This is why you must always look at total Net Income and Revenue alongside EPS.
+      </p>
+
+      <h3>2. Accounting Gimmicks (One-Time Gains)</h3>
+      <p>
+        Net income includes <em>everything</em>, not just selling products. If a struggling retail chain sells its corporate headquarters building for a massive $500 million profit, that cash goes into Net Income for that quarter. Their EPS will look absolutely incredible.
+      </p>
+      <p>
+        But they can only sell the building once. The underlying retail business might still be bleeding cash. To combat this, sophisticated investors look for "Adjusted EPS" or "Core EPS," which strips out these one-time, non-recurring events to show the true operating profitability of the business.
+      </p>
+
+      <h2>How to Actually Use EPS in Your Investing</h2>
+
+      <p>Now that you know what it is and how it can be manipulated, how do you use it to find good stocks?</p>
+
+      <ul>
+        <li><strong>Look for Consistent Growth:</strong> One massive EPS year means nothing. Look at a company's EPS over a 5-to-10-year period. You want to see a staircase moving up and to the right. Consistent EPS growth proves the company has a durable competitive advantage and pricing power.</li>
+        <li><strong>Compare Within the Same Industry:</strong> Never compare the EPS of a software company to the EPS of a steel mill. Software companies have entirely different profit margins and capital requirements. Only compare a company's EPS growth and P/E ratio against its direct competitors.</li>
+        <li><strong>Beware of Negative EPS:</strong> A negative EPS means the company is losing money. This isn't inherently bad—Amazon lost money for years while it conquered e-commerce—but it means the company is surviving on debt or selling new shares to investors to stay afloat. If a company with negative EPS cannot eventually turn a profit, it will go bankrupt.</li>
+        <li><strong>Watch for Dilution:</strong> Look at the "Shares Outstanding" number on the income statement over the last few years. If that number is constantly going up, the company is diluting your ownership. Even if total net income is growing, your slice of the pie is getting smaller.</li>
+      </ul>
+
+      <p>
+        EPS is the starting line of fundamental analysis, not the finish line. It tells you if a company is profitable today and how much of that profit belongs to you as a shareholder. By combining EPS with an understanding of revenue growth, profit margins, and cash flow, you can start valuing businesses like a professional investor.
+      </p>
+
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: var(--text-primary);
+  }
+
+  .hero-section {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .content-section {
+    line-height: 1.7;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+
+  ul, ol {
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .formula-box {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Ensure links within the content are visible and use the accent color */
+  .page-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .page-content a:hover {
+    opacity: 0.8;
+  }
+</style>

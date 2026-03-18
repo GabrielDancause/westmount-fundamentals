@@ -1,0 +1,564 @@
+---
+import '../styles/global.css';
+import { sites } from '../config/sites';
+
+interface Props {
+  site: string;
+  title: string;
+  description: string;
+  canonical: string;
+  schema?: any;
+  bodyClass?: string;
+}
+
+const { site, title, description, canonical, schema, bodyClass } = Astro.props;
+const siteConfig = sites[site];
+
+// Sub-sites on photonbuilder.com need prefixed home links
+const SUB_SITES = ['bodycount','sendnerds','justonemoment','getthebag','fixitwithducttape','papyruspeople','eeniemeenie','pleasestartplease'];
+const homeHref = SUB_SITES.includes(site) ? `/${site}/` : '/';
+
+if (!siteConfig) {
+  throw new Error(`Site configuration not found for: ${site}`);
+}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Content link styles (must be raw HTML to survive Astro build) -->
+  <Fragment set:html={`<style>.page-content a:not(.btn):not(.nav-link),.container a:not(.btn):not(.nav-link),.content-section a:not(.btn):not(.nav-link){color:var(--accent-color);text-decoration:underline;text-underline-offset:2px}.page-content a:not(.btn):not(.nav-link):hover,.container a:not(.btn):not(.nav-link):hover,.content-section a:not(.btn):not(.nav-link):hover{opacity:0.8}</style>`} />
+  <!-- Google Analytics -->
+  <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.gaId}`}></script>
+  <script define:vars={{ gaId: siteConfig.gaId }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', gaId);
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href={canonical}>
+  <title>{title}</title>
+  <meta name="description" content={description}>
+
+  <!-- Open Graph tags -->
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content={siteConfig.name}>
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content={`https://${siteConfig.domain}/og-image.png`}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  {schema && (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  )}
+
+  <style define:vars={{
+    accentColor: siteConfig.accent,
+    themeBg: siteConfig.theme.bg,
+    themeCardBg: siteConfig.theme.cardBg,
+    themeBorder: siteConfig.theme.border,
+    themeTextPrimary: siteConfig.theme.textPrimary,
+    themeTextSecondary: siteConfig.theme.textSecondary,
+  }}>
+    :root {
+      /* Canonical names */
+      --bg-color: var(--themeBg);
+      --card-bg: var(--themeCardBg);
+      --border-color: var(--themeBorder);
+      --accent-color: var(--accentColor);
+      --text-primary: var(--themeTextPrimary);
+      --text-secondary: var(--themeTextSecondary);
+
+      /* Aliases (pages use inconsistent names) */
+      --bg: var(--themeBg);
+      --bg-main: var(--themeBg);
+      --card: var(--themeCardBg);
+      --bg-card: var(--themeCardBg);
+      --border: var(--themeBorder);
+      --accent: var(--accentColor);
+      --text: var(--themeTextPrimary);
+      --text-main: var(--themeTextPrimary);
+      --text-color: var(--themeTextPrimary);
+      --text-muted: var(--themeTextSecondary);
+      --text-dim: var(--themeTextSecondary);
+      --text-sec: var(--themeTextSecondary);
+
+      /* Fonts */
+      --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-body: var(--font-ui);
+      --font-sans: var(--font-ui);
+      --font-main: var(--font-ui);
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-code: var(--font-mono);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--themeBg);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+    }
+
+
+
+    /* Sticky Nav */
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: rgba(6, 10, 18, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(74, 143, 231, 0.15);
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 100%;
+    }
+
+    .sticky-nav .brand {
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    .sticky-nav .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .sticky-nav .nav-links a:hover {
+      color: var(--accent-color);
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-primary);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    ul, ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      background-color: rgba(212, 160, 23, 0.1);
+      color: var(--accent-color);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Cards and Highlight Boxes */
+    .card, .highlight-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .highlight-box {
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .calculator-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2.5rem 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .calculator-card h3 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    /* Form Input Styles */
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .suffix {
+      position: absolute;
+      right: 1rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      padding: 0.75rem 1rem;
+      padding-right: 2.5rem;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    .calc-result {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .calc-result-label {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .calc-result-value {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: rgba(212, 160, 23, 0.05);
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    td {
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* FAQ Styles */
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-item {
+      margin-bottom: 1.5rem;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+      margin-top: 0;
+      color: var(--text-primary);
+      font-size: 1.15rem;
+    }
+
+    .faq-item p {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+
+    /* Stats and Badges */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+    }
+
+    .badge.positive {
+      background-color: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+
+    .badge.negative {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .badge.neutral {
+      background-color: rgba(148, 163, 184, 0.1);
+      color: var(--text-secondary);
+    }
+
+    .chart-container {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: 4rem;
+    }
+
+    footer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--text-primary);
+      text-decoration: underline;
+    }
+
+    /* Hamburger Toggle */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text-secondary);
+      border-radius: 1px;
+      transition: all 0.2s;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+      .nav-toggle {
+        display: flex;
+      }
+
+      .sticky-nav .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(6, 10, 18, 0.98);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        flex-direction: column;
+        padding: 12px 24px 20px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .sticky-nav .nav-links.open {
+        display: flex;
+      }
+
+      .sticky-nav .nav-links a {
+        margin-left: 0;
+        padding: 10px 0;
+        font-size: 1rem;
+      }
+      
+      h1 { 
+        font-size: 2rem; 
+      }
+      
+      h2 { 
+        font-size: 1.5rem; 
+      }
+      
+      .calc-result-value { 
+        font-size: 2rem; 
+      }
+
+      .container {
+        padding: 2rem 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class={bodyClass}>
+  <!-- Sticky Nav -->
+  <nav class="sticky-nav">
+    <a href={homeHref} class="brand">{siteConfig.name}</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      {siteConfig.nav.map(item => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </div>
+  </nav>
+  <script is:inline>
+    document.querySelector('.nav-toggle')?.addEventListener('click', function() {
+      const links = document.querySelector('.nav-links');
+      const open = links.classList.toggle('open');
+      this.setAttribute('aria-expanded', String(open));
+    });
+  </script>
+
+  <slot />
+
+  <footer>
+    <p>
+      {siteConfig.footer.text}
+      {siteConfig.footer.gabVentures && (
+        <> &middot; A <a href="https://gab.ae">GAB Ventures</a> property. Not investment advice. All information for educational purposes only.</>
+      )}
+    </p>
+  </footer>
+</body>
+</html>

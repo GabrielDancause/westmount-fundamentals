@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "What to Hold in Your RRSP",
+    "description": "Asset location strategies, US dividends, and bonds. Free interactive tool from What to Hold in Your RRSP. No sign-up required.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are US dividends taxed in an RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Due to a tax treaty between Canada and the United States, the standard 15% US withholding tax on dividends is not applied when US stocks or US-listed ETFs are held inside an RRSP."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I hold individual stocks in my RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, you can hold a wide variety of qualified investments, including individual stocks, bonds, ETFs, mutual funds, and GICs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it better to hold bonds in an RRSP or TFSA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bonds generate interest income, which is fully taxable at your marginal rate. Therefore, it is often more tax-efficient to hold bonds in an RRSP to shelter that income, while holding higher-growth assets in a TFSA."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "What to Hold in Your RRSP",
+  description: "Asset location strategies, US dividends, and bonds. A complete, practical guide with examples, tips, and actionable steps you can follow today.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="What to Hold in Your RRSP" description="Asset location strategies, US dividends, and bonds." canonical="https://westmountfundamentals.com/rrsp-investment-options" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>What to Hold in Your RRSP</h1><p>Asset location strategies, US dividends, and bonds.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-vs-tfsa-decision">Rrsp Vs Tfsa Decision</a></li>
+        <li><a href="/rrsp-home-buyers-plan">Rrsp Home Buyers Plan</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>Are US dividends taxed in an RRSP?</h3>
+      <p>No. Due to a tax treaty between Canada and the United States, the standard 15% US withholding tax on dividends is not applied when US stocks or US-listed ETFs are held inside an RRSP.</p>
+      <h3>Can I hold individual stocks in my RRSP?</h3>
+      <p>Yes, you can hold a wide variety of qualified investments, including individual stocks, bonds, ETFs, mutual funds, and GICs.</p>
+      <h3>Is it better to hold bonds in an RRSP or TFSA?</h3>
+      <p>Bonds generate interest income, which is fully taxable at your marginal rate. Therefore, it is often more tax-efficient to hold bonds in an RRSP to shelter that income, while holding higher-growth assets in a TFSA.</p>
+    </div>
+
+    <div class="card">
+      <h2>Maximizing Tax-Sheltered Growth Potential</h2>
+      <p>The Registered Retirement Savings Plan (RRSP) is a highly versatile account that permits a wide array of qualified investments. While it is common for individuals to simply hold high-interest cash or Guaranteed Investment Certificates (GICs) in their RRSP, this often represents a missed opportunity. Because the RRSP shelters all investment growth from taxes until withdrawal, it is generally best utilized to hold assets that have the highest potential for long-term compound growth, such as equities (stocks and stock-based ETFs).</p>
+
+      <p>The power of tax-deferred compounding over several decades cannot be overstated. If you hold aggressive growth assets in an RRSP, you are effectively reinvesting the money that would otherwise have gone to the government in the form of annual capital gains or dividend taxes. However, it is important to remember that all withdrawals are eventually taxed as regular income, meaning you lose the preferential tax treatment usually applied to capital gains and Canadian eligible dividends when these assets are held outside a registered account.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Unique Advantage: US Withholding Tax</h2>
+      <p>One of the most specific and powerful advantages of the RRSP concerns international investing, particularly in the United States. Generally, when a Canadian resident receives a dividend from a US corporation, the US government applies a 15% withholding tax before the money crosses the border. However, due to a longstanding tax treaty between Canada and the US, the RRSP is recognized as a qualifying retirement account. Therefore, the 15% withholding tax is entirely waived when US stocks or US-listed ETFs are held directly within an RRSP.</p>
+
+      <p>This exemption makes the RRSP the absolute optimal location for holding high-yielding US dividend stocks or broad-market US index funds (like those tracking the S&P 500). It is important to note that this exemption only applies to assets held directly; if you hold a Canadian-listed ETF that in turn holds US stocks, the withholding tax is still applied internally by the fund, resulting in a slight drag on performance. Furthermore, this exemption does not apply to the Tax-Free Savings Account (TFSA) or the First Home Savings Account (FHSA).</p>
+    </div>
+
+    <div class="card">
+      <h2>Asset Location Strategies Involving Bonds</h2>
+      <p>Asset location is the practice of strategically placing different types of investments into different accounts (RRSP, TFSA, Non-Registered) to minimize total taxation. For conservative investors or those nearing retirement, fixed-income assets like bonds are a necessary component of a diversified portfolio. However, the interest income generated by bonds is highly taxed in Canada; it is taxed at your full marginal rate, just like salary income.</p>
+
+      <p>Because of this punitive tax treatment, it is generally highly recommended to hold bonds and other interest-bearing assets within the tax-sheltered environment of an RRSP. By keeping your bonds in the RRSP, you shield that highly-taxed income from the CRA. Conversely, you would prioritize placing Canadian equities in a non-registered account, as Canadian eligible dividends receive a favorable tax credit, and only 50% of capital gains are currently subject to taxation. This strategic allocation can significantly improve your portfolio's after-tax returns.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

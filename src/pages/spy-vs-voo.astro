@@ -1,0 +1,443 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "SPY vs VOO: Which S&P 500 ETF is Better?",
+    "description": "A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your portfolio.",
+    "datePublished": "2026-03-15",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Research",
+      "url": "https://westmountfundamentals.com"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why is VOO's expense ratio lower than SPY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "VOO is structured as a traditional open-end fund and managed by Vanguard, which is known for its at-cost fee model, allowing it to charge just 0.03%. SPY, created in 1993, is structured as a Unit Investment Trust (UIT), which carries slightly higher operational costs and has maintained its 0.0945% fee structure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I trade options better on SPY or VOO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SPY is universally preferred for options trading because it has significantly higher daily trading volume and open interest. This results in tighter bid-ask spreads and much better liquidity compared to VOO, which is crucial for active traders and institutions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do SPY and VOO pay the same dividends?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because they hold the exact same 500 companies in the exact same proportions, their gross dividend yields are essentially identical. However, because VOO has a slightly lower expense ratio, its net dividend payout to investors might be marginally higher over long periods."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does a Unit Investment Trust structure mean for SPY?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because SPY is a Unit Investment Trust (UIT), it cannot reinvest cash dividends paid by underlying companies back into the fund immediately. It must hold that cash until the next distribution date. It also cannot lend out its shares to earn extra income, unlike VOO."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it worth switching from SPY to VOO for the lower fee?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you are a long-term buy-and-hold investor with a large balance in a taxable account, the tax hit of selling SPY to buy VOO would likely far outweigh the 0.0645% fee savings. However, for new money or inside a tax-advantaged account like an IRA, choosing VOO is generally more cost-effective."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "SPY vs VOO: Which S&P 500 ETF is Better? | Westmount",
+  description: "A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your...",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="SPY vs VOO: Which S&P 500 ETF is Better? | Westmount"
+  description="A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your."
+  canonical="https://westmountfundamentals.com/spy-vs-voo"
+  schema={schema}
+>
+  <style is:inline>
+    .page-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .interactive-comparison {
+      margin-bottom: 50px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .comparison-tabs {
+      display: flex;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 15px 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-color);
+      border-bottom: 3px solid var(--accent-color);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-content {
+      padding: 30px;
+    }
+
+    .tab-content.hidden {
+      display: none;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1px;
+      background-color: var(--border-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .grid-col {
+      background-color: var(--card-bg);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header-col {
+      background-color: rgba(0,0,0,0.1);
+    }
+
+    .fund-ticker {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      margin-bottom: 5px;
+    }
+
+    .fund-name {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .grid-row {
+      display: contents;
+    }
+
+    .row-label {
+      background-color: rgba(255, 255, 255, 0.02);
+      padding: 15px 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .row-val {
+      background-color: var(--card-bg);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .metric-bad {
+      color: #ef4444; /* Red for worse metric */
+      font-weight: 600;
+    }
+
+    .metric-good {
+      color: #10b981; /* Green for better metric */
+      font-weight: 600;
+    }
+
+    h2 {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    p {
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+      .grid-row {
+        display: block;
+        margin-bottom: 15px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .header-col { display: none; }
+      .fund-col {
+        display: none;
+      }
+      .row-label {
+        justify-content: center;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .row-val {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+      }
+      .row-val:nth-child(2)::before {
+        content: "SPY: ";
+        font-weight: bold;
+        color: var(--text-primary);
+        margin-right: 10px;
+      }
+      .row-val:nth-child(3)::before {
+        content: "VOO: ";
+        font-weight: bold;
+        color: var(--text-primary);
+        margin-right: 10px;
+      }
+      .row-val:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+
+  <div class="page-content">
+    <div class="hero">
+      <h1>SPY vs VOO: The Ultimate S&P 500 Showdown</h1>
+      <p>Compare the oldest S&P 500 ETF (SPY) against Vanguard's low-cost juggernaut (VOO) to see which fits your investment strategy.</p>
+    </div>
+
+    <div class="container">
+      <div class="card interactive-comparison">
+        <div class="comparison-tabs">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="fees">Fees & AUM</button>
+          <button class="tab-btn" data-tab="structure">Structure & Liquidity</button>
+        </div>
+
+        <div class="tab-content" id="tab-overview">
+          <div class="comparison-grid">
+            <div class="grid-col header-col"></div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">SPY</div>
+              <div class="fund-name">SPDR S&P 500 ETF Trust</div>
+            </div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">VOO</div>
+              <div class="fund-name">Vanguard S&P 500 ETF</div>
+            </div>
+
+            <div class="grid-row">
+              <div class="row-label">Issuer</div>
+              <div class="row-val">State Street (SPDR)</div>
+              <div class="row-val">Vanguard</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Inception Date</div>
+              <div class="row-val">January 1993</div>
+              <div class="row-val">September 2010</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Benchmark</div>
+              <div class="row-val">S&P 500 Index</div>
+              <div class="row-val">S&P 500 Index</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-fees">
+          <div class="comparison-grid">
+            <div class="grid-col header-col"></div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">SPY</div>
+            </div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">VOO</div>
+            </div>
+
+            <div class="grid-row">
+              <div class="row-label">Expense Ratio</div>
+              <div class="row-val metric-bad">0.0945%</div>
+              <div class="row-val metric-good">0.03%</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Cost per $10k</div>
+              <div class="row-val">$9.45 / year</div>
+              <div class="row-val">$3.00 / year</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Assets Under Management</div>
+              <div class="row-val">~$500 Billion</div>
+              <div class="row-val">~$400 Billion</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-structure">
+          <div class="comparison-grid">
+            <div class="grid-col header-col"></div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">SPY</div>
+            </div>
+            <div class="grid-col fund-col">
+              <div class="fund-ticker">VOO</div>
+            </div>
+
+            <div class="grid-row">
+              <div class="row-label">Legal Structure</div>
+              <div class="row-val">Unit Investment Trust (UIT)</div>
+              <div class="row-val">Traditional Open-End Fund</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Dividend Reinvestment</div>
+              <div class="row-val">Holds cash until payout</div>
+              <div class="row-val">Reinvests immediately</div>
+            </div>
+            <div class="grid-row">
+              <div class="row-label">Options Liquidity</div>
+              <div class="row-val metric-good">Excellent (Tighter Spreads)</div>
+              <div class="row-val">Good (Wider Spreads)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2>The Fee Difference: Does 0.06% Matter?</h2>
+      <p>When analyzing <a href="/etf-expense-ratios">ETF expense ratios</a>, both of these funds are remarkably cheap compared to the broader mutual fund industry. SPY charges 0.0945% annually, while VOO charges a mere 0.03%.</p>
+      <p>For a long-term buy-and-hold investor, that 0.0645% difference might seem trivial. However, compounded over 30 years on a $100,000 portfolio growing at an average market rate, the Vanguard option would leave you with thousands of dollars more in your pocket simply by minimizing the ongoing drag of fees.</p>
+
+      <div class="callout">
+        <strong>The Takeaway:</strong> If your goal is simply to buy, hold, and forget about it for the next three decades, VOO's lower fee structure makes it mathematically superior for accumulating wealth.
+      </div>
+
+      <h2>Structure and The "Cash Drag" Effect</h2>
+      <p>One of the most under-discussed differences between these two titans is their legal structure. State Street's SPY was the pioneer—launched in 1993, it was built as a Unit Investment Trust (UIT). Under UIT rules, the fund is not permitted to reinvest the cash dividends it receives from underlying companies back into the market immediately. Instead, it must hold that cash in a non-interest-bearing account until it is distributed to shareholders quarterly.</p>
+      <p>Vanguard's VOO, launched much later in 2010, is a traditional open-end fund. It can immediately reinvest intra-quarter dividends, keeping the money working in the market. During strong bull runs, this lack of "cash drag" allows VOO to track the index just a microscopic bit closer than its older rival.</p>
+
+      <h2>Liquidity: Why Traders Stick With SPY</h2>
+      <p>If VOO is cheaper and doesn't suffer from cash drag, why does SPY still have more Assets Under Management? The answer lies with institutional investors and active traders. SPY has unparalleled liquidity.</p>
+      <p>Because SPY has been around for over 30 years, it has built a massive ecosystem of options trading. The bid-ask spreads on SPY options are incredibly tight, sometimes just a penny wide. For day traders, hedge funds, or anyone executing complex options strategies, the cost savings of SPY's superior liquidity far outweighs the higher expense ratio. For more on index fund choices, see our <a href="/guide-sp500-index-funds">complete guide to choosing an S&P 500 fund</a> or compare these to other funds in our <a href="/etf-comparison-tool">ETF Comparison Tool</a>.</p>
+
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-section">
+        <div class="faq-item">
+          <h3>Why is VOO's expense ratio lower than SPY?</h3>
+          <p>VOO is structured as a traditional open-end fund and managed by Vanguard, which is known for its at-cost fee model, allowing it to charge just 0.03%. SPY, created in 1993, is structured as a Unit Investment Trust (UIT), which carries slightly higher operational costs and has maintained its 0.0945% fee structure.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I trade options better on SPY or VOO?</h3>
+          <p>SPY is universally preferred for options trading because it has significantly higher daily trading volume and open interest. This results in tighter bid-ask spreads and much better liquidity compared to VOO, which is crucial for active traders and institutions.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do SPY and VOO pay the same dividends?</h3>
+          <p>Because they hold the exact same 500 companies in the exact same proportions, their gross dividend yields are essentially identical. However, because VOO has a slightly lower expense ratio, its net dividend payout to investors might be marginally higher over long periods.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What does a Unit Investment Trust structure mean for SPY?</h3>
+          <p>Because SPY is a Unit Investment Trust (UIT), it cannot reinvest cash dividends paid by underlying companies back into the fund immediately. It must hold that cash until the next distribution date. It also cannot lend out its shares to earn extra income, unlike VOO.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is it worth switching from SPY to VOO for the lower fee?</h3>
+          <p>If you are a long-term buy-and-hold investor with a large balance in a taxable account, the tax hit of selling SPY to buy VOO would likely far outweigh the 0.0645% fee savings. However, for new money or inside a tax-advantaged account like an IRA, choosing VOO is generally more cost-effective.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const contents = document.querySelectorAll('.tab-content');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          // Remove active class from all tabs
+          tabs.forEach(t => t.classList.remove('active'));
+          // Add active class to clicked tab
+          tab.classList.add('active');
+
+          // Hide all content
+          contents.forEach(c => c.classList.add('hidden'));
+
+          // Show target content
+          const targetId = `tab-${tab.getAttribute('data-tab')}`;
+          document.getElementById(targetId).classList.remove('hidden');
+        });
+      });
+    });
+  </script>
+</SiteLayout>

@@ -1,0 +1,351 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Best Stocks to Invest in 2025 & Beyond",
+  description: "Wondering where the smart money is going for the next few years? Explore our data-driven list of the best stocks to invest in for 2025 and beyond.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are the best stocks to invest in 2025?", "acceptedAnswer": {"@type": "Answer", "text": "Identifying the best stocks to invest in 2025 requires balancing growth potential with downside protection. Generally, these include established dividend payers, defensive consumer staples, and healthcare companies that offer stability regardless of economic conditions. Examples often cited for 2025 include Johnson & Johnson, Walmart, and Procter & Gamble, which boast strong balance sheets and pricing power."}}, {"@type": "Question", "name": "What were the best stocks to invest in 2024?", "acceptedAnswer": {"@type": "Answer", "text": "In 2024, the market narrative was predominantly driven by mega-cap technology companies, often referred to as the 'Magnificent Seven.' These firms capitalized on the artificial intelligence boom and robust consumer spending. However, as the year progressed, there was a noticeable rotation into value sectors and small-cap stocks as investors sought broader market participation."}}, {"@type": "Question", "name": "What are the best stocks to invest in?", "acceptedAnswer": {"@type": "Answer", "text": "The overarching question of what are the best stocks to invest in has no single correct answer, as it fundamentally depends on your specific time horizon, risk appetite, and investment objectives. A universally common and effective strategy involves building a diversified core portfolio composed of broad market index funds, supplemented by carefully selected blue-chip dividend stocks for income and stability."}}, {"@type": "Question", "name": "What are the best stocks to invest in 2026?", "acceptedAnswer": {"@type": "Answer", "text": "Looking toward 2026, the focus shifts to sustainability and resilience. The best stocks to invest in for 2026 are companies that maintain sustainable dividend payout ratios, possess the pricing power to navigate inflationary pressures, and operate resilient business models that provide essential goods or services, ensuring steady cash flow across economic cycles."}}, {"@type": "Question", "name": "How do I choose the best stocks?", "acceptedAnswer": {"@type": "Answer", "text": "Choosing the best stocks involves a multifaceted approach combining quantitative and qualitative analysis. Key considerations include evaluating the company's financial health via its balance sheet, understanding its competitive position or 'moat' within the industry, analyzing valuation metrics such as the Price-to-Earnings (P/E) ratio, and aligning the investment with your personal portfolio strategy."}}]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Best Stocks to Invest in 2025 & Beyond", "description": "Wondering where the smart money is going for the next few years? Explore our data-driven list of the best stocks to invest in for 2025 and beyond.", "datePublished": "2026-03-15", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}}];
+---
+<SiteLayout site="westmount" title="Best Stocks to Invest in 2025 & Beyond" description="Wondering where the smart money is going for the next few years? Explore our data-driven list of the best stocks to invest in for 2025 and beyond." canonical="https://westmountfundamentals.com/best-stocks-to-invest-in-2025" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Best Stocks to Invest in 2025 & Beyond</h1>
+      <p class="subtitle">Long-term picks for a resilient, diversified, and profitable portfolio.</p>
+    </div>
+
+    <section class="intro-section" style="margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.8;">
+        <p>Building a robust and resilient portfolio demands a strategic approach to equity selection, a process that becomes increasingly critical as we evaluate the best stocks to invest in 2025. The transition from previous market cycles into the mid-2020s has been characterized by evolving inflation dynamics, shifting interest rate expectations, and profound technological integration across all sectors. Investors asking what are the best stocks to invest in must now consider not only historical performance but also how companies are adapting to a rapidly changing global economy.</p><p>In assessing the best stocks to invest in 2024, the market rewarded companies with immense scale and cash reserves, particularly within the technology sector. However, as we look forward, the criteria for the best stocks to invest in 2026 emphasize durability, pricing power, and consistent shareholder returns through dividends and share buybacks. The equities featured in this guide represent a cross-section of industries, from consumer defensive stalwarts to innovative healthcare providers, each selected for their potential to anchor a long-term investment strategy.</p><p>This comprehensive analysis provides real-time data, including current prices, P/E ratios, and dividend yields, allowing you to filter and sort based on your investment priorities. Whether you are constructing a portfolio from scratch or rebalancing existing holdings, understanding the fundamental drivers behind these companies is paramount. The best stocks to invest in are ultimately those that align with your financial objectives, risk tolerance, and time horizon, providing both capital appreciation and income generation over the years to come.</p>
+    </section>
+
+    <div class="search-container" style="margin-bottom: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h3 style="margin-top: 0; margin-bottom: 1rem;">Filter the Data</h3>
+        <input type="text" id="searchInput" placeholder="Search by ticker, name, or sector..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1rem; background: transparent; color: var(--text-primary);">
+    </div>
+
+    <div style="overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 1rem;">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)" style="cursor:pointer;" title="Sort by Ticker">Ticker &#x2195;</th>
+                    <th onclick="sortTable(1)" style="cursor:pointer;" title="Sort by Name">Name &#x2195;</th>
+                    <th onclick="sortTable(2)" style="cursor:pointer;" title="Sort by Sector">Sector &#x2195;</th>
+                    <th onclick="sortTable(3)" style="cursor:pointer;" title="Sort by Price">Price &#x2195;</th>
+                    <th onclick="sortTable(4)" style="cursor:pointer;" title="Sort by Dividend Yield">Yield &#x2195;</th>
+                    <th onclick="sortTable(5)" style="cursor:pointer;" title="Sort by P/E Ratio">P/E Ratio &#x2195;</th>
+                    <th onclick="sortTable(6)" style="cursor:pointer;" title="Sort by Market Cap">Market Cap &#x2195;</th>
+                </tr>
+            </thead>
+            <tbody>
+
+        <tr>
+            <td><strong>BRK-B</strong></td>
+            <td>Berkshire Hathaway Inc. New</td>
+            <td>Financial Services</td>
+            <td>$490.03</td>
+            <td>N/A</td>
+            <td>15.80</td>
+            <td>$1.06T</td>
+        </tr>
+        <tr>
+            <td><strong>V</strong></td>
+            <td>Visa Inc.</td>
+            <td>Financial Services</td>
+            <td>$307.14</td>
+            <td>0.87%</td>
+            <td>28.81</td>
+            <td>$592.18B</td>
+        </tr>
+        <tr>
+            <td><strong>JNJ</strong></td>
+            <td>Johnson & Johnson</td>
+            <td>Healthcare</td>
+            <td>$241.52</td>
+            <td>2.15%</td>
+            <td>21.88</td>
+            <td>$582.04B</td>
+        </tr>
+        <tr>
+            <td><strong>WMT</strong></td>
+            <td>Walmart Inc.</td>
+            <td>Consumer Defensive</td>
+            <td>$126.52</td>
+            <td>0.78%</td>
+            <td>46.34</td>
+            <td>$1.01T</td>
+        </tr>
+        <tr>
+            <td><strong>PG</strong></td>
+            <td>Procter & Gamble Company (The)</td>
+            <td>Consumer Defensive</td>
+            <td>$150.65</td>
+            <td>2.81%</td>
+            <td>22.32</td>
+            <td>$352.59B</td>
+        </tr>
+        <tr>
+            <td><strong>UNH</strong></td>
+            <td>UnitedHealth Group Incorporated</td>
+            <td>Healthcare</td>
+            <td>$282.09</td>
+            <td>3.13%</td>
+            <td>21.32</td>
+            <td>$256.05B</td>
+        </tr>
+        <tr>
+            <td><strong>MA</strong></td>
+            <td>Mastercard Incorporated</td>
+            <td>Financial Services</td>
+            <td>$497.99</td>
+            <td>0.70%</td>
+            <td>30.13</td>
+            <td>$444.43B</td>
+        </tr>
+        <tr>
+            <td><strong>HD</strong></td>
+            <td>Home Depot, Inc. (The)</td>
+            <td>Consumer Cyclical</td>
+            <td>$339.03</td>
+            <td>2.75%</td>
+            <td>23.81</td>
+            <td>$337.51B</td>
+        </tr>
+        <tr>
+            <td><strong>COST</strong></td>
+            <td>Costco Wholesale Corporation</td>
+            <td>Consumer Defensive</td>
+            <td>$1008.43</td>
+            <td>0.52%</td>
+            <td>52.36</td>
+            <td>$447.43B</td>
+        </tr>
+        <tr>
+            <td><strong>ABBV</strong></td>
+            <td>AbbVie Inc.</td>
+            <td>Healthcare</td>
+            <td>$219.68</td>
+            <td>3.15%</td>
+            <td>92.69</td>
+            <td>$388.43B</td>
+        </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <section style="margin-top: 3rem;">
+        <h2>Detailed Equity Analysis</h2>
+        <p style="margin-bottom: 1.5rem;">Below is a comprehensive breakdown of each stock in our list. By combining fundamental metrics like valuation multiples and dividend yields with qualitative analysis of company operations and sector dynamics, investors can make more informed portfolio allocation decisions.</p>
+        <div id="analysisContainer">
+
+        <div class="card item-card">
+            <h3>BRK-B - Berkshire Hathaway Inc. New</h3>
+            <p><strong>Sector:</strong> Financial Services | <strong>Price:</strong> $490.03 | <strong>Yield:</strong> N/A | <strong>P/E:</strong> 15.80 | <strong>Market Cap:</strong> $1.06T</p>
+            <p>Berkshire Hathaway Inc., together with its subsidiaries, engages in the insurance, freight rail transportation, and utility businesses. The company provides property, casualty, life, accident, and hea...</p>
+            <p><a href="/stock-comparison-tool?symbols=BRK-B" style="color: var(--accent-color); font-weight: bold;">Compare BRK-B metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>V - Visa Inc.</h3>
+            <p><strong>Sector:</strong> Financial Services | <strong>Price:</strong> $307.14 | <strong>Yield:</strong> 0.87% | <strong>P/E:</strong> 28.81 | <strong>Market Cap:</strong> $592.18B</p>
+            <p>Visa Inc. operates as a payment technology company in the United States and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=V" style="color: var(--accent-color); font-weight: bold;">Compare V metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>JNJ - Johnson & Johnson</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $241.52 | <strong>Yield:</strong> 2.15% | <strong>P/E:</strong> 21.88 | <strong>Market Cap:</strong> $582.04B</p>
+            <p>Johnson & Johnson, together with its subsidiaries, engages in the research and development, manufacture, and sale of a range of products in the healthcare field worldwide. It operates in two segments, Innovative Medicine and MedTech.</p>
+            <p><a href="/stock-comparison-tool?symbols=JNJ" style="color: var(--accent-color); font-weight: bold;">Compare JNJ metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>WMT - Walmart Inc.</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $126.52 | <strong>Yield:</strong> 0.78% | <strong>P/E:</strong> 46.34 | <strong>Market Cap:</strong> $1.01T</p>
+            <p>Walmart Inc. engages in the operation of retail and wholesale stores and clubs, eCommerce websites, and mobile applications worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=WMT" style="color: var(--accent-color); font-weight: bold;">Compare WMT metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>PG - Procter & Gamble Company (The)</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $150.65 | <strong>Yield:</strong> 2.81% | <strong>P/E:</strong> 22.32 | <strong>Market Cap:</strong> $352.59B</p>
+            <p>The Procter & Gamble Company provides branded consumer packaged goods worldwide. It operates through Beauty; Grooming; Health Care; Fabric & Home Care; and Baby, Feminine & Family Care segments.</p>
+            <p><a href="/stock-comparison-tool?symbols=PG" style="color: var(--accent-color); font-weight: bold;">Compare PG metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>UNH - UnitedHealth Group Incorporated</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $282.09 | <strong>Yield:</strong> 3.13% | <strong>P/E:</strong> 21.32 | <strong>Market Cap:</strong> $256.05B</p>
+            <p>UnitedHealth Group Incorporated operates as a health care company in the United States and internationally. It operates through four segments: Optum Health, Optum Insight, Optum Rx; and UnitedHealthcare.</p>
+            <p><a href="/stock-comparison-tool?symbols=UNH" style="color: var(--accent-color); font-weight: bold;">Compare UNH metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>MA - Mastercard Incorporated</h3>
+            <p><strong>Sector:</strong> Financial Services | <strong>Price:</strong> $497.99 | <strong>Yield:</strong> 0.70% | <strong>P/E:</strong> 30.13 | <strong>Market Cap:</strong> $444.43B</p>
+            <p>Mastercard Incorporated, a technology company, provides transaction processing and other payment-related products and services in the United States and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=MA" style="color: var(--accent-color); font-weight: bold;">Compare MA metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>HD - Home Depot, Inc. (The)</h3>
+            <p><strong>Sector:</strong> Consumer Cyclical | <strong>Price:</strong> $339.03 | <strong>Yield:</strong> 2.75% | <strong>P/E:</strong> 23.81 | <strong>Market Cap:</strong> $337.51B</p>
+            <p>The Home Depot, Inc. operates as a home improvement retailer in the United States and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=HD" style="color: var(--accent-color); font-weight: bold;">Compare HD metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>COST - Costco Wholesale Corporation</h3>
+            <p><strong>Sector:</strong> Consumer Defensive | <strong>Price:</strong> $1008.43 | <strong>Yield:</strong> 0.52% | <strong>P/E:</strong> 52.36 | <strong>Market Cap:</strong> $447.43B</p>
+            <p>Costco Wholesale Corporation, together with its subsidiaries, engages in the operation of membership warehouses in the United States, Puerto Rico, Canada, Mexico, Japan, the United Kingdom, Korea, Australia, Taiwan, China, Spain, France, Iceland, New Zealand, and Sweden.</p>
+            <p><a href="/stock-comparison-tool?symbols=COST" style="color: var(--accent-color); font-weight: bold;">Compare COST metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>ABBV - AbbVie Inc.</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $219.68 | <strong>Yield:</strong> 3.15% | <strong>P/E:</strong> 92.69 | <strong>Market Cap:</strong> $388.43B</p>
+            <p>AbbVie Inc., a research-based biopharmaceutical company, engages in the research and development, manufacturing, commercializing, and sale of medicines and therapies worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=ABBV" style="color: var(--accent-color); font-weight: bold;">Compare ABBV metrics &rarr;</a></p>
+        </div>
+        </div>
+    </section>
+
+
+    <section style="margin-top: 3rem;">
+        <h2>Our Methodology and Market Approach</h2>
+        <p>Understanding how we select and analyze equities is crucial for making informed investment decisions. Our proprietary methodology involves a rigorous, multi-factor screening process designed to identify companies with durable competitive advantages, robust financial health, and compelling valuation metrics. We begin by defining the investable universe, which typically includes large-cap and mid-cap equities trading on major global exchanges.</p>
+
+        <p>The first pillar of our analysis focuses on fundamental financial metrics. We meticulously review income statements, balance sheets, and cash flow statements to assess a company's profitability, leverage, and liquidity. Key indicators such as the Price-to-Earnings (P/E) ratio, Price-to-Book (P/B) ratio, and Free Cash Flow (FCF) yield are evaluated relative to industry peers and historical averages. A company must demonstrate consistent revenue growth and expanding profit margins to warrant consideration. Furthermore, we pay close attention to return on invested capital (ROIC), as it is a strong indicator of management's ability to efficiently allocate capital.</p>
+
+        <p>Beyond quantitative metrics, our methodology heavily weights qualitative factors. We conduct deep-dive research into the competitive landscape of each industry, identifying structural tailwinds and potential disruptive threats. Evaluating a company's economic moat—whether derived from network effects, switching costs, cost advantages, or intangible assets like patents and brand strength—is central to our approach. We look for businesses that can maintain pricing power and protect their market share over the long term.</p>
+
+
+    </section>
+
+
+
+
+    <section class="faq-section" style="margin-top: 3rem;">
+        <h2>Frequently Asked Questions</h2>
+
+        <details>
+            <summary>What are the best stocks to invest in 2025?</summary>
+            <p>Identifying the best stocks to invest in 2025 requires balancing growth potential with downside protection. Generally, these include established dividend payers, defensive consumer staples, and healthcare companies that offer stability regardless of economic conditions. Examples often cited for 2025 include Johnson & Johnson, Walmart, and Procter & Gamble, which boast strong balance sheets and pricing power.</p>
+        </details>
+        <details>
+            <summary>What were the best stocks to invest in 2024?</summary>
+            <p>In 2024, the market narrative was predominantly driven by mega-cap technology companies, often referred to as the 'Magnificent Seven.' These firms capitalized on the artificial intelligence boom and robust consumer spending. However, as the year progressed, there was a noticeable rotation into value sectors and small-cap stocks as investors sought broader market participation.</p>
+        </details>
+        <details>
+            <summary>What are the best stocks to invest in?</summary>
+            <p>The overarching question of what are the best stocks to invest in has no single correct answer, as it fundamentally depends on your specific time horizon, risk appetite, and investment objectives. A universally common and effective strategy involves building a diversified core portfolio composed of broad market index funds, supplemented by carefully selected blue-chip dividend stocks for income and stability.</p>
+        </details>
+        <details>
+            <summary>What are the best stocks to invest in 2026?</summary>
+            <p>Looking toward 2026, the focus shifts to sustainability and resilience. The best stocks to invest in for 2026 are companies that maintain sustainable dividend payout ratios, possess the pricing power to navigate inflationary pressures, and operate resilient business models that provide essential goods or services, ensuring steady cash flow across economic cycles.</p>
+        </details>
+        <details>
+            <summary>How do I choose the best stocks?</summary>
+            <p>Choosing the best stocks involves a multifaceted approach combining quantitative and qualitative analysis. Key considerations include evaluating the company's financial health via its balance sheet, understanding its competitive position or 'moat' within the industry, analyzing valuation metrics such as the Price-to-Earnings (P/E) ratio, and aligning the investment with your personal portfolio strategy.</p>
+        </details>
+    </section>
+
+    <section class="internal-links" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+        <h3>Related Resources</h3>
+        <p style="margin-bottom: 1rem;">Expand your research by exploring our other guides and interactive tools:</p>
+        <ul>
+            <li><a href="/best-stocks-to-buy-now">Best Stocks to Buy Now</a></li>
+            <li><a href="/best-stocks-to-invest-in-2025">Best Stocks to Invest in 2025</a></li>
+            <li><a href="/dividend-stocks">Top Dividend Stocks Guide</a></li>
+            <li><a href="/stock-screener">Interactive Stock Screener</a></li>
+            <li><a href="/stock-comparison-tool">Stock Comparison Tool</a></li>
+        </ul>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+
+        // Filter table rows
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+
+        // Filter analysis cards
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+
+    // Table sorting
+    function sortTable(n) {
+        const table = document.getElementById("dataTable");
+        let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                let valX = x.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+                let valY = y.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+
+                if (valX === 'n/a') valX = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valX.endsWith('t')) valX = parseFloat(valX) * 1e12;
+                else if (valX.endsWith('b')) valX = parseFloat(valX) * 1e9;
+                else if (valX.endsWith('m')) valX = parseFloat(valX) * 1e6;
+                else if (!isNaN(parseFloat(valX))) valX = parseFloat(valX);
+
+                if (valY === 'n/a') valY = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valY.endsWith('t')) valY = parseFloat(valY) * 1e12;
+                else if (valY.endsWith('b')) valY = parseFloat(valY) * 1e9;
+                else if (valY.endsWith('m')) valY = parseFloat(valY) * 1e6;
+                else if (!isNaN(parseFloat(valY))) valY = parseFloat(valY);
+
+                if (dir == "asc") {
+                    if (valX > valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (valX < valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; margin: 0; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background-color: rgba(0,0,0,0.02); white-space: nowrap; user-select: none; }
+    th:hover { background-color: rgba(0,0,0,0.05); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; font-size: 1.1rem; }
+    .faq-section p { margin-top: 1rem; color: var(--text-secondary); line-height: 1.6; }
+    .internal-links ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+    .internal-links a { text-decoration: none; color: var(--accent-color); font-weight: 600; padding: 0.5rem 1rem; border-radius: 6px; background: rgba(74, 143, 231, 0.1); }
+    .internal-links a:hover { background: rgba(74, 143, 231, 0.2); }
+  </style>
+</SiteLayout>

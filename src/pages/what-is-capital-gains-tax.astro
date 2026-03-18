@@ -1,0 +1,290 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is Capital Gains Tax? A Complete Guide for Investors",
+  description: "Learn what capital gains tax is, the difference between short-term and long-term rates, and strategies to minimize your tax burden when investing.",
+  category: "guide",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What exactly is a capital gains tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Capital gains tax is a tax on the profit realized from the sale of a non-inventory asset that was purchased for a lower price. The most common capital gains are realized from the sale of stocks, bonds, precious metals, real estate, and property."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is the capital gains tax rate determined?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The capital gains tax rate is determined by how long you held the asset before selling it and your taxable income. Assets held for a year or less are subject to short-term capital gains tax, which equals your ordinary income tax rate. Assets held for more than a year are subject to long-term capital gains tax rates, which are typically 0%, 15%, or 20% depending on your income."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I have to pay capital gains tax if I don't sell?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, capital gains are not taxed until they are realized, meaning you must sell the asset for a profit before the tax applies. Unrealized gains (when an asset has increased in value but you still own it) are not subject to capital gains tax."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use capital losses to offset capital gains?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, through a strategy called tax-loss harvesting, you can sell assets at a loss to offset the taxes you owe on capital gains. If your capital losses exceed your capital gains, you can use up to $3,000 of those losses to offset ordinary income in a given tax year, and carry forward any remaining losses to future years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are dividends taxed as capital gains?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Qualified dividends are taxed at the more favorable long-term capital gains rates (0%, 15%, or 20%). Non-qualified (or ordinary) dividends are taxed at your ordinary income tax rate, similar to short-term capital gains."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-capital-gains-tax" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>What is Capital Gains Tax?</h1>
+      <p>Understanding capital gains tax is one of the most important concepts for any investor looking to build long-term wealth. When you buy an asset and sell it for a profit, the government wants a piece of that profit. But how much they take depends entirely on your strategy, your income, and how long you held the asset.</p>
+
+      <h2>The Basics: What Exactly is a Capital Gains Tax?</h2>
+      <p>A capital gains tax is a tax imposed on the profit realized from the sale of an asset. But the phrase "profit realized from the sale" is what trips up most beginner investors.</p>
+
+      <p>Let's define the two most important terms in investing and taxation: <strong>Realized</strong> and <strong>Unrealized</strong>.</p>
+
+      <div class="highlight-box">
+        <h3>Unrealized Gains vs. Realized Gains</h3>
+        <p>If you purchase a share of stock for $100 and it grows to $150 over the next year, you have made a $50 "profit" on paper. However, because you haven't sold the stock, that $50 is an <strong>unrealized gain</strong>. You do not owe any capital gains tax on this $50 growth.</p>
+        <p>It's only when you press the "sell" button and convert that stock back into cash that the gain becomes <strong>realized</strong>. That is the moment the IRS takes notice and a tax event occurs.</p>
+      </div>
+
+      <p>Capital gains don't just apply to stocks. They apply to almost any asset you buy and sell for a profit, including:</p>
+      <ul>
+        <li>Stocks and Exchange-Traded Funds (ETFs)</li>
+        <li>Bonds</li>
+        <li>Real Estate (including your primary residence, though there are special exemptions)</li>
+        <li>Precious Metals (like Gold and Silver)</li>
+        <li>Cryptocurrency</li>
+        <li>Collectibles (like art or vintage cars)</li>
+      </ul>
+
+      <p>While the concept is straightforward—make a profit, pay a tax—the actual rate you pay is determined by a single, crucial factor: <strong>time</strong>.</p>
+
+      <h2>Short-Term vs. Long-Term Capital Gains Tax Rates</h2>
+      <p>The IRS heavily incentivizes long-term investing. The tax code essentially penalizes you for trading in and out of stocks quickly, and rewards you for buying and holding.</p>
+
+      <p>The time you hold an asset before selling it dictates which of two categories your tax rate falls into:</p>
+
+      <h3>1. Short-Term Capital Gains (Held for 1 year or less)</h3>
+      <p>If you buy a stock and sell it for a profit 365 days later (or sooner), the profit is considered a short-term capital gain. Short-term capital gains do not have their own special tax brackets. Instead, the profit is simply added to your ordinary income for the year and taxed at your standard federal income tax bracket.</p>
+
+      <p>For high earners, this means short-term capital gains can be taxed at up to 37% at the federal level, not including state taxes.</p>
+
+      <div class="card">
+        <h4>Short-Term Example</h4>
+        <p>Imagine your ordinary income places you in the 24% tax bracket. If you buy 100 shares of a company for $10,000 and sell them six months later for $15,000, your $5,000 profit is a short-term capital gain.</p>
+        <p>Because you held the asset for less than a year, that $5,000 is taxed at your ordinary income rate of 24%. You will owe <strong>$1,200</strong> in taxes on this trade.</p>
+      </div>
+
+      <h3>2. Long-Term Capital Gains (Held for more than 1 year)</h3>
+      <p>If you hold an asset for 366 days or more before selling it, the profit is categorized as a long-term capital gain. This is where the magic of the tax code happens for investors.</p>
+
+      <p>Long-term capital gains benefit from significantly lower, preferential tax rates. Depending on your taxable income and filing status, your long-term capital gains rate will be <strong>0%, 15%, or 20%</strong>.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Long-Term Capital Gains Rate</th>
+              <th>Who pays it?</th>
+              <th>Why it matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>0%</strong></td>
+              <td>Lower-income earners (Single filers earning roughly under $47,025 in 2024)</td>
+              <td>You pay no federal tax on your investment profits. This is a massive wealth-building tool for lower-income investors.</td>
+            </tr>
+            <tr>
+              <td><strong>15%</strong></td>
+              <td>Most middle-to-high income earners (Single filers earning between ~$47,025 and ~$518,900 in 2024)</td>
+              <td>This is the rate the vast majority of investors pay. It is often significantly lower than their ordinary income tax rate.</td>
+            </tr>
+            <tr>
+              <td><strong>20%</strong></td>
+              <td>Highest income earners (Single filers earning over ~$518,900 in 2024)</td>
+              <td>Even the wealthiest investors pay a maximum base rate of 20%, which is nearly half the top ordinary income tax bracket of 37%.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><em>Note: Very high earners may also be subject to an additional 3.8% Net Investment Income Tax (NIIT), pushing the top effective federal rate to 23.8%. State taxes may also apply.</em></p>
+
+      <div class="card">
+        <h4>Long-Term Example</h4>
+        <p>Let's take the same scenario as before: you buy $10,000 of stock and it grows to $15,000. But this time, you wait <strong>13 months</strong> before selling it.</p>
+        <p>Your $5,000 profit is now a long-term capital gain. If your income places you in the 15% long-term bracket, you will owe <strong>$750</strong> in taxes on this trade.</p>
+        <p>Simply by waiting a few extra months to hit the one-year mark, you saved $450 in taxes.</p>
+      </div>
+
+      <p>This is why day traders face an incredibly steep uphill battle. Every successful trade they make is taxed at the highest possible rate (ordinary income), creating a massive drag on their compound growth compared to a long-term buy-and-hold investor.</p>
+
+      <h2>Real-World Example: Calculating Capital Gains with Apple (AAPL)</h2>
+      <p>Let's walk through exactly how this works with a real-world company, using historical data to highlight the power of holding for the long term and the danger of short-term trading.</p>
+
+      <div class="card">
+        <h3>Scenario 1: The Short-Term Trader</h3>
+        <p>Imagine you bought $10,000 worth of Apple (AAPL) stock on <strong>January 3, 2023</strong>. Apple was trading at approximately $125 per share, giving you exactly 80 shares.</p>
+        <p>By <strong>July 19, 2023</strong> (just over six months later), Apple stock had surged to approximately $195 per share. The value of your 80 shares is now $15,600.</p>
+        <p>You decide to take your profits and sell all 80 shares.</p>
+
+        <h4>The Tax Calculation</h4>
+        <ul>
+          <li><strong>Proceeds (Sale Price):</strong> $15,600</li>
+          <li><strong>Cost Basis (Purchase Price):</strong> $10,000</li>
+          <li><strong>Capital Gain (Profit):</strong> $5,600</li>
+        </ul>
+
+        <p>Because you held the stock for only six months, this is a <strong>short-term capital gain</strong>.</p>
+        <p>If you are a single filer with a taxable income of $80,000, your ordinary federal income tax bracket is 22%.</p>
+        <p>Your federal tax owed: <strong>$1,232</strong> (22% of $5,600).</p>
+        <p>Your after-tax profit: <strong>$4,368</strong>.</p>
+      </div>
+
+      <div class="card">
+        <h3>Scenario 2: The Long-Term Investor</h3>
+        <p>Now, imagine a different scenario. You bought the same $10,000 worth of Apple (AAPL) stock on <strong>January 3, 2023</strong> (80 shares at $125).</p>
+        <p>You held the stock through the end of 2023 and into 2024. Let's say you decide to sell your 80 shares on <strong>January 24, 2024</strong>. On that date, Apple was trading at approximately $195 per share—the exact same price as our short-term scenario.</p>
+
+        <h4>The Tax Calculation</h4>
+        <ul>
+          <li><strong>Proceeds (Sale Price):</strong> $15,600</li>
+          <li><strong>Cost Basis (Purchase Price):</strong> $10,000</li>
+          <li><strong>Capital Gain (Profit):</strong> $5,600</li>
+        </ul>
+
+        <p>Because you held the stock for more than a year (386 days), this is a <strong>long-term capital gain</strong>.</p>
+        <p>If you are the same single filer with a taxable income of $80,000, your long-term capital gains bracket is 15%.</p>
+        <p>Your federal tax owed: <strong>$840</strong> (15% of $5,600).</p>
+        <p>Your after-tax profit: <strong>$4,760</strong>.</p>
+      </div>
+
+      <div class="highlight-box">
+        <p><strong>The takeaway:</strong> By simply holding the stock for an additional six months before selling at the exact same price, the long-term investor saved $392 in federal taxes—increasing their after-tax profit by nearly 10%.</p>
+      </div>
+
+      <h2>How to Calculate Your Cost Basis</h2>
+      <p>In the Apple example above, calculating the profit was simple. We subtracted the purchase price ($10,000) from the sale price ($15,600). The original purchase price is called your <strong>cost basis</strong>.</p>
+
+      <p>But what if you didn't buy all your shares at once? What if you bought $1,000 of Apple stock every month for two years?</p>
+
+      <p>If you buy shares of the same company at different times and at different prices, you will have multiple "tax lots." When you eventually decide to sell some (but not all) of those shares, you have to decide <em>which</em> shares you are selling.</p>
+
+      <p>This is where cost basis accounting methods come into play. Most brokerages default to one of two methods:</p>
+
+      <h3>1. First-In, First-Out (FIFO)</h3>
+      <p>This is the default method for almost every major brokerage. When you sell shares, the brokerage assumes you are selling the oldest shares you bought first.</p>
+      <p><strong>Why it matters:</strong> FIFO is generally best for ensuring your shares qualify for long-term capital gains rates. Because it sells your oldest shares first, those shares are the most likely to have been held for more than a year.</p>
+
+      <h3>2. Specific Identification (Spec ID)</h3>
+      <p>This method allows you to log into your brokerage account and manually select exactly which shares (or "tax lots") you want to sell.</p>
+      <p><strong>Why it matters:</strong> If you bought shares of a stock at high prices and low prices, you might want to specifically sell the shares you bought at the highest price. Why? Because the higher the purchase price, the lower your profit (capital gain) will be when you sell, minimizing your tax bill.</p>
+
+      <p>Understanding cost basis is essential because the IRS only taxes you on the difference between the sale price and the cost basis. If you can legally raise your cost basis (by selecting higher-priced shares to sell), you can lower your capital gains tax.</p>
+
+      <h2>Strategies to Minimize Capital Gains Tax</h2>
+      <p>Now that you understand what capital gains tax is and how it works, the next logical step is to learn how to legally minimize it. The U.S. tax code is filled with incentives for investors to keep their money invested and grow their wealth.</p>
+
+      <h3>1. The Holding Period Rule (Buy and Hold)</h3>
+      <p>The simplest and most effective strategy for the vast majority of investors is to simply hold onto your investments for at least one year and a day before selling.</p>
+      <p>This strategy alone drops your tax rate from ordinary income (up to 37%) to long-term capital gains rates (0%, 15%, or 20%). Over a lifetime of investing, the difference between short-term trading and long-term investing can be hundreds of thousands, if not millions, of dollars in tax savings.</p>
+
+      <h3>2. Tax-Loss Harvesting</h3>
+      <p>Tax-loss harvesting is a powerful tool used by advanced investors to offset their capital gains with capital losses.</p>
+      <p>If you have an investment that has lost money (an unrealized loss) and another investment that has made money (an unrealized gain), you can strategically sell the losing investment to create a "realized loss." You then sell the winning investment to create a "realized gain."</p>
+
+      <div class="card">
+        <h4>How Tax-Loss Harvesting Works</h4>
+        <p>Imagine you have realized $10,000 in long-term capital gains this year by selling Stock A.</p>
+        <p>You also own Stock B, which has performed poorly and is down $8,000 from your original purchase price. You decide to sell Stock B, realizing an $8,000 capital loss.</p>
+        <p>When you file your taxes, the IRS allows you to subtract your capital losses from your capital gains. Instead of owing taxes on $10,000, you will only owe taxes on your net gain of <strong>$2,000</strong> ($10,000 gain minus $8,000 loss).</p>
+      </div>
+
+      <p>But what if your losses exceed your gains? The IRS allows you to use up to <strong>$3,000</strong> in net capital losses to offset your <em>ordinary income</em> each year (e.g., your salary). If your net losses are greater than $3,000, you can carry the remaining balance forward to future tax years indefinitely.</p>
+
+      <div class="highlight-box">
+        <h3>Beware the Wash-Sale Rule</h3>
+        <p>If you use tax-loss harvesting, you must be extremely careful of the IRS "Wash-Sale Rule."</p>
+        <p>This rule states that if you sell an investment at a loss to harvest the tax benefit, you cannot buy a "substantially identical" investment within 30 days before or after the sale.</p>
+        <p>If you do, the IRS will disallow the capital loss, and you will not get the tax deduction. For example, you cannot sell shares of the S&P 500 ETF (SPY) at a loss and buy them back the next day just to get the tax write-off.</p>
+      </div>
+
+      <h3>3. Utilize Tax-Advantaged Accounts</h3>
+      <p>The ultimate way to avoid capital gains tax is to use accounts specifically designed by the government to shield your investments from taxes. These accounts come with restrictions on when you can withdraw the money, but the tax benefits are immense.</p>
+
+      <ul>
+        <li><strong>Traditional 401(k) and IRA:</strong> Contributions are tax-deductible now, and your investments grow tax-deferred. You do not pay any capital gains tax when you buy and sell investments inside these accounts. However, you will pay ordinary income tax when you withdraw the money in retirement.</li>
+        <li><strong>Roth 401(k) and Roth IRA:</strong> You contribute money that has already been taxed (no upfront deduction). However, your investments grow tax-free, and you pay <strong>zero capital gains tax</strong> and zero ordinary income tax when you withdraw the money in retirement.</li>
+        <li><strong>Health Savings Account (HSA):</strong> Often called the ultimate tax hack. Contributions are tax-deductible, growth is tax-free (no capital gains tax), and withdrawals are tax-free if used for qualified medical expenses.</li>
+      </ul>
+
+      <h3>4. Donate Appreciated Assets</h3>
+      <p>If you are charitably inclined, donating an asset that has gone up in value is significantly more tax-efficient than selling the asset, paying capital gains tax, and donating the cash.</p>
+      <p>If you donate a stock you have held for more than a year directly to a 501(c)(3) charity, you never have to pay capital gains tax on the appreciation. Furthermore, you can take a tax deduction for the full fair market value of the stock on the day you donated it.</p>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions About Capital Gains Tax</h2>
+
+        <div class="faq-item">
+          <h3>What exactly is a capital gains tax?</h3>
+          <p>Capital gains tax is a tax on the profit realized from the sale of a non-inventory asset that was purchased for a lower price. The most common capital gains are realized from the sale of stocks, bonds, precious metals, real estate, and property.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How is the capital gains tax rate determined?</h3>
+          <p>The capital gains tax rate is determined by how long you held the asset before selling it and your taxable income. Assets held for a year or less are subject to short-term capital gains tax, which equals your ordinary income tax rate. Assets held for more than a year are subject to long-term capital gains tax rates, which are typically 0%, 15%, or 20% depending on your income.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Do I have to pay capital gains tax if I don't sell?</h3>
+          <p>No, capital gains are not taxed until they are realized, meaning you must sell the asset for a profit before the tax applies. Unrealized gains (when an asset has increased in value but you still own it) are not subject to capital gains tax.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Can I use capital losses to offset capital gains?</h3>
+          <p>Yes, through a strategy called tax-loss harvesting, you can sell assets at a loss to offset the taxes you owe on capital gains. If your capital losses exceed your capital gains, you can use up to $3,000 of those losses to offset ordinary income in a given tax year, and carry forward any remaining losses to future years.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Are dividends taxed as capital gains?</h3>
+          <p>Qualified dividends are taxed at the more favorable long-term capital gains rates (0%, 15%, or 20%). Non-qualified (or ordinary) dividends are taxed at your ordinary income tax rate, similar to short-term capital gains.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Use CSS variables only: var(--accent-color), var(--card-bg), var(--border-color), var(--text-primary), var(--text-secondary), var(--bg-color) */
+  /* NO :root declarations */
+  .page-content {
+    color: var(--text-primary);
+  }
+</style>

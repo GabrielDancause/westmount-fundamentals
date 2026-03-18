@@ -1,0 +1,581 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Stock Return Calculator: Total ROI & Annualized Growth",
+      "description": "Calculate your true stock market returns. Find total profit, percentage return, and true annualized rate (CAGR) with this interactive stock return calculator.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do you calculate a stock's return?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The basic formula for a stock's total return is: ((Current Value - Initial Investment) / Initial Investment) × 100. For example, if you buy $1,000 worth of stock and it grows to $1,500, your return is (($1,500 - $1,000) / $1,000) × 100 = 50%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between total return and annualized return?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Total return is the overall percentage gained or lost on an investment over its entire holding period. Annualized return, or Compound Annual Growth Rate (CAGR), shows the average yearly growth rate required to achieve that final value. Annualized return is essential for comparing investments held for different lengths of time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I include dividends in my stock return calculation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, to calculate your true 'Total Return,' you must include both capital appreciation (price increase) and any dividends received. Reinvesting dividends significantly increases long-term compound growth."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good average stock market return?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, the S&P 500 has returned an average of about 10% per year before inflation, or roughly 7% per year after adjusting for inflation. Individual years can vary wildly, but this is the long-term historical benchmark."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this stock return calculator account for inflation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our basic calculator provides nominal returns (before inflation). To find your real return (after inflation), you must subtract the average inflation rate over your holding period from your annualized return."
+          }
+        }
+      ]
+    }
+  ]
+});
+
+export const meta = {
+  title: "Stock Return Calculator: True Annualized Profit Simulator",
+  description: "Made a profit but not sure your actual percentage yield? Calculate your true stock market returns, total profit, and annualized growth rate (CAGR) instantly.",
+  category: "tool",
+  published: "2026-03-24"
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/stock-return-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="calculator-container">
+      <div class="calc-header">
+        <h1>Stock Return Calculator</h1>
+        <p class="subtitle">Calculate your total profit, nominal percentage return, and true annualized rate (CAGR).</p>
+      </div>
+
+      <div class="calc-grid">
+        <div class="input-section">
+          <div class="form-group">
+            <label for="initial-investment">Initial Investment Cost</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="number" id="initial-investment" class="has-prefix" value="1000" min="0" step="10">
+            </div>
+            <p class="input-hint">The total cost basis of the stock</p>
+          </div>
+
+          <div class="form-group">
+            <label for="monthly-contrib">Monthly Contributions</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="number" id="monthly-contrib" class="has-prefix" value="0" min="0" step="10">
+            </div>
+            <p class="input-hint">Amount invested every month (DCA)</p>
+          </div>
+
+          <div class="form-group">
+            <label for="final-value">Final Value (or Current Value)</label>
+            <div class="input-wrapper">
+              <span class="input-prefix">$</span>
+              <input type="number" id="final-value" class="has-prefix" value="1500" min="0" step="10">
+            </div>
+            <p class="input-hint">Including any reinvested dividends</p>
+          </div>
+
+          <div class="form-group">
+            <label for="time-period">Holding Period</label>
+            <div class="input-wrapper">
+              <input type="number" id="time-period" class="has-suffix" value="3" min="0.1" step="0.1">
+              <span class="input-suffix">Years</span>
+            </div>
+            <p class="input-hint">How long you held the investment</p>
+          </div>
+        </div>
+
+        <div class="results-section">
+          <div class="result-card primary">
+            <div class="result-label">Total Nominal Return</div>
+            <div class="result-value" id="roi-percentage">50.00%</div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-label">Annualized Return (CAGR)</div>
+            <div class="result-value" id="annualized-roi">14.47%</div>
+          </div>
+
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Calculation Summary</th>
+                <th class="table-value">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total Principal Invested</td>
+                <td class="table-value" id="table-invested">$1,000.00</td>
+              </tr>
+              <tr>
+                <td>Final Portfolio Value</td>
+                <td class="table-value" id="table-final">$1,500.00</td>
+              </tr>
+              <tr>
+                <td>Total Net Profit</td>
+                <td class="table-value" id="table-profit">$500.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="content-section" style="margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <h2>Understanding Stock Returns: More Than Just Profit</h2>
+        <p>When you invest in the stock market, tracking your performance is crucial. However, looking solely at your net profit (e.g., "I made $500!") doesn't provide enough context to determine if your investment was actually successful compared to alternative options. Our <strong>Stock Return Calculator</strong> helps you convert those raw dollar amounts into standardized percentages, making it easy to benchmark your performance against market averages like the S&P 500.</p>
+
+        <p>There are two primary ways to measure your stock returns: <strong>Total Return</strong> and <strong>Annualized Return (CAGR)</strong>. Let's break down the difference.</p>
+
+        <h3>1. Total Nominal Return (ROI)</h3>
+        <p>Your total return, also known as Return on Investment (ROI), is the simplest way to measure performance. It tells you the total percentage gained or lost on your initial investment over its entire lifespan.</p>
+
+        <div style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; margin-bottom: 0;"><strong>Total Return = [(Current Value - Total Invested) / Total Invested] × 100</strong></p>
+        </div>
+
+        <p>For example, if you bought $1,000 worth of stock, and it is now worth $1,500, your net profit is $500. Divide that by your initial $1,000 investment to get 0.5, or a <strong>50% total return</strong>. This basic formula is identical to the one found in a standard <a href="/roi-calculator">ROI calculator</a>.</p>
+
+        <h3>2. Annualized Return (CAGR)</h3>
+        <p>The fatal flaw of "Total Return" is that it ignores time. A 50% return is incredible if achieved in one year. But if it took 15 years to make that 50%, your money actually grew very slowly and likely lost purchasing power to inflation.</p>
+
+        <p>This is where <strong>Compound Annual Growth Rate (CAGR)</strong> comes in. Annualized return tells you the steady, equivalent yearly rate of return required to get from your starting value to your ending value.</p>
+
+        <div style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="font-family: 'JetBrains Mono', monospace; margin-bottom: 0;"><strong>CAGR = [(Ending Value / Beginning Value) ^ (1 / Number of Years)] - 1</strong></p>
+        </div>
+
+        <p>Using the previous example: you turned $1,000 into $1,500. Let's look at how the <em>holding period</em> changes the reality of that investment:</p>
+        <ul style="margin-left: 2rem; margin-bottom: 1.5rem; color: var(--text-secondary);">
+          <li>If held for <strong>1 year</strong>: Annualized return is 50.0%.</li>
+          <li>If held for <strong>3 years</strong>: Annualized return is 14.47%.</li>
+          <li>If held for <strong>10 years</strong>: Annualized return is 4.14%.</li>
+        </ul>
+
+        <p>If that investment took 10 years, your annualized return (4.14%) significantly underperformed the historical <a href="/average-stock-market-return">average stock market return</a>, which is typically around 7-10% annually.</p>
+
+        <h2>Factoring in Dividends and Dollar-Cost Averaging</h2>
+        <p>A true stock return calculator must account for more than just the initial purchase price and final sale price.</p>
+
+        <p><strong>Dividends:</strong> When calculating your final value, be sure to include any cash dividends received. If you reinvested those dividends (often called a DRIP strategy), they are naturally included in your final portfolio balance. Reinvesting dividends is the key to massive long-term compound growth; you can model this specifically using a <a href="/dividend-reinvestment-calculator">dividend reinvestment calculator</a>.</p>
+
+        <p><strong>Monthly Contributions:</strong> Real-world investors rarely make a single lump-sum purchase. They usually employ Dollar-Cost Averaging (DCA), buying small amounts of stock every month regardless of the price. Our calculator allows you to input "Monthly Contributions" to accurately model the complex internal rate of return when money is added steadily over time.</p>
+
+        <p>For more detailed forecasting using consistent monthly contributions over decades, you may also want to use a dedicated <a href="/compound-interest-calculator">compound interest calculator</a> to visualize your retirement trajectory.</p>
+      </div>
+    </div>
+  </div>
+
+<style>
+  .calculator-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .calc-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .calc-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+
+  :global(input.input-error) {
+    border-color: var(--sell-color, #ef4444) !important;
+    background-color: color-mix(in srgb, var(--sell-color, #ef4444) 10%, transparent) !important;
+  }
+  .form-group {
+
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .input-hint {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  input[type="number"].has-prefix {
+    padding-left: 2rem;
+  }
+
+  input[type="number"].has-suffix {
+    padding-right: 3.5rem;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card.primary {
+    background: var(--card-bg);
+    border-color: var(--accent-color);
+  }
+
+  .result-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .result-value.positive {
+    color: var(--accent-color);
+  }
+
+  .result-value.negative {
+    color: var(--text-secondary);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .comparison-table th {
+    background: var(--bg-color);
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .comparison-table td {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .table-value {
+    text-align: right;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", function() {
+    const inputs = [
+      document.getElementById('initial-investment'),
+      document.getElementById('monthly-contrib'),
+      document.getElementById('final-value'),
+      document.getElementById('time-period')
+    ];
+
+    const elements = {
+      roiPercentage: document.getElementById('roi-percentage'),
+      annualizedRoi: document.getElementById('annualized-roi'),
+      tableInvested: document.getElementById('table-invested'),
+      tableFinal: document.getElementById('table-final'),
+      tableProfit: document.getElementById('table-profit')
+    };
+
+    function formatCurrency(num) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    function formatPercent(num) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num / 100);
+    }
+
+    function calculate() {
+      let initialStr = inputs[0].value;
+      let monthlyStr = inputs[1].value;
+      let finalStr = inputs[2].value;
+      let yearsStr = inputs[3].value;
+
+      let initial = parseFloat(initialStr);
+      let monthly = parseFloat(monthlyStr);
+      let final = parseFloat(finalStr);
+      let years = parseFloat(yearsStr);
+
+      let valid = true;
+      if (isNaN(initial) || initial < 0) { inputs[0].classList.add('input-error'); valid = false; initial = 0; } else { inputs[0].classList.remove('input-error'); }
+      if (isNaN(monthly) || monthly < 0) { inputs[1].classList.add('input-error'); monthly = 0; } else { inputs[1].classList.remove('input-error'); }
+      if (isNaN(final) || final < 0) { inputs[2].classList.add('input-error'); valid = false; final = 0; } else { inputs[2].classList.remove('input-error'); }
+      if (isNaN(years) || years <= 0) { inputs[3].classList.add('input-error'); valid = false; years = 1; } else { inputs[3].classList.remove('input-error'); }
+
+      if (!valid) {
+        elements.roiPercentage.textContent = 'N/A';
+        elements.annualizedRoi.textContent = 'N/A';
+        elements.roiPercentage.className = 'result-value';
+        elements.annualizedRoi.className = 'result-value';
+
+        elements.tableInvested.textContent = 'N/A';
+        elements.tableFinal.textContent = 'N/A';
+        elements.tableProfit.textContent = 'N/A';
+        return;
+      }
+
+      const totalMonths = years * 12;
+      const totalContributions = monthly * totalMonths;
+      const totalInvested = initial + totalContributions;
+
+      if (totalInvested <= 0) {
+        elements.roiPercentage.textContent = 'N/A';
+        elements.annualizedRoi.textContent = 'N/A';
+        elements.roiPercentage.className = 'result-value';
+        elements.annualizedRoi.className = 'result-value';
+
+        elements.tableInvested.textContent = formatCurrency(totalInvested);
+        elements.tableFinal.textContent = formatCurrency(final);
+        elements.tableProfit.textContent = formatCurrency(final - totalInvested);
+        return;
+      }
+
+      const profit = final - totalInvested;
+      let roi = (profit / totalInvested) * 100;
+
+      // Float precision fix
+      let fixedRoi = parseFloat(roi.toPrecision(14));
+      if (Math.abs(fixedRoi - Math.round(fixedRoi)) < 1e-14) {
+        roi = Math.round(fixedRoi);
+      } else {
+        roi = fixedRoi;
+      }
+
+      elements.roiPercentage.textContent = formatPercent(roi);
+      elements.roiPercentage.className = 'result-value ' + (roi > 0 ? 'positive' : (roi < 0 ? 'negative' : ''));
+
+      if (years > 0) {
+        let cagr = 0;
+
+        // Complex internal rate of return calculation approximation if monthly contributions exist
+        if (monthly > 0) {
+            // Newton-Raphson method for IRR
+            let r = 0.05; // Initial guess 5%
+            const maxIters = 100;
+            let converged = false;
+
+            for (let i = 0; i < maxIters; i++) {
+                let f = initial * Math.pow(1 + r, totalMonths);
+                let df = totalMonths * initial * Math.pow(1 + r, totalMonths - 1);
+
+                if (r === 0) {
+                    f += monthly * totalMonths;
+                    df += monthly * (totalMonths * (totalMonths + 1)) / 2;
+                } else {
+                    f += monthly * ((Math.pow(1 + r, totalMonths) - 1) / r);
+                    df += monthly * ( (totalMonths * r * Math.pow(1 + r, totalMonths - 1) - Math.pow(1 + r, totalMonths) + 1) / (r * r) );
+                }
+
+                f -= final;
+
+                let nextR = r - f / df;
+                if (Math.abs(nextR - r) < 1e-7) {
+                    r = nextR;
+                    converged = true;
+                    break;
+                }
+                r = nextR;
+            }
+
+            if (converged && r > -1) {
+                // convert monthly IRR to Annualized CAGR
+                cagr = (Math.pow(1 + r, 12) - 1) * 100;
+            } else {
+                // Fallback to simple CAGR if IRR fails to converge
+                cagr = (Math.pow(final / totalInvested, 1 / years) - 1) * 100;
+            }
+        } else {
+            // Standard CAGR
+            if (final > 0) {
+                cagr = (Math.pow(final / initial, 1 / years) - 1) * 100;
+            } else if (final === 0) {
+                cagr = -100;
+            }
+        }
+
+        if (isNaN(cagr) || !isFinite(cagr)) {
+            elements.annualizedRoi.textContent = 'N/A';
+            elements.annualizedRoi.className = 'result-value';
+        } else {
+            let fixedCagr = parseFloat(cagr.toPrecision(14));
+            if (Math.abs(fixedCagr - Math.round(fixedCagr)) < 1e-14) {
+                cagr = Math.round(fixedCagr);
+            } else {
+                cagr = fixedCagr;
+            }
+            elements.annualizedRoi.textContent = formatPercent(cagr);
+            elements.annualizedRoi.className = 'result-value ' + (cagr > 0 ? 'positive' : (cagr < 0 ? 'negative' : ''));
+        }
+      } else {
+        elements.annualizedRoi.textContent = 'N/A';
+        elements.annualizedRoi.className = 'result-value';
+      }
+
+      elements.tableInvested.textContent = formatCurrency(totalInvested);
+      elements.tableFinal.textContent = formatCurrency(final);
+      elements.tableProfit.textContent = formatCurrency(profit);
+
+      elements.tableProfit.style.color = profit > 0 ? 'var(--accent-color)' : (profit < 0 ? 'var(--text-secondary)' : 'var(--text-primary)');
+    }
+
+    inputs.forEach(input => {
+      if (input) {
+        input.addEventListener('input', calculate);
+      }
+    });
+
+    // Initial calculation
+    calculate();
+  });
+</script>
+</SiteLayout>

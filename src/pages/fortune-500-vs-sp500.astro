@@ -1,0 +1,208 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Fortune 500 vs S&P 500: What's the Difference?",
+    "description": "Many investors confuse the Fortune 500 and the S&P 500. Discover the key differences between a revenue-based magazine list and a market-cap weighted stock index.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/fortune-500-vs-sp500"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can a company be in the Fortune 500 but not the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Private companies, like Publix Super Markets or Koch Industries, appear on the Fortune 500 because of their massive revenues, but they cannot be in the S&P 500 because their stock is not publicly traded."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which list is better for tracking the stock market?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The S&P 500 is the standard benchmark for tracking the U.S. stock market because it measures the performance of publicly traded shares. The Fortune 500 is simply a snapshot of corporate revenue size."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who decides which companies make the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A committee at S&P Dow Jones Indices selects companies based on strict criteria including market capitalization, liquidity, and a history of positive earnings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is Walmart #1 on the Fortune 500 but not the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Walmart generates more raw revenue (sales) than any other U.S. company, earning the top Fortune 500 spot. However, its total market value (market cap) is lower than tech giants like Apple or Microsoft, which dominate the S&P 500."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do international companies qualify for either list?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The standard Fortune 500 and S&P 500 lists both require companies to be based in the United States. Fortune magazine does publish a separate 'Global 500' list for international businesses."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Fortune 500 vs S&P 500: What's the Difference?",
+  description: "Many investors confuse the Fortune 500 and the S&P 500. Discover the key differences between a revenue-based magazine list and a market-cap weighted stock...",
+  category: "tool",
+  published: "2024-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Fortune 500 vs S&P 500: What's the Difference?"
+  description="Many investors confuse the Fortune 500 and the S&P 500. Discover the key differences between a revenue-based magazine list and a market-cap weighted stock."
+  canonical="https://westmountfundamentals.com/fortune-500-vs-sp500"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Fortune 500 vs S&P 500</h1>
+      <p class="subtitle">Understanding the Two Most Famous Business Lists</p>
+    </div>
+
+    <section>
+      <p>
+        When you read financial news, you will frequently hear analysts mention the <strong>Fortune 500</strong> and the <strong>S&P 500</strong>. Because both include the number 500 and feature many of the same major U.S. corporations, it is easy to assume they are interchangeable.
+      </p>
+
+      <p>
+        However, these two lists serve entirely different purposes, are measured by completely different metrics, and are compiled by different organizations. One is a magazine's ranking of massive sales numbers, while the other is the foundational benchmark for the U.S. stock market.
+      </p>
+
+      <h2>The Fortune 500: Ranked by Revenue</h2>
+      <p>
+        The Fortune 500 is an annual list published by <em>Fortune</em> magazine that ranks the 500 largest United States corporations strictly by total revenue for their respective fiscal years. It is essentially a measure of sheer size in terms of sales dollars coming through the door.
+      </p>
+
+      <div class="card">
+        <h3>Key Characteristics of the Fortune 500</h3>
+        <ul>
+          <li><strong>Primary Metric:</strong> Gross Revenue (Sales).</li>
+          <li><strong>Ownership:</strong> Includes both public companies and private companies that file financial statements with government agencies.</li>
+          <li><strong>Frequency:</strong> Published once a year as a magazine feature.</li>
+          <li><strong>Creator:</strong> Fortune Media Group Holdings.</li>
+        </ul>
+      </div>
+
+      <p>
+        Because the only requirement is massive revenue, businesses operating in low-margin industries with high volumes of goods—such as retail and grocery chains—often dominate the top spots. They move a lot of product, generating enormous top-line revenue, even if their actual profit margins are thin.
+      </p>
+
+      <h2>The S&P 500: The Market Cap Index</h2>
+      <p>
+        The Standard & Poor's 500, commonly known as the S&P 500, is a stock market index tracking the stock performance of 500 of the largest companies listed on stock exchanges in the United States. Unlike a simple revenue ranking, this is an actively maintained financial instrument used by investors to gauge the overall health of the stock market.
+      </p>
+
+      <div class="card">
+        <h3>Key Characteristics of the S&P 500</h3>
+        <ul>
+          <li><strong>Primary Metric:</strong> Market Capitalization (Total value of all outstanding shares).</li>
+          <li><strong>Ownership:</strong> Strictly limited to publicly traded companies.</li>
+          <li><strong>Frequency:</strong> Updated continuously during trading hours; committee rebalances it quarterly.</li>
+          <li><strong>Creator:</strong> S&P Dow Jones Indices.</li>
+        </ul>
+      </div>
+
+      <p>
+        To be included in the S&P 500, a company must meet strict liquidity requirements, have a minimum market capitalization, and report positive earnings over the most recent four quarters. If you are interested in learning more about how these funds work, check out our guide on <a href="/what-are-stocks">what stocks are</a> or explore <a href="/best-sp500-index-funds-2026">S&P 500 index funds</a>.
+      </p>
+
+      <h2>The Walmart Example: Why The Lists Differ</h2>
+      <p>
+        The easiest way to understand the difference is to look at the top company on each list.
+      </p>
+
+      <div class="callout">
+        <strong>Walmart</strong> consistently holds the #1 spot on the Fortune 500 because it generates hundreds of billions of dollars in retail sales worldwide—more raw revenue than any other U.S. company.
+      </div>
+
+      <p>
+        However, Walmart is rarely in the top 10 of the S&P 500. The S&P 500 is weighted by market capitalization (what investors believe the company is currently worth). Tech giants like Apple, Microsoft, and Nvidia have significantly higher profit margins and growth expectations. Therefore, the stock market values those tech companies much higher than Walmart, placing them at the top of the S&P 500, even though their raw sales figures might be lower.
+      </p>
+
+      <h2>Can a Company Be on Both Lists?</h2>
+      <p>
+        Absolutely. Many of the largest companies in the world—like Apple, Amazon, and Alphabet—are so massive that they generate enough revenue to rank highly on the Fortune 500, while also maintaining the high market capitalization required to dominate the S&P 500.
+      </p>
+
+      <p>
+        Conversely, a massive privately owned company like Publix Super Markets generates enough grocery sales to easily make the Fortune 500. But because you cannot buy shares of Publix on the public stock exchange, it will never appear in the S&P 500.
+      </p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>Can a company be in the Fortune 500 but not the S&P 500?</summary>
+        <p>Yes. Private companies, like Publix Super Markets or Koch Industries, appear on the Fortune 500 because of their massive revenues, but they cannot be in the S&P 500 because their stock is not publicly traded.</p>
+      </details>
+
+      <details>
+        <summary>Which list is better for tracking the stock market?</summary>
+        <p>The S&P 500 is the standard benchmark for tracking the U.S. stock market because it measures the performance of publicly traded shares. The Fortune 500 is simply a snapshot of corporate revenue size.</p>
+      </details>
+
+      <details>
+        <summary>Who decides which companies make the S&P 500?</summary>
+        <p>A committee at S&P Dow Jones Indices selects companies based on strict criteria including market capitalization, liquidity, and a history of positive earnings.</p>
+      </details>
+
+      <details>
+        <summary>Why is Walmart #1 on the Fortune 500 but not the S&P 500?</summary>
+        <p>Walmart generates more raw revenue (sales) than any other U.S. company, earning the top Fortune 500 spot. However, its total market value (market cap) is lower than tech giants like Apple or Microsoft, which dominate the S&P 500.</p>
+      </details>
+
+      <details>
+        <summary>Do international companies qualify for either list?</summary>
+        <p>The standard Fortune 500 and S&P 500 lists both require companies to be based in the United States. Fortune magazine does publish a separate "Global 500" list for international businesses.</p>
+      </details>
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    p { line-height: 1.6; margin-bottom: 1rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  </style>
+</SiteLayout>

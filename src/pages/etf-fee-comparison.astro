@@ -1,0 +1,224 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "ETF Fee Comparison & Expense Ratio Calculator",
+    "description": "Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a good MER for an ETF?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For broad market index funds (like S&P 500 or TSX Composite), a good MER is under 0.10%. For all-in-one asset allocation ETFs, aim for under 0.25%. Specialized or actively managed ETFs may charge 0.50% or more."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are ETF fees paid?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You do not receive a bill for ETF fees. The fund manager deducts the MER directly from the fund's assets on a daily basis. The price you see on your trading screen already reflects the fee deduction."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a 1% fee make a big difference?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Over a 30-year investing horizon, a 1% difference in fees can consume over 25% of your total potential portfolio value due to the loss of compounding interest."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "ETF Fee Comparison Calculator: The Hidden Cost of Investing",
+  description: "Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="ETF Fee Comparison Calculator: The Hidden Cost of Investing"
+  description="Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns."
+  canonical="https://westmountfundamentals.com/etf-fee-comparison"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>ETF Fee Comparison & Calculator</h1>
+      <p>Discover exactly how much of your wealth is being silently consumed by Management Expense Ratios (MER).</p>
+    </div>
+
+    <h2>The Power of Low Fees</h2>
+    <p>When investing in the stock market, you cannot control economic growth, inflation, or interest rates. The one factor completely within your control is how much you pay in fees. </p>
+    <p>Mutual funds in Canada notoriously charge upwards of 2.0% per year. In contrast, broad-market ETFs often charge less than 0.10%. While a difference of 1.9% might sound small, compounded over decades, it represents hundreds of thousands of dollars.</p>
+
+    <div class="card" id="calculator-section">
+      <h3>Interactive Fee Drag Calculator</h3>
+      <p>Enter your investment details below to see how fees impact your final portfolio value over time.</p>
+
+      <div class="calc-grid">
+        <div class="input-group">
+          <label>Initial Investment ($)</label>
+          <input type="number" id="initial" value="10000" />
+        </div>
+        <div class="input-group">
+          <label>Monthly Contribution ($)</label>
+          <input type="number" id="monthly" value="500" />
+        </div>
+        <div class="input-group">
+          <label>Annual Return Before Fees (%)</label>
+          <input type="number" id="return" value="7.0" step="0.1" />
+        </div>
+        <div class="input-group">
+          <label>Investment Horizon (Years)</label>
+          <input type="number" id="years" value="30" />
+        </div>
+      </div>
+
+      <div class="fee-comparison">
+        <div class="fee-scenario">
+          <h4>Low-Cost ETF (0.10% MER)</h4>
+          <p class="result-val" id="etf-result">$0</p>
+          <p class="fee-lost" id="etf-fees">Total Fees Paid: $0</p>
+        </div>
+        <div class="fee-scenario">
+          <h4>Typical Mutual Fund (2.00% MER)</h4>
+          <p class="result-val" id="mf-result">$0</p>
+          <p class="fee-lost" id="mf-fees">Total Fees Paid: $0</p>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <h4>The Cost of High Fees</h4>
+        <p>By choosing the 2.00% mutual fund over the 0.10% ETF, you sacrifice <strong id="difference" style="color:var(--accent-color); font-size:1.2rem;">$0</strong> of your potential wealth.</p>
+      </div>
+      <button onclick="calculateFees()" style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px;">Calculate Impact</button>
+    </div>
+
+    <h2>Average MERs by ETF Category</h2>
+    <p>Not all ETFs are incredibly cheap. Fees usually scale with the complexity of the fund's strategy.</p>
+    <ul>
+      <li><strong>Broad Market (S&P 500, TSX 60):</strong> 0.05% - 0.10%</li>
+      <li><strong>All-in-One Asset Allocation:</strong> 0.20% - 0.25%</li>
+      <li><strong>Dividend & Factor-Based:</strong> 0.20% - 0.60%</li>
+      <li><strong>Thematic & Active Management:</strong> 0.50% - 0.85%+</li>
+      <li><strong>Cryptocurrency ETFs:</strong> 0.40% - 1.00%+</li>
+    </ul>
+
+    <h2>Explore More</h2>
+    <p>Now that you understand fees, find the best low-cost ETFs for your portfolio:</p>
+    <ul>
+      <li><a href="/best-canadian-etfs-2026">Back to the Best Canadian ETFs in 2026 Master Guide</a></li>
+      <li><a href="/best-equity-etfs-canada">Explore Core Canadian Equity ETFs (Ultra-Low Fee)</a></li>
+      <li><a href="/best-all-in-one-etfs">Compare All-in-One Portfolios (Best Value)</a></li>
+    </ul>
+
+    <div class="faq-section" style="margin-top: 3rem;">
+      <h2>Frequently Asked Questions</h2>
+      <div class="card">
+        <h4>What is a good MER for an ETF?</h4>
+        <p>For broad market index funds (like S&P 500 or TSX Composite), a good MER is under 0.10%. For all-in-one asset allocation ETFs, aim for under 0.25%. Specialized or actively managed ETFs may charge 0.50% or more.</p>
+      </div>
+      <div class="card">
+        <h4>How are ETF fees paid?</h4>
+        <p>You do not receive a bill for ETF fees. The fund manager deducts the MER directly from the fund's assets on a daily basis. The price you see on your trading screen already reflects the fee deduction.</p>
+      </div>
+      <div class="card">
+        <h4>Does a 1% fee make a big difference?</h4>
+        <p>Yes. Over a 30-year investing horizon, a 1% difference in fees can consume over 25% of your total potential portfolio value due to the loss of compounding interest.</p>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    function calculateFees() {
+      const initial = parseFloat(document.getElementById('initial').value) || 0;
+      const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+      const rateStr = parseFloat(document.getElementById('return').value) || 0;
+      const years = parseInt(document.getElementById('years').value) || 0;
+
+      const rate = rateStr / 100;
+      const etfRate = rate - 0.0010; // 0.10% fee
+      const mfRate = rate - 0.0200; // 2.00% fee
+
+      function calcFutureValue(r) {
+        let total = initial;
+        for(let i=1; i<=years; i++){
+          total = total * (1 + r) + (monthly * 12);
+        }
+        return total;
+      }
+
+      function calcGrossValue() {
+        let total = initial;
+        for(let i=1; i<=years; i++){
+          total = total * (1 + rate) + (monthly * 12);
+        }
+        return total;
+      }
+
+      const gross = calcGrossValue();
+      const etfFinal = calcFutureValue(etfRate);
+      const mfFinal = calcFutureValue(mfRate);
+
+      const etfFees = gross - etfFinal;
+      const mfFees = gross - mfFinal;
+      const diff = etfFinal - mfFinal;
+
+      document.getElementById('etf-result').innerText = "$" + etfFinal.toLocaleString(undefined, {maximumFractionDigits: 0});
+      document.getElementById('mf-result').innerText = "$" + mfFinal.toLocaleString(undefined, {maximumFractionDigits: 0});
+
+      document.getElementById('etf-fees').innerText = "Total Fees Drag: $" + etfFees.toLocaleString(undefined, {maximumFractionDigits: 0});
+      document.getElementById('mf-fees').innerText = "Total Fees Drag: $" + mfFees.toLocaleString(undefined, {maximumFractionDigits: 0});
+
+      document.getElementById('difference').innerText = "$" + diff.toLocaleString(undefined, {maximumFractionDigits: 0});
+    }
+
+    // Run once on load
+    if (typeof window !== 'undefined') {
+        window.onload = calculateFees;
+    }
+  </script>
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    h2 { margin-top: 2.5rem; margin-bottom: 1rem; color: var(--text-primary); }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text-primary); }
+    p { margin-bottom: 1.2rem; line-height: 1.6; color: var(--text-primary); }
+    ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; color: var(--text-primary); }
+    a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+
+    /* Calculator Specific Styles */
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .calc-grid { grid-template-columns: 1fr; } }
+    .input-group label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px; }
+    .input-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); background: #0c1218; color: var(--text-primary); border-radius: 6px; }
+    .fee-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .fee-scenario { background: #0c1218; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+    .result-val { font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: var(--text-primary); }
+    .fee-lost { color: #e74c3c; font-size: 0.9rem; margin: 0; }
+    .summary-box { background: rgba(74, 143, 231, 0.1); border: 1px solid var(--accent-color); padding: 15px; border-radius: 8px; text-align: center; }
+  </style>
+</SiteLayout>

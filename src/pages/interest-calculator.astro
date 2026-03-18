@@ -1,0 +1,449 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Interest Calculator - Calculate Simple & Compound Interest",
+  description: "Calculate how much interest you can earn or owe with this free interactive interest calculator. Supports simple and compound interest.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between simple and compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is calculated only on the principal amount, while compound interest is calculated on both the principal amount and the accumulated interest from previous periods."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate simple interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is calculated using the formula: I = P × R × T, where I is the interest earned, P is the principal amount, R is the annual interest rate, and T is the time in years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often should interest be compounded?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The frequency of compounding depends on the specific financial product. Common frequencies are annually, semi-annually, quarterly, monthly, and daily. More frequent compounding generally leads to higher overall returns."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is APY (Annual Percentage Yield)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "APY is the real rate of return earned on a savings deposit or investment taking into account the effect of compounding interest. It is typically higher than the nominal interest rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can this calculator be used for loans?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, this calculator can estimate the interest owed on a loan, particularly if it uses simple interest. However, for amortized loans like mortgages, a dedicated loan calculator is recommended."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/interest-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Interest Calculator</h1>
+      <p class="subtitle">Quickly calculate simple and compound interest for your investments or loans.</p>
+    </div>
+
+    <!-- UI -->
+    <div class="calculator-container">
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="principal">Principal Amount ($)</label>
+          <input type="number" id="principal" value="10000" min="0" step="100" />
+        </div>
+
+        <div class="input-group">
+          <label for="rate">Annual Interest Rate (%)</label>
+          <input type="number" id="rate" value="5" min="0" step="0.1" />
+        </div>
+
+        <div class="input-group">
+          <label for="years">Time Period (Years)</label>
+          <input type="number" id="years" value="5" min="1" max="100" step="1" />
+        </div>
+
+        <div class="input-group">
+          <label for="interestType">Interest Type</label>
+          <select id="interestType">
+            <option value="simple">Simple Interest</option>
+            <option value="compound" selected>Compound Interest</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="compoundFreqGroup">
+          <label for="frequency">Compounding Frequency</label>
+          <select id="frequency">
+            <option value="1">Annually (1/yr)</option>
+            <option value="2">Semi-Annually (2/yr)</option>
+            <option value="4">Quarterly (4/yr)</option>
+            <option value="12" selected>Monthly (12/yr)</option>
+            <option value="365">Daily (365/yr)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card primary-result">
+          <h3>Total Balance</h3>
+          <div class="result-value" id="total-balance">$0.00</div>
+        </div>
+
+        <div class="secondary-results">
+          <div class="sub-result">
+            <h4>Total Principal</h4>
+            <div id="total-principal">$0.00</div>
+          </div>
+          <div class="sub-result">
+            <h4>Total Interest Earned</h4>
+            <div id="total-interest" class="highlight-text">$0.00</div>
+          </div>
+        </div>
+      </div>
+      <div id="error-message" class="error-text" style="display: none;">Please enter valid, positive numbers.</div>
+    </div>
+
+    <!-- Explainer -->
+    <div class="explainer">
+      <h2>Understanding Interest Types</h2>
+      <p>
+        Interest is the cost of borrowing money or the reward for saving it. In the financial world, there are two primary ways interest is calculated: <strong>Simple Interest</strong> and <strong>Compound Interest</strong>. Knowing the difference between them is critical for making informed decisions about investments and loans.
+      </p>
+
+      <div class="info-grid">
+        <div class="highlight-box">
+          <h3>Simple Interest</h3>
+          <p>
+            Simple interest is calculated solely on the initial principal amount. The interest earned or paid remains constant throughout the entire term because it never builds upon previously accumulated interest.
+          </p>
+          <div class="formula-box">
+            <strong>Formula: I = P × R × T</strong>
+          </div>
+          <p>
+            <em>Where: I = Interest, P = Principal, R = Rate (decimal), T = Time (years)</em>
+          </p>
+          <p>
+            Simple interest is often used for short-term personal loans, car loans, and some types of bonds.
+          </p>
+        </div>
+
+        <div class="highlight-box">
+          <h3>Compound Interest</h3>
+          <p>
+            Compound interest is calculated on the initial principal <em>and</em> the accumulated interest from previous periods. This creates a "snowball effect" where your money grows at an accelerating rate over time.
+          </p>
+          <div class="formula-box">
+            <strong>Formula: A = P(1 + r/n)<sup>nt</sup></strong>
+          </div>
+          <p>
+            <em>Where: A = Total Amount, P = Principal, r = Rate (decimal), n = Compounding periods per year, t = Time (years)</em>
+          </p>
+          <p>
+            Compound interest is common in high-yield savings accounts, certificates of deposit (CDs), and most long-term investments.
+          </p>
+        </div>
+      </div>
+
+      <h3>The Power of Compounding Frequency</h3>
+      <p>
+        If you select Compound Interest in the calculator, you'll see a drop-down for <strong>Compounding Frequency</strong>. This determines how often the interest is calculated and added back to your balance.
+      </p>
+      <p>
+        The more frequently your money is compounded (e.g., daily versus annually), the more money you will earn over the long term. This is why financial products often advertise their Annual Percentage Yield (APY) alongside their nominal interest rate. The APY accounts for the compounding frequency, giving you a truer picture of your actual earnings.
+      </p>
+    </div>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the difference between simple and compound interest?</summary>
+        <p>Simple interest is calculated only on the principal amount, while compound interest is calculated on both the principal amount and the accumulated interest from previous periods. Compound interest grows wealth much faster over long periods.</p>
+      </details>
+
+      <details>
+        <summary>How do I calculate simple interest?</summary>
+        <p>Simple interest is calculated using the formula: I = P × R × T, where I is the interest earned, P is the principal amount, R is the annual interest rate, and T is the time in years.</p>
+      </details>
+
+      <details>
+        <summary>How often should interest be compounded?</summary>
+        <p>The frequency of compounding depends on the specific financial product. Common frequencies are annually, semi-annually, quarterly, monthly, and daily. More frequent compounding generally leads to higher overall returns.</p>
+      </details>
+
+      <details>
+        <summary>What is APY (Annual Percentage Yield)?</summary>
+        <p>APY is the real rate of return earned on a savings deposit or investment taking into account the effect of compounding interest. It is typically higher than the nominal interest rate, unless the interest is only compounded annually.</p>
+      </details>
+
+      <details>
+        <summary>Can this calculator be used for loans?</summary>
+        <p>Yes, this calculator can estimate the total interest and final balance owed on a simple interest loan. However, for complex amortized loans like mortgages or standard auto loans, a dedicated loan amortization calculator will provide more accurate monthly payment schedules.</p>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function calculateInterest() {
+      const principalInput = document.getElementById('principal');
+      const rateInput = document.getElementById('rate');
+      const yearsInput = document.getElementById('years');
+      const interestTypeSelect = document.getElementById('interestType');
+      const frequencySelect = document.getElementById('frequency');
+      const compoundFreqGroup = document.getElementById('compoundFreqGroup');
+      const errorMsg = document.getElementById('error-message');
+
+      const principal = parseFloat(principalInput.value);
+      const rate = parseFloat(rateInput.value);
+      const years = parseFloat(yearsInput.value);
+      const isSimple = interestTypeSelect.value === 'simple';
+      const frequency = isSimple ? 1 : parseInt(frequencySelect.value);
+
+      // Toggle compound frequency visibility
+      compoundFreqGroup.style.display = isSimple ? 'none' : 'block';
+
+      if (isNaN(principal) || isNaN(rate) || isNaN(years) ||
+          principal < 0 || rate < 0 || years <= 0) {
+        errorMsg.style.display = 'block';
+        document.getElementById('total-balance').textContent = '$0.00';
+        document.getElementById('total-principal').textContent = '$0.00';
+        document.getElementById('total-interest').textContent = '$0.00';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+
+      let totalValue = 0;
+      let totalInterest = 0;
+
+      if (isSimple) {
+        // Simple Interest: A = P(1 + rt) -> I = P * r * t
+        totalInterest = principal * (rate / 100) * years;
+        totalValue = principal + totalInterest;
+      } else {
+        // Compound Interest: A = P(1 + r/n)^(nt)
+        const r = rate / 100;
+        const n = frequency;
+        const t = years;
+        totalValue = principal * Math.pow(1 + (r / n), n * t);
+        totalInterest = totalValue - principal;
+      }
+
+      document.getElementById('total-balance').textContent = formatCurrency(totalValue);
+      document.getElementById('total-principal').textContent = formatCurrency(principal);
+      document.getElementById('total-interest').textContent = formatCurrency(totalInterest);
+    }
+
+    function initCalculator() {
+      const inputs = ['principal', 'rate', 'years', 'interestType', 'frequency'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.dataset.initialized) {
+          el.addEventListener('input', calculateInterest);
+          el.dataset.initialized = 'true';
+        }
+      });
+      calculateInterest();
+    }
+
+    // Initialize on both DOM load and Astro View Transitions
+    document.addEventListener('DOMContentLoaded', initCalculator);
+    document.addEventListener('astro:page-load', initCalculator);
+  </script>
+
+</SiteLayout>
+<style>
+  .hero { text-align: center; padding: 3rem 0 2rem; }
+  .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+  .calculator-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .input-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: var(--font-mono, monospace);
+    transition: border-color 0.2s;
+  }
+
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+  }
+
+  .results-grid {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .primary-result {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+  }
+
+  .primary-result h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .result-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    font-family: var(--font-mono, monospace);
+  }
+
+  .secondary-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .sub-result {
+    text-align: center;
+  }
+
+  .sub-result h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .sub-result div {
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .highlight-text {
+    color: #22c55e;
+  }
+
+  .error-text {
+    color: #ef4444;
+    margin-top: 1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .explainer { margin: 3rem 0; line-height: 1.6; }
+  .explainer h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+  .explainer h3 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; }
+  .explainer p { margin-bottom: 1rem; color: var(--text-secondary); }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .highlight-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .highlight-box h3 {
+    margin-top: 0;
+  }
+
+  .formula-box {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  .faq-section { margin-top: 3rem; }
+  .faq-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+  .faq-section details {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+  .faq-section summary { font-weight: 600; cursor: pointer; }
+  .faq-section details p {
+    margin: 1rem 0 0 0;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+</style>

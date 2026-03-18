@@ -1,0 +1,492 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Debt Payoff Calculator: See Exactly When You'll Be Debt-Free",
+  description: "Find out how much time and money you can save. Use our interactive debt payoff calculator to compare snowball, avalanche, and custom payment strategies.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": ["FAQPage", "Article"],
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the fastest way to pay off debt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The fastest way mathematically is the debt avalanche method, where you pay off balances with the highest interest rates first while making minimum payments on everything else. However, the debt snowball method (paying smallest balances first) can provide psychological motivation by giving you quick wins."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do extra payments affect my debt payoff date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Making extra payments reduces your principal balance directly. Since interest is calculated based on the principal, a lower principal means less interest accrues each month, allowing more of your regular payment to go toward the principal, dramatically accelerating your payoff date."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if my monthly payment is less than the interest charge?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If your payment is less than the monthly interest charge, you are in a state of negative amortization. Your balance will grow each month instead of shrinking, and you will never pay off the debt. You must increase your payment or lower your interest rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it better to pay off debt or save for emergencies?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most financial experts recommend saving a small starter emergency fund (e.g., $1,000 or one month's expenses) first. This prevents you from taking on new debt for unexpected expenses while you are aggressively paying down your existing balances."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is daily interest calculated on my debt?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Daily interest is calculated by dividing your annual percentage rate (APR) by 365. This daily periodic rate is then multiplied by your current balance to determine how much interest you accrue each day."
+      }
+    }
+  ],
+  "headline": meta.title,
+  "description": meta.description,
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals"
+  }
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/debt-payoff-calculator" schema={schema}>
+  <div class="page-content">
+    <h1>Debt Payoff Calculator</h1>
+    <p class="subtitle">Enter your balance, interest rate, and payment amount to see your payoff timeline and total interest cost.</p>
+
+
+    <div class="calculator-card" id="debt-calculator">
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label for="balance">Current Balance</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="balance" value="10000" min="0" step="100" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="interest-rate">Interest Rate (APR)</label>
+          <div class="input-wrapper">
+            <input type="number" id="interest-rate" value="19.99" min="0" step="0.01" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="payment">Monthly Payment</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="payment" value="250" min="0" step="10" />
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-banner" style="display: none;">
+        Payment must be greater than monthly interest to pay off balance.
+      </div>
+
+      <div class="results-grid" id="results-container">
+        <div class="result-box primary">
+          <span class="result-label">Months to Payoff</span>
+          <span class="result-value" id="res-months">0</span>
+          <span class="result-sub">or <span id="res-years">0</span> years</span>
+        </div>
+
+        <div class="result-box secondary">
+          <span class="result-label">Total Interest Paid</span>
+          <span class="result-value" id="res-interest">$0</span>
+        </div>
+
+        <div class="result-box secondary">
+          <span class="result-label">Total Amount Paid</span>
+          <span class="result-value" id="res-total">$0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container" style="display: none;" id="amortization-container">
+      <h3>Amortization Schedule</h3>
+      <div class="table-container">
+        <table id="amortization-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Interest Paid</th>
+              <th>Principal Paid</th>
+              <th>Remaining Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+<style>
+  .subtitle {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: var(--text-secondary);
+  }
+
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .input-wrapper input {
+    padding-left: 2.2rem;
+  }
+
+  #interest-rate {
+    padding-left: 1rem;
+    padding-right: 2.5rem;
+  }
+
+  .error-banner {
+    background-color: var(--bg-color);
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .results-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .result-box.primary {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .result-box {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .result-box.primary {
+    background-color: var(--bg-color);
+    border-color: var(--accent-color);
+  }
+
+  .result-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .result-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .result-box.primary .result-value {
+    font-size: 3rem;
+    color: var(--accent-color);
+  }
+
+  .result-sub {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+  }
+
+  .table-container {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+</style>
+
+
+
+    <div class="content-section">
+      <h2>How the Debt Payoff Timeline is Calculated</h2>
+      <p>Understanding the math behind your debt repayment can help you make strategic decisions about which loans to pay off first. Whether you are tackling credit card debt, student loans, or personal loans, the principles of amortization remain the same.</p>
+
+      <div class="highlight-box">
+        <h3>The Mathematics of Amortization</h3>
+        <p>When you make a payment toward your debt, the financial institution applies a portion of that payment to the <strong>accrued interest</strong> first. Only the remaining amount goes toward reducing your <strong>principal balance</strong>.</p>
+        <p>To calculate how long it will take to pay off a balance (n), the standard formula for an amortized loan is derived from the annuity formula:</p>
+        <code>n = -log(1 - (r * P) / A) / log(1 + r)</code>
+        <ul style="margin-top: 1rem;">
+          <li><strong>P:</strong> Principal Balance (current amount owed)</li>
+          <li><strong>r:</strong> Monthly Interest Rate (APR ÷ 12)</li>
+          <li><strong>A:</strong> Monthly Payment Amount</li>
+        </ul>
+      </div>
+
+      <h2>Strategies for Accelerating Debt Payoff</h2>
+      <p>There are two primary methods recommended by financial experts to systematically eliminate debt. Both approaches require you to make minimum payments on all accounts while heavily targeting one specific debt with any extra money you have available.</p>
+
+      <h3>The Debt Avalanche Method (Highest Interest First)</h3>
+      <p>The debt avalanche method focuses on the math. You target the debt with the highest annual percentage rate (APR) first. Because this debt generates the most interest per dollar owed, eliminating it fastest will save you the maximum amount of money in the long run.</p>
+
+      <h3>The Debt Snowball Method (Smallest Balance First)</h3>
+      <p>The debt snowball method focuses on psychology and motivation. You target the debt with the smallest overall balance first, regardless of the interest rate. Paying off an entire account quickly provides a "quick win," which behaviorally encourages you to stick to your debt payoff plan.</p>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>What is the fastest way to pay off debt?</h3>
+          <p>The fastest way mathematically is the debt avalanche method, where you pay off balances with the highest interest rates first while making minimum payments on everything else. However, the debt snowball method (paying smallest balances first) can provide psychological motivation by giving you quick wins.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How do extra payments affect my debt payoff date?</h3>
+          <p>Making extra payments reduces your principal balance directly. Since interest is calculated based on the principal, a lower principal means less interest accrues each month, allowing more of your regular payment to go toward the principal, dramatically accelerating your payoff date.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What happens if my monthly payment is less than the interest charge?</h3>
+          <p>If your payment is less than the monthly interest charge, you are in a state of negative amortization. Your balance will grow each month instead of shrinking, and you will never pay off the debt. You must increase your payment or lower your interest rate.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Is it better to pay off debt or save for emergencies?</h3>
+          <p>Most financial experts recommend saving a small starter emergency fund (e.g., $1,000 or one month's expenses) first. This prevents you from taking on new debt for unexpected expenses while you are aggressively paying down your existing balances.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How is daily interest calculated on my debt?</h3>
+          <p>Daily interest is calculated by dividing your annual percentage rate (APR) by 365. This daily periodic rate is then multiplied by your current balance to determine how much interest you accrue each day.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</SiteLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputBalance = document.getElementById('balance');
+    const inputRate = document.getElementById('interest-rate');
+    const inputPayment = document.getElementById('payment');
+
+    const resMonths = document.getElementById('res-months');
+    const resYears = document.getElementById('res-years');
+    const resInterest = document.getElementById('res-interest');
+    const resTotal = document.getElementById('res-total');
+
+    const errorBanner = document.getElementById('error-message');
+    const resultsContainer = document.getElementById('results-container');
+    const amortizationContainer = document.getElementById('amortization-container');
+    const amortizationTable = document.querySelector('#amortization-table tbody');
+
+    function formatCurrency(val) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    }
+
+    function calculatePayoff() {
+      // Get integer cents to avoid floating point errors
+      const balance = Math.round(parseFloat(inputBalance.value || 0) * 100);
+      const rateStr = inputRate.value || 0;
+      const rate = parseFloat(rateStr);
+      const payment = Math.round(parseFloat(inputPayment.value || 0) * 100);
+
+      // Edge cases: No balance
+      if (balance <= 0) {
+        showResults(0, 0, 0);
+        return;
+      }
+
+      // Edge case: 0% interest
+      if (Math.abs(rate) < 1e-10) {
+        if (payment <= 0) {
+          showError();
+          return;
+        }
+        const months = Math.ceil(balance / payment);
+        showResults(months, 0, balance);
+        generateAmortization(balance, 0, payment, months);
+        return;
+      }
+
+      // Convert annual rate to monthly decimal
+      const monthlyRate = (rate / 100) / 12;
+      const monthlyInterestCharge = Math.round(balance * monthlyRate);
+
+      // Negative Amortization Check (payment must cover interest)
+      if (payment <= monthlyInterestCharge && balance > 0) {
+        showError();
+        return;
+      }
+
+      hideError();
+
+      // Calculation variables
+      let currentBalance = balance;
+      let totalInterest = 0;
+      let months = 0;
+      let tableHtml = '';
+
+      let yearInterest = 0;
+      let yearPrincipal = 0;
+      let currentYear = 1;
+
+      // Simulate payment month by month to build schedule and handle remainders cleanly
+      // Cap at 1000 months (83 years) to prevent infinite loops in extreme edge cases
+      while (currentBalance > 0 && months < 1000) {
+        months++;
+
+        let interestForMonth = Math.round(currentBalance * monthlyRate);
+        totalInterest += interestForMonth;
+        yearInterest += interestForMonth;
+
+        // Final payment could be less than the regular payment
+        let principalPaid = payment - interestForMonth;
+
+        if (principalPaid > currentBalance) {
+          principalPaid = currentBalance;
+        }
+
+        currentBalance -= principalPaid;
+        yearPrincipal += principalPaid;
+
+        // Log yearly summary
+        if (months % 12 === 0 || currentBalance === 0) {
+          tableHtml += `
+            <tr>
+              <td>Year ${currentYear}</td>
+              <td>${formatCurrency(yearInterest / 100)}</td>
+              <td>${formatCurrency(yearPrincipal / 100)}</td>
+              <td>${formatCurrency(currentBalance / 100)}</td>
+            </tr>
+          `;
+          currentYear++;
+          yearInterest = 0;
+          yearPrincipal = 0;
+        }
+      }
+
+      if (months >= 1000) {
+        // Technically pays off, but takes over 80 years
+        resMonths.textContent = "1000+";
+        resYears.textContent = "83+";
+        resInterest.textContent = "Too High";
+        resTotal.textContent = "Too High";
+        amortizationContainer.style.display = 'none';
+        return;
+      }
+
+      showResults(months, totalInterest, balance + totalInterest);
+      amortizationTable.innerHTML = tableHtml;
+      amortizationContainer.style.display = 'block';
+    }
+
+    function showResults(months, interestCents, totalCents) {
+      hideError();
+      resMonths.textContent = months;
+
+      let fixedYears = parseFloat((months / 12).toPrecision(14));
+      if (Math.abs(fixedYears - Math.round(fixedYears)) < 1e-14) {
+        resYears.textContent = Math.round(fixedYears);
+      } else {
+        resYears.textContent = fixedYears.toFixed(1);
+      }
+
+      resInterest.textContent = formatCurrency(interestCents / 100);
+      resTotal.textContent = formatCurrency(totalCents / 100);
+      resultsContainer.style.opacity = '1';
+    }
+
+    function generateAmortization(balance, rate, payment, totalMonths) {
+       // Simple amortization for 0%
+       let currentBalance = balance;
+       let tableHtml = '';
+       let yearPrincipal = 0;
+       let currentYear = 1;
+
+       for (let i = 1; i <= totalMonths; i++) {
+         let principalPaid = Math.min(payment, currentBalance);
+         currentBalance -= principalPaid;
+         yearPrincipal += principalPaid;
+
+         if (i % 12 === 0 || currentBalance === 0) {
+           tableHtml += `
+            <tr>
+              <td>Year ${currentYear}</td>
+              <td>$0.00</td>
+              <td>${formatCurrency(yearPrincipal / 100)}</td>
+              <td>${formatCurrency(currentBalance / 100)}</td>
+            </tr>
+          `;
+          currentYear++;
+          yearPrincipal = 0;
+         }
+       }
+       amortizationTable.innerHTML = tableHtml;
+       amortizationContainer.style.display = 'block';
+    }
+
+    function showError() {
+      errorBanner.style.display = 'block';
+      resultsContainer.style.opacity = '0.3';
+      amortizationContainer.style.display = 'none';
+    }
+
+    function hideError() {
+      errorBanner.style.display = 'none';
+      resultsContainer.style.opacity = '1';
+    }
+
+    // Bind real-time events
+    [inputBalance, inputRate, inputPayment].forEach(input => {
+      input.addEventListener('input', calculatePayoff);
+    });
+
+    // Initial calculation
+    calculatePayoff();
+  });
+</script>

@@ -1,0 +1,302 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is Net Worth? The Ultimate Guide for Beginners",
+  description: "Learn what net worth is, how to calculate it, and why it's the ultimate measure of financial health. Discover practical steps to track and grow your wealth.",
+  category: "guide",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a good net worth for my age?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While benchmarks vary, a classic formula from 'The Millionaire Next Door' suggests: (Age × Pre-tax Income) ÷ 10. However, focusing on consistent, positive growth over time is far more important than comparing yourself to generalized age-based milestones."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are cars and vehicles included in net worth?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, vehicles are considered assets, albeit depreciating ones. You should include their current fair market value (what you could realistically sell them for today) in your assets, and list any outstanding auto loans under your liabilities."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my net worth include my salary or income?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, salary is your income stream, not an asset. Net worth is a snapshot of what you own (assets) minus what you owe (liabilities) at a specific point in time. Your salary helps build your net worth over time by allowing you to buy assets or pay down debt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are 401(k)s, IRAs, and other retirement accounts included in net worth?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. All retirement and investment accounts (401(k), IRA, Roth IRA, brokerage accounts) are financial assets and should be included in your net worth. Just remember that traditional (pre-tax) retirement accounts will eventually be taxed upon withdrawal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does it mean if my net worth is negative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A negative net worth means your total debts exceed the total value of your assets. This is incredibly common, especially for recent college graduates with student loans or new homeowners. It is simply a starting point on your financial journey."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-net-worth" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>What is Net Worth? The Ultimate Measure of Financial Health</h1>
+
+      <p class="lead" style="font-size: 1.25rem; font-weight: 500; color: var(--text-primary); margin-bottom: 2rem;">If you ask someone how they're doing financially, they'll usually tell you their salary. "I make $80,000 a year," they might say. But while income is a river flowing in, it tells you nothing about the reservoir they're building. That reservoir—the true measure of financial health—is your net worth.</p>
+
+      <div class="highlight-box">
+        <p><strong>Net Worth Defined:</strong> At its core, net worth is a simple subtraction problem: everything you own (your assets) minus everything you owe (your liabilities). It's the ultimate scorecard for your financial journey, revealing your true financial standing at any given moment.</p>
+      </div>
+
+      <h2>The Anatomy of Net Worth: Assets vs. Liabilities</h2>
+
+      <p>Understanding net worth starts with breaking down its two fundamental components. To calculate your net worth accurately, you need to inventory every financial resource and obligation you have.</p>
+
+      <h3>1. Assets: Everything You Own</h3>
+      <p>An asset is anything that has tangible economic value and could, theoretically, be converted into cash. Not all assets are created equal, however. Some appreciate (grow in value) over time, while others depreciate (lose value).</p>
+
+      <ul>
+        <li><strong>Cash and Cash Equivalents:</strong> This is the foundation. It includes your checking accounts, savings accounts, high-yield savings accounts, money market funds, and physical cash. It's the money you can access immediately without penalty.</li>
+        <li><strong>Investments:</strong> These are the growth engines of your net worth. They include brokerage accounts, retirement accounts (401(k), IRA, Roth IRA), stocks, bonds, mutual funds, ETFs, and certificates of deposit (CDs).</li>
+        <li><strong>Real Estate:</strong> For many people, their primary residence is their largest single asset. This category also includes rental properties, commercial real estate, or vacant land. The value of these assets should be estimated based on current fair market value, not what you paid for them.</li>
+        <li><strong>Personal Property:</strong> These are depreciating assets but still hold value. Vehicles, boats, expensive jewelry, art collections, or valuable antiques fall here. While you shouldn't meticulously track the value of your used clothing or standard furniture, significant items like a paid-off car should be included at their current Kelley Blue Book or resale value.</li>
+        <li><strong>Business Interests:</strong> If you own a business or a stake in a private company, the estimated value of your equity is a substantial asset.</li>
+      </ul>
+
+      <h3>2. Liabilities: Everything You Owe</h3>
+      <p>A liability is a financial debt or obligation. It's money you have borrowed and are legally obligated to repay. Just as assets come in different forms, so do liabilities.</p>
+
+      <ul>
+        <li><strong>Mortgages:</strong> The remaining principal balance on the loan for your primary residence or any investment properties. This is typically the largest liability on a personal balance sheet.</li>
+        <li><strong>Consumer Debt:</strong> The balance on your credit cards, personal loans, or "buy now, pay later" plans. These are often high-interest liabilities that act as a drag on wealth accumulation.</li>
+        <li><strong>Student Loans:</strong> Both federal and private student loan balances.</li>
+        <li><strong>Auto Loans:</strong> The remaining amount owed on any vehicles you've financed.</li>
+        <li><strong>Medical Debt:</strong> Outstanding balances owed to hospitals or healthcare providers.</li>
+        <li><strong>Tax Liabilities:</strong> If you owe back taxes to the IRS or state authorities, that is a clear liability.</li>
+      </ul>
+
+      <h2>How to Calculate Your Net Worth (The Formula)</h2>
+
+      <p>The mathematical formula for net worth is elegant in its simplicity:</p>
+
+      <div class="calculator-card" style="text-align: center; padding: 3rem 2rem; background-color: var(--card-bg);">
+        <h3 style="margin: 0; font-size: 2rem; color: var(--accent-color);">Total Assets - Total Liabilities = Net Worth</h3>
+      </div>
+
+      <p>Let's look at a practical, real-world example to see how this plays out in action. We'll examine two fictional individuals: Sarah, a high-earning professional who is struggling to build wealth, and David, a moderate earner who is a disciplined saver.</p>
+
+      <h3>Scenario A: High Income, Low Net Worth</h3>
+      <p>Sarah is a corporate lawyer making $180,000 a year. Outwardly, she appears incredibly successful. She drives a luxury SUV, lives in a high-end downtown apartment, and wears designer clothes. Let's look at her balance sheet.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Assets</th>
+              <th>Value</th>
+              <th>Liabilities</th>
+              <th>Owed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Checking & Savings</td>
+              <td>$15,000</td>
+              <td>Student Loans (Law School)</td>
+              <td>$145,000</td>
+            </tr>
+            <tr>
+              <td>401(k) Retirement Account</td>
+              <td>$45,000</td>
+              <td>Auto Loan (Luxury SUV)</td>
+              <td>$55,000</td>
+            </tr>
+            <tr>
+              <td>Current Value of SUV</td>
+              <td>$48,000</td>
+              <td>Credit Card Debt</td>
+              <td>$12,000</td>
+            </tr>
+            <tr style="font-weight: 700; background-color: var(--card-bg);">
+              <td style="color: var(--text-primary);">Total Assets</td>
+              <td style="color: var(--accent-color);">$108,000</td>
+              <td style="color: var(--text-primary);">Total Liabilities</td>
+              <td style="color: var(--text-secondary);">$212,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Sarah's Net Worth Calculation:</strong> $108,000 (Assets) - $212,000 (Liabilities) = <strong>-$104,000</strong></p>
+
+      <p>Despite her impressive $180,000 salary, Sarah has a deeply negative net worth. Her income is being entirely consumed by lifestyle inflation and servicing the debt from her education and vehicle.</p>
+
+      <h3>Scenario B: Moderate Income, High Net Worth</h3>
+      <p>Now consider David. He is a high school teacher earning $65,000 a year. He drives a reliable ten-year-old sedan, lives in a modest suburban home he bought years ago, and maxes out his IRA every year. His financial picture looks very different.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Assets</th>
+              <th>Value</th>
+              <th>Liabilities</th>
+              <th>Owed</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Checking & Emergency Fund</td>
+              <td>$25,000</td>
+              <td>Mortgage Balance</td>
+              <td>$140,000</td>
+            </tr>
+            <tr>
+              <td>Roth IRA & Brokerage</td>
+              <td>$185,000</td>
+              <td>Auto Loan</td>
+              <td>$0 (Paid off)</td>
+            </tr>
+            <tr>
+              <td>Home Value (Current Market)</td>
+              <td>$350,000</td>
+              <td>Credit Card Debt</td>
+              <td>$0 (Paid monthly)</td>
+            </tr>
+            <tr>
+              <td>Current Value of Sedan</td>
+              <td>$4,000</td>
+              <td>Student Loans</td>
+              <td>$0 (Paid off)</td>
+            </tr>
+            <tr style="font-weight: 700; background-color: var(--card-bg);">
+              <td style="color: var(--text-primary);">Total Assets</td>
+              <td style="color: var(--accent-color);">$564,000</td>
+              <td style="color: var(--text-primary);">Total Liabilities</td>
+              <td style="color: var(--text-secondary);">$140,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>David's Net Worth Calculation:</strong> $564,000 (Assets) - $140,000 (Liabilities) = <strong>$424,000</strong></p>
+
+      <p>David earns significantly less than Sarah, but because he has minimized his liabilities (carrying only a mortgage) and consistently built wealth-generating assets (his home equity and retirement accounts), his net worth is nearly half a million dollars. He is far more financially secure.</p>
+
+      <h2>Why Net Worth Matters More Than Income</h2>
+
+      <p>The contrast between Sarah and David illustrates a fundamental truth of personal finance: <strong>Income is not wealth.</strong></p>
+
+      <p>Income is the tool you use to build wealth, but net worth is the actual measurement of that wealth. Focusing solely on your salary is like a business focusing only on revenue while ignoring expenses and debt. You can have millions of dollars flowing through your hands over a lifetime, but if you spend it all (or borrow against your future earnings), you will have nothing to show for it.</p>
+
+      <div class="highlight-box">
+        <h3>The Hidden Dangers of Ignoring Net Worth</h3>
+        <p>When you don't track your net worth, you become susceptible to the "wealth illusion." You might feel rich because you can afford the monthly payments on a luxury car and a massive mortgage. But monthly payments obscure the underlying reality: those assets might be fully offset by the crushing weight of the debt attached to them.</p>
+        <p>Tracking net worth forces you to look at the holistic picture. It demands accountability for both sides of the ledger.</p>
+      </div>
+
+      <h2>The Difference Between Liquid and Illiquid Net Worth</h2>
+
+      <p>As you become more sophisticated in tracking your finances, it's crucial to understand the distinction between liquid net worth and total net worth. This is particularly important for intermediate investors who are planning for major life events, sabbaticals, or early retirement.</p>
+
+      <h3>Liquid Net Worth</h3>
+      <p>Liquid net worth only includes assets that can be rapidly converted into cash within a few days without taking a significant loss or paying substantial penalties. This includes cash, checking/savings accounts, and taxable brokerage accounts (stocks, bonds, ETFs).</p>
+      <p>It explicitly excludes real estate (which takes months to sell and incurs high transaction fees), 401(k)s and IRAs (which carry early withdrawal penalties before age 59½), and business equity.</p>
+
+      <h3>Why Liquidity Matters</h3>
+      <p>Consider an individual whose entire $1,000,000 net worth is tied up in the equity of their primary residence. While technically a "millionaire," they are "house poor." If they face a sudden medical emergency, lose their job, or want to start a business, they cannot easily access that wealth without selling their home or taking on a Home Equity Line of Credit (HELOC)—which means taking on new debt.</p>
+      <p>A healthy financial profile balances long-term illiquid growth assets (like real estate and retirement accounts) with sufficient liquid assets to provide flexibility and security in the present.</p>
+
+      <h2>How to Practically Track Your Net Worth</h2>
+
+      <p>Tracking your net worth shouldn't be a daily obsession. The stock market fluctuates, and home prices vary week to week. Daily tracking leads to emotional fatigue and poor decision-making. Instead, tracking should be a periodic health check.</p>
+
+      <h3>1. The Spreadsheet Method</h3>
+      <p>For those who prefer granular control and privacy, a simple spreadsheet is highly effective. Create a new column for each month or quarter. List your assets in the top half, sum them up. List your liabilities in the bottom half, sum them up. Subtract the two to find your total.</p>
+      <p>Update this sheet on the first day of the month or the first day of the quarter. Over years, this sheet becomes a powerful historical record of your financial progress.</p>
+
+      <h3>2. Automated Tracking Tools</h3>
+      <p>If manual entry sounds tedious, there are numerous automated tools available (often referred to as financial aggregators). Applications like Empower (formerly Personal Capital), Monarch Money, or YNAB (You Need A Budget) allow you to link your bank accounts, brokerages, credit cards, and mortgage providers.</p>
+      <p>These tools pull your balances automatically and generate real-time charts of your net worth trajectory. While convenient, they do require you to share your login credentials or use secure API tokens via services like Plaid.</p>
+
+      <h2>Analyzing Corporate Net Worth: Book Value</h2>
+
+      <p>For intermediate investors, understanding personal net worth translates directly into evaluating companies in the stock market. In the corporate world, a company's "net worth" is referred to as its <strong>Book Value</strong> or <strong>Shareholders' Equity</strong>.</p>
+
+      <p>If you look at a company's balance sheet, you will see the exact same formula at play: Total Assets minus Total Liabilities equals Shareholders' Equity. If a company were to hypothetically liquidate today—sell off all its factories, inventory, and intellectual property (assets), and pay off all its bondholders and creditors (liabilities)—the remaining cash is what would belong to the shareholders.</p>
+
+      <p>Value investors often look for companies trading at a discount to their book value. If a company has a book value of $100 million but the stock market values the entire company (its market capitalization) at only $80 million, the investor is essentially buying the company's net worth for less than it is fundamentally worth.</p>
+
+      <h2>Actionable Takeaways: Growing Your Net Worth</h2>
+
+      <p>Understanding net worth is only the first step; the ultimate goal is to grow it systematically over time. There are only two fundamental levers you can pull to increase your net worth: increase your assets or decrease your liabilities.</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3 style="color: var(--accent-color); font-size: 1.25rem;">Lever 1: Buy Appreciating Assets</h3>
+          <p style="font-size: 0.95rem;">Focus your discretionary income on buying things that grow in value or generate cash flow. This means aggressively funding retirement accounts, buying low-cost index funds, or investing in real estate. Minimize the purchase of depreciating assets like new cars or luxury consumer goods.</p>
+        </div>
+        <div class="stat-card">
+          <h3 style="color: var(--accent-color); font-size: 1.25rem;">Lever 2: Annihilate High-Interest Debt</h3>
+          <p style="font-size: 0.95rem;">High-interest consumer debt (like credit cards charging 20% APR) is a wealth destroyer. Paying down $10,000 of credit card debt increases your net worth by exactly $10,000 while simultaneously guaranteeing a 20% "return" on that money by eliminating the interest payments.</p>
+        </div>
+      </div>
+
+      <p>The most powerful approach combines both levers. A portion of your monthly cash flow should be dedicated to servicing and eliminating debt, while another portion is diverted into investments. This dual-pronged attack accelerates the "spread" between your assets and liabilities, leading to compounding net worth growth.</p>
+
+      <p>Remember that the trajectory of net worth is rarely a straight line. Market corrections will cause your asset values to temporarily dip, and life emergencies may require taking on unexpected liabilities. The goal is not perfection, but a general upward trend line over decades. By shifting your focus from "how much I make" to "what my net worth is," you transition from a consumer mindset to an investor mindset—the foundational shift required for long-term financial independence.</p>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>What is a good net worth for my age?</h3>
+          <p>While benchmarks vary, a classic formula from "The Millionaire Next Door" suggests: (Age × Pre-tax Income) ÷ 10. However, focusing on consistent, positive growth over time is far more important than comparing yourself to generalized age-based milestones.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Are cars and vehicles included in net worth?</h3>
+          <p>Yes, vehicles are considered assets, albeit depreciating ones. You should include their current fair market value (what you could realistically sell them for today) in your assets, and list any outstanding auto loans under your liabilities.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Does my net worth include my salary or income?</h3>
+          <p>No, salary is your income stream, not an asset. Net worth is a snapshot of what you own (assets) minus what you owe (liabilities) at a specific point in time. Your salary helps build your net worth over time by allowing you to buy assets or pay down debt.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Are 401(k)s, IRAs, and other retirement accounts included in net worth?</h3>
+          <p>Absolutely. All retirement and investment accounts (401(k), IRA, Roth IRA, brokerage accounts) are financial assets and should be included in your net worth. Just remember that traditional (pre-tax) retirement accounts will eventually be taxed upon withdrawal.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What does it mean if my net worth is negative?</h3>
+          <p>A negative net worth means your total debts exceed the total value of your assets. This is incredibly common, especially for recent college graduates with student loans or new homeowners. It is simply a starting point on your financial journey, indicating that debt reduction should be a primary focus.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Base styles inherited from SiteLayout */
+  /* Specific styling applied via classes to ensure layout compatibility */
+</style>

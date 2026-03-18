@@ -1,0 +1,692 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Dave Ramsey Investment Calculator: Will 12% Returns Make You Rich?",
+  description: "Dave Ramsey often cites a 12% average annual return for mutual funds. See what happens to your money when you run the actual numbers in this interactive...",
+  category: "tool",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/ramsey-investment-calculator"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the Dave Ramsey investment calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Dave Ramsey investment calculator models how your portfolio could grow using his frequently cited assumption of a 12% average annual return. It helps you project future wealth based on your initial investment, monthly contributions, and time horizon."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Dave Ramsey's 12% return realistic?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many financial experts consider a 12% average annual return to be optimistic. The S&P 500 has historically returned about 10% before inflation. Adjusting for inflation, real returns are closer to 7%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the Dave Ramsey formula work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It uses the standard compound interest formula: A = P(1 + r/n)^(nt). For monthly contributions, it also includes the future value of an annuity formula to calculate the total projected portfolio value."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What kind of mutual funds does Dave Ramsey recommend?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "He generally recommends dividing investments equally across four types of mutual funds: Growth, Growth and Income, Aggressive Growth, and International."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I adjust the 12% return when planning my retirement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Most conservative financial planners suggest using a 6% to 8% expected return to avoid a potential shortfall in retirement savings, especially after accounting for inflation and fees."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/ramsey-investment-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+    <header class="page-header">
+      <h1>Dave Ramsey Investment Calculator</h1>
+      <p class="lead">Project your portfolio growth using the widely debated 12% mutual fund return assumption—and see how it compares to standard market expectations.</p>
+    </header>
+
+    <div class="calculator-container">
+      <div class="calc-card input-section">
+        <h2>Input Your Numbers</h2>
+        <p class="section-desc">Enter your starting balance and monthly contributions below.</p>
+
+        <div class="input-group">
+          <label for="initialInvestment">Initial Investment ($)</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="initialInvestment" value="10000" min="0" step="100">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="monthlyContribution">Monthly Contribution ($)</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="monthlyContribution" value="500" min="0" step="50">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="yearsToGrow">Years to Grow</label>
+          <div class="input-wrapper">
+            <input type="number" id="yearsToGrow" value="30" min="1" max="100" step="1">
+            <span class="suffix">Years</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="interestRate">Expected Annual Return (%)</label>
+          <div class="input-wrapper">
+            <input type="number" id="interestRate" value="12" min="0" max="50" step="0.1">
+            <span class="suffix">%</span>
+          </div>
+          <small class="helper-text">Defaults to Ramsey's 12%. Try 8% or 10% for comparison.</small>
+        </div>
+
+        <button id="calculateBtn" class="calc-btn">Calculate Growth</button>
+      </div>
+
+      <div class="calc-card results-section">
+        <h2>Your Projected Wealth</h2>
+
+        <div class="results-grid">
+          <div class="result-box highlight">
+            <span class="result-label">Total Future Value</span>
+            <span class="result-value" id="totalValue">$1,795,084.77</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Total Principal</span>
+            <span class="result-value" id="totalPrincipal">$190,000.00</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Total Interest Earned</span>
+            <span class="result-value" id="totalInterest">$1,605,084.77</span>
+          </div>
+        </div>
+
+        <div class="comparison-box">
+          <h3>The 12% vs. 8% Reality Check</h3>
+          <p>If you used a more conservative 8% return instead of 12%, your total future value would be: <strong id="conservativeValue" class="warning-text">$859,095.69</strong></p>
+          <p class="difference-text">That's a difference of <strong id="valueDifference">$935,989.08</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <article class="educational-content">
+      <h2>Understanding the Dave Ramsey Investment Philosophy</h2>
+      <p>
+        When exploring personal finance, it is nearly impossible to avoid the name Dave Ramsey. A cornerstone of his wealth-building advice involves investing in good, growth-stock mutual funds. But what frequently catches the attention of financial advisors and mathematicians alike is his often-cited assumption of a <strong>12% average annual return</strong>.
+      </p>
+      <p>
+        Our Dave Ramsey investment calculator allows you to model exactly how your money would grow if it consistently hit that 12% mark. It relies on the power of <a href="/investment-calculator">compound interest</a>, a force that Albert Einstein purportedly called the eighth wonder of the world.
+      </p>
+
+      <h3>The Mechanics of the Calculation</h3>
+      <p>
+        How do we arrive at these massive future valuations? The calculator processes two parallel math equations: the future value of a single lump sum (your initial investment) and the future value of an annuity (your monthly contributions).
+      </p>
+      <p>
+        The core formula for compound interest on a principal amount is:
+      </p>
+      <div class="formula-box">
+        <strong>A = P(1 + r/n)<sup>nt</sup></strong>
+        <ul>
+          <li><strong>A</strong> = The future value of the investment</li>
+          <li><strong>P</strong> = The principal investment amount</li>
+          <li><strong>r</strong> = The annual interest rate (decimal)</li>
+          <li><strong>n</strong> = The number of times that interest is compounded per year</li>
+          <li><strong>t</strong> = The number of years the money is invested</li>
+        </ul>
+      </div>
+      <p>
+        For monthly contributions (the annuity portion), the formula is slightly more complex:
+      </p>
+      <div class="formula-box">
+        <strong>FV = PMT × [((1 + r/n)<sup>nt</sup> - 1) / (r/n)]</strong>
+        <ul>
+          <li><strong>FV</strong> = Future value of the annuity</li>
+          <li><strong>PMT</strong> = The monthly payment amount</li>
+        </ul>
+      </div>
+
+      <h4>A Worked Example (Showing Our Math)</h4>
+      <p>
+        Let's say you start with $10,000 and contribute $500 monthly for 30 years at Dave Ramsey's 12% return, compounded monthly.
+      </p>
+      <ul>
+        <li><strong>Principal Growth:</strong> $10,000 × (1 + 0.12/12)<sup>(12×30)</sup> = $359,496.41</li>
+        <li><strong>Contribution Growth:</strong> $500 × [((1 + 0.12/12)<sup>(12×30)</sup> - 1) / (0.12/12)] = $1,435,588.36</li>
+        <li><strong>Total Value:</strong> $359,496.41 + $1,435,588.36 = <strong>$1,795,084.77</strong></li>
+      </ul>
+      <p>
+        It looks incredibly appealing. By investing $190,000 out of pocket over 30 years, you generate over $1.6 million in pure interest. But is it realistic?
+      </p>
+
+      <h2>The Great 12% Debate: Is it Realistic?</h2>
+      <p>
+        To understand why the 12% figure is highly contested, we have to look at historical market data. Over the last century, the S&P 500—often used as a proxy for the broader U.S. stock market—has returned approximately 10% annually before inflation.
+      </p>
+      <p>
+        Dave Ramsey frequently defends the 12% figure by pointing out the simple arithmetic average of the S&P 500's annual returns since its inception in the 1920s. However, there is a critical difference between an <em>arithmetic average</em> and a <em>geometric average</em> (also known as the Compound Annual Growth Rate, or <a href="/cagr-calculator">CAGR</a>).
+      </p>
+
+      <h3>Arithmetic vs. Geometric Averages</h3>
+      <p>
+        Imagine you invest $100. In Year 1, your investment drops by 50% to $50. In Year 2, it grows by 100%, returning to $100.
+      </p>
+      <ul>
+        <li><strong>Arithmetic Average:</strong> (-50% + 100%) / 2 = <strong>25%</strong></li>
+        <li><strong>Actual Compound Return:</strong> You started with $100 and ended with $100. Your actual return is <strong>0%</strong>.</li>
+      </ul>
+      <p>
+        Because the stock market is volatile and experiences negative years, the actual compound return you experience (geometric average) will always be lower than the simple average (arithmetic). When planning for retirement using tools like an <a href="/investment-calculator">investing calculator</a> or an <a href="/investment-planner">investment planner</a>, relying on an arithmetic average will significantly overestimate your future wealth.
+      </p>
+
+      <h2>When Should You Use This Calculator?</h2>
+      <p>
+        While betting your retirement solely on a 12% return is risky, running these numbers is still highly educational and useful for several scenarios:
+      </p>
+      <ol>
+        <li><strong>Understanding the Impact of Fees:</strong> By testing 12% versus 10% (a 2% drop), you can visually see how mutual fund fees or advisory fees eat into your long-term wealth. A 2% fee might not sound like much today, but compounded over 30 years, it costs you hundreds of thousands of dollars. Even a 1% fee on a million-dollar portfolio is $10,000 per year that you are missing out on. When you run the math through an investment planner, it becomes painfully clear why keeping your expense ratios low is one of the single most important things an investor can do. The difference between an index fund charging 0.03% and a mutual fund charging 1.25% is astronomical over a long timeline.</li>
+        <li><strong>Setting Best-Case Scenario Goals:</strong> If you are building a highly aggressive portfolio—perhaps heavily weighted in small-cap value or emerging markets—12% might represent your absolute best-case ceiling. It allows you to see the "what if" scenario if everything goes perfectly. However, this should be paired with a much more grounded analysis of your downside risk. If you are striving for 12%, you are taking on significant volatility. Knowing what that upper bound looks like can help you decide if taking on that extra risk is actually worth it for your personal financial goals.</li>
+        <li><strong>Comparing Investment Vehicles:</strong> Use this tool alongside an <a href="/roi-calculator">ROI calculator</a> to compare high-growth equity strategies against safer, fixed-income investments. For instance, you could compare the projected returns of a heavy stock portfolio against a portfolio leaning heavily into municipal bonds or high-yield savings. This comparative analysis is crucial for constructing a diversified portfolio that aligns with your specific risk tolerance. You might find that a conservative 6% return still meets your retirement goals, meaning you don't need to stretch for the elusive 12% and take on unnecessary risk.</li>
+      </ol>
+
+      <h3>The Psychological Benefit of Running the Numbers</h3>
+      <p>
+        Beyond the pure math, using a Dave Ramsey investment calculator provides a powerful psychological boost. The sheer magnitude of compound interest is difficult for the human brain to intuitively grasp. We are wired to think linearly, not exponentially. When you input a modest monthly contribution of $500 and see it blossom into over a million dollars over three decades, it completely changes your perspective on saving.
+      </p>
+      <p>
+        This realization is often the catalyst that shifts someone from a spender to a saver. It demonstrates that you do not need a massive income to build significant wealth; you simply need discipline, consistency, and time. Even if the 12% assumption is aggressive, the underlying principle—that your money can work harder than you do—is universally true. It provides the motivation needed to stick to a budget, avoid unnecessary debt, and prioritize long-term financial security over short-term consumption.
+      </p>
+
+      <h2>Deep Dive: The Four Mutual Fund Types</h2>
+      <p>
+        To understand the 12% claim, it is essential to examine the specific investment strategy Dave Ramsey advocates. He does not recommend buying individual stocks or throwing all your money into a single index fund. Instead, he suggests dividing your investments equally across four specific categories of mutual funds. This strategy is designed to balance aggressive growth with some level of stability, although it remains heavily tilted toward equities.
+      </p>
+
+      <h3>1. Growth and Income Funds (25%)</h3>
+      <p>
+        These are large, well-established companies that have a history of paying consistent dividends while also offering moderate capital appreciation. These are often referred to as "blue-chip" stocks. The goal here is to provide a foundation of stability. Even during market downturns, these companies tend to weather the storm better than smaller, riskier firms, and their dividends provide a steady stream of income that can be reinvested to buy more shares when prices are low. Think of massive consumer staples, established technology giants, and major healthcare corporations. While they may not provide explosive growth, they are reliable.
+      </p>
+
+      <h3>2. Growth Funds (25%)</h3>
+      <p>
+        Growth funds focus on medium to large companies that are experiencing faster-than-average expansion. These companies typically reinvest their earnings back into the business to fuel further growth, rather than paying out large dividends. They are more volatile than growth and income funds but offer higher potential returns. This category often includes companies in rapidly evolving sectors like technology, biotechnology, and consumer discretionary. When the economy is booming, growth funds tend to outperform, but they can also suffer steeper losses during recessions.
+      </p>
+
+      <h3>3. Aggressive Growth Funds (25%)</h3>
+      <p>
+        This is where the highest risk and highest potential reward reside. Aggressive growth funds target small-cap companies, startups, and rapidly emerging industries. These are the companies trying to disrupt established markets. They are highly volatile; their stock prices can swing wildly based on earnings reports, macroeconomic trends, or even just market sentiment. However, if one of these small companies hits it big and becomes the next major industry leader, the returns can be astronomical. This slice of the portfolio is the engine that attempts to drive the overall return closer to that 12% target, but it requires a strong stomach for volatility.
+      </p>
+
+      <h3>4. International Funds (25%)</h3>
+      <p>
+        To protect against localized economic downturns in the United States, Ramsey recommends allocating a quarter of your portfolio to international companies. This provides geographic diversification. If the US market is struggling but emerging markets in Asia or established economies in Europe are thriving, this portion of the portfolio helps smooth out the overall returns. International investing introduces additional risks, such as currency fluctuations and geopolitical instability, but it is a crucial component of a well-rounded strategy.
+      </p>
+
+      <p>
+        While this four-fund strategy is widely debated—many modern financial advisors prefer simpler, lower-cost index fund portfolios—it is the specific engine designed to chase those aggressive double-digit returns. By understanding the components, you can better evaluate whether the 12% assumption is remotely plausible for your specific mix of investments.
+      </p>
+
+
+      <h2>Common Mistakes When Projecting Investment Growth</h2>
+      <p>
+        When people use investment calculators, they often fall prey to a few common psychological traps. It is easy to punch numbers into a form and get excited about a massive future balance, but failing to account for real-world friction can lead to severe disappointment decades down the line. Here is what to watch out for:
+      </p>
+
+      <h3>1. Forgetting About Inflation (The Silent Wealth Killer)</h3>
+      <p>
+        A million dollars in 30 years will not have the same purchasing power as a million dollars today. This is perhaps the most dangerous oversight investors make. Historically, inflation averages around 3% per year. If you achieve a 10% return, your <em>real</em> return—the increase in your actual purchasing power—is closer to 7%.
+      </p>
+      <p>
+        To put this in perspective, if inflation averages 3% over the next 30 years, you will need approximately $2.4 million to buy what $1 million buys today. When you look at the final number spit out by our Dave Ramsey investment calculator, always mentally discount it. A good rule of thumb is to subtract 3% from your expected return right from the start. If you are hoping for 10% nominal growth, plug in 7% to see your wealth in today's purchasing power.
+      </p>
+
+      <h3>2. Assuming Linear, Uninterrupted Returns</h3>
+      <p>
+        Calculators assume the market gives you exactly the same return every single year like clockwork. This is mathematically convenient but entirely divorced from reality. In reality, you might see a 20% gain one year, a flat market the next, and a terrifying 15% loss the year after that. This volatility is entirely normal, but it means your portfolio's path will be a jagged, unpredictable line, not a smooth upward curve.
+      </p>
+      <p>
+        This sequence of returns matters immensely, especially as you approach retirement. If you experience massive losses right before you plan to start withdrawing funds (a concept known as sequence of returns risk), your portfolio could be devastated, even if the long-term average remains at 10% or 12%. Tools like the <a href="/average-stock-market-return">average stock market return</a> guide can provide better historical context for just how bumpy the ride can be.
+      </p>
+
+      <h3>3. Ignoring Taxes and Capital Gains</h3>
+      <p>
+        Unless you are investing strictly within a tax-advantaged account like a Roth IRA or a TFSA, the government will inevitably take its cut. You will eventually owe taxes on your capital gains when you sell, and you will owe taxes on dividends as they are paid out year after year.
+      </p>
+      <p>
+        Furthermore, actively managed mutual funds—the type often associated with aggressive growth strategies—tend to have high turnover rates. This means the fund manager is constantly buying and selling stocks within the fund. This constant trading generates taxable capital gains distributions that are passed on to you, the investor. You could end up owing taxes on these distributions even in a year when the overall value of the mutual fund went down! Always consider the tax efficiency of your investments.
+      </p>
+
+      <h3>4. Underestimating the Impact of Fees (MER)</h3>
+      <p>
+        We touched on this earlier, but it deserves its own section because it is so insidious. The Management Expense Ratio (MER) of a mutual fund is a percentage deducted from your total assets every single year, regardless of whether the fund makes money or loses money. If a fund charges 1.5%, your 12% gross return is instantly reduced to 10.5%.
+      </p>
+      <p>
+        Over 30 years, a 1.5% fee can consume hundreds of thousands of dollars of potential wealth. This is the primary argument for low-cost index funds, which often charge 0.05% or less. When projecting your growth, you must use your <em>net</em> expected return after all fees have been subtracted.
+      </p>
+
+      <h3>5. Emotional Capitulation During Bear Markets</h3>
+      <p>
+        The biggest flaw in any investment calculator is that it assumes the investor behaves perfectly. It assumes you will continue to confidently pour $500 a month into the market, month after month, decade after decade. It assumes you will not panic.
+      </p>
+      <p>
+        In reality, when the market crashes by 30% and the news is proclaiming the end of the financial system, human nature screams at you to sell and move your money to cash. Selling at the bottom locks in your losses and guarantees you will miss the eventual recovery. No calculator can account for the psychological fortitude required to stay the course during a severe bear market. The numbers only work if you have the discipline to execute the plan regardless of market conditions.
+      </p>
+
+
+      <h2>Practical Tips from the Professionals</h2>
+      <p>
+        Financial planners generally prefer to under-promise and over-deliver. When they build financial plans, they rarely use a 12% assumption. Here are the rules of thumb they actually use:
+      </p>
+      <ul>
+        <li><strong>The 6-7-8 Rule:</strong> Many planners use 6% for conservative portfolios, 7% for moderate ones, and 8% for aggressive portfolios. This bakes in a buffer for inflation and market downturns.</li>
+        <li><strong>Plan for the Worst, Hope for the Best:</strong> Run your numbers using 8%. If you hit your retirement goals at 8%, you are in great shape. If the market happens to give you 10% or 12%, treat it as a massive bonus rather than a baseline expectation.</li>
+        <li><strong>Focus on What You Can Control:</strong> You cannot control the stock market's returns. You <em>can</em> control your savings rate, your asset allocation, and your fees. Focus intensely on maximizing your monthly contribution rather than endlessly chasing higher yields.</li>
+      </ul>
+
+      <p>
+        Ultimately, whether you subscribe to Dave Ramsey's 12% philosophy or prefer a more conservative approach, the most important step is simply getting started. Time in the market is your greatest asset. Try running different scenarios in our calculator, or explore how a <a href="/stock-split-calculator">stock split</a> might affect individual shares in a portfolio.
+      </p>
+    </article>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .lead {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .calculator-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .calculator-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .calc-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .section-desc {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .input-wrapper:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 0, 112, 243), 0.2);
+  }
+
+  .prefix, .suffix {
+    padding: 0.75rem 1rem;
+    background: var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  input[type="number"] {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1rem;
+    width: 100%;
+    outline: none;
+  }
+
+  .helper-text {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .calc-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-top: 1rem;
+  }
+
+  .calc-btn:hover {
+    opacity: 0.9;
+  }
+
+  .results-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .result-box {
+    padding: 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-box.highlight {
+    background: rgba(var(--accent-color-rgb, 0, 112, 243), 0.05);
+    border-color: var(--accent-color);
+  }
+
+  .result-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .result-box.highlight .result-value {
+    color: var(--accent-color);
+    font-size: 2rem;
+  }
+
+  .comparison-box {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-top: 2px dashed var(--border-color);
+  }
+
+  .comparison-box h3 {
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .warning-text {
+    color: #e65100;
+    font-size: 1.1rem;
+  }
+
+  .difference-text {
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .educational-content {
+    margin-top: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .educational-content h2 {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content h4 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content p, .educational-content ul, .educational-content ol {
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .educational-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .formula-box {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .formula-box strong {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-family: monospace;
+  }
+
+  .formula-box ul {
+    margin-bottom: 0;
+  }
+
+  .formula-box li {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  /* Ensuring links inside page-content have proper styling per requirements */
+  .page-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const initialInput = document.getElementById("initialInvestment");
+    const monthlyInput = document.getElementById("monthlyContribution");
+    const yearsInput = document.getElementById("yearsToGrow");
+    const rateInput = document.getElementById("interestRate");
+    const calcBtn = document.getElementById("calculateBtn");
+
+    const totalValueEl = document.getElementById("totalValue");
+    const totalPrincipalEl = document.getElementById("totalPrincipal");
+    const totalInterestEl = document.getElementById("totalInterest");
+    const conservativeValueEl = document.getElementById("conservativeValue");
+    // valueDifference is dynamically recreated
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    };
+
+    const calculateCompoundInterest = (principal, monthly, years, annualRate) => {
+      // Handle edge cases
+      if (principal < 0) principal = 0;
+      if (monthly < 0) monthly = 0;
+      if (years < 0) years = 0;
+
+      const r = annualRate / 100;
+      const n = 12; // Compounded monthly
+      const t = years;
+
+      // If rate is 0 or negative
+      if (r <= 0) {
+        return principal + (monthly * 12 * t);
+      }
+
+      // Principal compound interest: A = P(1 + r/n)^(nt)
+      const principalFutureValue = principal * Math.pow((1 + r/n), (n * t));
+
+      // Future value of a series (annuity): PMT × [((1 + r/n)^(nt) - 1) / (r/n)]
+      const pmtFutureValue = monthly * ((Math.pow((1 + r/n), (n * t)) - 1) / (r / n));
+
+      let result = principalFutureValue + pmtFutureValue;
+
+      // Precision handling
+      let fixed = parseFloat(result.toPrecision(14));
+      if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+        return Math.round(fixed);
+      }
+      return fixed;
+    };
+
+    const updateCalculations = () => {
+      let principal = parseFloat(initialInput.value) || 0;
+      let monthly = parseFloat(monthlyInput.value) || 0;
+      let years = parseFloat(yearsInput.value) || 0;
+      let rate = parseFloat(rateInput.value) || 0;
+
+      // Main calculation
+      const futureValue = calculateCompoundInterest(principal, monthly, years, rate);
+      const totalInvested = principal + (monthly * 12 * years);
+      const interestEarned = futureValue - totalInvested;
+
+      // Conservative calculation (always at 8%)
+      const conservativeRate = 8;
+      const conservativeValue = calculateCompoundInterest(principal, monthly, years, conservativeRate);
+      const diff = futureValue - conservativeValue;
+
+      // Update UI
+      totalValueEl.textContent = formatCurrency(futureValue);
+      totalPrincipalEl.textContent = formatCurrency(totalInvested);
+      totalInterestEl.textContent = formatCurrency(Math.max(0, interestEarned));
+
+      conservativeValueEl.textContent = formatCurrency(conservativeValue);
+      // valueDifference updated inside diffContainer logic
+
+      // Adjust text based on whether the main rate is higher or lower than the conservative rate
+      const diffContainer = document.querySelector('.difference-text');
+      if (diffContainer) {
+        if (rate > conservativeRate) {
+          diffContainer.textContent = "That's a difference of ";
+          const strong = document.createElement("strong");
+          strong.id = "valueDifference";
+          strong.textContent = formatCurrency(diff);
+          diffContainer.appendChild(strong);
+        } else if (rate < conservativeRate) {
+          diffContainer.textContent = "The 8% return would give you ";
+          const strong = document.createElement("strong");
+          strong.id = "valueDifference";
+          strong.textContent = formatCurrency(Math.abs(diff));
+          diffContainer.appendChild(strong);
+          diffContainer.appendChild(document.createTextNode(" more."));
+        } else {
+          diffContainer.textContent = `This matches the conservative 8% estimate.`;
+        }
+      }
+    };
+
+    // Calculate on button click
+    calcBtn.addEventListener("click", updateCalculations);
+
+    // Also calculate on any input change for real-time calculation
+    const inputs = [initialInput, monthlyInput, yearsInput, rateInput];
+    inputs.forEach(input => {
+      input.addEventListener("input", updateCalculations);
+    });
+
+    // Initial calculation on load
+    updateCalculations();
+  });
+</script>

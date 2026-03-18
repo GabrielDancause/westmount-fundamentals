@@ -1,0 +1,288 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Simple Interest Calculator | Calculate Loan & Investment Interest",
+  description: "Calculate simple interest on loans or investments quickly. Input principal, rate, and time to see your total interest and final balance instantly.",
+  category: "tool",
+  published: "2026-03-20"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is simple interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is a quick method of calculating the interest charge on a loan or the return on an investment. It is determined by multiplying the daily interest rate by the principal by the number of days that elapse between payments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is simple interest calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The formula for simple interest is I = P × R × T, where 'I' is the Interest, 'P' is the Principal amount, 'R' is the Annual Interest Rate (in decimal form), and 'T' is the Time in years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between simple and compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is calculated only on the principal amount of a loan or investment. Compound interest is calculated on the principal amount and also on the accumulated interest of previous periods."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is simple interest commonly used?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest is most commonly used for short-term personal loans, auto loans, and certain types of consumer installment loans where interest does not compound."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does simple interest benefit the borrower or lender?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simple interest generally benefits the borrower more than compound interest because they don't have to pay interest on accumulated interest. The total amount paid over the life of a simple interest loan will be less than a compound interest loan with the same rate and term."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/simple-interest-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Simple Interest Calculator</h1>
+      <p class="subtitle">Quickly determine the interest cost of a loan or return on an investment using the simple interest formula.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="input-group">
+        <label for="principal">Principal Amount ($)</label>
+        <input type="number" id="principal" value="5000" min="0" step="100" />
+      </div>
+
+      <div class="input-group">
+        <label for="rate">Annual Interest Rate (%)</label>
+        <input type="number" id="rate" value="5" min="0" step="0.1" />
+      </div>
+
+      <div class="input-group">
+        <label for="time">Time Period (Years)</label>
+        <input type="number" id="time" value="3" min="0.1" step="0.1" />
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <h3>Total Interest Earned / Owed</h3>
+          <div class="result-value" id="total-interest">$0.00</div>
+        </div>
+
+        <div class="secondary-results">
+          <div class="sub-result">
+            <h4>Principal Amount</h4>
+            <div id="display-principal">$0.00</div>
+          </div>
+          <div class="sub-result">
+            <h4>Total Final Balance</h4>
+            <div id="total-balance">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-text" style="display: none;">Please enter valid positive numbers.</div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding Simple Interest</h2>
+      <p>
+        Simple interest is an easy and straightforward method of calculating the interest charge on a loan or the interest return on a cash investment. Unlike compound interest, where you earn or pay interest on previously accumulated interest, simple interest is determined solely by the initial principal amount.
+      </p>
+
+      <h3>The Simple Interest Formula</h3>
+      <p>
+        To manually calculate simple interest, you use the fundamental formula:
+      </p>
+      <div class="formula-box">
+        <strong>I = P × R × T</strong>
+      </div>
+      <p>Where:</p>
+      <ul>
+        <li><strong>I</strong> = Total Interest Amount</li>
+        <li><strong>P</strong> = Principal Amount (the initial sum of money)</li>
+        <li><strong>R</strong> = Annual Interest Rate (expressed as a decimal, e.g., 5% becomes 0.05)</li>
+        <li><strong>T</strong> = Time Period in years</li>
+      </ul>
+
+      <h3>Example Calculation</h3>
+      <p>
+        Imagine you take out a personal loan of <strong>$5,000</strong> at a simple annual interest rate of <strong>5%</strong> for <strong>3 years</strong>.
+      </p>
+      <p>Using the formula:</p>
+      <ul>
+        <li><strong>I</strong> = $5,000 × 0.05 × 3</li>
+        <li><strong>I</strong> = $750</li>
+      </ul>
+      <p>
+        The total interest paid over the 3-year term will be $750. The total balance to repay (Principal + Interest) will be $5,750.
+      </p>
+
+      <h3>Simple Interest vs. Compound Interest</h3>
+      <p>
+        The core difference between the two lies in what the interest is calculated against. Simple interest calculates a flat rate against the original principal amount for the entire duration of the term. Compound interest recalculates the principal amount periodically (e.g., daily or monthly) to include accrued interest, resulting in exponential growth.
+      </p>
+      <p>
+        For borrowers, simple interest is generally advantageous as the total interest paid is significantly less than a compounding loan. However, for investors, compounding interest is vastly superior for building long-term wealth.
+      </p>
+
+      <h3>Where is Simple Interest Used?</h3>
+      <p>
+        Simple interest is commonly used in consumer financing that isn't intended for long durations, including:
+      </p>
+      <ul>
+        <li>Auto loans</li>
+        <li>Short-term personal installment loans</li>
+        <li>Certificates of Deposit (CDs) that pay out interest periodically rather than reinvesting it</li>
+        <li>Early payment discounts on commercial invoices</li>
+      </ul>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is simple interest?</summary>
+        <p>Simple interest is a quick method of calculating the interest charge on a loan or the return on an investment. It is determined by multiplying the daily interest rate by the principal by the number of days that elapse between payments.</p>
+      </details>
+
+      <details>
+        <summary>How is simple interest calculated?</summary>
+        <p>The formula for simple interest is I = P × R × T, where 'I' is the Interest, 'P' is the Principal amount, 'R' is the Annual Interest Rate (in decimal form), and 'T' is the Time in years.</p>
+      </details>
+
+      <details>
+        <summary>What is the difference between simple and compound interest?</summary>
+        <p>Simple interest is calculated only on the principal amount of a loan or investment. Compound interest is calculated on the principal amount and also on the accumulated interest of previous periods.</p>
+      </details>
+
+      <details>
+        <summary>When is simple interest commonly used?</summary>
+        <p>Simple interest is most commonly used for short-term personal loans, auto loans, and certain types of consumer installment loans where interest does not compound.</p>
+      </details>
+
+      <details>
+        <summary>Does simple interest benefit the borrower or lender?</summary>
+        <p>Simple interest generally benefits the borrower more than compound interest because they don't have to pay interest on accumulated interest. The total amount paid over the life of a simple interest loan will be less than a compound interest loan with the same rate and term.</p>
+      </details>
+    </section>
+  </div>
+</SiteLayout>
+  <script is:inline>
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function calculateSimpleInterest() {
+      const principalInput = document.getElementById('principal');
+      const rateInput = document.getElementById('rate');
+      const timeInput = document.getElementById('time');
+      const errorMsg = document.getElementById('error-message');
+
+      const principal = parseFloat(principalInput.value);
+      const rate = parseFloat(rateInput.value);
+      const time = parseFloat(timeInput.value);
+
+      if (isNaN(principal) || isNaN(rate) || isNaN(time) || principal < 0 || rate < 0 || time < 0) {
+        errorMsg.style.display = 'block';
+        document.getElementById('total-interest').textContent = '$0.00';
+        document.getElementById('display-principal').textContent = '$0.00';
+        document.getElementById('total-balance').textContent = '$0.00';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+
+      // Simple Interest Formula: I = P * R * T
+      const interest = principal * (rate / 100) * time;
+      const totalBalance = principal + interest;
+
+      document.getElementById('total-interest').textContent = formatCurrency(interest);
+      document.getElementById('display-principal').textContent = formatCurrency(principal);
+      document.getElementById('total-balance').textContent = formatCurrency(totalBalance);
+    }
+
+    function initCalculator() {
+      const inputs = ['principal', 'rate', 'time'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.dataset.initialized) {
+          el.addEventListener('input', calculateSimpleInterest);
+          el.dataset.initialized = 'true';
+        }
+      });
+      calculateSimpleInterest();
+    }
+
+    document.addEventListener('DOMContentLoaded', initCalculator);
+    document.addEventListener('astro:page-load', initCalculator);
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .calculator-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+
+    .input-group { margin-bottom: 1.25rem; }
+    .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; }
+
+    input, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 1rem; }
+    input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+
+    .results-grid { margin-top: 2rem; }
+    .result-card { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+    .result-card h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--text-secondary); }
+    .result-value { font-size: 2.5rem; font-weight: 800; color: var(--accent-color); }
+
+    .secondary-results { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .sub-result { background: var(--bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; text-align: center; }
+    .sub-result h4 { margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+    .sub-result div { font-size: 1.2rem; font-weight: 700; }
+
+    .error-text { color: color-mix(in srgb, var(--text-primary) 50%, #ef4444); margin-top: 1rem; font-weight: 600; text-align: center; }
+
+    .explainer { margin: 3rem 0; line-height: 1.6; }
+    .explainer h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+    .explainer h3 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; }
+    .explainer p { margin-bottom: 1rem; color: var(--text-secondary); }
+    .explainer ul, .explainer ol { margin-bottom: 1rem; color: var(--text-secondary); padding-left: 1.5rem; }
+    .explainer li { margin-bottom: 0.5rem; }
+
+    .formula-box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; text-align: center; margin: 1.5rem 0; font-size: 1.2rem; }
+
+    .faq-section { margin-top: 3rem; }
+    .faq-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    .faq-section details p { margin: 1rem 0 0 0; color: var(--text-secondary); line-height: 1.5; }
+
+    @media (min-width: 640px) {
+      .calculator-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+      .results-grid { grid-column: 1 / -1; margin-top: 0; }
+      .input-group { margin-bottom: 0; }
+    }
+  </style>

@@ -1,0 +1,352 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "VOO vs S&P 500: Understanding the Difference",
+    "description": "Discover the crucial difference between the Vanguard S&P 500 ETF (VOO) and the S&P 500 Index itself. Learn about tracking error, expense ratios, and how to actually invest.",
+    "datePublished": "2026-03-15",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Research",
+      "url": "https://westmountfundamentals.com"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between VOO and the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The S&P 500 is a theoretical index or benchmark that tracks the performance of 500 large U.S. companies. VOO is an actual, tradable Exchange-Traded Fund (ETF) managed by Vanguard that buys the stocks within that index so you can invest in them."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I invest directly in the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, you cannot invest directly in an index. An index is simply a mathematical measure of market performance. To invest in it, you must buy a fund (like VOO, SPY, or IVV) that mimics the index's holdings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does VOO have an expense ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "VOO charges a 0.03% expense ratio to cover the administrative, legal, and operational costs of physically buying, selling, and managing the 500 individual stocks that make up the fund. The S&P 500 index itself has no fees because it is just a list."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is tracking error in an S&P 500 fund?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tracking error is the slight difference in performance between an index fund (like VOO) and the actual index (S&P 500). It is usually caused by the fund's expense ratio, cash drag, and minor delays in rebalancing portfolio holdings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are there alternatives to Vanguard's VOO?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, other major alternatives that track the exact same S&P 500 index include State Street's SPY and BlackRock's IVV. While they hold the same stocks, they may have slightly different expense ratios or liquidity profiles."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "VOO vs S&P 500: What's the Real Difference?",
+  description: "Are you confused by the difference between VOO and the S&P 500? One is a fund, the other is a benchmark.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="VOO vs S&P 500: What's the Real Difference?"
+  description="Are you confused by the difference between VOO and the S&P 500? One is a fund, the other is a benchmark."
+  canonical="https://westmountfundamentals.com/voo-vs-sp500"
+  schema={schema}
+>
+  <style is:inline>
+
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #fff 0%, #8b9bb4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card h2::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 24px;
+      background: var(--accent-color);
+      border-radius: 4px;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .callout {
+      background: rgba(74, 143, 231, 0.05);
+      border-left: 4px solid var(--accent-color);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .faq-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+
+    .faq-section h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-item h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .link {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      color: var(--text-primary);
+    }
+
+  </style>
+
+  <div class="page-content">
+    <div class="hero">
+      <h1>VOO vs S&P 500</h1>
+      <p>Understanding the fundamental difference between an index and an index fund.</p>
+    </div>
+
+
+    <div class="card">
+      <h2>The Core Difference</h2>
+      <p>Many beginners start their investing journey by searching "how to buy the S&P 500." They often discover the ticker symbol <strong>VOO</strong> and become confused about whether they are buying the index or something else.</p>
+
+      <p>The distinction is straightforward but crucial: The <strong>S&P 500</strong> is merely a mathematical list—a benchmark index created by Standard & Poor's. It tracks the collective performance of 500 of the largest publicly traded companies in the United States. Because it is just a statistical concept, it is not directly investable. You cannot wire money to "Standard & Poor's" to buy the index.</p>
+
+      <p><strong>VOO</strong> (Vanguard S&P 500 ETF), on the other hand, is a physical, tradable financial product. Created and managed by Vanguard, VOO is an Exchange-Traded Fund (ETF) designed to hold the exact same stocks, in the exact same proportions, as the S&P 500 index. When you buy a share of VOO, you are buying a tiny fraction of a massive pool of those 500 underlying stocks.</p>
+
+      <div class="callout">
+        <p><strong>Analogy:</strong> The S&P 500 is the recipe. VOO is the actual cake baked by Vanguard using that recipe.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Why VOO Exists: The Cost of Doing Business</h2>
+      <p>If VOO simply buys the companies on the S&P 500 list, why isn't its performance identical to the index? The answer lies in the logistics of running a multi-billion dollar fund.</p>
+
+      <h3>The Expense Ratio</h3>
+      <p>The theoretical index pays no trading fees, no legal costs, and no salaries. Vanguard, however, incurs substantial costs to continuously buy and sell shares to match the index, maintain compliance, and administer investor accounts. To cover these costs, Vanguard charges an incredibly low <strong>0.03% expense ratio</strong>.</p>
+      <p>This fee means that for every $10,000 you invest in VOO, you are effectively paying Vanguard $3 per year to do all the heavy lifting.</p>
+
+      <h3>Tracking Error</h3>
+      <p>Because of this tiny fee—and occasionally slight delays in reinvesting dividends or adjusting the portfolio when the S&P 500 adds or removes a company—VOO's performance will almost always lag the theoretical index by a fractional percentage. This microscopic deviation is known as tracking error.</p>
+    </div>
+
+    <div class="card">
+      <h2>Alternatives: Are There Other S&P 500 Funds?</h2>
+      <p>Vanguard is not the only company utilizing the S&P 500 recipe. Several other major financial institutions offer their own variations. They all hold the same 500 stocks, meaning their long-term returns will be virtually indistinguishable. The differences typically lie in their expense ratios, liquidity, and whether they are structured as ETFs or mutual funds.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Ticker</th>
+            <th>Expense Ratio</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Vanguard</td>
+            <td><strong>VOO</strong></td>
+            <td>0.03%</td>
+            <td>Long-term buy-and-hold retail investors.</td>
+          </tr>
+          <tr>
+            <td>State Street</td>
+            <td><strong>SPY</strong></td>
+            <td>0.09%</td>
+            <td>Active traders needing massive daily options liquidity.</td>
+          </tr>
+          <tr>
+            <td>BlackRock (iShares)</td>
+            <td><strong>IVV</strong></td>
+            <td>0.03%</td>
+            <td>Direct competitor to VOO; structurally identical.</td>
+          </tr>
+          <tr>
+            <td>Fidelity</td>
+            <td><strong>FXAIX</strong></td>
+            <td>0.015%</td>
+            <td>Mutual fund investors inside tax-advantaged accounts.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>To see a deeper dive into Vanguard's offering, you can read our <a href="/voo-etf-review-2026" class="link">comprehensive VOO ETF Review</a> or check out our guide comparing the <a href="/guide-sp500-index-funds" class="link">best S&P 500 index funds</a>.</p>
+    </div>
+
+    <div class="card">
+      <h2>How to Actually Invest in the S&P 500</h2>
+      <p>Now that you know you need an intermediary product like VOO to access the S&P 500, the process of investing is quite simple.</p>
+      <p>First, you must open an account with a brokerage firm (such as Fidelity, Charles Schwab, Robinhood, or Vanguard itself). Once your account is funded with cash, you simply search for the ticker symbol "VOO" on their trading platform and execute a buy order. Because VOO trades throughout the day on the stock exchange, your order will be filled instantly during normal market hours.</p>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is the difference between VOO and the S&P 500?</h3>
+        <p>The S&P 500 is a theoretical index or benchmark that tracks the performance of 500 large U.S. companies. VOO is an actual, tradable Exchange-Traded Fund (ETF) managed by Vanguard that buys the stocks within that index so you can invest in them.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I invest directly in the S&P 500?</h3>
+        <p>No, you cannot invest directly in an index. An index is simply a mathematical measure of market performance. To invest in it, you must buy a fund (like VOO, SPY, or IVV) that mimics the index's holdings.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why does VOO have an expense ratio?</h3>
+        <p>VOO charges a 0.03% expense ratio to cover the administrative, legal, and operational costs of physically buying, selling, and managing the 500 individual stocks that make up the fund. The S&P 500 index itself has no fees because it is just a list.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is tracking error in an S&P 500 fund?</h3>
+        <p>Tracking error is the slight difference in performance between an index fund (like VOO) and the actual index (S&P 500). It is usually caused by the fund's expense ratio, cash drag, and minor delays in rebalancing portfolio holdings.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Are there alternatives to Vanguard's VOO?</h3>
+        <p>Yes, other major alternatives that track the exact same S&P 500 index include State Street's SPY and BlackRock's IVV. While they hold the same stocks, they may have slightly different expense ratios or liquidity profiles.</p>
+      </div>
+    </div>
+
+  </div>
+</SiteLayout>

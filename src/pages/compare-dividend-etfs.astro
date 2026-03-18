@@ -1,0 +1,460 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Compare Dividend ETFs: SCHD, VYM, JEPI & More",
+  description: "Use our interactive tool to instantly compare top dividend ETFs like SCHD, VYM, HDV, JEPI, JEPQ, and DGRO.",
+  category: "tool",
+  published: "2026-03-24",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do covered call ETFs like JEPI and JEPQ generate such high yields?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Covered call ETFs generate high yields by combining a portfolio of equities with an options strategy. They sell (write) call options on an index or their holdings, collecting premiums which are distributed as income, often trading upside capital appreciation for immediate yield."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between dividend growth and high dividend yield strategies?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Dividend growth strategies (like SCHD or DGRO) focus on companies with a history of consistently increasing their payouts, emphasizing long-term total return and dividend safety. High dividend yield strategies (like VYM or HDV) target companies currently paying the highest absolute dividends, prioritizing immediate income over future growth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is the expense ratio important when comparing ETFs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The expense ratio represents the annual fee charged by the fund managers, expressed as a percentage of your investment. It directly reduces your overall return and effective dividend yield, making low-cost funds crucial for long-term compound growth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the number of holdings in an ETF matter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, the number of holdings indicates the fund's level of diversification. A broader fund with hundreds of stocks minimizes single-company risk, while a concentrated fund with fewer holdings relies more heavily on the performance of its top positions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I hold multiple dividend ETFs in the same portfolio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Many investors hold multiple dividend ETFs to blend strategies, such as pairing a core dividend growth fund for capital appreciation with a covered call ETF for enhanced monthly income, achieving a balanced mix of yield and growth."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Compare Dividend ETFs: SCHD, VYM, JEPI & More",
+    "description": "Use our interactive tool to instantly compare top dividend ETFs like SCHD, VYM, HDV, JEPI, JEPQ, and DGRO. Analyze yield, expense ratios, and strategy side-by-side.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "datePublished": "2026-03-24",
+    "dateModified": "2026-03-24"
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/compare-dividend-etfs" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Dividend ETF Comparison Tool</h1>
+      <p class="subtitle">Compare yields, expense ratios, holdings, and strategies of popular income funds.</p>
+    </div>
+
+    <!-- TOOL INJECTED HERE -->
+    <div class="tool-container card">
+      <div class="selector-row">
+        <div class="selector-group">
+          <label for="etfA">Select ETF A</label>
+          <select id="etfA">
+            <option value="SCHD" selected>SCHD - Schwab US Dividend Equity</option>
+            <option value="VYM">VYM - Vanguard High Dividend Yield</option>
+            <option value="HDV">HDV - iShares Core High Dividend</option>
+            <option value="JEPI">JEPI - JPMorgan Equity Premium Income</option>
+            <option value="JEPQ">JEPQ - JPMorgan Nasdaq Equity Premium</option>
+            <option value="DGRO">DGRO - iShares Core Dividend Growth</option>
+          </select>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="selector-group">
+          <label for="etfB">Select ETF B</label>
+          <select id="etfB">
+            <option value="SCHD">SCHD - Schwab US Dividend Equity</option>
+            <option value="VYM" selected>VYM - Vanguard High Dividend Yield</option>
+            <option value="HDV">HDV - iShares Core High Dividend</option>
+            <option value="JEPI">JEPI - JPMorgan Equity Premium Income</option>
+            <option value="JEPQ">JEPQ - JPMorgan Nasdaq Equity Premium</option>
+            <option value="DGRO">DGRO - iShares Core Dividend Growth</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="compare-row header-row">
+          <div class="compare-cell metric-name">Metric</div>
+          <div class="compare-cell etf-col" id="headerA">SCHD</div>
+          <div class="compare-cell etf-col" id="headerB">VYM</div>
+        </div>
+
+        <div class="compare-row">
+          <div class="compare-cell metric-name">Dividend Yield</div>
+          <div class="compare-cell etf-col highlight" id="yieldA">3.5%</div>
+          <div class="compare-cell etf-col highlight" id="yieldB">2.8%</div>
+        </div>
+
+        <div class="compare-row">
+          <div class="compare-cell metric-name">Expense Ratio</div>
+          <div class="compare-cell etf-col" id="erA">0.06%</div>
+          <div class="compare-cell etf-col" id="erB">0.06%</div>
+        </div>
+
+        <div class="compare-row">
+          <div class="compare-cell metric-name">Holdings Count</div>
+          <div class="compare-cell etf-col" id="holdingsA">100</div>
+          <div class="compare-cell etf-col" id="holdingsB">400+</div>
+        </div>
+
+        <div class="compare-row">
+          <div class="compare-cell metric-name">Strategy Type</div>
+          <div class="compare-cell etf-col strategy-text" id="strategyA">Dividend Growth</div>
+          <div class="compare-cell etf-col strategy-text" id="strategyB">High Yield Broad</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT INJECTED HERE -->
+    <div class="content-section">
+      <h2>Key Metrics Breakdown</h2>
+      <p>
+        When building an income-focused portfolio, selecting the right Exchange Traded Fund (ETF) requires looking beyond just the headline dividend yield. Our comparison tool highlights four critical metrics—Yield, Expense Ratio, Holdings Count, and Strategy Type—that define the risk, reward, and objective of these popular funds.
+      </p>
+
+      <h3>Dividend Yield</h3>
+      <p>
+        The dividend yield represents the annual income generated by the fund, expressed as a percentage of its current share price. While a high yield, such as the 9.0% offered by <a href="/jepq-dividend">JEPQ</a> or the 7.5% from <a href="/jepi-dividend">JEPI</a>, provides substantial immediate cash flow, it often comes with a trade-off in capital appreciation. Conversely, funds like <a href="/schd-dividend">SCHD</a> or DGRO offer lower starting yields but focus on companies with a history of consistent dividend growth, which can result in a higher yield-on-cost over long investment horizons.
+      </p>
+
+      <h3>Expense Ratio</h3>
+      <p>
+        An ETF's expense ratio is the annual fee charged by the fund manager to cover operational costs. Because this fee is automatically deducted from the fund's returns, minimizing expenses is crucial for maximizing your long-term compound growth. Broad market index funds and passive dividend strategies like VYM and SCHD typically boast ultra-low expense ratios around 0.06%. Actively managed funds or those utilizing complex derivatives, such as the covered call strategies in JEPI and JEPQ, inherently carry higher expense ratios (e.g., 0.35%) to compensate for the active management required to execute their options strategies. You can explore more about <a href="/etf-expense-ratios">how ETF expense ratios impact returns here</a>.
+      </p>
+
+      <h3>Holdings Count and Diversification</h3>
+      <p>
+        The number of individual holdings within an ETF provides insight into its level of diversification. A broadly diversified fund like VYM holds over 400 stocks, spreading risk across a wide swath of the market. In contrast, funds with stricter screening methodologies, such as HDV (75 holdings) or SCHD (100 holdings), take a more concentrated approach. While concentration can lead to outperformance if the underlying methodology selects strong companies, it also exposes the investor to higher volatility if a specific sector or handful of companies underperform.
+      </p>
+
+      <h3>Strategy Type</h3>
+      <p>
+        The core objective of the ETF dictates its performance characteristics in different market environments:
+      </p>
+      <ul>
+        <li><strong>Dividend Growth:</strong> Funds like SCHD and DGRO require constituent companies to have a proven track record of increasing their dividends year over year. This acts as a quality screen, often capturing mature, financially stable companies with strong cash flows.</li>
+        <li><strong>High Yield Broad/Screened:</strong> Funds like VYM and HDV target the highest absolute yielding stocks in the market. HDV specifically incorporates a financial health screen to avoid "yield traps"—companies with unsustainably high yields due to collapsing share prices.</li>
+        <li><strong>Covered Call (Monthly Income):</strong> Funds like JEPI and JEPQ generate outsized monthly income by holding a portfolio of equities while simultaneously selling call options against them. This strategy thrives in sideways or slightly bullish markets but caps the upside potential during major bull runs, as the fund is obligated to sell its holdings if prices rise past the options' strike prices.</li>
+      </ul>
+
+      <p>
+        Ultimately, the best dividend ETF depends on your specific financial goals. An investor nearing retirement might prioritize the immediate, high-yield monthly income of a covered call strategy, while a younger investor might favor the long-term compounding potential of a dividend growth fund. For a deeper dive into constructing a balanced approach, read our guide on <a href="/guide-dividend-portfolio">building a resilient dividend portfolio</a>.
+      </p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>How do covered call ETFs like JEPI and JEPQ generate such high yields?</summary>
+        <p>Covered call ETFs generate high yields by combining a portfolio of equities with an options strategy. They sell (write) call options on an index or their holdings, collecting premiums which are distributed as income, often trading upside capital appreciation for immediate yield.</p>
+      </details>
+      <details>
+        <summary>What is the difference between dividend growth and high dividend yield strategies?</summary>
+        <p>Dividend growth strategies (like SCHD or DGRO) focus on companies with a history of consistently increasing their payouts, emphasizing long-term total return and dividend safety. High dividend yield strategies (like VYM or HDV) target companies currently paying the highest absolute dividends, prioritizing immediate income over future growth.</p>
+      </details>
+      <details>
+        <summary>Why is the expense ratio important when comparing ETFs?</summary>
+        <p>The expense ratio represents the annual fee charged by the fund managers, expressed as a percentage of your investment. It directly reduces your overall return and effective dividend yield, making low-cost funds crucial for long-term compound growth.</p>
+      </details>
+      <details>
+        <summary>Does the number of holdings in an ETF matter?</summary>
+        <p>Yes, the number of holdings indicates the fund's level of diversification. A broader fund with hundreds of stocks minimizes single-company risk, while a concentrated fund with fewer holdings relies more heavily on the performance of its top positions.</p>
+      </details>
+      <details>
+        <summary>Can I hold multiple dividend ETFs in the same portfolio?</summary>
+        <p>Absolutely. Many investors hold multiple dividend ETFs to blend strategies, such as pairing a core dividend growth fund for capital appreciation with a covered call ETF for enhanced monthly income, achieving a balanced mix of yield and growth.</p>
+      </details>
+    </section>
+
+  </div>
+
+  <style is:inline>
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--accent-color);
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .tool-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .selector-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .selector-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .selector-group label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    select {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: auto;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .vs-badge {
+      background: var(--accent-color);
+      color: #fff;
+      font-weight: 800;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+
+    .comparison-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .compare-row {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .compare-row:last-child {
+      border-bottom: none;
+    }
+
+    .header-row {
+      background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+      font-weight: 700;
+    }
+
+    .compare-cell {
+      padding: 1rem;
+      text-align: center;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+
+    .metric-name {
+      font-weight: 600;
+      background: color-mix(in srgb, var(--card-bg) 95%, #000);
+      border-right: 1px solid var(--border-color);
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .etf-col {
+      border-right: 1px solid var(--border-color);
+    }
+
+    .etf-col:last-child {
+      border-right: none;
+    }
+
+    .highlight {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+
+    .strategy-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .content-section {
+      margin-top: 3rem;
+    }
+
+    .content-section h2 {
+      color: var(--accent-color);
+      margin-top: 2.5rem;
+    }
+
+    .content-section h3 {
+      margin-top: 2rem;
+    }
+
+    .content-section p {
+      margin-bottom: 1.2rem;
+      line-height: 1.7;
+    }
+
+    .content-section ul {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .content-section li {
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1.25rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    .faq-section details p {
+      margin-top: 1rem;
+      margin-bottom: 0;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .vs-badge {
+        display: none;
+      }
+      .metric-name {
+        flex: 0.8;
+      }
+      .highlight {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+
+  <script is:inline>
+    const etfData = {
+      "SCHD": { yield: "3.5%", er: "0.06%", holdings: "100", strategy: "Dividend Growth" },
+      "VYM": { yield: "2.8%", er: "0.06%", holdings: "400+", strategy: "High Yield Broad" },
+      "HDV": { yield: "3.3%", er: "0.08%", holdings: "75", strategy: "High Dividend Health Screen" },
+      "JEPI": { yield: "7.5%", er: "0.35%", holdings: "Covered Call + Equity", strategy: "Monthly Income" },
+      "JEPQ": { yield: "9.0%", er: "0.35%", holdings: "Nasdaq Covered Call", strategy: "Monthly Income" },
+      "DGRO": { yield: "2.3%", er: "0.08%", holdings: "400+", strategy: "Dividend Growth Focus" }
+    };
+
+    function updateComparison() {
+      const selectA = document.getElementById("etfA");
+      const selectB = document.getElementById("etfB");
+
+      const valA = selectA.value;
+      const valB = selectB.value;
+
+      document.getElementById("headerA").textContent = valA;
+      document.getElementById("yieldA").textContent = etfData[valA].yield;
+      document.getElementById("erA").textContent = etfData[valA].er;
+      document.getElementById("holdingsA").textContent = etfData[valA].holdings;
+      document.getElementById("strategyA").textContent = etfData[valA].strategy;
+
+      document.getElementById("headerB").textContent = valB;
+      document.getElementById("yieldB").textContent = etfData[valB].yield;
+      document.getElementById("erB").textContent = etfData[valB].er;
+      document.getElementById("holdingsB").textContent = etfData[valB].holdings;
+      document.getElementById("strategyB").textContent = etfData[valB].strategy;
+    }
+
+    document.getElementById("etfA").addEventListener("change", updateComparison);
+    document.getElementById("etfB").addEventListener("change", updateComparison);
+  </script>
+</SiteLayout>

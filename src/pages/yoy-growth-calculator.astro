@@ -1,0 +1,680 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "YoY Growth Calculator",
+    "operatingSystem": "Web",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Calculate your Year-over-Year (YoY) growth rate quickly. Discover how much your revenue, users, or stock portfolio has grown from the previous period.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is Year-over-Year (YoY) growth calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "YoY growth is calculated using the formula: ((Current Period Value - Previous Period Value) / Previous Period Value) × 100. This provides the percentage increase or decrease over the same time frame in the prior year."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is YoY growth important for businesses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Year-over-Year growth smooths out seasonal volatility. For example, retail businesses often see spikes during holidays. Comparing a quarter to the same quarter last year gives a more accurate picture of true growth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can YoY growth be negative?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. If the current period's value is lower than the previous period's value, the resulting percentage will be negative, indicating a decline or contraction in the metric being measured."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between YoY and MoM growth?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "YoY compares a period to the exact same period one year ago (e.g., Q1 2024 vs Q1 2023). Month-over-Month (MoM) compares a month to the immediately preceding month (e.g., February vs January), which can be heavily skewed by seasonality."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What metrics are commonly evaluated using YoY growth?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Investors and businesses frequently use YoY calculations for revenue, net income, user acquisition, website traffic, earnings per share (EPS), and stock price appreciation."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "YoY Growth Calculator | Westmount Fundamentals",
+  description: "Calculate your Year-over-Year (YoY) growth rate quickly. Discover how much your revenue, users, or stock portfolio has grown from the previous period.",
+  category: "tool",
+  published: "2024-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/yoy-growth-calculator"
+  schema={schema}
+>
+  <style is:inline>
+    .page-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+
+    .hero {
+      padding: 40px 0;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    @media (min-width: 768px) {
+      .calc-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    input[type="number"]:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(74, 143, 231, 0.2);
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .result-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .result-value.accent { color: var(--accent-color); }
+    .result-value.success { color: #4caf50; }
+    .result-value.danger { color: #ff5252; }
+
+    .content-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .content-section h2 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+
+    .content-section h3 {
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      margin: 24px 0 12px;
+      font-weight: 700;
+    }
+
+    .content-section p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-item h4 {
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .faq-item p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    .callout {
+      background: rgba(74, 143, 231, 0.1);
+      border-left: 4px solid var(--accent-color);
+      padding: 16px;
+      margin: 24px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .btn {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #3a75c4;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    td input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    td input:focus {
+      border-color: var(--accent-color);
+      background: var(--bg-color);
+    }
+
+    .btn-remove {
+      background: transparent;
+      color: #ff5252;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 4px;
+    }
+
+    .btn-remove:hover {
+      opacity: 0.8;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: rgba(74, 143, 231, 0.1);
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+
+  </style>
+
+  <div class="hero">
+    <h1>YoY Growth Calculator</h1>
+    <p>Calculate your Year-over-Year (YoY) growth rate instantly. Compare current and previous periods to find out exactly how much your metrics have expanded or contracted.</p>
+  </div>
+
+  <div class="page-content">
+
+<div class="mode-selector">
+      <div class="mode-btn active" id="btn-single-mode">Single Period</div>
+      <div class="mode-btn" id="btn-multi-mode">Multi-Period Trend</div>
+    </div>
+
+    <!-- Single Period Mode -->
+    <div id="single-mode" class="calc-grid">
+      <div class="card">
+        <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 20px; font-weight: 700;">Growth Variables</h2>
+
+        <div class="input-group">
+          <label>Previous Period Value</label>
+          <div class="input-wrapper">
+            <input type="number" id="prev-value" value="10000" step="any">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Current Period Value</label>
+          <div class="input-wrapper">
+            <input type="number" id="curr-value" value="12500" step="any">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 20px; font-weight: 700;">Results</h2>
+
+        <div class="result-row">
+          <span class="result-label">Absolute Change</span>
+          <span class="result-value" id="res-absolute">+2,500.00</span>
+        </div>
+        <div class="result-row" style="border-bottom: none;">
+          <span class="result-label">YoY Growth Rate</span>
+          <span class="result-value accent" id="res-growth" style="font-size: 1.5rem;">+25.00%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Period Mode -->
+    <div id="multi-mode" class="card" style="display: none; margin-bottom: 40px;">
+      <h2 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 20px; font-weight: 700;">Multi-Period Trend Analysis</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">Enter historical data chronologically (oldest to newest) to see period-over-period growth rates.</p>
+
+      <div style="overflow-x: auto;">
+        <table id="trend-table">
+          <thead>
+            <tr>
+              <th style="width: 30%;">Period (e.g., 2021)</th>
+              <th style="width: 30%;">Value</th>
+              <th style="width: 30%;">YoY Growth</th>
+              <th style="width: 10%;"></th>
+            </tr>
+          </thead>
+          <tbody id="trend-tbody">
+            <!-- Rows generated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <button id="add-row-btn" class="btn btn-secondary" style="margin-top: 16px;">+ Add Period</button>
+    </div>
+
+<div class="content-section">
+      <h2>Understanding Year-over-Year (YoY) Growth</h2>
+      <p>Year-over-Year (YoY) growth is a key performance indicator used to evaluate financial or operational performance over a specific time frame, compared to the exact same period in the previous year. This metric is invaluable because it inherently adjusts for seasonality, providing a much clearer picture of long-term trends.</p>
+
+      <h3>The YoY Growth Formula</h3>
+      <div class="callout">
+        <p><strong>YoY Growth Rate = ((Current Period Value - Previous Period Value) / Previous Period Value) × 100</strong></p>
+      </div>
+      <p>To calculate the rate manually, first subtract the older value from the newer value to find the absolute change. Next, divide that difference by the older value. Finally, multiply the result by 100 to convert the decimal into a percentage.</p>
+
+      <h3>Real-World Examples of YoY Growth</h3>
+      <p>While YoY calculations are mathematically straightforward, their application spans across various facets of business and investing:</p>
+      <ul>
+        <li style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 8px;"><strong>Revenue Growth:</strong> If a SaaS company generated $1.2 million in Q3 2023 and $1.5 million in Q3 2024, their YoY revenue growth is 25%. This helps investors understand if the company's core product is gaining market traction.</li>
+        <li style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 8px;"><strong>User Acquisition:</strong> A mobile app might have 50,000 active users in January of year one, and 85,000 active users in January of year two. That represents a 70% YoY user growth, signaling strong marketing or product-led adoption.</li>
+        <li style="color: var(--text-secondary); margin-left: 20px; margin-bottom: 8px;"><strong>Stock Price Appreciation:</strong> An investor holding shares of a technology ETF might check the price on December 31st of consecutive years to determine the YoY capital appreciation, independent of dividend yields. (If you are trading on margin, be sure to also check your risk using our <a href="/margin-calculator">Margin & Leverage Calculator</a>).</li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h4>How is Year-over-Year (YoY) growth calculated?</h4>
+        <p>YoY growth is calculated using the formula: ((Current Period Value - Previous Period Value) / Previous Period Value) × 100. This provides the percentage increase or decrease over the same time frame in the prior year.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Why is YoY growth important for businesses?</h4>
+        <p>Year-over-Year growth smooths out seasonal volatility. For example, retail businesses often see spikes during holidays. Comparing a quarter to the same quarter last year gives a more accurate picture of true growth.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>Can YoY growth be negative?</h4>
+        <p>Yes. If the current period's value is lower than the previous period's value, the resulting percentage will be negative, indicating a decline or contraction in the metric being measured.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>What is the difference between YoY and MoM growth?</h4>
+        <p>YoY compares a period to the exact same period one year ago (e.g., Q1 2024 vs Q1 2023). Month-over-Month (MoM) compares a month to the immediately preceding month (e.g., February vs January), which can be heavily skewed by seasonality.</p>
+      </div>
+
+      <div class="faq-item">
+        <h4>What metrics are commonly evaluated using YoY growth?</h4>
+        <p>Investors and businesses frequently use YoY calculations for revenue, net income, user acquisition, website traffic, earnings per share (EPS), and stock price appreciation.</p>
+      </div>
+    </div>
+
+  </div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const formatNumber = (val) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+    const formatPercent = (val) => new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+
+    // Elements
+    const btnSingle = document.getElementById('btn-single-mode');
+    const btnMulti = document.getElementById('btn-multi-mode');
+    const singleMode = document.getElementById('single-mode');
+    const multiMode = document.getElementById('multi-mode');
+
+    // Tab switching
+    btnSingle.addEventListener('click', () => {
+      btnSingle.classList.add('active');
+      btnMulti.classList.remove('active');
+      singleMode.style.display = 'grid';
+      multiMode.style.display = 'none';
+    });
+
+    btnMulti.addEventListener('click', () => {
+      btnMulti.classList.add('active');
+      btnSingle.classList.remove('active');
+      singleMode.style.display = 'none';
+      multiMode.style.display = 'block';
+    });
+
+    // Single Period Logic
+    const prevInput = document.getElementById('prev-value');
+    const currInput = document.getElementById('curr-value');
+    const resAbsolute = document.getElementById('res-absolute');
+    const resGrowth = document.getElementById('res-growth');
+
+    function calculateSingle() {
+      if (prevInput.value === '' || currInput.value === '') {
+        resAbsolute.textContent = '-';
+        resAbsolute.className = 'result-value';
+        resGrowth.textContent = '-';
+        resGrowth.className = 'result-value';
+        return;
+      }
+
+      const prev = parseFloat(prevInput.value);
+      const curr = parseFloat(currInput.value);
+
+      if (isNaN(prev) || isNaN(curr)) {
+        resAbsolute.textContent = '-';
+        resGrowth.textContent = '-';
+        return;
+      }
+
+      const diff = curr - prev;
+      let diffStr = formatNumber(Math.abs(diff));
+      if (diff > 0) diffStr = '+' + diffStr;
+      if (diff < 0) diffStr = '-' + diffStr;
+
+      resAbsolute.textContent = diffStr;
+
+      if (prev === 0) {
+        resGrowth.textContent = curr > 0 ? 'Infinite' : (curr < 0 ? '-Infinite' : '0.00%');
+        resGrowth.className = curr > 0 ? 'result-value success' : (curr < 0 ? 'result-value danger' : 'result-value');
+      } else {
+        const growth = diff / Math.abs(prev);
+        let growthStr = formatPercent(Math.abs(growth));
+        if (growth > 0) {
+          growthStr = '+' + growthStr;
+          resGrowth.className = 'result-value success';
+        } else if (growth < 0) {
+          growthStr = '-' + growthStr;
+          resGrowth.className = 'result-value danger';
+        } else {
+          resGrowth.className = 'result-value';
+        }
+        resGrowth.textContent = growthStr;
+      }
+    }
+
+    prevInput.addEventListener('input', calculateSingle);
+    currInput.addEventListener('input', calculateSingle);
+    calculateSingle(); // init
+
+    // Multi Period Logic
+    const tbody = document.getElementById('trend-tbody');
+    const addRowBtn = document.getElementById('add-row-btn');
+
+    let tableData = [
+      { id: 1, period: '2022', value: '10000' },
+      { id: 2, period: '2023', value: '12500' },
+      { id: 3, period: '2024', value: '15000' }
+    ];
+    let nextId = 4;
+
+    function renderTable() {
+      tbody.innerHTML = '';
+
+      for (let i = 0; i < tableData.length; i++) {
+        const row = tableData[i];
+        let growthHtml = '<span style="color: var(--text-secondary);">-</span>';
+
+        if (i > 0) {
+          const prevVal = parseFloat(tableData[i-1].value);
+          const currVal = parseFloat(row.value);
+
+          if (!isNaN(prevVal) && !isNaN(currVal) && tableData[i-1].value !== '' && row.value !== '') {
+            if (prevVal === 0) {
+               growthHtml = currVal > 0 ? '<span class="result-value success">Infinite</span>' : (currVal < 0 ? '<span class="result-value danger">-Infinite</span>' : '<span class="result-value">0.00%</span>');
+            } else {
+              const growth = (currVal - prevVal) / Math.abs(prevVal);
+              const growthStr = formatPercent(Math.abs(growth));
+              if (growth > 0) {
+                growthHtml = `<span class="result-value success">+${growthStr}</span>`;
+              } else if (growth < 0) {
+                growthHtml = `<span class="result-value danger">-${growthStr}</span>`;
+              } else {
+                growthHtml = `<span class="result-value">0.00%</span>`;
+              }
+            }
+          }
+        }
+
+        const tr = document.createElement('tr');
+
+        const tdPeriod = document.createElement('td');
+        const inputPeriod = document.createElement('input');
+        inputPeriod.type = 'text';
+        inputPeriod.value = row.period;
+        inputPeriod.placeholder = 'Year/Quarter';
+        inputPeriod.dataset.id = row.id;
+        inputPeriod.dataset.field = 'period';
+        tdPeriod.appendChild(inputPeriod);
+
+        const tdValue = document.createElement('td');
+        const inputValue = document.createElement('input');
+        inputValue.type = 'number';
+        inputValue.step = 'any';
+        inputValue.value = row.value;
+        inputValue.placeholder = 'Value';
+        inputValue.dataset.id = row.id;
+        inputValue.dataset.field = 'value';
+        tdValue.appendChild(inputValue);
+
+        const tdGrowth = document.createElement('td');
+        tdGrowth.innerHTML = growthHtml;
+
+        const tdAction = document.createElement('td');
+        tdAction.style.textAlign = 'right';
+        if (tableData.length > 2) {
+          const btnRemove = document.createElement('button');
+          btnRemove.className = 'btn-remove';
+          btnRemove.innerHTML = '&times;';
+          btnRemove.title = 'Remove Row';
+          btnRemove.onclick = () => {
+            tableData = tableData.filter(r => r.id !== row.id);
+            renderTable();
+          };
+          tdAction.appendChild(btnRemove);
+        }
+
+        tr.appendChild(tdPeriod);
+        tr.appendChild(tdValue);
+        tr.appendChild(tdGrowth);
+        tr.appendChild(tdAction);
+
+        tbody.appendChild(tr);
+
+        // Add event listeners to newly created inputs
+        inputPeriod.addEventListener('input', (e) => handleTableInput(e, row.id, 'period'));
+        inputValue.addEventListener('input', (e) => handleTableInput(e, row.id, 'value'));
+      }
+    }
+
+    function handleTableInput(e, id, field) {
+      const row = tableData.find(r => r.id === id);
+      if (row) {
+        row[field] = e.target.value;
+        renderTable(); // Re-render to update calculations
+
+        // Re-focus the input since renderTable destroys DOM
+        setTimeout(() => {
+          const inputs = tbody.querySelectorAll('input');
+          for (let input of inputs) {
+            if (parseInt(input.dataset.id) === id && input.dataset.field === field) {
+              input.focus();
+
+              // Move cursor to end if it's text
+              if (field === 'period') {
+                 const len = input.value.length;
+                 input.setSelectionRange(len, len);
+              }
+              break;
+            }
+          }
+        }, 0);
+      }
+    }
+
+    addRowBtn.addEventListener('click', () => {
+      tableData.push({ id: nextId++, period: '', value: '' });
+      renderTable();
+    });
+
+    renderTable(); // init
+  });
+</script>
+
+</SiteLayout>

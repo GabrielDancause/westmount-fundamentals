@@ -1,0 +1,195 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How Do Stocks Work? The Mechanics of the Market",
+    "description": "Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/how-do-stocks-work"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do stocks work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Stocks work by representing fractional ownership in a company. When you buy a stock, you buy a piece of the company's future earnings and assets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes a stock's price go up or down?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A stock's price is determined purely by supply and demand. If more people want to buy the stock than sell it, the price goes up. If more people want to sell, the price goes down."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who sets the price of a stock?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The price of a stock is set by the open market—specifically the continuous bidding between buyers (who want a low price) and sellers (who want a high price)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does a company benefit when its stock price goes up?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A higher stock price allows a company to raise more money if it issues new shares, makes it easier to buy other companies using stock, and helps retain employees through stock-based compensation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you only lose money if you sell?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, paper losses (when the stock price drops below what you paid) only become 'realized' or actual losses when you decide to sell the stock at that lower price."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "How Do Stocks Work? A Beginner's Guide to the Market",
+  description: "Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="How Do Stocks Work? A Beginner's Guide to the Market"
+  description="Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function."
+  canonical="https://westmountfundamentals.com/how-do-stocks-work"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>How Do Stocks Work?</h1>
+      <p class="subtitle">The Mechanics Behind Market Movements</p>
+    </div>
+
+    <section>
+      <p>
+        To a beginner, the stock market can look like a chaotic casino with numbers flashing on screens and people shouting on financial news networks. But beneath the noise, the system is actually quite logical. So, <strong>how do stocks work</strong> behind the scenes? It all comes down to ownership, value, and human psychology.
+      </p>
+
+      <h2>The Function of the Market</h2>
+      <p>
+        To understand how stocks work, you have to understand why they exist. When a private company wants to expand—perhaps to build a global supply chain or develop a revolutionary new product—they often need more money than a bank is willing to lend.
+      </p>
+
+      <p>
+        To raise this money, the company holds an Initial Public Offering (IPO). They divide the ownership of their company into millions of tiny pieces called "shares" and sell them to the public. The company gets the cash it needs to grow, and the investors get a slice of the company's future profits. Once those shares are sold, investors can trade them with <em>each other</em> on a stock exchange (like the NYSE or Nasdaq).
+      </p>
+
+      <div class="card">
+        <h3>A Real-World Example</h3>
+        <p>
+          Think of a stock exchange like a giant digital farmers market. The company is the farm, and the stocks are the apples. The farm sells the apples to wholesalers (the IPO). From that point on, the wholesalers trade the apples among themselves and to regular customers. The farm already has its money; the current price of the apples is just determined by how badly people want to buy or sell them today.
+        </p>
+      </div>
+
+      <h2>What Makes Prices Move?</h2>
+      <p>
+        This is the most common question beginners ask: What actually causes a stock price to change from $50 to $51? The answer is simple: <strong>Supply and Demand.</strong>
+      </p>
+
+      <p>
+        There is no computer program or government agency that dictates what a stock is worth. The price you see on your screen is simply the last price at which a buyer and a seller agreed to trade.
+      </p>
+
+      <div class="callout">
+        <strong>The Mechanics of Supply & Demand:</strong><br/>
+        If a company announces a cure for a disease, suddenly millions of people want to buy the stock (Demand goes up), but current owners don't want to sell it (Supply goes down). Buyers have to offer higher and higher prices to convince current owners to sell. The price goes up.
+      </div>
+
+      <p>
+        Conversely, if a company reports terrible earnings, current owners panic and want to sell, but nobody wants to buy. Sellers have to keep lowering their asking price until they finally find a willing buyer. The price goes down.
+      </p>
+
+      <h2>The Role of Earnings</h2>
+      <p>
+        While supply and demand dictate the day-to-day price movements, what dictates supply and demand over the long term? <strong>Corporate Earnings.</strong>
+      </p>
+      <p>
+        Ultimately, a stock's value is tied to how much money the underlying company makes. If a company consistently grows its profits year after year, the value of owning a piece of that company inherently increases. Investors will demand the stock, driving the price up. If a company continuously loses money, the stock will eventually become worthless.
+      </p>
+
+      <h2>Why It Matters</h2>
+      <p>
+        Understanding how stocks work demystifies the investing process. When the market drops violently, uneducated investors panic, thinking their money is vanishing into thin air. Educated investors realize that a dropping price simply means that sellers temporarily outnumber buyers—often driven by fear rather than a fundamental change in the businesses they own.
+      </p>
+      <p>
+        By focusing on the underlying <a href="/what-are-stocks">businesses</a> rather than the daily price ticker, you can make calm, rational decisions that lead to long-term wealth accumulation.
+      </p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>How do stocks work?</summary>
+        <p>Stocks work by representing fractional ownership in a company. When you buy a stock, you buy a piece of the company's future earnings and assets.</p>
+      </details>
+
+      <details>
+        <summary>What makes a stock's price go up or down?</summary>
+        <p>A stock's price is determined purely by supply and demand. If more people want to buy the stock than sell it, the price goes up. If more people want to sell, the price goes down.</p>
+      </details>
+
+      <details>
+        <summary>Who sets the price of a stock?</summary>
+        <p>The price of a stock is set by the open market—specifically the continuous bidding between buyers (who want a low price) and sellers (who want a high price).</p>
+      </details>
+
+      <details>
+        <summary>How does a company benefit when its stock price goes up?</summary>
+        <p>A higher stock price allows a company to raise more money if it issues new shares, makes it easier to buy other companies using stock, and helps retain employees through stock-based compensation.</p>
+      </details>
+
+      <details>
+        <summary>Do you only lose money if you sell?</summary>
+        <p>Yes, paper losses (when the stock price drops below what you paid) only become 'realized' or actual losses when you decide to sell the stock at that lower price.</p>
+      </details>
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    p { line-height: 1.6; margin-bottom: 1rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  </style>
+</SiteLayout>

@@ -1,0 +1,218 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Russell 1000 vs S&P 500",
+  description: "Are you missing out on 500 potential market winners? Discover how the broader Russell 1000 compares to the legendary S&P 500 in this definitive index breakdown.",
+  category: "guide",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the main difference between the Russell 1000 and the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The S&P 500 tracks 500 large-cap U.S. companies selected by a committee, covering about 80% of the U.S. stock market. The Russell 1000 tracks the largest 1,000 U.S. companies by objective market capitalization, covering about 93% of the U.S. equity market, meaning it includes large-cap and a significant portion of mid-cap stocks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which index performs better, the Russell 1000 or the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, their performance is extremely similar (often correlated at 0.99) because both are market-cap weighted, meaning the massive tech companies at the top drive the majority of returns for both indexes. However, the Russell 1000 can slightly outperform during periods when mid-cap stocks are doing well."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the Russell 1000 hold the same stocks as the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, almost every stock in the S&P 500 is also in the Russell 1000. The Russell 1000 essentially contains the S&P 500 plus the next 500 largest U.S. companies (the mid-cap sector)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are companies selected for these indexes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Russell 1000 uses strict, objective, rules-based criteria based purely on market capitalization rankings during its annual reconstitution. The S&P 500 is selected by a committee at Standard & Poor's, which requires companies to meet criteria like four consecutive quarters of positive earnings before they are eligible for inclusion."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I invest in both the Russell 1000 and the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generally, no. Because there is massive overlap between the two indexes (the top companies dominate both), holding both does not provide significant diversification. Investors usually pick one or the other as their core U.S. large-cap holding."
+          }
+        }
+      ]
+    }
+  ]
+};
+---<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/russell-1000-vs-sp-500" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Russell 1000 vs S&P 500: The Battle of the Benchmarks</h1>
+      <p class="subtitle">Decoding the Differences Between America's Top Broad-Market Indexes</p>
+    </div>
+
+    <section class="content-section">
+      <p>For the vast majority of passive, long-term investors, the absolute cornerstone of their investment portfolio—often outperforming actively managed funds and individual stock picks like <a href="/coreweave-vs-nvidia-palantir-stocks">NVIDIA or Palantir</a>—is a low-cost U.S. large-cap equity index fund. This foundational asset class provides immediate, highly diversified exposure to the largest, most profitable, and most influential corporations driving the American economy forward. When deciding how to allocate your equity portfolio (before balancing it against <a href="/bonds-vs-stocks">bonds</a>), the two most prominent, widely followed benchmarks tracking this massive space are the legendary <strong>S&P 500</strong> and the broader, highly comprehensive <strong>Russell 1000</strong>.</p>
+
+      <p>While these two titanic indexes appear incredibly similar at first glance—and frequently trace nearly identical performance paths on a chart—understanding the nuanced differences in their underlying construction methodologies, the specific rules governing inclusion, and the exact scope of their market coverage can have subtle but important impacts on your long-term returns, your risk exposure, and your true level of market diversification.</p>
+
+      <h2>The S&P 500: The Managed Committee Approach</h2>
+      <p>The Standard & Poor's 500 (commonly known as the S&P 500) is, without hyperbole, arguably the single most famous, closely monitored stock index in the financial world. Originally created in 1957, it was designed to serve as a bellwether for the overall health of the United States economy. It tracks the performance of 500 of the largest publicly traded companies based in the United States, representing approximately 80% of the total available market capitalization of the U.S. equity market.</p>
+
+      <h3>The Overlooked Reality: The "Committee" Filter and Profitability Requirements</h3>
+      <p>What many retail investors genuinely do not realize is that the S&P 500 is not simply a raw, purely mechanical list of the 500 largest U.S. companies by market cap. It is, in fact, actively curated and managed by a human committee (the S&P Dow Jones Indices U.S. Index Committee). To even be considered eligible for inclusion in this elite club, a company must meet a stringent set of criteria. Chief among these requirements is profitability: a company must report positive earnings in its most recent fiscal quarter, as well as positive aggregate earnings over the sum of its four most recent consecutive quarters.</p>
+
+      <p>This strict "quality" filter is a defining feature of the index. It deliberately keeps highly speculative, massive-but-unprofitable large-cap companies (often high-flying tech startups that recently went public) out of the index until they prove they can actually generate a sustained profit. This historical quirk means the S&P 500 inherently skews slightly toward more mature, established, blue-chip businesses.</p>
+
+      <div class="card">
+        <h3>S&P 500 Key Pros & Cons</h3>
+        <p><strong>Pros:</strong> A proven gauge of the U.S. economy, the built-in "profitability" filter removes highly speculative names, and it is the benchmark against which almost all active managers are measured.</p>
+        <p><strong>Cons:</strong> Excludes mid-cap and small-cap stocks entirely, meaning you miss out on early growth phases before a company becomes large enough for inclusion. It is also highly concentrated in a few mega-cap tech stocks.</p>
+      </div>
+
+      <h2>The Russell 1000: The Rules-Based Broad Market</h2>
+      <p>In contrast to the curated nature of the S&P 500, the Russell 1000 index (launched in 1984 by the Frank Russell Company) is designed to track the highest-ranking 1,000 stocks contained within the massive Russell 3000 Index (which itself represents approximately 98% of the entire investable U.S. stock market). Consequently, the Russell 1000 covers approximately 93% to 94% of the total U.S. equity market capitalization. By holding exactly double the number of companies, it casts a significantly wider net.</p>
+
+      <h3>The Purely Mechanical, Objective Approach</h3>
+      <p>Unlike the S&P 500, the Russell 1000 is a purely rules-based, entirely objective index. It does not rely on a committee, and it does not make subjective judgments about the "quality" of a business. Once a year (during its highly anticipated annual reconstitution event, typically in June), all eligible U.S. companies are simply ranked strictly by their total objective market capitalization. If your market cap places you in the top 1,000, you are automatically included in the index. Period.</p>
+
+      <p>Crucially, there is absolutely no earnings or profitability requirement to join the Russell 1000. Because it holds twice as many underlying companies as its rival, it inherently captures the entirety of the established large-cap space <em>plus</em> a massive, significant swath of the faster-growing mid-cap space. This means investors holding the Russell 1000 are gaining exposure to "the next generation" of corporate giants earlier in their lifecycle, before they are mature and profitable enough to gain entry into the elite S&P 500.</p>
+
+      <div class="card">
+        <h3>Russell 1000 Key Pros & Cons</h3>
+        <p><strong>Pros:</strong> Broader market representation (93% vs 80%), captures mid-cap companies earlier in their growth cycle, and its purely mechanical nature means no human committee biases.</p>
+        <p><strong>Cons:</strong> Because it is market-cap weighted, the bottom 500 companies have a very minor impact on overall performance, making it perform almost identically to the S&P 500 despite holding double the stocks.</p>
+      </div>
+
+      <h2>Head-to-Head Comparison Table</h2>
+      <p>Let's compare these two dominant indexes based on their underlying construction and coverage:</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>S&P 500</th>
+              <th>Russell 1000</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Number of Stocks</strong></td>
+              <td>500</td>
+              <td>1,000</td>
+            </tr>
+            <tr>
+              <td><strong>Market Coverage</strong></td>
+              <td>~80% of U.S. Equities</td>
+              <td>~93% of U.S. Equities</td>
+            </tr>
+            <tr>
+              <td><strong>Primary Focus</strong></td>
+              <td>Large-Cap</td>
+              <td>Large-Cap + Mid-Cap</td>
+            </tr>
+            <tr>
+              <td><strong>Selection Method</strong></td>
+              <td>S&P Index Committee</td>
+              <td>Objective Rules-Based (Market Cap)</td>
+            </tr>
+            <tr>
+              <td><strong>Profitability Filter</strong></td>
+              <td>Yes (4 quarters of positive earnings required)</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td><strong>Weighting Method</strong></td>
+              <td>Float-Adjusted Market Cap</td>
+              <td>Market Cap</td>
+            </tr>
+            <tr>
+              <td><strong>Historical Correlation</strong></td>
+              <td>0.99 (Nearly Identical)</td>
+              <td>0.99 (Nearly Identical)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="verdict">
+        <h2>The Verdict: When to Choose Which</h2>
+        <p>The single most important concept to understand when choosing between these two benchmarks is the overwhelming mathematical power of market-capitalization weighting. Because both indexes weight their holdings by total market value, the massive mega-cap technology companies at the very top (think Apple, Microsoft, Amazon, Alphabet, and NVIDIA) completely dominate the overall performance of both funds. Therefore, despite holding 500 more companies, the "bottom 500" mid-cap stocks in the Russell 1000 represent such a small fractional percentage of the total index value that they rarely move the needle significantly. Historically, the annualized returns of the S&P 500 and the Russell 1000 are nearly identical, boasting a long-term statistical correlation of over 0.99.</p>
+
+        <ul>
+          <li><strong>Choose the S&P 500 (e.g., VOO, SPY, IVV) if:</strong> You prefer the inherent "quality" filter that forces companies to prove they are consistently profitable before granting them inclusion into the index. If you fundamentally believe that owning the largest, most established, most profitable 500 blue-chip companies is sufficient to capture the vast majority of the growth of the broader U.S. economy, an S&P 500 fund remains the undisputed gold standard for core portfolio holdings.</li>
+          <li><strong>Choose the Russell 1000 (e.g., IWB, VONE) if:</strong> You are seeking a slightly broader, more comprehensive net. The Russell 1000 automatically captures "the next 500" mid-cap companies that are growing rapidly and aggressively, but might not yet qualify for the strict profitability requirements of the S&P 500 committee. It provides a more complete, objective, un-filtered representation of the overall investable U.S. stock market.</li>
+          <li><strong>The Most Important Note on Diversification:</strong> You absolutely do not need to hold both of these indexes in your portfolio simultaneously. Because there is such massive structural overlap between the two (every single major company in the S&P 500 is also heavily weighted in the top half of the Russell 1000), holding both funds essentially provides zero meaningful diversification benefits. You are simply buying the exact same top 50 companies twice. Pick one or the other to serve as your single core domestic large-cap equity holding, and build the rest of your portfolio around it.</li>
+        </ul>
+      </div>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <details>
+          <summary>What is the main difference between the Russell 1000 and the S&P 500?</summary>
+          <p>The S&P 500 tracks 500 large-cap U.S. companies selected by a committee, covering about 80% of the U.S. stock market. The Russell 1000 tracks the largest 1,000 U.S. companies by objective market capitalization, covering about 93% of the U.S. equity market, meaning it includes large-cap and a significant portion of mid-cap stocks.</p>
+        </details>
+
+        <details>
+          <summary>Which index performs better, the Russell 1000 or the S&P 500?</summary>
+          <p>Historically, their performance is extremely similar (often correlated at 0.99) because both are market-cap weighted, meaning the massive tech companies at the top drive the majority of returns for both indexes. However, the Russell 1000 can slightly outperform during periods when mid-cap stocks are doing well.</p>
+        </details>
+
+        <details>
+          <summary>Does the Russell 1000 hold the same stocks as the S&P 500?</summary>
+          <p>Yes, almost every stock in the S&P 500 is also in the Russell 1000. The Russell 1000 essentially contains the S&P 500 plus the next 500 largest U.S. companies (the mid-cap sector).</p>
+        </details>
+
+        <details>
+          <summary>How are companies selected for these indexes?</summary>
+          <p>The Russell 1000 uses strict, objective, rules-based criteria based purely on market capitalization rankings during its annual reconstitution. The S&P 500 is selected by a committee at Standard & Poor's, which requires companies to meet criteria like four consecutive quarters of positive earnings before they are eligible for inclusion.</p>
+        </details>
+
+        <details>
+          <summary>Should I invest in both the Russell 1000 and the S&P 500?</summary>
+          <p>Generally, no. Because there is massive overlap between the two indexes (the top companies dominate both), holding both does not provide significant diversification. Investors usually pick one or the other as their core U.S. large-cap holding.</p>
+        </details>
+      </section>
+
+    </section>
+  </div>
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .vs-badge { background: var(--accent-color); color: white; padding: 0.25rem 1rem; border-radius: 99px; font-weight: 700; display: inline-block; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .verdict { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 1.5rem; margin: 2rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; color: var(--text-primary); }
+  </style>
+</SiteLayout>

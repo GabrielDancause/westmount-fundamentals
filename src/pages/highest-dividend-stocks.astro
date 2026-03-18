@@ -1,0 +1,1268 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Highest Dividend Stocks 2026: Top Yields Ranked",
+  description: "Discover the top companies offering the highest dividend yields right now. We analyze payouts, stability, and risks. Which stock tops our list?",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": ["Article", "FAQPage"],
+  "headline": "Highest Dividend Stocks 2026: Top Yields Ranked",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the highest dividend yield stocks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The highest dividend yield stocks typically include telecom, energy, and tobacco companies. Our current list is led by companies with yields exceeding 5-8%."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are highest dividend stocks safe?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not always. A very high dividend yield can sometimes be a 'yield trap' indicating the stock price has fallen significantly and the dividend may be cut."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often do high dividend stocks pay?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most US-based high dividend stocks pay on a quarterly basis, though some real estate investment trusts (REITs) pay monthly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I focus only on highest yield dividend stocks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, it's generally better to focus on dividend growth and payout ratio rather than chasing the absolute highest yield."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What sectors have the highest dividend yields in 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Energy, Real Estate (REITs), Utilities, and Telecommunications traditionally offer the highest average dividend yields."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/highest-dividend-stocks" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Highest Dividend Stocks 2026: Top Yields Ranked</h1>
+      <p class="subtitle">An data-driven analysis of the market's biggest dividend payers.</p>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <p>Investors seeking passive income often look for the <strong>highest dividend stocks</strong>. However, chasing yield without understanding the underlying business can lead to "yield traps"—where a high yield is merely a reflection of a plummeting stock price preceding a dividend cut. In this guide, we analyze the <strong>highest dividend yield stocks 2026</strong> offers, examining not just the payout, but the fundamentals supporting it.</p>
+    </div>
+
+    <section class="methodology-section" style="background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+      <h2>Methodology</h2>
+      <p>To compile our list of the <strong>highest yield dividend stocks</strong>, we analyzed companies with a market capitalization over $10 billion to ensure a baseline of stability. We then ranked them primarily by their forward dividend yield, while also factoring in their payout ratios and 5-year dividend growth history to identify sustainable income opportunities.</p>
+    </section>
+
+    <div class="controls-section" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <label style="font-weight: bold;">Filter by Sector:</label>
+      <select id="sector-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="all">All Sectors</option>
+        <option value="Energy">Energy</option>
+        <option value="Communication Services">Communication Services</option>
+        <option value="Financial Services">Financial Services</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Consumer Defensive">Consumer Defensive</option>
+      </select>
+
+      <label style="font-weight: bold; margin-left: 1rem;">Min Yield:</label>
+      <select id="yield-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="0">Any</option>
+        <option value="3">3%+</option>
+        <option value="5">5%+</option>
+        <option value="7">7%+</option>
+      </select>
+    </div>
+
+    <section>
+      <h2>Summary Comparison</h2>
+      <div style="overflow-x: auto;">
+        <table id="summary-table">
+          <thead>
+            <tr>
+              <th style="cursor: pointer;" onclick="sortTable(0)">Ticker ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(1)">Name ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(2)">Price ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(3)">Market Cap ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(4)">Div Yield ↕</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+<td><strong>PFE</strong></td>
+<td>Pfizer, Inc.</td>
+<td>$26.58</td>
+<td>$151.14B</td>
+<td>6.47%</td>
+</tr>
+<tr>
+<td><strong>MO</strong></td>
+<td>Altria Group, Inc.</td>
+<td>$67.89</td>
+<td>$113.97B</td>
+<td>6.25%</td>
+</tr>
+<tr>
+<td><strong>EPD</strong></td>
+<td>Enterprise Products Partners L.</td>
+<td>$36.99</td>
+<td>$79.96B</td>
+<td>5.88%</td>
+</tr>
+<tr>
+<td><strong>BTI</strong></td>
+<td>British American Tobacco  Indus</td>
+<td>$59.93</td>
+<td>$129.91B</td>
+<td>5.57%</td>
+</tr>
+<tr>
+<td><strong>VZ</strong></td>
+<td>Verizon Communications Inc.</td>
+<td>$51.38</td>
+<td>$216.70B</td>
+<td>5.51%</td>
+</tr>
+<tr>
+<td><strong>ENB</strong></td>
+<td>Enbridge Inc</td>
+<td>$54.08</td>
+<td>$117.99B</td>
+<td>5.26%</td>
+</tr>
+<tr>
+<td><strong>WPC</strong></td>
+<td>W. P. Carey Inc. REIT</td>
+<td>$71.49</td>
+<td>$16.10B</td>
+<td>5.20%</td>
+</tr>
+<tr>
+<td><strong>BCE</strong></td>
+<td>BCE, Inc.</td>
+<td>$25.57</td>
+<td>$23.91B</td>
+<td>5.02%</td>
+</tr>
+<tr>
+<td><strong>O</strong></td>
+<td>Realty Income Corporation</td>
+<td>$64.44</td>
+<td>$60.30B</td>
+<td>5.02%</td>
+</tr>
+<tr>
+<td><strong>BNS</strong></td>
+<td>Bank Nova Scotia Halifax Pfd 3</td>
+<td>$68.75</td>
+<td>$85.09B</td>
+<td>4.69%</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>AT&T Inc.</td>
+<td>$27.72</td>
+<td>$196.52B</td>
+<td>4.00%</td>
+</tr>
+<tr>
+<td><strong>CVX</strong></td>
+<td>Chevron Corporation</td>
+<td>$196.82</td>
+<td>$393.51B</td>
+<td>3.62%</td>
+</tr>
+<tr>
+<td><strong>KMI</strong></td>
+<td>Kinder Morgan, Inc.</td>
+<td>$33.39</td>
+<td>$74.29B</td>
+<td>3.50%</td>
+</tr>
+<tr>
+<td><strong>TD</strong></td>
+<td>Toronto Dominion Bank (The)</td>
+<td>$93.24</td>
+<td>$155.83B</td>
+<td>3.38%</td>
+</tr>
+<tr>
+<td><strong>CM</strong></td>
+<td>Canadian Imperial Bank of Comme</td>
+<td>$95.29</td>
+<td>$87.70B</td>
+<td>3.28%</td>
+</tr>
+<tr>
+<td><strong>PG</strong></td>
+<td>Procter & Gamble Company (The)</td>
+<td>$150.65</td>
+<td>$352.59B</td>
+<td>2.81%</td>
+</tr>
+<tr>
+<td><strong>IBM</strong></td>
+<td>International Business Machines</td>
+<td>$246.28</td>
+<td>$231.11B</td>
+<td>2.73%</td>
+</tr>
+<tr>
+<td><strong>XOM</strong></td>
+<td>Exxon Mobil Corporation</td>
+<td>$156.12</td>
+<td>$650.52B</td>
+<td>2.64%</td>
+</tr>
+<tr>
+<td><strong>JNJ</strong></td>
+<td>Johnson & Johnson</td>
+<td>$241.52</td>
+<td>$582.04B</td>
+<td>2.15%</td>
+</tr>
+<tr>
+<td><strong>MMM</strong></td>
+<td>3M Company</td>
+<td>$150.96</td>
+<td>$79.51B</td>
+<td>2.07%</td>
+</tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>The Top Ranked Dividend Payers</h2>
+      <div id="cards-container">
+
+    <div class="card item-card" data-sector="Healthcare" data-mcap="151140990976" data-yield="6.47">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">1</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Pfizer, Inc. (PFE)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$26.58</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">6.47%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$151.14B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Healthcare</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Pfizer, Inc. ranks #1 for dividend yield due to its dividend yield of 6.47% combined with its position in the Drug Manufacturers - General industry.</p>
+      <p>Pfizer Inc. discovers, develops, manufactures, markets, distributes, and sells biopharmaceutical products in the United States and internationally. It operates in three segments: Biopharma, PC1, and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Drug Manufacturers - General</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Healthcare sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Defensive" data-mcap="113965015040" data-yield="6.25">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">2</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Altria Group, Inc. (MO)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$67.89</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">6.25%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$113.97B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Defensive</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Altria Group, Inc. ranks #2 for dividend yield due to its dividend yield of 6.25% combined with its position in the Tobacco industry.</p>
+      <p>Altria Group, Inc., through its subsidiaries, manufactures and sells smokeable and oral tobacco products in the United States. It offers cigarettes primarily under the Marlboro brand; large cigars...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Tobacco</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Defensive sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="79963537408" data-yield="5.88">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">3</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Enterprise Products Partners L. (EPD)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$36.99</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.88%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$79.96B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Enterprise Products Partners L. ranks #3 for dividend yield due to its dividend yield of 5.88% combined with its position in the Oil & Gas Midstream industry.</p>
+      <p>Enterprise Products Partners L.P. provides midstream energy services to producers and consumers of natural gas, natural gas liquids (NGLs), crude oil, petrochemicals, and refined products. It...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Midstream</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Defensive" data-mcap="129912758272" data-yield="5.57">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">4</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">British American Tobacco  Indus (BTI)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$59.93</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.57%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$129.91B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Defensive</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> British American Tobacco  Indus ranks #4 for dividend yield due to its dividend yield of 5.57% combined with its position in the Tobacco industry.</p>
+      <p>British American Tobacco p.l.c. provides tobacco and nicotine products to consumers in the United States, Europe, Latin America, Canada, the Asia-Pacific, the Middle East, Central Asia, Caucasus, and ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Tobacco</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Defensive sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="216704614400" data-yield="5.51">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">5</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Verizon Communications Inc. (VZ)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$51.38</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.51%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$216.70B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Verizon Communications Inc. ranks #5 for dividend yield due to its dividend yield of 5.51% combined with its position in the Telecom Services industry.</p>
+      <p>Verizon Communications Inc., through its subsidiaries, engages in the provision of communications, technology, information, and streaming products and services to consumers, businesses, and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Telecom Services</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="117993381888" data-yield="5.26">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">6</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Enbridge Inc (ENB)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$54.08</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.26%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$117.99B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Enbridge Inc ranks #6 for dividend yield due to its dividend yield of 5.26% combined with its position in the Oil & Gas Midstream industry.</p>
+      <p>Enbridge Inc., together with its subsidiaries, operates as an energy infrastructure company. The company operates through four segments: Liquids Pipelines, Gas Transmission, Gas Distribution and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Midstream</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Real Estate" data-mcap="16097374208" data-yield="5.2">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">7</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">W. P. Carey Inc. REIT (WPC)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$71.49</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.20%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$16.10B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Real Estate</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> W. P. Carey Inc. REIT ranks #7 for dividend yield due to its dividend yield of 5.20% combined with its position in the REIT - Diversified industry.</p>
+      <p>W. P. Carey Inc. ranks among the largest net lease REITs with a well-diversified portfolio of high-quality, operationally critical commercial real estate. It includes 1,682 net lease properties...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in REIT - Diversified</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Real Estate sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="23911442432" data-yield="5.02">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">8</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">BCE, Inc. (BCE)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$25.57</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.02%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$23.91B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> BCE, Inc. ranks #8 for dividend yield due to its dividend yield of 5.02% combined with its position in the Telecom Services industry.</p>
+      <p>BCE Inc., a communications company, provides wireless, wireline, internet, streaming services, and television (TV) services to residential, business, and wholesale customers in Canada. The company...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Telecom Services</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Real Estate" data-mcap="60301340672" data-yield="5.02">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">9</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Realty Income Corporation (O)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$64.44</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">5.02%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$60.30B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Real Estate</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Realty Income Corporation ranks #9 for dividend yield due to its dividend yield of 5.02% combined with its position in the REIT - Retail industry.</p>
+      <p>Realty Income Corporation, an S&P 500 company, is real estate partner to the world's leading companies. We serve our clients as a full-service real estate capital provider. As of December 31, 2025,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in REIT - Retail</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Real Estate sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="85090779136" data-yield="4.69">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">10</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Bank Nova Scotia Halifax Pfd 3 (BNS)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$68.75</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">4.69%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$85.09B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Bank Nova Scotia Halifax Pfd 3 ranks #10 for dividend yield due to its dividend yield of 4.69% combined with its position in the Banks - Diversified industry.</p>
+      <p>The Bank of Nova Scotia provides various banking products and services in Canada, the United States, Mexico, Peru, Chile, Colombia, the Caribbean and Central America, and internationally. It operates ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="196519526400" data-yield="4.0">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">11</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">AT&T Inc. (T)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$27.72</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">4.00%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$196.52B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> AT&T Inc. ranks #11 for dividend yield due to its dividend yield of 4.00% combined with its position in the Telecom Services industry.</p>
+      <p>AT&T Inc. provides telecommunications and technology services worldwide. It operates through two segments, Communications and Latin America. The Communications segment offers wireless voice and data...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Telecom Services</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="393512779776" data-yield="3.62">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">12</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Chevron Corporation (CVX)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$196.82</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">3.62%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$393.51B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Chevron Corporation ranks #12 for dividend yield due to its dividend yield of 3.62% combined with its position in the Oil & Gas Integrated industry.</p>
+      <p>Chevron Corporation, through its subsidiaries, engages in the integrated energy and chemicals operations in the United States and internationally. It operates through Upstream, Downstream, and All...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Integrated</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="74286284800" data-yield="3.5">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">13</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Kinder Morgan, Inc. (KMI)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$33.39</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">3.50%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$74.29B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Kinder Morgan, Inc. ranks #13 for dividend yield due to its dividend yield of 3.50% combined with its position in the Oil & Gas Midstream industry.</p>
+      <p>Kinder Morgan, Inc. operates as an energy infrastructure company primarily in North America. It operates through Natural Gas Pipelines, Products Pipelines, Terminals, and CO2 segments. The Natural...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Midstream</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="155826126848" data-yield="3.38">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">14</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Toronto Dominion Bank (The) (TD)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$93.24</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">3.38%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$155.83B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Toronto Dominion Bank (The) ranks #14 for dividend yield due to its dividend yield of 3.38% combined with its position in the Banks - Diversified industry.</p>
+      <p>The Toronto-Dominion Bank, together with its subsidiaries, provides various financial products and services in Canada, the United States, and internationally. It operates through four segments:...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="87700152320" data-yield="3.28">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">15</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Canadian Imperial Bank of Comme (CM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$95.29</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">3.28%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$87.70B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Canadian Imperial Bank of Comme ranks #15 for dividend yield due to its dividend yield of 3.28% combined with its position in the Banks - Diversified industry.</p>
+      <p>Canadian Imperial Bank of Commerce, a diversified financial institution, provides various financial products and services to personal, business, public sector, and institutional clients in Canada,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Defensive" data-mcap="352594100224" data-yield="2.81">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">16</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Procter & Gamble Company (The) (PG)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$150.65</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">2.81%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$352.59B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Defensive</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Procter & Gamble Company (The) ranks #16 for dividend yield due to its dividend yield of 2.81% combined with its position in the Household & Personal Products industry.</p>
+      <p>The Procter & Gamble Company provides branded consumer packaged goods worldwide. It operates through Beauty; Grooming; Health Care; Fabric & Home Care; and Baby, Feminine & Family Care segments. The...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Household & Personal Products</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Defensive sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="231111393280" data-yield="2.73">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">17</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">International Business Machines (IBM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$246.28</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">2.73%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$231.11B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> International Business Machines ranks #17 for dividend yield due to its dividend yield of 2.73% combined with its position in the Information Technology Services industry.</p>
+      <p>International Business Machines Corporation, together with its subsidiaries, provides integrated solutions and services in the Americas, Europe, the Middle East, Africa, and the Asia Pacific. It...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Information Technology Services</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="650515120128" data-yield="2.64">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">18</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Exxon Mobil Corporation (XOM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$156.12</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">2.64%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$650.52B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Exxon Mobil Corporation ranks #18 for dividend yield due to its dividend yield of 2.64% combined with its position in the Oil & Gas Integrated industry.</p>
+      <p>Exxon Mobil Corporation engages in the exploration and production of crude oil and natural gas in the United States, Canada, and internationally. The company operates through Upstream, Energy...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Integrated</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Healthcare" data-mcap="582038847488" data-yield="2.15">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">19</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Johnson & Johnson (JNJ)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$241.52</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">2.15%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$582.04B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Healthcare</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Johnson & Johnson ranks #19 for dividend yield due to its dividend yield of 2.15% combined with its position in the Drug Manufacturers - General industry.</p>
+      <p>Johnson & Johnson, together with its subsidiaries, engages in the research and development, manufacture, and sale of a range of products in the healthcare field worldwide. It operates in two segments,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Drug Manufacturers - General</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Healthcare sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Industrials" data-mcap="79510634496" data-yield="2.07">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">20</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">3M Company (MMM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$150.96</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Dividend Yield</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">2.07%</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$79.51B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Industrials</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> 3M Company ranks #20 for dividend yield due to its dividend yield of 2.07% combined with its position in the Conglomerates industry.</p>
+      <p>3M Company provides diversified technology services in the America, the Asia Pacific, Europe, the Middle East, Africa, and internationally. It operates through three segments: Safety and Industrial,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Conglomerates</li>
+            <li>Attractive dividend yield</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Industrials sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+      </div>
+    </section>
+
+
+
+    <section class="deep-dive-section" style="margin-top: 3rem; background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>Comprehensive Guide to Investing Strategy</h2>
+
+      <h3>1. Understanding Core Fundamentals</h3>
+      <p>Before committing capital to any individual equity, a thorough understanding of underlying financial metrics is essential. Valuation ratios such as the Price-to-Earnings (P/E) multiple, Price-to-Book (P/B), and Enterprise Value-to-EBITDA provide a starting point for determining whether a stock is trading at a discount or premium relative to its historical averages and industry peers. However, static ratios are insufficient without context. Investors must analyze the trajectory of revenue growth, operating margins, and free cash flow generation. A company may appear cheap based on trailing earnings, but if forward guidance indicates secular decline, the seemingly attractive valuation may represent a value trap rather than a genuine opportunity.</p>
+
+      <h3>2. The Role of Economic Moats</h3>
+      <p>Sustainable competitive advantages, often referred to as "economic moats," are the primary drivers of long-term outperformance. These moats can take several forms: intangible assets like patents and strong brand identity, network effects where the service becomes more valuable as more people use it, switching costs that make it difficult for customers to leave, and cost advantages achieved through economies of scale. When analyzing stocks, identifying the presence and durability of these moats is critical. A company with a wide moat is better equipped to protect its market share from competitors, maintain pricing power during inflationary periods, and generate consistent returns on invested capital over decades.</p>
+
+      <h3>3. Macroeconomic Factors and Sector Rotation</h3>
+      <p>Individual stock performance is inextricably linked to broader macroeconomic conditions. Interest rates, inflation expectations, and GDP growth influence different sectors in varying ways. For instance, rising interest rates generally negatively impact growth stocks, as their future cash flows are discounted at higher rates, while potentially benefiting financials due to widening net interest margins. Conversely, during economic expansions, cyclical sectors like industrials and consumer discretionary tend to outperform defensive sectors like utilities and consumer staples. Understanding these macro dynamics allows investors to implement sector rotation strategies, adjusting portfolio weightings to align with the current phase of the business cycle.</p>
+
+      <h3>4. Risk Management and Portfolio Diversification</h3>
+      <p>Capital preservation is just as important as capital appreciation. Effective risk management begins with diversification across asset classes, sectors, and geographies to mitigate idiosyncratic risk. However, true diversification requires understanding the correlation between different investments; adding numerous highly correlated tech stocks does not meaningfully reduce portfolio volatility. Position sizing is another crucial element. Allocating a predetermined percentage of capital to each position based on its risk profile prevents any single failure from catastrophic impact. Additionally, utilizing stop-loss orders or hedging strategies through options can provide downside protection during periods of extreme market stress.</p>
+
+      <h3>5. Psychological Discipline in Investing</h3>
+      <p>Perhaps the most challenging aspect of investing is managing behavioral biases. The market is prone to periods of irrational exuberance and unwarranted panic. Investors frequently fall victim to recency bias, assuming current trends will persist indefinitely, or confirmation bias, actively seeking information that supports their existing beliefs while ignoring contradictory evidence. Maintaining a long-term perspective requires the discipline to stick to a well-defined investment thesis, the patience to allow compound interest to work, and the emotional fortitude to resist the herd mentality. Successful investing is often less about superior intellect and more about superior temperament.</p>
+
+      <h3>6. The Importance of Free Cash Flow</h3>
+      <p>While earnings per share (EPS) is a widely reported metric, it can be subject to accounting manipulation. Free cash flow (FCF) provides a more transparent view of a company's financial health. FCF represents the cash a company generates after accounting for cash outflows to support operations and maintain its capital assets. Unlike earnings, cash cannot be easily manipulated. A company with robust and growing free cash flow has the flexibility to reinvest in its business, pursue strategic acquisitions, reduce debt, buy back shares, or pay out dividends to shareholders. Tracking FCF yield is a powerful tool for identifying undervalued companies with genuine financial strength.</p>
+
+      <h3>7. Analyzing Management and Capital Allocation</h3>
+      <p>The quality of a company's leadership team is a significant determinant of long-term success. Effective management not only executes operational strategies efficiently but also excels at capital allocation. How a CEO and board of directors choose to deploy retained earnings—whether through organic growth initiatives, M&A, debt reduction, or shareholder returns—directly impacts the compounding of shareholder value. Analyzing a management team's track record of generating a high return on invested capital (ROIC) and their alignment with shareholders, often demonstrated through insider ownership, is a qualitative but vital step in the equity research process.</p>
+    </section>
+
+    <section class="related-articles" style="margin-top: 3rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>More Investing Guides</h2>
+      <ul style="list-style-type: none; padding-left: 0;">
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/highest-dividend-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Highest Dividend Stocks 2026: Top Yields Ranked</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/cheap-stocks-to-buy-now" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Cheap Stocks to Buy Now: Undervalued Picks 2026</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/best-ai-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Best AI Stocks 2026: Top Artificial Intelligence Companies</a></li>
+      </ul>
+    </section>
+
+    <section class="faq-section" style="margin-top: 3rem;">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What are the highest dividend yield stocks?</summary>
+        <p>The highest dividend yield stocks typically include telecom, energy, and tobacco companies. Our current list is led by companies with yields exceeding 5-8%.</p>
+      </details>
+      <details>
+        <summary>Are highest dividend stocks safe?</summary>
+        <p>Not always. A very high dividend yield can sometimes be a 'yield trap' indicating the stock price has fallen significantly and the dividend may be cut.</p>
+      </details>
+      <details>
+        <summary>How often do high dividend stocks pay?</summary>
+        <p>Most US-based high dividend stocks pay on a quarterly basis, though some real estate investment trusts (REITs) pay monthly.</p>
+      </details>
+      <details>
+        <summary>Should I focus only on highest yield dividend stocks?</summary>
+        <p>No, it's generally better to focus on dividend growth and payout ratio rather than chasing the absolute highest yield.</p>
+      </details>
+      <details>
+        <summary>What sectors have the highest dividend yields in 2026?</summary>
+        <p>Energy, Real Estate (REITs), Utilities, and Telecommunications traditionally offer the highest average dividend yields.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Sortable table
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("summary-table");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let valX = x.innerHTML.replace(/[\$,%]/g, '').trim();
+          let valY = y.innerHTML.replace(/[\$,%]/g, '').trim();
+
+          if (valX === 'N/A') valX = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valX.includes('B')) valX = parseFloat(valX) * 1e9;
+          else if (valX.includes('T')) valX = parseFloat(valX) * 1e12;
+          else if (valX.includes('M')) valX = parseFloat(valX) * 1e6;
+          else if (!isNaN(valX)) valX = parseFloat(valX);
+
+          if (valY === 'N/A') valY = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valY.includes('B')) valY = parseFloat(valY) * 1e9;
+          else if (valY.includes('T')) valY = parseFloat(valY) * 1e12;
+          else if (valY.includes('M')) valY = parseFloat(valY) * 1e6;
+          else if (!isNaN(valY)) valY = parseFloat(valY);
+
+          if (dir == "asc") {
+            if (valX > valY) { shouldSwitch = true; break; }
+          } else if (dir == "desc") {
+            if (valX < valY) { shouldSwitch = true; break; }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    // Filtering
+    document.getElementById('sector-filter').addEventListener('change', filterCards);
+    document.getElementById('yield-filter').addEventListener('change', filterCards);
+
+    function filterCards() {
+      const sector = document.getElementById('sector-filter').value;
+      const minYield = parseFloat(document.getElementById('yield-filter').value);
+      const cards = document.querySelectorAll('.item-card');
+
+      cards.forEach(card => {
+        const cardSector = card.getAttribute('data-sector');
+        const cardYield = parseFloat(card.getAttribute('data-yield'));
+
+        let show = true;
+        if (sector !== 'all' && cardSector !== sector) show = false;
+        if (minYield > 0 && cardYield < minYield) show = false;
+
+        card.style.display = show ? 'block' : 'none';
+      });
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .rank-badge { background: var(--accent-color); color: white; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(0,0,0,0.05); white-space: nowrap; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

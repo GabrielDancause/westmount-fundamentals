@@ -1,0 +1,209 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { sites } from "../config/sites";
+
+// SITE_ID is replaced per-site by the deploy script
+const SITE_ID = 'westmount';
+const siteConfig = sites[SITE_ID];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": siteConfig.name,
+  "url": `https://${siteConfig.domain}/`,
+  "description": `${siteConfig.name} — free financial calculators, investing guides, equity research, and market analysis tools for investors.`
+};
+
+// Dynamically import all sibling .astro pages
+const allPages = import.meta.glob('./*.astro', { eager: true });
+
+// Extract meta from each page
+interface PageMeta {
+  title: string;
+  description: string;
+  category: string;
+  published?: string;
+  stat?: string;
+  statLabel?: string;
+  priority?: number;
+  emoji?: string;
+}
+
+interface PageEntry {
+  slug: string;
+  meta: PageMeta;
+}
+
+const pages: PageEntry[] = Object.entries(allPages)
+  .filter(([path]) => !path.includes('index'))
+  .map(([path, mod]: [string, any]) => ({
+    slug: path.replace('./', '').replace('.astro', ''),
+    meta: mod.meta || {
+      title: path.replace('./', '').replace('.astro', '').replace(/-/g, ' '),
+      description: '',
+      category: 'tool',
+    },
+  }))
+  .sort((a, b) => (b.meta.priority || 0) - (a.meta.priority || 0));
+
+// Group by category
+const tools = pages.filter(p => p.meta.category === 'tool');
+const studies = pages.filter(p => p.meta.category === 'study');
+const guides = pages.filter(p => p.meta.category === 'guide');
+const lists = pages.filter(p => p.meta.category === 'list');
+
+// Emoji assignment
+function getEmoji(slug: string, category: string): string {
+  if (slug.includes('calculator') || slug.includes('planner')) return '🧮';
+  if (slug.includes('checker') || slug.includes('analyzer')) return '🔍';
+  if (slug.includes('comparison') || slug.includes('vs')) return '⚖️';
+  if (slug.includes('guide')) return '📖';
+  if (slug.includes('glossary') || slug.includes('dictionary')) return '📚';
+  if (slug.includes('checklist')) return '✅';
+  if (slug.includes('dividend') || slug.includes('yield')) return '💰';
+  if (slug.includes('etf') || slug.includes('stock')) return '📈';
+  if (category === 'tool') return '🛠️';
+  if (category === 'study') return '🔬';
+  if (category === 'guide') return '📖';
+  if (category === 'list') return '📋';
+  return '📄';
+}
+
+// Truncate description
+function truncate(text: string, max: number): string {
+  if (!text || text.length <= max) return text || '';
+  return text.slice(0, max).replace(/\s+\S*$/, '') + '…';
+}
+---
+
+<SiteLayout
+  site={SITE_ID}
+  title={`${siteConfig.name}`}
+  description={`${siteConfig.name} — free financial calculators, investing guides, equity research, and market analysis tools for investors.`}
+  canonical={`https://${siteConfig.domain}/`}
+  schema={schema}
+>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>{siteConfig.name}</h1>
+      <p>{pages.length} free tools, guides, and resources. No sign-ups required.</p>
+    </div>
+  </div>
+
+  {tools.length > 0 && (
+    <div class="section-container" id="tools">
+      <div class="section-header">
+        <span class="section-tag">🛠️ TOOLS</span>
+        <h2 class="section-title">Calculators & Tools</h2>
+        <p class="section-sub">Free, instant calculators — no sign-ups required.</p>
+      </div>
+      <div class="tools-grid">
+        {tools.map(page => (
+          <a class="tool-card" href={`/${page.slug}`}>
+            <span class="tool-emoji">{getEmoji(page.slug, 'tool')}</span>
+            <h3 class="tool-name">{page.meta.title}</h3>
+            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {studies.length > 0 && (
+    <div class="section-container" id="studies">
+      <div class="section-header">
+        <span class="section-tag">🔬 STUDIES</span>
+        <h2 class="section-title">Research & Analysis</h2>
+        <p class="section-sub">Data-driven research with real numbers.</p>
+      </div>
+      <div class="studies-grid">
+        {studies.map(page => (
+          <a class="study-card" href={`/${page.slug}`}>
+            <div class="study-content">
+              {page.meta.stat && (
+                <div class="study-stat">
+                  <span class="stat-value">{page.meta.stat}</span>
+                  {page.meta.statLabel && <span class="stat-label">{page.meta.statLabel}</span>}
+                </div>
+              )}
+              <h3 class="study-name">{page.meta.title}</h3>
+              <p class="study-desc">{truncate(page.meta.description, 150)}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {guides.length > 0 && (
+    <div class="section-container" id="guides">
+      <div class="section-header">
+        <span class="section-tag">📖 GUIDES</span>
+        <h2 class="section-title">Guides & Explainers</h2>
+        <p class="section-sub">Clear, jargon-free explanations.</p>
+      </div>
+      <div class="tools-grid">
+        {guides.map(page => (
+          <a class="tool-card" href={`/${page.slug}`}>
+            <span class="tool-emoji">{getEmoji(page.slug, 'guide')}</span>
+            <h3 class="tool-name">{page.meta.title}</h3>
+            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {lists.length > 0 && (
+    <div class="section-container" id="lists">
+      <div class="section-header">
+        <span class="section-tag">📋 LISTS</span>
+        <h2 class="section-title">Lists & Rankings</h2>
+        <p class="section-sub">Curated, ranked, and compared.</p>
+      </div>
+      <div class="tools-grid">
+        {lists.map(page => (
+          <a class="tool-card" href={`/${page.slug}`}>
+            <span class="tool-emoji">{getEmoji(page.slug, 'list')}</span>
+            <h3 class="tool-name">{page.meta.title}</h3>
+            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <style is:inline>
+    .hero { text-align: center; padding: 4rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+    
+    .section-container { max-width: 1100px; margin: 0 auto 3rem; padding: 0 1.5rem; }
+    .section-header { text-align: center; margin-bottom: 2rem; }
+    .section-tag { display: inline-block; background: color-mix(in srgb, var(--accent-color) 10%, transparent); color: var(--accent-color); font-size: .7rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px; margin-bottom: 12px; }
+    .section-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .section-sub { color: var(--text-secondary); font-size: 0.95rem; }
+    
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .tool-card { display: block; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
+    .tool-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
+    .tool-emoji { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
+    .tool-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; line-height: 1.3; }
+    .tool-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin: 0; }
+    
+    .studies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
+    .study-card { display: block; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
+    .study-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
+    .study-stat { margin-bottom: 0.75rem; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent-color); display: block; }
+    .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .study-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .study-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
+    
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.8rem; }
+      .tools-grid, .studies-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</SiteLayout>

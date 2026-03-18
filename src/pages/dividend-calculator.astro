@@ -1,0 +1,369 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Dividend Calculator: Project Your Income and Reinvestment Returns",
+  description: "Free dividend calculator to estimate your future portfolio value, dividend income, and the power of dividend reinvestment (DRIP) over time.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is dividend yield calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dividend yield is calculated by dividing the annual dividend per share by the current share price. For example, if a company pays $2 in annual dividends and its stock trades at $50, the dividend yield is 4% ($2 / $50)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a DRIP (Dividend Reinvestment Plan)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A DRIP, or Dividend Reinvestment Plan, is a program that allows investors to automatically reinvest their cash dividends into additional shares or fractional shares of the underlying stock or ETF on the dividend payment date."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator account for taxes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator provides estimates before taxes. Dividend taxes depend on your local tax laws, whether the dividends are qualified or non-qualified, and the type of investment account (e.g., taxable brokerage vs. tax-advantaged retirement accounts like an IRA)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often are dividends typically paid?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most dividend-paying companies in the US pay dividends quarterly. However, some companies pay monthly, semi-annually, or annually. Some specialized ETFs and REITs frequently pay monthly dividends."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is dividend growth important?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dividend growth is important because it helps protect your purchasing power against inflation. Companies with a history of consistent dividend growth (like Dividend Aristocrats) often indicate strong financial health and generate a growing income stream over time."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/dividend-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="container">
+      <h1>Dividend Calculator</h1>
+      <p>Estimate the future value of your dividend portfolio, total dividend income, and the long-term impact of DRIP (Dividend Reinvestment Plans).</p>
+
+      <div class="calculator-card">
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="principal">Starting Principal ($)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="principal" value="10000" min="0" step="100" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="contribution">Annual Contribution ($)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="contribution" value="6000" min="0" step="100" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="yield">Dividend Yield (%)</label>
+            <div class="input-wrapper">
+              <input type="number" id="yield" value="4.0" min="0" max="100" step="0.1" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="growth">Annual Price Growth (%)</label>
+            <div class="input-wrapper">
+              <input type="number" id="growth" value="5.0" min="0" max="100" step="0.1" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="years">Years to Grow</label>
+            <div class="input-wrapper">
+              <input type="number" id="years" value="10" min="1" max="100" step="1" />
+            </div>
+          </div>
+
+          <div class="input-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="drip" checked />
+              Reinvest Dividends (DRIP)
+            </label>
+          </div>
+        </div>
+
+        <div class="calc-results-grid">
+          <div class="calc-result">
+            <span class="calc-result-label">Total Portfolio Value</span>
+            <div class="calc-result-value" id="result-total">$0.00</div>
+          </div>
+          <div class="calc-result">
+            <span class="calc-result-label">Annual Dividend Income</span>
+            <div class="calc-result-value" id="result-income">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>How the Dividend Calculator Works</h2>
+        <p>This dividend calculator projects the future growth of your investments by accounting for initial capital, ongoing contributions, annual stock price appreciation, and dividend yield. Crucially, it demonstrates the powerful snowball effect of dividend reinvestment (DRIP).</p>
+
+        <h3>The Power of DRIP (Dividend Reinvestment Plans)</h3>
+        <p>When you enable DRIP, your cash dividends are automatically used to purchase additional shares of the underlying stock or ETF. As your share count grows, your future dividend payments increase—even if the dividend per share remains the same. Over decades, this compounding effect can significantly amplify your total returns.</p>
+
+        <h3>Formula Explanation</h3>
+        <p>The calculator uses an iterative annual compound interest formula to simulate portfolio growth:</p>
+        <ul>
+          <li><strong>Price Appreciation:</strong> The portfolio's principal balance increases annually based on the "Annual Price Growth" percentage.</li>
+          <li><strong>Contributions:</strong> The "Annual Contribution" is added to the total balance at the end of each year.</li>
+          <li><strong>Dividends:</strong> The annual dividend income is calculated by multiplying the current total value by the "Dividend Yield".</li>
+          <li><strong>Reinvestment:</strong> If DRIP is enabled, the calculated dividend income is added back to the portfolio balance, further accelerating compound growth in subsequent years.</li>
+        </ul>
+
+        <h2>Understanding the Key Inputs</h2>
+        <ul>
+          <li><strong>Starting Principal:</strong> Your current portfolio value or the initial lump sum you plan to invest.</li>
+          <li><strong>Annual Contribution:</strong> The total amount of new cash you intend to deposit and invest each year.</li>
+          <li><strong>Dividend Yield (%):</strong> The expected annual percentage payout based on the portfolio's value. Historically, the S&P 500 averages around 1.5% to 2%, while dedicated dividend ETFs like SCHD might yield 3% to 4%.</li>
+          <li><strong>Annual Price Growth (%):</strong> The expected yearly capital appreciation of the stock price itself (excluding dividends).</li>
+          <li><strong>Years to Grow:</strong> Your investment time horizon or time until retirement.</li>
+        </ul>
+      </div>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h3>How is dividend yield calculated?</h3>
+          <p>Dividend yield is calculated by dividing the annual dividend per share by the current share price. For example, if a company pays $2 in annual dividends and its stock trades at $50, the dividend yield is 4% ($2 / $50).</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is a DRIP (Dividend Reinvestment Plan)?</h3>
+          <p>A DRIP, or Dividend Reinvestment Plan, is a program that allows investors to automatically reinvest their cash dividends into additional shares or fractional shares of the underlying stock or ETF on the dividend payment date.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Does this calculator account for taxes?</h3>
+          <p>This calculator provides estimates before taxes. Dividend taxes depend on your local tax laws, whether the dividends are qualified or non-qualified, and the type of investment account (e.g., taxable brokerage vs. tax-advantaged retirement accounts like an IRA).</p>
+        </div>
+        <div class="faq-item">
+          <h3>How often are dividends typically paid?</h3>
+          <p>Most dividend-paying companies in the US pay dividends quarterly. However, some companies pay monthly, semi-annually, or annually. Some specialized ETFs and REITs frequently pay monthly dividends.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why is dividend growth important?</h3>
+          <p>Dividend growth is important because it helps protect your purchasing power against inflation. Companies with a history of consistent dividend growth (like Dividend Aristocrats) often indicate strong financial health and generate a growing income stream over time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .input-wrapper input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    transition: border-color 0.2s;
+  }
+
+  .input-wrapper input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  /* Apply left padding only to inputs with a prefix */
+  .prefix + input {
+    padding-left: 2.5rem;
+  }
+
+  /* Apply right padding only to inputs with a suffix */
+  input:has(+ .suffix) {
+    padding-right: 2.5rem;
+  }
+
+  /* Fix card styling */
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    grid-column: 1 / -1;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+  }
+
+  .calc-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+  }
+
+  .calc-result {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  @media (max-width: 600px) {
+    .calc-results-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .calc-result {
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+    .calc-result:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const elPrincipal = document.getElementById('principal');
+    const elContribution = document.getElementById('contribution');
+    const elYield = document.getElementById('yield');
+    const elGrowth = document.getElementById('growth');
+    const elYears = document.getElementById('years');
+    const elDrip = document.getElementById('drip');
+
+    const resTotal = document.getElementById('result-total');
+    const resIncome = document.getElementById('result-income');
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function calculate() {
+      const principal = parseFloat(elPrincipal.value) || 0;
+      const annualContrib = parseFloat(elContribution.value) || 0;
+      const divYield = (parseFloat(elYield.value) || 0) / 100;
+      const priceGrowth = (parseFloat(elGrowth.value) || 0) / 100;
+      const years = parseInt(elYears.value, 10) || 0;
+      const isDrip = elDrip.checked;
+
+      let currentBalance = principal;
+      let annualIncome = 0;
+
+      for (let i = 0; i < years; i++) {
+        // Apply capital appreciation first
+        currentBalance *= (1 + priceGrowth);
+
+        // Add new contributions at end of year
+        currentBalance += annualContrib;
+
+        // Calculate dividends generated this year based on year-end balance
+        annualIncome = currentBalance * divYield;
+
+        // Reinvest if DRIP is checked
+        if (isDrip) {
+          currentBalance += annualIncome;
+        }
+      }
+
+      // Calculate final year income (based on final balance)
+      annualIncome = currentBalance * divYield;
+
+      resTotal.textContent = formatCurrency(currentBalance);
+      resIncome.textContent = formatCurrency(annualIncome);
+    }
+
+    // Bind event listeners to all inputs
+    [elPrincipal, elContribution, elYield, elGrowth, elYears, elDrip].forEach(input => {
+      if (input.type === 'checkbox') {
+        input.addEventListener('change', calculate);
+      } else {
+        input.addEventListener('input', calculate);
+      }
+    });
+
+    // Initial calculation
+    calculate();
+  });
+</script>

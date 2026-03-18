@@ -1,0 +1,311 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between QQQ and S&P 500?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "QQQ tracks the Nasdaq-100 index, which consists of the 100 largest non-financial companies listed on the Nasdaq, heavily weighted towards technology. The S&P 500 is a broader index of 500 large U.S. companies across all sectors of the economy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does QQQ have higher historical returns?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "QQQ has historically delivered higher returns largely due to its concentrated exposure to high-growth technology and communication services companies, which have outperformed the broader market over the last decade."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the sector concentration risk in QQQ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because QQQ is heavily weighted in the technology sector (often over 50%), it carries significant sector concentration risk. A downturn in the tech industry will impact QQQ much more severely than the diversified S&P 500."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does QQQ or S&P 500 pay a higher dividend?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The S&P 500 typically pays a higher dividend yield than QQQ. Many of the tech-focused companies in QQQ reinvest their earnings into growth rather than paying dividends to shareholders."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is QQQ appropriate for an investor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "QQQ is appropriate for investors with a higher risk tolerance and a longer time horizon who are seeking aggressive growth and believe in the continued outperformance of the technology sector. It is often used as a growth tilt alongside a broader core holding like the S&P 500."
+      }
+    }
+  ]
+};
+
+export const meta = {
+  title: "QQQ vs S&P 500: Compare Index Funds & Performance",
+  description: "Compare the tech-heavy Nasdaq-100 (QQQ) against the broader S&P 500. Analyze historical returns, volatility, and sector concentration risk with our...",
+  category: "tool",
+  published: "2024-03-24",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="QQQ vs S&P 500: Compare Index Funds & Performance"
+  description="Compare the tech-heavy Nasdaq-100 (QQQ) against the broader S&P 500. Analyze historical returns, volatility, and sector concentration risk with our."
+  canonical="https://westmountfundamentals.com/qqq-vs-sp500"
+  schema={schema}
+>
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 4rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1.25rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section { margin-top: 3rem; }
+    .faq-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-item h3 { font-size: 1.2rem; margin-bottom: 0.75rem; color: var(--text-primary); }
+    .faq-item p { color: var(--text-secondary); line-height: 1.6; margin: 0; }
+
+    h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+    p { margin-bottom: 1.25rem; line-height: 1.6; color: var(--text-secondary); }
+
+    /* Interactive Tool Styles */
+    .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .input-group { margin-bottom: 1.25rem; }
+    .input-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .input-group input, .input-group select { width: 100%; padding: 0.75rem; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; font-family: inherit; font-size: 1rem; transition: border-color 0.2s; }
+    .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent-color); }
+
+    .metric-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-label { font-weight: 600; color: var(--text-secondary); }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-primary); text-align: right; }
+    .metric-value.winner { color: #10b981; }
+    .metric-value.loser { color: #ef4444; }
+
+    .index-header { text-align: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
+    .index-ticker { font-size: 2rem; font-weight: 800; color: var(--accent-color); font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
+    .index-name { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+    .slider-container { margin: 2rem 0; }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+    input[type=range] { width: 100%; -webkit-appearance: none; background: transparent; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent-color); cursor: pointer; margin-top: -6px; }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: var(--border-color); border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .tool-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <div class="hero">
+    <h1>QQQ vs S&P 500</h1>
+    <p>Compare the tech-heavy Nasdaq-100 against the broad market S&P 500. Analyze historical returns, volatility, and sector risk.</p>
+  </div>
+
+  <div class="page-content">
+
+    <div class="card">
+      <h2 style="margin-top:0;">Interactive Comparison Tool</h2>
+      <p>Adjust the hypothetical investment amount and holding period to see how the historical average returns of QQQ and the S&P 500 would have compounded over time. <br><small><em>Note: Historical averages used are roughly 13% for QQQ and 10% for S&P 500. Past performance does not guarantee future results.</em></small></p>
+
+      <div class="tool-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1rem;">
+        <div class="input-group">
+          <label for="initial-investment">Initial Investment ($)</label>
+          <input type="number" id="initial-investment" value="10000" min="100" step="100">
+        </div>
+        <div class="input-group">
+          <label for="years">Holding Period (Years)</label>
+          <input type="number" id="years" value="10" min="1" max="40" step="1">
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <input type="range" id="years-slider" min="1" max="40" value="10">
+        <div class="slider-labels">
+          <span>1 Year</span>
+          <span>40 Years</span>
+        </div>
+      </div>
+
+      <div class="tool-grid">
+        <!-- QQQ Column -->
+        <div style="background: color-mix(in srgb, var(--card-bg) 95%, white); border-radius: 8px; padding: 1.5rem; border: 1px solid var(--border-color);">
+          <div class="index-header">
+            <div class="index-ticker">QQQ</div>
+            <div class="index-name">Nasdaq-100</div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Focus</span>
+            <span class="metric-value" style="font-family: inherit; font-size: 0.9rem;">Tech / Growth</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Holdings</span>
+            <span class="metric-value">100</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Financials</span>
+            <span class="metric-value">0%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Assumed Return</span>
+            <span class="metric-value">13.0%</span>
+          </div>
+          <div class="metric-row" style="margin-top: 1rem; border-top: 2px solid var(--border-color);">
+            <span class="metric-label">Future Value</span>
+            <span class="metric-value" id="qqq-fv" style="font-size: 1.2rem; color: var(--accent-color);">$0.00</span>
+          </div>
+        </div>
+
+        <!-- SP500 Column -->
+        <div style="background: color-mix(in srgb, var(--card-bg) 95%, white); border-radius: 8px; padding: 1.5rem; border: 1px solid var(--border-color);">
+          <div class="index-header">
+            <div class="index-ticker">S&P 500</div>
+            <div class="index-name">Broad Market</div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Focus</span>
+            <span class="metric-value" style="font-family: inherit; font-size: 0.9rem;">Diversified</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Holdings</span>
+            <span class="metric-value">500</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Financials</span>
+            <span class="metric-value">~13%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Assumed Return</span>
+            <span class="metric-value">10.0%</span>
+          </div>
+          <div class="metric-row" style="margin-top: 1rem; border-top: 2px solid var(--border-color);">
+            <span class="metric-label">Future Value</span>
+            <span class="metric-value" id="sp500-fv" style="font-size: 1.2rem; color: var(--accent-color);">$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-bottom:0; font-size:0.95rem;">
+        <strong>The Trade-Off:</strong> While QQQ projects a higher <span id="diff-val" style="font-weight:bold; font-family:'JetBrains Mono';">$0.00</span> final balance in this <span id="diff-years" style="font-weight:bold;">10</span>-year scenario, it experiences significantly larger drawdowns during bear markets (especially in the tech sector) compared to the diversified S&P 500.
+      </div>
+    </div>
+
+    <!-- CONTENT SECTIONS -->
+    <div class="card">
+      <h2>Key Differences: QQQ vs S&P 500</h2>
+      <p>When investors look to capture broad stock market returns, the <strong>S&P 500</strong> is often the default choice. It tracks 500 of the largest publicly traded companies in the United States across all 11 stock market sectors, making it a highly diversified benchmark for the overall U.S. economy. For more details, see our <a href="/guide-sp500-index-funds">guide to S&P 500 index funds</a>.</p>
+      <p>Conversely, <strong>QQQ</strong> is an exchange-traded fund (ETF) that tracks the <strong>Nasdaq-100 Index</strong>. This index is composed of the 100 largest non-financial companies listed on the Nasdaq stock exchange. Because of the nature of the Nasdaq exchange, QQQ is heavily tilted toward technology, telecommunications, and consumer discretionary stocks. We have a detailed <a href="/qqq-etf-review-2026">QQQ ETF review</a> for a deeper dive.</p>
+    </div>
+
+    <div class="card">
+      <h2>Performance and Volatility</h2>
+      <p>Historically, QQQ has significantly outperformed the S&P 500 over the past 10 to 15 years. This outperformance is largely driven by the explosive growth of mega-cap technology companies (often referred to as the <a href="/magnificent-seven-stocks-2026">Magnificent Seven stocks</a>) that dominate the top holdings of the Nasdaq-100.</p>
+      <p>However, this higher return comes with higher volatility. Because QQQ is more concentrated in fewer stocks and a specific sector, it tends to experience steeper drawdowns during bear markets or tech-specific corrections. For example, during the 2000-2002 dot-com crash and the 2022 tech pullback, QQQ saw much larger percentage declines than the broadly diversified S&P 500.</p>
+    </div>
+
+    <div class="card">
+      <h2>Sector Concentration Risk</h2>
+      <p>The most critical difference between the two indices is their sector allocation. The S&P 500 includes companies from Information Technology, Healthcare, Financials, Consumer Staples, Energy, and more. This means if one sector (like Tech) underperforms, other sectors (like Energy or Financials) might buoy the index.</p>
+      <p>QQQ explicitly excludes the financial sector. Furthermore, information technology and communication services often make up over 60% of its total weight. If you invest heavily in QQQ, you are making a concentrated bet on the continued success and dominance of the technology sector.</p>
+    </div>
+
+    <div class="card">
+      <h2>Which One Is Right For You?</h2>
+      <p>Choosing between QQQ and the S&P 500 depends entirely on your investment goals, timeline, and risk tolerance.</p>
+      <p>The <strong>S&P 500</strong> is generally considered the foundational building block of a long-term portfolio. It offers broad diversification, lower volatility, and exposure to the entire U.S. economy. It is suitable as a core holding for almost any investor. You can compare various S&P 500 ETFs using our <a href="/best-sp500-index-funds-2026">Best S&P 500 Index Funds</a> list.</p>
+      <p><strong>QQQ</strong> is better suited as a "growth tilt." Investors who are younger, have a higher risk tolerance, or specifically want to overweight technology in their portfolios often use QQQ alongside a core S&P 500 holding. It is generally not recommended as the *only* equity holding in a portfolio due to its lack of diversification.</p>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is the difference between QQQ and S&P 500?</h3>
+        <p>QQQ tracks the Nasdaq-100 index, which consists of the 100 largest non-financial companies listed on the Nasdaq, heavily weighted towards technology. The S&P 500 is a broader index of 500 large U.S. companies across all sectors of the economy.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why does QQQ have higher historical returns?</h3>
+        <p>QQQ has historically delivered higher returns largely due to its concentrated exposure to high-growth technology and communication services companies, which have outperformed the broader market over the last decade.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is the sector concentration risk in QQQ?</h3>
+        <p>Because QQQ is heavily weighted in the technology sector (often over 50%), it carries significant sector concentration risk. A downturn in the tech industry will impact QQQ much more severely than the diversified S&P 500.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does QQQ or S&P 500 pay a higher dividend?</h3>
+        <p>The S&P 500 typically pays a higher dividend yield than QQQ. Many of the tech-focused companies in QQQ reinvest their earnings into growth rather than paying dividends to shareholders.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>When is QQQ appropriate for an investor?</h3>
+        <p>QQQ is appropriate for investors with a higher risk tolerance and a longer time horizon who are seeking aggressive growth and believe in the continued outperformance of the technology sector. It is often used as a growth tilt alongside a broader core holding like the S&P 500.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script is:inline>
+    const qqqReturn = 0.130; // 13% average historical
+    const sp500Return = 0.100; // 10% average historical
+
+    const initialInput = document.getElementById('initial-investment');
+    const yearsInput = document.getElementById('years');
+    const yearsSlider = document.getElementById('years-slider');
+
+    const qqqFvEl = document.getElementById('qqq-fv');
+    const sp500FvEl = document.getElementById('sp500-fv');
+    const diffValEl = document.getElementById('diff-val');
+    const diffYearsEl = document.getElementById('diff-years');
+
+    const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+
+    function calculate() {
+      const initial = parseFloat(initialInput.value) || 0;
+      const years = parseInt(yearsInput.value, 10) || 0;
+
+      const qqqFv = initial * Math.pow(1 + qqqReturn, years);
+      const sp500Fv = initial * Math.pow(1 + sp500Return, years);
+      const diff = qqqFv - sp500Fv;
+
+      qqqFvEl.textContent = formatCurrency(qqqFv);
+      sp500FvEl.textContent = formatCurrency(sp500Fv);
+
+      if (diff > 0) {
+        diffValEl.textContent = formatCurrency(diff);
+      } else {
+        diffValEl.textContent = formatCurrency(0);
+      }
+      diffYearsEl.textContent = years;
+    }
+
+    // Event Listeners
+    initialInput.addEventListener('input', calculate);
+    yearsInput.addEventListener('input', (e) => {
+      yearsSlider.value = e.target.value;
+      calculate();
+    });
+    yearsSlider.addEventListener('input', (e) => {
+      yearsInput.value = e.target.value;
+      calculate();
+    });
+
+    // Initial calculation
+    calculate();
+  </script>
+</SiteLayout>

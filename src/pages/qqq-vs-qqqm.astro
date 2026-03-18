@@ -1,0 +1,318 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "QQQ vs QQQM: Expense Ratio and Feature Comparison",
+    "description": "Compare Invesco's QQQ and QQQM ETFs side-by-side. Calculate the exact difference in expense ratios (0.20% vs 0.15%) and learn which Nasdaq-100 fund is right for you.",
+    "url": "https://westmountfundamentals.com/qqq-vs-qqqm"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the main difference between QQQ and QQQM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The primary difference is their cost structure and intended use. QQQ has a higher expense ratio of 0.20% but offers massive liquidity, making it ideal for institutional active trading and options strategies. QQQM has a lower expense ratio of 0.15% and a lower share price, specifically designed for retail buy-and-hold investors who want to minimize fees over the long term."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do QQQ and QQQM track the exact same index?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, both QQQ and QQQM track the exact same index: the Nasdaq-100. This index consists of the 100 largest non-financial companies listed on the Nasdaq stock exchange. Their underlying holdings and performance before fees are identical."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much money does QQQM save compared to QQQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because QQQM charges a 0.15% expense ratio compared to QQQ's 0.20%, you save $5 per year for every $10,000 invested. On a $100,000 portfolio, this equates to $50 in annual savings. Over a 20-30 year investing horizon, compounded growth makes this small percentage difference quite significant."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why would anyone buy QQQ instead of QQQM if it costs more?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "QQQ is one of the most heavily traded securities in the world. It has billions in daily trading volume, extremely tight bid-ask spreads, and a highly liquid options market. For day traders, institutions, and options traders, this liquidity is far more valuable than a 0.05% difference in the annual expense ratio."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I convert my shares of QQQ to QQQM without paying taxes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, you cannot directly convert QQQ shares into QQQM shares. If you hold QQQ in a taxable brokerage account and wish to switch, you must sell your QQQ shares (potentially triggering capital gains taxes) and use the proceeds to buy QQQM. In a tax-advantaged account like an IRA, you can sell and rebuy without tax consequences."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "QQQ vs QQQM: Expense Ratio & Comparison Tool",
+  description: "Compare Invesco's QQQ and QQQM ETFs side-by-side. Calculate the exact difference in expense ratios (0.20% vs 0.",
+  category: "tool",
+  published: "2026-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="QQQ vs QQQM: Expense Ratio & Comparison Tool"
+  description="Compare Invesco's QQQ and QQQM ETFs side-by-side. Calculate the exact difference in expense ratios (0.20% vs 0."
+  canonical="https://westmountfundamentals.com/qqq-vs-qqqm"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>QQQ vs QQQM Comparison Tool</h1>
+      <p>Analyze the exact long-term cost differences between Invesco's flagship Nasdaq-100 ETFs.</p>
+    </div>
+
+    <div class="content-section">
+      <p>Invesco offers two exchange-traded funds (ETFs) that track the identical Nasdaq-100 index: QQQ (Invesco QQQ Trust) and QQQM (Invesco NASDAQ 100 ETF). While they hold the exact same stocks in the exact same proportions, their cost structures and liquidity profiles make them suited for entirely different types of investors.</p>
+
+      <p>The core distinction lies in their expense ratios. QQQ charges a 0.20% annual management fee, whereas QQQM was introduced specifically to offer a lower 0.15% fee. While a 0.05% difference may seem negligible, compounded over decades of retirement investing, it can translate to thousands of dollars in lost returns.</p>
+
+      <p>Use our interactive calculator below to input your investment strategy and see precisely how much capital you save by opting for the lower-cost variant.</p>
+    </div>
+
+    <div class="calculator-container card">
+      <div class="calc-header">
+        <h3>Expense Ratio & Growth Calculator</h3>
+        <p>Project the impact of a 0.20% (QQQ) vs 0.15% (QQQM) fee.</p>
+      </div>
+
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label for="initial-investment">Initial Investment ($)</label>
+          <input type="number" id="initial-investment" value="10000" min="0" />
+        </div>
+        <div class="input-group">
+          <label for="monthly-contribution">Monthly Contribution ($)</label>
+          <input type="number" id="monthly-contribution" value="500" min="0" />
+        </div>
+        <div class="input-group">
+          <label for="expected-return">Expected Annual Return (%)</label>
+          <input type="number" id="expected-return" value="10" min="1" step="0.1" />
+        </div>
+        <div class="input-group">
+          <label for="years">Investment Horizon (Years)</label>
+          <input type="number" id="years" value="20" min="1" max="50" />
+        </div>
+      </div>
+
+      <div class="calc-actions">
+        <button id="calculate-btn" class="calc-button">Calculate Comparison</button>
+      </div>
+
+      <div id="results-container" class="results-container" style="display: none;">
+        <div class="results-grid">
+          <div class="result-card qqq-result">
+            <h4>QQQ (0.20% Fee)</h4>
+            <div class="result-row">
+              <span class="label">Final Balance:</span>
+              <span class="value" id="qqq-balance">$0</span>
+            </div>
+            <div class="result-row">
+              <span class="label">Total Fees Paid:</span>
+              <span class="value negative" id="qqq-fees">$0</span>
+            </div>
+          </div>
+
+          <div class="result-card qqqm-result">
+            <h4>QQQM (0.15% Fee)</h4>
+            <div class="result-row">
+              <span class="label">Final Balance:</span>
+              <span class="value" id="qqqm-balance">$0</span>
+            </div>
+            <div class="result-row">
+              <span class="label">Total Fees Paid:</span>
+              <span class="value negative" id="qqqm-fees">$0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="savings-highlight callout">
+          <span class="savings-label">Total Extra Wealth with QQQM:</span>
+          <span class="savings-value" id="total-savings">$0</span>
+          <p class="savings-note">This is the additional portfolio value generated simply by paying a lower management fee.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Understanding the Liquidity Gap</h2>
+      <p>If QQQM is mathematically superior due to its lower cost, why does QQQ still hold over $200 billion in assets under management (AUM) compared to QQQM's roughly $20 billion? The answer is liquidity.</p>
+
+      <p>QQQ is heavily utilized by institutional investors, high-frequency algorithms, and options traders. It consistently ranks among the most actively traded securities globally. This massive volume ensures extremely tight bid-ask spreads (often just a penny), meaning large block trades can be executed instantly without impacting the market price.</p>
+
+      <p>Furthermore, QQQ possesses an unparalleled options market. For investors writing covered calls, executing complex spreads, or utilizing portfolio margin, QQQ is the mandatory vehicle. QQQM's options chain is significantly thinner, leading to wider spreads that quickly erase the benefit of the lower expense ratio.</p>
+
+      <h2>The Verdict: Which Should You Buy?</h2>
+      <p>The decision tree for choosing between these two funds is relatively straightforward:</p>
+
+      <ul class="feature-list">
+        <li><strong>Choose QQQM if:</strong> You are a retail investor buying and holding for the long term. If your goal is to dollar-cost average into your IRA or brokerage account over decades, the 0.05% fee reduction acts as a guaranteed, risk-free compounding advantage. Furthermore, QQQM's lower nominal share price (roughly half that of QQQ) makes it easier to accumulate whole shares.</li>
+        <li><strong>Choose QQQ if:</strong> You are an active trader, a day trader, or an options seller. If you are moving large amounts of capital frequently or relying on options premiums, the superior liquidity and tighter spreads of QQQ will save you more money in execution costs than you would gain from QQQM's lower expense ratio.</li>
+      </ul>
+
+      <p>For more detailed breakdowns on portfolio construction and fund analysis, consider reading our comprehensive <a href="/qqq-etf-review-2026">QQQ ETF Review (2026)</a> or use our broad <a href="/stock-comparison-tool">Stock Comparison Tool</a> to analyze individual Nasdaq-100 components.</p>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is the main difference between QQQ and QQQM?</h3>
+        <p>The primary difference is their cost structure and intended use. QQQ has a higher expense ratio of 0.20% but offers massive liquidity, making it ideal for institutional active trading and options strategies. QQQM has a lower expense ratio of 0.15% and a lower share price, specifically designed for retail buy-and-hold investors who want to minimize fees over the long term.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Do QQQ and QQQM track the exact same index?</h3>
+        <p>Yes, both QQQ and QQQM track the exact same index: the Nasdaq-100. This index consists of the 100 largest non-financial companies listed on the Nasdaq stock exchange. Their underlying holdings and performance before fees are identical.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How much money does QQQM save compared to QQQ?</h3>
+        <p>Because QQQM charges a 0.15% expense ratio compared to QQQ's 0.20%, you save $5 per year for every $10,000 invested. On a $100,000 portfolio, this equates to $50 in annual savings. Over a 20-30 year investing horizon, compounded growth makes this small percentage difference quite significant.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why would anyone buy QQQ instead of QQQM if it costs more?</h3>
+        <p>QQQ is one of the most heavily traded securities in the world. It has billions in daily trading volume, extremely tight bid-ask spreads, and a highly liquid options market. For day traders, institutions, and options traders, this liquidity is far more valuable than a 0.05% difference in the annual expense ratio.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I convert my shares of QQQ to QQQM without paying taxes?</h3>
+        <p>No, you cannot directly convert QQQ shares into QQQM shares. If you hold QQQ in a taxable brokerage account and wish to switch, you must sell your QQQ shares (potentially triggering capital gains taxes) and use the proceeds to buy QQQM. In a tax-advantaged account like an IRA, you can sell and rebuy without tax consequences.</p>
+      </div>
+    </div>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent-color); }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .content-section { margin-top: 2rem; margin-bottom: 2rem; }
+    .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+    .content-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .content-section a:hover { text-decoration: underline; }
+
+    .feature-list { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; }
+    .feature-list li { margin-bottom: 0.75rem; }
+    .feature-list strong { color: var(--text-primary); }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, var(--card-bg)); border-left: 4px solid var(--accent-color); padding: 1.5rem; border-radius: 0 8px 8px 0; margin-top: 2rem; }
+
+    .calc-header { text-align: center; margin-bottom: 2rem; }
+    .calc-header h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .calc-header p { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .inputs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); font-size: 0.95rem; }
+    .input-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: color-mix(in srgb, var(--card-bg) 95%, #000); color: var(--text-primary); font-size: 1.05rem; font-family: monospace; }
+    .input-group input:focus { outline: none; border-color: var(--accent-color); }
+
+    .calc-actions { text-align: center; margin-bottom: 2rem; }
+    .calc-button { background: var(--accent-color); color: #fff; border: none; padding: 0.8rem 2rem; font-size: 1.1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; }
+    .calc-button:hover { opacity: 0.9; }
+
+    .results-container { border-top: 1px solid var(--border-color); padding-top: 2rem; }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    .result-card { background: color-mix(in srgb, var(--card-bg) 95%, #fff); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; }
+    .result-card h4 { text-align: center; margin-top: 0; margin-bottom: 1.25rem; font-size: 1.2rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; }
+
+    .result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .result-row:last-child { margin-bottom: 0; }
+    .result-row .label { color: var(--text-secondary); font-size: 0.95rem; }
+    .result-row .value { font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    .result-row .value.negative { color: #ef4444; }
+
+    .savings-highlight { text-align: center; }
+    .savings-label { display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .savings-value { display: block; font-family: monospace; font-size: 2.5rem; font-weight: 800; color: #22c55e; margin-bottom: 0.5rem; }
+    .savings-note { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+
+    .faq-section { margin-top: 4rem; }
+    .faq-item { margin-bottom: 2rem; }
+    .faq-item h3 { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem; }
+    .faq-item p { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6; margin: 0; }
+
+    @media (max-width: 640px) {
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const calcBtn = document.getElementById('calculate-btn');
+      const resultsContainer = document.getElementById('results-container');
+
+      if (!calcBtn || !resultsContainer) return;
+
+      const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+
+      function calculateGrowth(initial, monthly, returnRate, years, expenseRatio) {
+        const monthlyReturn = returnRate / 100 / 12;
+        const monthlyFee = expenseRatio / 100 / 12;
+        const netMonthlyReturn = monthlyReturn - monthlyFee;
+        const months = years * 12;
+
+        let balance = initial;
+        let totalFees = 0;
+
+        for (let i = 0; i < months; i++) {
+          const fee = balance * monthlyFee;
+          totalFees += fee;
+          balance = balance * (1 + netMonthlyReturn) + monthly;
+        }
+
+        return { balance, totalFees };
+      }
+
+      calcBtn.addEventListener('click', () => {
+        const initial = parseFloat(document.getElementById('initial-investment').value) || 0;
+        const monthly = parseFloat(document.getElementById('monthly-contribution').value) || 0;
+        const expectedReturn = parseFloat(document.getElementById('expected-return').value) || 0;
+        const years = parseInt(document.getElementById('years').value) || 0;
+
+        if (years <= 0 || expectedReturn <= 0) {
+          alert('Please enter valid positive numbers for return and years.');
+          return;
+        }
+
+        const qqqER = 0.20;
+        const qqqmER = 0.15;
+
+        const qqqData = calculateGrowth(initial, monthly, expectedReturn, years, qqqER);
+        const qqqmData = calculateGrowth(initial, monthly, expectedReturn, years, qqqmER);
+
+        document.getElementById('qqq-balance').textContent = formatCurrency(qqqData.balance);
+        document.getElementById('qqq-fees').textContent = formatCurrency(qqqData.totalFees);
+
+        document.getElementById('qqqm-balance').textContent = formatCurrency(qqqmData.balance);
+        document.getElementById('qqqm-fees').textContent = formatCurrency(qqqmData.totalFees);
+
+        const savings = qqqmData.balance - qqqData.balance;
+        document.getElementById('total-savings').textContent = formatCurrency(savings);
+
+        resultsContainer.style.display = 'block';
+      });
+    });
+  </script>
+</SiteLayout>

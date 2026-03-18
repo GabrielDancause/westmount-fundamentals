@@ -1,0 +1,347 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Simple Loan Calculator | Real-time Monthly Payments",
+  description: "Calculate your estimated monthly loan payments, total interest, and amortization schedule instantly with our free, real-time loan calculator.",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you calculate a monthly loan payment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Monthly loan payments are calculated using an amortization formula that takes the principal amount, multiplies it by the periodic interest rate, and divides that by one minus (1 plus the periodic interest rate) to the negative power of the total number of payments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is amortization?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Amortization is the process of spreading out a loan into a series of fixed payments over time. Early payments primarily cover interest, while later payments pay down more of the principal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a longer loan term mean smaller payments?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, extending the loan term reduces your monthly payment because you are spreading the cost over a longer period. However, a longer term also means you will pay significantly more in total interest over the life of the loan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I save money by making extra payments?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Any extra payments made toward the principal reduce the remaining balance on which future interest is calculated. This can help you pay off the loan faster and save a substantial amount on interest."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my actual payment higher than the calculator estimate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Calculators typically estimate the principal and interest portion of your loan. Actual payments, especially for mortgages or auto loans, may include additional costs like property taxes, homeowner's insurance, PMI (Private Mortgage Insurance), or dealer fees."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/loan-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="container">
+      <h1>Loan Calculator</h1>
+      <p style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">
+        Calculate estimated monthly payments and total interest for mortgages, auto loans, or personal loans.
+      </p>
+
+      <div class="calculator-card">
+        <div class="calc-grid">
+          <div class="input-section">
+            <div class="input-group">
+              <label for="principal">Loan Amount</label>
+              <div class="input-wrapper">
+                <span class="prefix" style="position: absolute; left: 1rem; color: var(--text-secondary); font-family: var(--font-mono);">$</span>
+                <input type="number" id="principal" min="1" step="1000" value="250000" style="padding-left: 2rem;">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="interestRate">Annual Interest Rate (%)</label>
+              <div class="input-wrapper">
+                <input type="number" id="interestRate" min="0" step="0.1" value="6.5">
+                <span class="suffix">%</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="loanTerm">Loan Term</label>
+              <div class="input-wrapper">
+                <input type="number" id="loanTerm" min="1" step="1" value="30">
+                <span class="suffix">Years</span>
+              </div>
+            </div>
+
+            <div class="calc-result">
+              <span class="calc-result-label">Estimated Monthly Payment</span>
+              <div class="calc-result-value" id="monthlyPaymentResult">$1,580.17</div>
+            </div>
+          </div>
+
+          <div class="results-section">
+            <div class="results-summary">
+              <div class="summary-item">
+                <span class="summary-label">Principal Amount</span>
+                <span class="summary-value" id="principalSummary">$250,000.00</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Total Interest Paid</span>
+                <span class="summary-value" id="totalInterestResult">$318,861.22</span>
+              </div>
+              <div class="summary-item total">
+                <span class="summary-label">Total Cost of Loan</span>
+                <span class="summary-value highlight" id="totalCostResult">$568,861.22</span>
+              </div>
+            </div>
+
+            <div class="chart-visual" id="chartVisual" style="margin-top: 1.5rem; height: 16px; border-radius: 8px; overflow: hidden; display: flex; background: var(--border-color);">
+              <div class="chart-bar-principal" id="barPrincipal" style="height: 100%; background: var(--accent-color); width: 43.9%;"></div>
+              <div class="chart-bar-interest" id="barInterest" style="height: 100%; background: color-mix(in srgb, var(--accent-color) 40%, transparent); width: 56.1%;"></div>
+            </div>
+            <div class="chart-legend" style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+              <span>Principal</span>
+              <span>Interest</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>How Loan Payments are Calculated</h2>
+        <p>This calculator uses the standard amortization formula to determine fixed monthly payments over the life of a loan. This applies to mortgages, auto loans, personal loans, and student loans.</p>
+
+        <div class="highlight-box">
+          <p><strong>The Formula:</strong></p>
+          <p style="font-family: var(--font-mono); text-align: center; margin-top: 1rem; font-size: 1.1rem; overflow-x: auto;">M = P [ r(1 + r)^n ] / [ (1 + r)^n - 1 ]</p>
+          <ul style="margin-top: 1rem; margin-bottom: 0;">
+            <li><strong>M:</strong> Total monthly payment</li>
+            <li><strong>P:</strong> Principal loan amount</li>
+            <li><strong>r:</strong> Periodic interest rate (annual rate divided by 12)</li>
+            <li><strong>n:</strong> Total number of payments (years multiplied by 12)</li>
+          </ul>
+        </div>
+
+        <h2>Understanding the Costs</h2>
+        <p>When you take out a loan, the total cost involves more than just the amount you borrow. The interest rate and loan term significantly impact how much you ultimately pay.</p>
+
+        <h3>1. The Loan Term Impact</h3>
+        <p>A longer loan term (like a 30-year vs. 15-year mortgage) spreads your payments out over more time, resulting in a <strong>lower monthly payment</strong>. However, because the principal is carried longer, you accrue <strong>more total interest</strong>. A shorter term means higher monthly payments, but substantial interest savings.</p>
+
+        <h3>2. Amortization Mechanics</h3>
+        <p>During the early years of an amortized loan, a large portion of your monthly payment goes toward interest, while only a small fraction reduces the principal balance. As you progress through the loan term, this ratio flips, and more of your payment starts attacking the principal.</p>
+
+        <h3>3. Hidden Costs (Not Included in Estimate)</h3>
+        <p>Remember that this calculator computes <em>principal and interest</em> only. Real-world loans often include extra fees:</p>
+        <ul>
+          <li><strong>Mortgages:</strong> Property taxes, homeowner's insurance, HOA fees, and PMI (if down payment is under 20%).</li>
+          <li><strong>Auto Loans:</strong> Sales tax, title fees, and dealer documentation fees.</li>
+          <li><strong>Personal Loans:</strong> Origination fees or prepayment penalties.</li>
+        </ul>
+      </div>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>How do you calculate a monthly loan payment?</h3>
+          <p>Monthly loan payments are calculated using an amortization formula that takes the principal amount, multiplies it by the periodic interest rate, and divides that by one minus (1 plus the periodic interest rate) to the negative power of the total number of payments.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What is amortization?</h3>
+          <p>Amortization is the process of spreading out a loan into a series of fixed payments over time. Early payments primarily cover interest, while later payments pay down more of the principal.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Does a longer loan term mean smaller payments?</h3>
+          <p>Yes, extending the loan term reduces your monthly payment because you are spreading the cost over a longer period. However, a longer term also means you will pay significantly more in total interest over the life of the loan.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Can I save money by making extra payments?</h3>
+          <p>Yes. Any extra payments made toward the principal reduce the remaining balance on which future interest is calculated. This can help you pay off the loan faster and save a substantial amount on interest.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Why is my actual payment higher than the calculator estimate?</h3>
+          <p>Calculators typically estimate the principal and interest portion of your loan. Actual payments, especially for mortgages or auto loans, may include additional costs like property taxes, homeowner's insurance, PMI (Private Mortgage Insurance), or dealer fees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .input-section {
+      border-right: 1px solid var(--border-color);
+      padding-right: 3rem;
+    }
+  }
+
+  .results-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .results-summary {
+    background: color-mix(in srgb, var(--card-bg) 50%, var(--bg-color));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--border-color);
+  }
+
+  .summary-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .summary-item.total {
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: none;
+  }
+
+  .summary-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .summary-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .summary-value.highlight {
+    color: var(--accent-color);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const principalInput = document.getElementById('principal');
+    const interestRateInput = document.getElementById('interestRate');
+    const loanTermInput = document.getElementById('loanTerm');
+
+    const monthlyPaymentResult = document.getElementById('monthlyPaymentResult');
+    const principalSummary = document.getElementById('principalSummary');
+    const totalInterestResult = document.getElementById('totalInterestResult');
+    const totalCostResult = document.getElementById('totalCostResult');
+
+    const barPrincipal = document.getElementById('barPrincipal');
+    const barInterest = document.getElementById('barInterest');
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    };
+
+    const calculateLoan = () => {
+      const principal = parseFloat(principalInput.value) || 0;
+      const annualRate = parseFloat(interestRateInput.value) || 0;
+      const termYears = parseFloat(loanTermInput.value) || 0;
+
+      if (principal <= 0 || termYears <= 0) {
+        monthlyPaymentResult.textContent = '$0.00';
+        principalSummary.textContent = formatCurrency(principal);
+        totalInterestResult.textContent = '$0.00';
+        totalCostResult.textContent = formatCurrency(principal);
+        barPrincipal.style.width = '100%';
+        barInterest.style.width = '0%';
+        return;
+      }
+
+      const totalPayments = termYears * 12;
+      let monthlyPayment = 0;
+      let totalCost = 0;
+      let totalInterest = 0;
+
+      if (annualRate > 0) {
+        const monthlyRate = (annualRate / 100) / 12;
+        monthlyPayment = (principal * monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) / (Math.pow(1 + monthlyRate, totalPayments) - 1);
+        totalCost = monthlyPayment * totalPayments;
+        totalInterest = totalCost - principal;
+      } else {
+        monthlyPayment = principal / totalPayments;
+        totalCost = principal;
+        totalInterest = 0;
+      }
+
+      // Format and display results
+      monthlyPaymentResult.textContent = formatCurrency(monthlyPayment);
+      principalSummary.textContent = formatCurrency(principal);
+      totalInterestResult.textContent = formatCurrency(totalInterest);
+      totalCostResult.textContent = formatCurrency(totalCost);
+
+      // Update progress bar visual
+      const principalPercent = (principal / totalCost) * 100;
+      const interestPercent = 100 - principalPercent;
+
+      // Only animate width if valid, else fallback
+      if (totalCost > 0) {
+        barPrincipal.style.width = `${principalPercent}%`;
+        barInterest.style.width = `${interestPercent}%`;
+      } else {
+        barPrincipal.style.width = '100%';
+        barInterest.style.width = '0%';
+      }
+    };
+
+    // Add event listeners for real-time calculation
+    principalInput.addEventListener('input', calculateLoan);
+    interestRateInput.addEventListener('input', calculateLoan);
+    loanTermInput.addEventListener('input', calculateLoan);
+
+    // Initial calculation
+    calculateLoan();
+  });
+</script>

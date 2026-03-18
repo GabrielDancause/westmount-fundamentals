@@ -1,0 +1,452 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Mutual Fund Calculator: Project Your Investment Growth",
+  description: "Use our interactive mutual fund calculator to project long-term growth and discover exactly how expense ratios and fees impact your true returns over time.",
+  category: "tool",
+  published: "2026-03-20"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/mutual-fund-calculator"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does an expense ratio affect my mutual fund returns?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An expense ratio is an annual fee charged by mutual funds to cover management and operating costs. It directly reduces your overall return. Over decades, even a seemingly small difference, like 0.5% versus 1.5%, can compound into tens of thousands of dollars in lost wealth."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is considered a good expense ratio for a mutual fund?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Actively managed mutual funds typically charge between 0.5% and 1.5% annually. However, passive index funds often have expense ratios below 0.1%. Generally, an expense ratio under 0.5% is considered good, while anything above 1% is considered high and requires strong outperformance to justify."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I reinvest my mutual fund distributions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, reinvesting dividends and capital gain distributions allows you to buy more shares, accelerating compound growth. Most mutual fund calculators, including ours, assume that all distributions are automatically reinvested into the fund."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much should I invest in mutual funds each month?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A common rule of thumb is to invest 15% to 20% of your gross income for long-term goals like retirement. The specific amount depends on your timeline and target final balance. Use a mutual fund calculator to determine the monthly contribution required to hit your financial goals."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between a front-end load and an expense ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A front-end load is a one-time sales commission (often up to 5.75%) charged when you first buy the mutual fund. An expense ratio is an ongoing annual fee calculated as a percentage of your total assets in the fund. Many investors prefer 'no-load' funds to avoid upfront commissions."
+          }
+        }
+      ]
+    }
+  ]
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/mutual-fund-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h1>Mutual Fund Calculator</h1>
+      <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Project your investment growth and see exactly how expense ratios impact your total returns over time.</p>
+    </div>
+
+
+    <div class="calculator-card">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+
+        <div class="input-group">
+          <label for="initial">Initial Investment</label>
+          <div class="input-wrapper">
+            <span style="position: absolute; left: 1rem; color: var(--text-secondary); pointer-events: none;">$</span>
+            <input type="number" id="initial" value="5000" min="0" step="500" style="padding-left: 2rem;">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="monthly">Monthly Contribution</label>
+          <div class="input-wrapper">
+            <span style="position: absolute; left: 1rem; color: var(--text-secondary); pointer-events: none;">$</span>
+            <input type="number" id="monthly" value="500" min="0" step="100" style="padding-left: 2rem;">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="years">Years to Grow</label>
+          <div class="input-wrapper">
+            <input type="number" id="years" value="20" min="1" max="100" step="1">
+            <span class="suffix">years</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="returnRate">Expected Annual Return</label>
+          <div class="input-wrapper">
+            <input type="number" id="returnRate" value="8" min="-100" max="100" step="0.1">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="expenseRatio">Expense Ratio (Fees)</label>
+          <div class="input-wrapper">
+            <input type="number" id="expenseRatio" value="0.75" min="0" max="10" step="0.05">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="frontLoad">Front-end Load (Optional)</label>
+          <div class="input-wrapper">
+            <input type="number" id="frontLoad" value="0" min="0" max="10" step="0.25">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="calc-result" style="margin-top: 2rem; display: flex; flex-wrap: wrap; justify-content: space-around; gap: 1rem;">
+        <div style="text-align: center;">
+            <span class="calc-result-label">Net Future Value</span>
+            <div class="calc-result-value" id="finalBalance" style="font-size: 2.2rem; color: var(--accent-color);">$0.00</div>
+        </div>
+        <div style="text-align: center;">
+            <span class="calc-result-label" style="color: var(--text-primary); font-weight: 600;">Total Fees Paid</span>
+            <div class="calc-result-value" id="totalFeesPaid" style="font-size: 1.8rem; color: var(--sell-color);">$0.00</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="calc-result-label">Total Contributions</span>
+        <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="totalPrincipal">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <span class="calc-result-label">Gross Earnings</span>
+        <div style="font-size: 1.5rem; font-weight: 700; color: var(--buy-color);" id="totalInterest">$0.00</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 2rem; background: var(--card-bg); border-left-color: var(--sell-color);">
+        <p style="margin: 0; font-size: 1.05rem;">
+            <strong>The Hidden Cost of Fees:</strong> If you had chosen a zero-fee fund, your final balance would have been <strong style="color: var(--text-primary);" id="noFeeBalance">$0.00</strong>. That means you sacrificed <strong id="feePercentageLost" style="color: var(--sell-color);">0%</strong> of your total potential returns to fees.
+        </p>
+    </div>
+
+    <div class="chart-container" style="margin-top: 2rem;">
+      <h3 style="margin-top: 0; margin-bottom: 1rem;">Growth & Fee Schedule</h3>
+      <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+        <table id="scheduleTable">
+          <thead style="position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th>Year</th>
+              <th>Total Invested</th>
+              <th>Gross Value</th>
+              <th style="color: var(--sell-color);">Cum. Fees</th>
+              <th style="color: var(--accent-color);">Net Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script is:inline>
+      const formatCurrency = (num) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(num);
+      };
+
+      const formatPercent = (num) => {
+          return new Intl.NumberFormat('en-US', {
+             style: 'percent',
+             maximumFractionDigits: 1
+          }).format(num);
+      }
+
+      const calculateMutualFund = () => {
+        const initial = Math.max(0, parseFloat(document.getElementById('initial').value) || 0);
+        const monthly = Math.max(0, parseFloat(document.getElementById('monthly').value) || 0);
+        let years = parseFloat(document.getElementById('years').value) || 0;
+        let rate = parseFloat(document.getElementById('returnRate').value) || 0;
+        const expenseRatio = Math.max(0, parseFloat(document.getElementById('expenseRatio').value) || 0);
+        const frontLoad = Math.max(0, parseFloat(document.getElementById('frontLoad').value) || 0);
+
+        // Cap years at 100 to prevent performance issues
+        if (years > 100) {
+            years = 100;
+            document.getElementById('years').value = 100;
+        }
+        if (years < 0) years = 0;
+
+        const annualReturnDecimal = rate / 100;
+        const expenseRatioDecimal = expenseRatio / 100;
+        const netAnnualReturnDecimal = annualReturnDecimal - expenseRatioDecimal;
+        const frontLoadDecimal = frontLoad / 100;
+
+        // Apply front-load to initial investment
+        const initialInvestedNet = initial * (1 - frontLoadDecimal);
+        let initialFrontLoadFee = initial - initialInvestedNet;
+
+        let currentBalanceNet = initialInvestedNet;
+        let currentBalanceGross = initial; // If no fees
+        let totalContributions = initial;
+        let cumulativeFees = initialFrontLoadFee;
+
+        const monthlyReturn = annualReturnDecimal / 12;
+        const netMonthlyReturn = netAnnualReturnDecimal / 12;
+
+        const tbody = document.querySelector('#scheduleTable tbody');
+        tbody.innerHTML = '';
+        let html = '';
+
+        for (let year = 1; year <= years; year++) {
+          let yearContributions = 0;
+          let yearFees = 0;
+
+          for (let month = 1; month <= 12; month++) {
+            const monthlyContributionNet = monthly * (1 - frontLoadDecimal);
+            const monthlyFrontLoadFee = monthly - monthlyContributionNet;
+
+            totalContributions += monthly;
+            yearContributions += monthly;
+            cumulativeFees += monthlyFrontLoadFee;
+
+            // Gross balance calculation (0 fees)
+            currentBalanceGross += monthly;
+            currentBalanceGross = currentBalanceGross * (1 + monthlyReturn);
+
+            // Net balance calculation
+            // We apply the net return because expense ratios are typically taken out daily/monthly from assets
+            currentBalanceNet += monthlyContributionNet;
+            currentBalanceNet = currentBalanceNet * (1 + netMonthlyReturn);
+          }
+
+          // At the end of the year, we can estimate cumulative fees as Gross - Net - Any remaining front load differences not captured
+          const currentFees = currentBalanceGross - currentBalanceNet;
+
+          html += `
+            <tr>
+              <td>${year}</td>
+              <td>${formatCurrency(totalContributions)}</td>
+              <td>${formatCurrency(currentBalanceGross)}</td>
+              <td style="color: var(--sell-color);">${formatCurrency(Math.max(0, currentFees))}</td>
+              <td style="color: var(--accent-color); font-weight: 600;">${formatCurrency(Math.max(0, currentBalanceNet))}</td>
+            </tr>
+          `;
+        }
+
+        tbody.innerHTML = html;
+
+        // Final updates
+        const totalFeesFinal = currentBalanceGross - currentBalanceNet;
+        const grossEarnings = currentBalanceGross - totalContributions;
+
+        document.getElementById('finalBalance').textContent = formatCurrency(Math.max(0, currentBalanceNet));
+        document.getElementById('totalFeesPaid').textContent = formatCurrency(Math.max(0, totalFeesFinal));
+
+        document.getElementById('totalPrincipal').textContent = formatCurrency(totalContributions);
+        document.getElementById('totalInterest').textContent = formatCurrency(Math.max(0, grossEarnings));
+
+        document.getElementById('noFeeBalance').textContent = formatCurrency(Math.max(0, currentBalanceGross));
+
+        let percentageLost = 0;
+        if (currentBalanceGross > totalContributions) {
+            percentageLost = totalFeesFinal / (currentBalanceGross - totalContributions);
+        }
+        document.getElementById('feePercentageLost').textContent = formatPercent(percentageLost);
+      };
+
+      // Add event listeners
+      const inputs = ['initial', 'monthly', 'years', 'returnRate', 'expenseRatio', 'frontLoad'];
+      inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', calculateMutualFund);
+      });
+
+      // Initial calculation
+      calculateMutualFund();
+    </script>
+
+    <style>
+      .calculator-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2.5rem 0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .suffix {
+        position: absolute;
+        right: 1rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        pointer-events: none;
+      }
+      input[type="number"] {
+        width: 100%;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+        padding-right: 2.5rem;
+        border-radius: 8px;
+        transition: border-color 0.2s;
+        -moz-appearance: textfield;
+      }
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"]:focus {
+        outline: none;
+        border-color: var(--accent-color);
+      }
+    </style>
+
+    <section class="educational-content" style="margin-top: 3rem;">
+      <h2>Understanding the True Cost of Mutual Funds</h2>
+      <p>Mutual funds are a powerful tool for building long-term wealth, allowing everyday investors to easily diversify across hundreds or thousands of stocks. However, the convenience of professional management comes at a cost. This <strong>mutual fund calculator</strong> is designed not only to project your compound growth but to vividly illustrate the often-hidden impact of fees.</p>
+
+      <p>When comparing mutual funds versus index funds (or evaluating your 401(k) options), the most critical number to look for is the <strong>expense ratio</strong>. While a 1% fee might sound negligible compared to an 8% expected return, the mathematics of compounding tells a very different story over a 20 or 30-year timeframe.</p>
+
+      <h3>How the Mutual Fund Formula Works</h3>
+      <p>At its core, a mutual fund calculator uses the standard compound interest formula, but it must dynamically adjust the rate of return to account for ongoing fees. The basic formula for compound growth with regular contributions is:</p>
+
+      <div class="highlight-box">
+        <p><strong>FV = PMT × [ ((1 + r/n)<sup>nt</sup> - 1) / (r/n) ]</strong></p>
+        <p>Where:</p>
+        <ul>
+          <li><strong>FV</strong> = Future Value</li>
+          <li><strong>PMT</strong> = Monthly Contribution</li>
+          <li><strong>r</strong> = Annual Interest Rate (adjusted for fees)</li>
+          <li><strong>n</strong> = Compounding periods per year</li>
+          <li><strong>t</strong> = Time in years</li>
+        </ul>
+      </div>
+
+      <p>In our calculator, the <strong>r</strong> (annual return) is replaced by your <em>net return</em>: <strong>(Expected Return - Expense Ratio)</strong>. Because the expense ratio is charged automatically by the fund manager—reducing the net asset value (NAV) of the fund daily or monthly—it directly reduces your compounding rate.</p>
+
+      <h3>The Devastating Impact of a 1% Fee</h3>
+      <p>The human brain struggles to comprehend exponential growth, which is why fees are so deceptive. Imagine you invest $500 a month for 30 years with an 8% expected return.</p>
+      <ul>
+        <li><strong>With a 0.05% Expense Ratio (Typical Index Fund):</strong> Your final balance would be roughly <strong>$723,000</strong>.</li>
+        <li><strong>With a 1.05% Expense Ratio (Typical Actively Managed Fund):</strong> Your final balance would be roughly <strong>$588,000</strong>.</li>
+      </ul>
+      <p>That 1% difference didn't just cost you 1% of your final balance; it cost you nearly <strong>$135,000</strong> in lost potential wealth. You sacrificed nearly 20% of your total possible returns simply to pay the fund manager. This "wealth drag" is why many modern investors, inspired by pioneers like John Bogle, strongly prefer low-cost index mutual funds or ETFs over actively managed alternatives.</p>
+
+      <h3>Front-End Loads: The "Entry Tax"</h3>
+      <p>Some mutual funds (often "A-class" shares sold by brokers) charge a <strong>front-end load</strong>. This is a sales commission taken directly out of your investment before it even hits the market.</p>
+
+      <p>If a fund has a 5% front-end load and you invest $10,000, the broker immediately takes $500. Only $9,500 is actually invested. Our mutual fund calculator accounts for this by reducing your initial investment and every subsequent monthly contribution by the load percentage. In the modern era of commission-free trading and abundant "no-load" funds, financial experts generally advise avoiding loaded funds entirely.</p>
+
+      <h3>Rules of Thumb for Mutual Fund Investors</h3>
+      <ul>
+        <li><strong>Seek Expense Ratios Under 0.50%:</strong> For broad market index funds, you should ideally pay less than 0.10%. For specialized or actively managed funds, try to keep it under 0.50%. Anything above 1.00% is widely considered excessive.</li>
+        <li><strong>Avoid Loads:</strong> There is almost no justification for paying a front-end or back-end load today. Look exclusively for "no-load" mutual funds.</li>
+        <li><strong>Automate Your Contributions:</strong> The secret to mutual fund success is dollar-cost averaging—investing a set amount every month regardless of what the stock market is doing. This prevents emotional investing and lowers your average cost per share over time.</li>
+      </ul>
+
+      <p>If you are looking for broader investment projections beyond mutual funds, you can also use our general <a href="/investment-calculator">investment calculator</a>.</p>
+    </section>
+
+    <!-- FAQ Schema explicitly placed -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How does an expense ratio affect my mutual fund returns?</h3>
+        <p>An expense ratio is an annual fee charged by mutual funds to cover management and operating costs. It directly reduces your overall return. Over decades, even a seemingly small difference, like 0.5% versus 1.5%, can compound into tens of thousands of dollars in lost wealth.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is considered a good expense ratio for a mutual fund?</h3>
+        <p>Actively managed mutual funds typically charge between 0.5% and 1.5% annually. However, passive index funds often have expense ratios below 0.1%. Generally, an expense ratio under 0.5% is considered good, while anything above 1% is considered high and requires strong outperformance to justify.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Should I reinvest my mutual fund distributions?</h3>
+        <p>Yes, reinvesting dividends and capital gain distributions allows you to buy more shares, accelerating compound growth. Most mutual fund calculators, including ours, assume that all distributions are automatically reinvested into the fund.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How much should I invest in mutual funds each month?</h3>
+        <p>A common rule of thumb is to invest 15% to 20% of your gross income for long-term goals like retirement. The specific amount depends on your timeline and target final balance. Use a mutual fund calculator to determine the monthly contribution required to hit your financial goals.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the difference between a front-end load and an expense ratio?</h3>
+        <p>A front-end load is a one-time sales commission (often up to 5.75%) charged when you first buy the mutual fund. An expense ratio is an ongoing annual fee calculated as a percentage of your total assets in the fund. Many investors prefer 'no-load' funds to avoid upfront commissions.</p>
+      </div>
+    </section>
+
+  </div>
+</SiteLayout>

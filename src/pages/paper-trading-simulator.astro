@@ -1,0 +1,538 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Free Paper Trading Simulator & Virtual Portfolio Manager",
+    "description": "Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track your gains without risking real money.",
+    "url": "https://westmountfundamentals.com/paper-trading-simulator"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is paper trading?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Paper trading is simulated trading that allows you to buy and sell stocks, options, or ETFs using virtual money instead of real capital. It is designed to let beginners practice executing trades and experienced investors test new strategies without any financial risk."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do the prices in this simulator not change?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To keep the simulator lightweight and focused on the mechanics of building a portfolio allocation, it uses a preset list of popular stocks and ETFs with fixed, historical benchmark prices. This ensures the tool functions smoothly as an educational sandbox without requiring live market data feeds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much virtual money do I start with?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This paper trading simulator initializes your virtual brokerage account with $100,000 in simulated cash. You can use this capital to buy shares of the available tickers and construct a mock portfolio."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is an allocation pie chart?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An allocation pie chart provides a visual breakdown of your portfolio's diversification. It displays the percentage of your total account value that is held in cash versus the value invested in individual stock positions, helping you quickly identify if you are overexposed to a single asset."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are there simulated brokerage fees?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In this specific educational simulator, we do not deduct simulated trading commissions or slippage. However, when transitioning to a real account, choosing a zero-commission broker is crucial, which is why we provide a separate brokerage fee calculator."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Free Paper Trading Simulator & Virtual Portfolio Manager",
+  description: "Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track...",
+  category: "tool",
+  published: "2026-03-24",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Free Paper Trading Simulator & Virtual Portfolio Manager"
+  description="Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track."
+  canonical="https://westmountfundamentals.com/paper-trading-simulator"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Paper Trading Simulator</h1>
+      <p>Practice building a portfolio with $100,000 in virtual cash.</p>
+    </div>
+
+
+    <div class="simulator-wrapper">
+      <div class="dashboard card">
+        <div class="portfolio-summary">
+          <div class="stat-box">
+            <span class="stat-label">Total Portfolio Value</span>
+            <span class="stat-value" id="total-value">$100,000.00</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Available Cash</span>
+            <span class="stat-value" id="cash-balance">$100,000.00</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Unrealized P&L</span>
+            <span class="stat-value" id="total-pnl">$0.00</span>
+          </div>
+        </div>
+
+        <div class="allocation-section">
+          <h3>Portfolio Allocation</h3>
+          <div class="chart-container">
+             <div id="allocation-pie-chart"></div>
+          </div>
+          <div id="allocation-legend" class="legend-container"></div>
+        </div>
+      </div>
+
+      <div class="trading-desk card">
+        <h3>Execute Trade</h3>
+        <p class="disclaimer">Disclaimer: Prices are static examples for educational purposes only.</p>
+
+        <div class="trade-form">
+          <div class="input-group">
+            <label for="ticker-select">Select Asset:</label>
+            <select id="ticker-select">
+              <option value="AAPL" data-price="195">AAPL - Apple Inc. ($195.00)</option>
+              <option value="MSFT" data-price="420">MSFT - Microsoft Corp. ($420.00)</option>
+              <option value="GOOGL" data-price="175">GOOGL - Alphabet Inc. ($175.00)</option>
+              <option value="AMZN" data-price="185">AMZN - Amazon.com Inc. ($185.00)</option>
+              <option value="NVDA" data-price="130">NVDA - NVIDIA Corp. ($130.00)</option>
+              <option value="TSLA" data-price="175">TSLA - Tesla Inc. ($175.00)</option>
+              <option value="SPY" data-price="530">SPY - SPDR S&P 500 ETF ($530.00)</option>
+              <option value="QQQ" data-price="460">QQQ - Invesco QQQ Trust ($460.00)</option>
+              <option value="VOO" data-price="490">VOO - Vanguard S&P 500 ETF ($490.00)</option>
+              <option value="SCHD" data-price="82">SCHD - Schwab US Dividend Equity ETF ($82.00)</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="trade-action">Action:</label>
+            <select id="trade-action">
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="share-quantity">Quantity (Shares):</label>
+            <input type="number" id="share-quantity" min="1" value="1" />
+          </div>
+
+          <div class="estimated-cost">
+            <span>Estimated Value: </span>
+            <span id="estimated-trade-value">$195.00</span>
+          </div>
+
+          <button id="execute-trade-btn" class="trade-btn">Execute Trade</button>
+          <div id="trade-message" class="trade-message"></div>
+        </div>
+      </div>
+
+      <div class="positions-table card">
+        <h3>Open Positions</h3>
+        <div class="table-responsive">
+          <table id="positions-table">
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Shares</th>
+                <th>Avg Cost</th>
+                <th>Current Price</th>
+                <th>Market Value</th>
+                <th>P&L</th>
+              </tr>
+            </thead>
+            <tbody id="positions-body">
+              <tr id="empty-positions-row">
+                <td colspan="6" style="text-align: center;">No open positions. Start trading above!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button id="reset-account-btn" class="reset-btn">Reset Account to $100K</button>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Why Use a Paper Trading Simulator?</h2>
+      <p>Transitioning from studying financial theory to actively deploying capital is a daunting leap for many retail investors. A paper trading simulator acts as a crucial bridge, allowing you to experience the mechanics of order execution and portfolio construction without risking your hard-earned savings. By practicing in a risk-free environment, you can test whether your theories on the <a href="/guide-stock-market-basics">stock market basics</a> hold up under simulated conditions.</p>
+
+      <p>Furthermore, managing a virtual portfolio forces you to confront the emotional realities of investing, albeit in a muted form. Watching your simulated account balance fluctuate can reveal underlying risk tolerances you didn't know you had. If a virtual 10% drawdown causes you anxiety, you will quickly realize that allocating your real cash requires a more conservative approach, perhaps leaning heavier into <a href="/guide-etf-investing">ETF investing</a> rather than volatile individual names.</p>
+
+      <h2>The Importance of Asset Allocation</h2>
+      <p>One of the primary tools in our simulator is the allocation pie chart. Diversification is famously described as the only free lunch in investing, and the pie chart provides immediate visual feedback on your exposure. If you notice that a single technology stock occupies 40% of your pie, you are highly vulnerable to sector-specific shocks.</p>
+
+      <p>Practicing balanced allocation here prepares you for the real world, where mitigating concentration risk is paramount. Many investors use index funds like the <a href="/best-sp500-index-funds-2026">best S&P 500 index funds</a> to form the bedrock of their portfolio, ensuring broad market exposure while reserving smaller 'satellite' positions for riskier, high-conviction trades.</p>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is paper trading?</h3>
+        <p>Paper trading is simulated trading that allows you to buy and sell stocks, options, or ETFs using virtual money instead of real capital. It is designed to let beginners practice executing trades and experienced investors test new strategies without any financial risk.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why do the prices in this simulator not change?</h3>
+        <p>To keep the simulator lightweight and focused on the mechanics of building a portfolio allocation, it uses a preset list of popular stocks and ETFs with fixed, historical benchmark prices. This ensures the tool functions smoothly as an educational sandbox without requiring live market data feeds.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How much virtual money do I start with?</h3>
+        <p>This paper trading simulator initializes your virtual brokerage account with $100,000 in simulated cash. You can use this capital to buy shares of the available tickers and construct a mock portfolio.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is an allocation pie chart?</h3>
+        <p>An allocation pie chart provides a visual breakdown of your portfolio's diversification. It displays the percentage of your total account value that is held in cash versus the value invested in individual stock positions, helping you quickly identify if you are overexposed to a single asset.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Are there simulated brokerage fees?</h3>
+        <p>In this specific educational simulator, we do not deduct simulated trading commissions or slippage. However, when transitioning to a real account, choosing a zero-commission broker is crucial, which is why we provide a separate <a href="/brokerage-fee-calculator">brokerage fee calculator</a>.</p>
+      </div>
+    </div>
+
+
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const INITIAL_CASH = 100000;
+
+      // Asset prices hardcoded
+      const assetPrices = {
+        'AAPL': 195,
+        'MSFT': 420,
+        'GOOGL': 175,
+        'AMZN': 185,
+        'NVDA': 130,
+        'TSLA': 175,
+        'SPY': 530,
+        'QQQ': 460,
+        'VOO': 490,
+        'SCHD': 82
+      };
+
+      const chartColors = [
+        '#4a8fe7', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+        '#1abc9c', '#34495e', '#e67e22', '#16a085', '#c0392b'
+      ];
+      const cashColor = '#95a5a6';
+
+      let portfolio = {
+        cash: INITIAL_CASH,
+        positions: {} // ticker -> { shares: number, avgCost: number }
+      };
+
+      // Load from localStorage
+      const savedPortfolio = localStorage.getItem('wm_paper_portfolio');
+      if (savedPortfolio) {
+        try {
+          portfolio = JSON.parse(savedPortfolio);
+        } catch(e) {
+          console.error("Error loading portfolio from local storage");
+        }
+      }
+
+      const savePortfolio = () => {
+        localStorage.setItem('wm_paper_portfolio', JSON.stringify(portfolio));
+      };
+
+      const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+
+      const updateDashboard = () => {
+        let totalMarketValue = 0;
+        let totalCostBasis = 0;
+
+        const tbody = document.getElementById('positions-body');
+        tbody.innerHTML = '';
+
+        const positionKeys = Object.keys(portfolio.positions);
+
+        if (positionKeys.length === 0) {
+          tbody.innerHTML = '<tr id="empty-positions-row"><td colspan="6" style="text-align: center;">No open positions. Start trading above!</td></tr>';
+        }
+
+        const allocationData = [];
+
+        positionKeys.forEach((ticker, index) => {
+          const pos = portfolio.positions[ticker];
+          if (pos.shares <= 0) return;
+
+          const currentPrice = assetPrices[ticker];
+          const marketValue = pos.shares * currentPrice;
+          const costBasis = pos.shares * pos.avgCost;
+          const pnl = marketValue - costBasis;
+          const pnlClass = pnl >= 0 ? 'profit' : 'loss';
+
+          totalMarketValue += marketValue;
+          totalCostBasis += costBasis;
+
+          allocationData.push({
+            ticker: ticker,
+            value: marketValue,
+            color: chartColors[index % chartColors.length]
+          });
+
+          const tr = document.createElement('tr');
+
+          const tdTicker = document.createElement('td');
+          tdTicker.textContent = ticker;
+
+          const tdShares = document.createElement('td');
+          tdShares.textContent = pos.shares;
+
+          const tdAvgCost = document.createElement('td');
+          tdAvgCost.textContent = formatCurrency(pos.avgCost);
+
+          const tdPrice = document.createElement('td');
+          tdPrice.textContent = formatCurrency(currentPrice);
+
+          const tdMarketVal = document.createElement('td');
+          tdMarketVal.textContent = formatCurrency(marketValue);
+
+          const tdPnl = document.createElement('td');
+          tdPnl.className = pnlClass;
+          tdPnl.textContent = formatCurrency(pnl);
+
+          tr.appendChild(tdTicker);
+          tr.appendChild(tdShares);
+          tr.appendChild(tdAvgCost);
+          tr.appendChild(tdPrice);
+          tr.appendChild(tdMarketVal);
+          tr.appendChild(tdPnl);
+
+          tbody.appendChild(tr);
+        });
+
+        const totalPortfolioValue = portfolio.cash + totalMarketValue;
+        const totalPnl = totalMarketValue - totalCostBasis;
+
+        document.getElementById('total-value').textContent = formatCurrency(totalPortfolioValue);
+        document.getElementById('cash-balance').textContent = formatCurrency(portfolio.cash);
+
+        const pnlEl = document.getElementById('total-pnl');
+        pnlEl.textContent = formatCurrency(totalPnl);
+        pnlEl.className = 'stat-value ' + (totalPnl >= 0 ? 'profit' : 'loss');
+
+        // Render Pie Chart via conic-gradient
+        allocationData.push({ ticker: 'Cash', value: portfolio.cash, color: cashColor });
+
+        let gradientStops = [];
+        let currentPercentage = 0;
+        const legendContainer = document.getElementById('allocation-legend');
+        legendContainer.innerHTML = '';
+
+        allocationData.forEach(item => {
+          if (item.value <= 0) return;
+          const percentage = (item.value / totalPortfolioValue) * 100;
+          const nextPercentage = currentPercentage + percentage;
+
+          gradientStops.push(`${item.color} ${currentPercentage}% ${nextPercentage}%`);
+
+          const legendItem = document.createElement('div');
+          legendItem.className = 'legend-item';
+
+          const colorBox = document.createElement('span');
+          colorBox.className = 'legend-color';
+          colorBox.style.backgroundColor = item.color;
+
+          const label = document.createElement('span');
+          label.textContent = `${item.ticker} (${percentage.toFixed(1)}%)`;
+
+          legendItem.appendChild(colorBox);
+          legendItem.appendChild(label);
+          legendContainer.appendChild(legendItem);
+
+          currentPercentage = nextPercentage;
+        });
+
+        const pieChart = document.getElementById('allocation-pie-chart');
+        if (gradientStops.length > 0) {
+          pieChart.style.background = `conic-gradient(${gradientStops.join(', ')})`;
+        } else {
+          pieChart.style.background = '#ccc';
+        }
+      };
+
+      // Form updates
+      const quantityInput = document.getElementById('share-quantity');
+      const tickerSelect = document.getElementById('ticker-select');
+      const estimatedValueEl = document.getElementById('estimated-trade-value');
+
+      const updateEstimate = () => {
+        const selectedOpt = tickerSelect.options[tickerSelect.selectedIndex];
+        const price = parseFloat(selectedOpt.getAttribute('data-price'));
+        const qty = parseInt(quantityInput.value) || 0;
+        estimatedValueEl.textContent = formatCurrency(price * qty);
+      };
+
+      quantityInput.addEventListener('input', updateEstimate);
+      tickerSelect.addEventListener('change', updateEstimate);
+
+      // Execute Trade
+      document.getElementById('execute-trade-btn').addEventListener('click', () => {
+        const action = document.getElementById('trade-action').value;
+        const ticker = tickerSelect.value;
+        const qty = parseInt(quantityInput.value);
+        const price = assetPrices[ticker];
+        const msgEl = document.getElementById('trade-message');
+
+        if (!qty || qty <= 0) {
+          msgEl.textContent = "Please enter a valid quantity.";
+          msgEl.className = 'trade-message error';
+          return;
+        }
+
+        const tradeValue = price * qty;
+
+        if (action === 'buy') {
+          if (tradeValue > portfolio.cash) {
+            msgEl.textContent = "Insufficient funds to complete this purchase.";
+            msgEl.className = 'trade-message error';
+            return;
+          }
+
+          portfolio.cash -= tradeValue;
+
+          if (!portfolio.positions[ticker]) {
+            portfolio.positions[ticker] = { shares: 0, avgCost: 0 };
+          }
+
+          const pos = portfolio.positions[ticker];
+          const totalCost = (pos.shares * pos.avgCost) + tradeValue;
+          pos.shares += qty;
+          pos.avgCost = totalCost / pos.shares;
+
+          msgEl.textContent = `Successfully bought ${qty} shares of ${ticker}.`;
+          msgEl.className = 'trade-message success';
+
+        } else if (action === 'sell') {
+          const pos = portfolio.positions[ticker];
+
+          if (!pos || pos.shares < qty) {
+            msgEl.textContent = `Insufficient shares. You only own ${pos ? pos.shares : 0} shares of ${ticker}.`;
+            msgEl.className = 'trade-message error';
+            return;
+          }
+
+          portfolio.cash += tradeValue;
+          pos.shares -= qty;
+
+          if (pos.shares === 0) {
+             delete portfolio.positions[ticker];
+          }
+
+          msgEl.textContent = `Successfully sold ${qty} shares of ${ticker}.`;
+          msgEl.className = 'trade-message success';
+        }
+
+        savePortfolio();
+        updateDashboard();
+        quantityInput.value = 1;
+        updateEstimate();
+      });
+
+      // Reset
+      document.getElementById('reset-account-btn').addEventListener('click', () => {
+        if (confirm("Are you sure you want to reset your account? All progress will be lost.")) {
+          portfolio = { cash: INITIAL_CASH, positions: {} };
+          savePortfolio();
+          updateDashboard();
+          document.getElementById('trade-message').textContent = "Account reset to $100,000.";
+          document.getElementById('trade-message').className = 'trade-message success';
+        }
+      });
+
+      // Init
+      updateDashboard();
+      updateEstimate();
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .card h3 { margin-top: 0; margin-bottom: 1.5rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+
+    .simulator-wrapper { display: flex; flex-direction: column; gap: 1rem; }
+
+    .portfolio-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-box { background: color-mix(in srgb, var(--card-bg) 95%, #000); padding: 1.5rem; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); }
+    .stat-label { display: block; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+    .stat-value { display: block; font-size: 1.8rem; font-weight: 700; color: var(--text-primary); }
+    .stat-value.profit { color: #2ecc71; }
+    .stat-value.loss { color: #e74c3c; }
+
+    .allocation-section { display: flex; flex-direction: column; align-items: center; }
+    .chart-container { width: 250px; height: 250px; margin-bottom: 1.5rem; }
+    #allocation-pie-chart { width: 100%; height: 100%; border-radius: 50%; background: #ccc; transition: background 0.3s ease; }
+
+    .legend-container { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    .legend-item { display: flex; align-items: center; font-size: 0.9rem; color: var(--text-secondary); }
+    .legend-color { width: 16px; height: 16px; border-radius: 4px; display: inline-block; margin-right: 0.5rem; }
+
+    .disclaimer { font-size: 0.85rem; color: var(--text-secondary); margin-top: -1rem; margin-bottom: 1.5rem; font-style: italic; }
+
+    .trade-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .input-group select, .input-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: color-mix(in srgb, var(--card-bg) 95%, #000); color: var(--text-primary); font-size: 1rem; }
+
+    .estimated-cost { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); padding-bottom: 0.5rem; }
+    .trade-btn { background: var(--accent-color); color: #fff; border: none; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; height: 100%; }
+    .trade-btn:hover { opacity: 0.9; }
+
+    .trade-message { grid-column: 1 / -1; font-weight: 600; text-align: center; padding: 0.5rem; border-radius: 4px; }
+    .trade-message.error { color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+    .trade-message.success { color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+
+    .table-responsive { overflow-x: auto; margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+    th { font-weight: 600; color: var(--text-secondary); background: color-mix(in srgb, var(--card-bg) 95%, #000); white-space: nowrap; }
+    td.profit { color: #2ecc71; font-weight: 600; }
+    td.loss { color: #e74c3c; font-weight: 600; }
+
+    .reset-btn { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 6px; cursor: pointer; display: block; margin: 0 auto; }
+    .reset-btn:hover { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border-color: #e74c3c; }
+
+    .content-section { margin-top: 3rem; }
+    .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2rem 0 1rem; color: var(--text-primary); }
+    .content-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .content-section a:hover { text-decoration: underline; }
+
+    .faq-section { margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 2rem; }
+    .faq-item { margin-bottom: 1.5rem; }
+    .faq-item h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .faq-item p { color: var(--text-secondary); line-height: 1.6; }
+    .faq-item a { color: var(--accent-color); text-decoration: none; }
+  </style>
+</SiteLayout>

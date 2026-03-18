@@ -1,0 +1,155 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "How to Choose Between ETFs and Mutual Funds",
+  description: "Both bundle stocks together, but one might be quietly eating your returns with hidden fees. Discover the key differences before you invest.",
+  category: "guide",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How to choose between ETFs and mutual funds?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Choose based on your trading style, fee tolerance, and tax situation. ETFs are better for low-cost, tax-efficient, intraday trading. Mutual funds are often preferred for automatic, set-amount investments within retirement accounts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are ETFs cheaper than mutual funds?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generally, yes. ETFs usually passively track an index, resulting in lower expense ratios compared to actively managed mutual funds, which pay high fees to fund managers."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do mutual funds perform better than ETFs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, most actively managed mutual funds fail to beat their benchmark index over a 10-year period, meaning a cheaper, passive ETF often yields better net returns."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you trade mutual funds like stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Mutual funds are priced and traded only once per day at the market close. ETFs, however, can be bought and sold throughout the trading day just like individual stocks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which is more tax-efficient?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ETFs are typically more tax-efficient due to their unique creation/redemption structure, which minimizes the capital gains distributions that mutual fund investors often face at year-end."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-choose-between-etfs-and-mutual-funds" schema={schema}>
+  <div class="page-content container">
+    <div class="hero">
+      <h1>How to Choose Between ETFs and Mutual Funds</h1>
+      <p class="subtitle">Two popular ways to buy baskets of stocks. One could be silently draining your wealth.</p>
+    </div>
+
+    <p>When you start investing, one of the first pieces of advice you'll hear is to "diversify." Instead of trying to pick the next Apple or Amazon, buy a basket containing hundreds of companies so that if one fails, your entire portfolio doesn't collapse. Both <strong>Exchange Traded Funds (ETFs)</strong> and <strong>Mutual Funds</strong> accomplish this goal. They are both financial baskets.</p>
+
+    <p>But that is where the similarities end. While they might hold the exact same underlying companies, the way they are traded, taxed, and managed is completely different. Choosing the wrong vehicle for your specific investing style could cost you tens of thousands of dollars in fees and taxes over your lifetime. So, how do you choose?</p>
+
+    <h2>The Structural Differences</h2>
+
+    <p>The primary difference between an ETF and a mutual fund comes down to how and when you can buy them.</p>
+
+    <p><strong>Mutual Funds</strong> are priced once per day at 4:00 PM EST when the market closes. This price is called the Net Asset Value (NAV). If you place an order to buy a mutual fund at 10:00 AM, you have no idea what price you will actually pay—your order simply sits in a queue until the closing bell. Mutual funds are usually bought in dollar amounts (e.g., "Buy $500 of this fund"), regardless of the share price.</p>
+
+    <p><strong>ETFs</strong>, on the other hand, trade exactly like individual stocks. They have a ticker symbol, and their price fluctuates second by second throughout the trading day. If you place a limit order for an ETF at 11:30 AM, you know exactly what price you are paying. Historically, ETFs had to be bought in whole shares, but many brokerages now allow fractional ETF investing.</p>
+
+    <div class="callout">
+      <strong>Key Concept: Active vs. Passive Management</strong><br>
+      While there are exceptions, most mutual funds are <em>actively managed</em>. A team of highly paid analysts tries to pick winning stocks to "beat the market." Consequently, their fees are high.<br><br>
+      Conversely, most ETFs are <em>passively managed</em>. They simply use a computer algorithm to track an index (like the S&P 500), resulting in incredibly low fees.
+    </div>
+
+    <h2>Real-World Example: The Impact of Fees</h2>
+
+    <p>Let’s say you invest $100,000 into a mutual fund with an expense ratio (annual fee) of 1.5%. You also invest $100,000 into an ETF tracking the exact same sector with an expense ratio of 0.10%.</p>
+
+    <p>Assuming both baskets hold the same companies and grow at 8% per year before fees, let's look at your balance after 30 years.</p>
+
+    <p>The mutual fund, dragged down by that 1.5% fee every single year, grows to roughly $661,000. However, the low-cost ETF, suffering barely any fee drag, grows to over $970,000. The mutual fund manager quietly pocketed over <strong>$300,000</strong> of your potential wealth simply for managing the basket.</p>
+
+    <h2>Why This Matters for Your Tax Bill</h2>
+
+    <p>Aside from fees, the other major difference is tax efficiency. This is primarily relevant if you hold these investments in a standard, taxable brokerage account rather than a tax-advantaged retirement account.</p>
+
+    <ul>
+      <li><strong>The Mutual Fund Tax Bomb:</strong> When an active mutual fund manager sells a stock for a profit inside the fund, they are legally required to pass that capital gain onto you at the end of the year. Even if you never sold a single share of the mutual fund itself, and even if the fund actually <em>lost</em> value that year, you might still get hit with a surprise tax bill in December.</li>
+      <li><strong>The ETF Advantage:</strong> ETFs have a unique "creation and redemption" structure. When an ETF needs to rebalance, it simply swaps shares "in-kind" with major financial institutions. This loophole means ETFs rarely trigger capital gains distributions. You only pay taxes when you personally decide to sell your ETF shares.</li>
+    </ul>
+
+    <p>Given the lower fees, higher tax efficiency, and intraday liquidity, ETFs have become the preferred choice for modern retail investors. However, mutual funds still hold value in one specific area: automated 401(k) retirement accounts where you want to seamlessly invest a specific dollar amount from every paycheck without worrying about fractional shares or intraday pricing.</p>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>How to choose between ETFs and mutual funds?</summary>
+        <p>Choose based on your trading style, fee tolerance, and tax situation. ETFs are better for low-cost, tax-efficient, intraday trading. Mutual funds are often preferred for automatic, set-amount investments within retirement accounts.</p>
+      </details>
+
+      <details>
+        <summary>Are ETFs cheaper than mutual funds?</summary>
+        <p>Generally, yes. ETFs usually passively track an index, resulting in lower expense ratios compared to actively managed mutual funds, which pay high fees to fund managers.</p>
+      </details>
+
+      <details>
+        <summary>Do mutual funds perform better than ETFs?</summary>
+        <p>Historically, most actively managed mutual funds fail to beat their benchmark index over a 10-year period, meaning a cheaper, passive ETF often yields better net returns.</p>
+      </details>
+
+      <details>
+        <summary>Can you trade mutual funds like stocks?</summary>
+        <p>No. Mutual funds are priced and traded only once per day at the market close. ETFs, however, can be bought and sold throughout the trading day just like individual stocks.</p>
+      </details>
+
+      <details>
+        <summary>Which is more tax-efficient?</summary>
+        <p>ETFs are typically more tax-efficient due to their unique creation/redemption structure, which minimizes the capital gains distributions that mutual fund investors often face at year-end.</p>
+      </details>
+    </section>
+  </div>  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

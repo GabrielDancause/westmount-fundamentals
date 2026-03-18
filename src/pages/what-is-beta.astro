@@ -1,0 +1,288 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is Beta in Stocks? The Complete Guide to Market Risk",
+  description: "Learn what beta means in stocks, how it measures volatility compared to the market, and how to use it to build a balanced, risk-adjusted investment portfolio.",
+  category: "guide",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a good beta for a stock?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A 'good' beta depends entirely on your investment goals. If you want stability and lower risk, a beta below 1.0 is considered good. If you are seeking higher returns and can tolerate more volatility, a beta above 1.0 might be appropriate for you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a stock have a negative beta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. A negative beta means the stock tends to move in the opposite direction of the broader market. Gold mining stocks or certain specialized ETFs sometimes have negative betas, acting as a hedge during market downturns, though they are relatively rare."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is beta the same as volatility?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not exactly. While related, volatility (often measured by standard deviation) measures how much a stock's price fluctuates on its own. Beta measures how much that stock fluctuates in relation to the overall market (like the S&P 500)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a high beta mean high risk?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A high beta indicates higher systematic risk (market risk) because the stock is more sensitive to market swings. However, it does not account for company-specific (unsystematic) risks like poor management or changing consumer trends."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does a stock's beta change?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Beta is a backward-looking metric calculated using historical data (typically over 3 to 5 years). Because it is a rolling calculation, a stock's beta changes continuously as new daily or monthly closing prices are added and old ones fall off."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-beta" schema={schema}>
+  <div class="page-content">
+
+    <h1>What is Beta in Stocks? Understanding Market Volatility</h1>
+
+    <p>When you start analyzing individual companies or building an investment portfolio, you will inevitably encounter the term "beta." It usually sits quietly next to other key metrics like P/E ratio or dividend yield, expressed as a simple decimal number like 0.85, 1.20, or exactly 1.00. But what is beta in stocks, and why does that single decimal point matter so much to professional investors?</p>
+
+    <p>At its core, beta is a measurement of a stock's <strong>volatility in relation to the overall market</strong>. It tells you whether a specific stock tends to be more erratic, less erratic, or identically erratic compared to a broader benchmark index, such as the S&P 500.</p>
+
+    <p>Understanding beta is crucial because it helps you gauge the specific kind of risk—known as systematic or market risk—that a stock adds to your portfolio. By mastering this concept, you can tailor your investments to match your personal risk tolerance, ensuring you don't take on more turbulence than you can handle, or conversely, ensuring you're taking on enough risk to meet your growth goals.</p>
+
+    <div class="highlight-box">
+      <h3>The Golden Rule of Beta</h3>
+      <p>The market itself (usually represented by the S&P 500) always has a baseline beta of exactly <strong>1.0</strong>. Every individual stock's beta is measured against this baseline.</p>
+    </div>
+
+    <h2>How the Beta Scale Works</h2>
+
+    <p>To understand what a stock's beta number means, you just need to compare it to the market's baseline of 1.0. The scale generally breaks down into a few distinct categories:</p>
+
+    <h3>Beta = 1.0 (Matching the Market)</h3>
+    <p>If a stock has a beta of exactly 1.0, its price activity is strongly correlated with the market. If the S&P 500 goes up 5% in a given month, a stock with a 1.0 beta is statistically likely to also go up roughly 5%. If the market drops 10%, that stock will likely drop about 10%.</p>
+
+    <h3>Beta > 1.0 (High Volatility)</h3>
+    <p>A beta greater than 1.0 indicates that the security's price is theoretically more volatile than the market. For example, if a stock's beta is 1.5, it's considered 50% more volatile than the market. If the broader market increases by 10%, this stock is expected to increase by 15%. However, risk cuts both ways: if the market falls by 10%, this stock is expected to plummet by 15%. High-beta stocks are typically found in growth-oriented sectors like technology, biotechnology, and consumer discretionary.</p>
+
+    <h3>0 < Beta < 1.0 (Low Volatility)</h3>
+    <p>A beta between 0 and 1.0 means the stock is less volatile than the market. A stock with a beta of 0.5 is half as volatile as the market. If the S&P 500 drops 10%, this stock might only drop 5%. These are often considered "defensive" stocks. You'll frequently find low-beta stocks in sectors that provide essential services regardless of the economy, such as utilities, consumer staples (like grocery or toothpaste companies), and healthcare.</p>
+
+    <h3>Beta = 0 (Uncorrelated)</h3>
+    <p>An asset with a beta of zero moves completely independently of the stock market. Cash and short-term treasury bills effectively have a beta of zero. Their value isn't dictated by the daily swings of the S&P 500.</p>
+
+    <h3>Beta < 0 (Negative Correlation)</h3>
+    <p>A negative beta indicates an inverse relationship to the market. When the market goes up, a negative beta asset tends to go down, and vice versa. Individual stocks almost never have negative betas over long periods. Negative betas are usually found in specialized hedging instruments, inverse ETFs, or sometimes gold mining companies, which investors often flock to when the broader stock market is panicking.</p>
+
+    <h2>Real-World Historical Examples of Beta</h2>
+
+    <p>To truly grasp what beta means in stocks, let's look at how it manifests in the real world using historical examples of well-known companies across different sectors.</p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Company Profile</th>
+            <th>Historical Beta Category</th>
+            <th>Typical Behavior in Market Swings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>High-Growth Tech (e.g., Tesla, Nvidia)</strong></td>
+            <td>High (1.5 to 2.0+)</td>
+            <td>Massive rallies during bull markets; steep, aggressive sell-offs during bear markets. These stocks amplify the market's mood.</td>
+          </tr>
+          <tr>
+            <td><strong>Large-Cap Financials (e.g., JPMorgan Chase)</strong></td>
+            <td>Moderate (1.0 to 1.3)</td>
+            <td>Moves slightly more than the market. Sensitive to economic cycles and interest rate changes, making them slightly more volatile than average.</td>
+          </tr>
+          <tr>
+            <td><strong>Consumer Staples (e.g., Procter & Gamble)</strong></td>
+            <td>Low (0.4 to 0.7)</td>
+            <td>Highly stable. People buy toothpaste and diapers regardless of a recession. These stocks soften the blow during market crashes.</td>
+          </tr>
+          <tr>
+            <td><strong>Regulated Utilities (e.g., NextEra Energy)</strong></td>
+            <td>Very Low (0.3 to 0.5)</td>
+            <td>Acts almost like a bond. Highly predictable revenue streams lead to minimal price fluctuation relative to the broader stock market.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Imagine a scenario where the S&P 500 suffers a severe 20% correction. A high-beta tech stock with a beta of 2.0 might suffer a devastating 40% loss. Meanwhile, a defensive utility stock with a beta of 0.5 might only drop 10%. Conversely, in a roaring bull market where the S&P 500 jumps 30%, the tech stock might surge 60%, while the utility stock slowly grinds up just 15%.</p>
+
+    <h2>How is Beta Actually Calculated?</h2>
+
+    <p>While most modern brokerage platforms calculate beta for you automatically, understanding the underlying math helps demystify the metric. Beta is calculated using regression analysis, a statistical method that compares the historical returns of an individual stock against the historical returns of a benchmark index over a specific timeframe.</p>
+
+    <p>The standard formula for Beta is:</p>
+
+    <div class="card" style="text-align: center; font-family: var(--font-mono); font-size: 1.2rem;">
+      Beta = Covariance(Stock Returns, Market Returns) / Variance(Market Returns)
+    </div>
+
+    <p>Here is what those terms mean in plain English:</p>
+    <ul>
+      <li><strong>Covariance:</strong> This measures how two different variables move together. It asks, "When the S&P 500 goes up, does this stock also go up? And by how much?"</li>
+      <li><strong>Variance:</strong> This measures how far the market's returns deviate from their own average over the timeframe. It establishes the baseline "waviness" of the market.</li>
+    </ul>
+
+    <p>By dividing the covariance by the variance, you isolate the specific portion of the stock's volatility that can be directly attributed to the broader market's movements.</p>
+
+    <p>It is crucial to note that beta is not a universal constant. The beta you see on Yahoo Finance might differ slightly from the beta on Google Finance or your broker. This happens because different platforms use different <strong>timeframes</strong> to run their regression analysis. A common standard is to use 5 years of monthly closing prices, but some platforms might use 3 years of weekly prices. Because a company's underlying business and the economic environment constantly change, its beta will slowly drift over time.</p>
+
+    <h2>Why Beta Matters for Your Portfolio</h2>
+
+    <p>Understanding beta is fundamental to a concept called modern portfolio theory (MPT), which emphasizes that investing is not just about picking winning stocks, but about <strong>managing risk</strong> across an entire portfolio. MPT separates the risks of owning a stock into two categories:</p>
+
+    <ul>
+      <li><strong>Systematic Risk:</strong> Also known as market risk. This is the risk inherent in the entire market (inflation, interest rates, wars, recessions). You cannot eliminate this risk simply by diversifying your portfolio because these macro factors affect all companies. Beta is the primary measurement of this systematic risk.</li>
+      <li><strong>Unsystematic Risk:</strong> Also known as company-specific risk. This is the risk that a specific company's CEO makes a terrible decision, their new product fails, or a competitor disrupts their industry. You <em>can</em> reduce this risk by diversifying your investments across different companies and sectors.</li>
+    </ul>
+
+    <p>Because unsystematic risk can be diversified away, beta becomes the most crucial metric for understanding the fundamental risk profile of a fully diversified portfolio. It helps you answer a critical question: "If the stock market crashes 20% tomorrow, how bad will my portfolio get hit?"</p>
+
+    <h2>How to Use Beta When Investing</h2>
+
+    <p>Beta shouldn't be the only metric you look at, but it serves as a powerful tool for portfolio construction and risk management. Here is how investors practically apply beta when making decisions.</p>
+
+    <div class="highlight-box">
+      <h3>Building a Strategy Based on Your Horizon</h3>
+      <p>If you are a young investor with 30 years until retirement, a portfolio with a beta greater than 1.0 (like 1.1 or 1.2) might make sense. You have the time to weather severe market drawdowns in exchange for the long-term compounding of higher-volatility growth stocks. However, if you are five years away from retirement, preserving your capital becomes critical. Shifting your portfolio toward a beta closer to 0.7 or 0.8 by overweighting utilities, consumer staples, and bonds can help you sleep at night during market panics.</p>
+    </div>
+
+    <h3>The Capital Asset Pricing Model (CAPM)</h3>
+    <p>The Capital Asset Pricing Model (CAPM) is a foundational formula in finance that uses beta to calculate the <strong>expected return</strong> of an asset. It suggests that investors require higher expected returns as compensation for taking on higher systematic risk (a higher beta).</p>
+
+    <p>The simplified concept is: The expected return of a stock equals the risk-free rate (usually the yield on a 10-year Treasury bond) plus the stock's beta multiplied by the expected market return minus the risk-free rate.</p>
+
+    <p>If a stock has a beta of 1.5, CAPM implies that you should demand significantly higher returns from that stock than you would from an index fund, because you are stomaching 50% more volatility. If the stock's fundamentals don't suggest it can deliver those outsized returns, it might not be worth the risk.</p>
+
+    <h3>Finding Your Portfolio's Total Beta</h3>
+    <p>You can calculate the weighted average beta of your entire portfolio to understand its overall risk profile. If half your money is in an S&P 500 ETF (Beta = 1.0) and half is in a high-growth tech ETF (Beta = 1.5), your portfolio's weighted beta is roughly 1.25. Knowing this number gives you a mathematical framework to evaluate whether your current risk exposure matches your true risk tolerance.</p>
+
+    <h2>Actionable Takeaways for Beginners</h2>
+
+    <ul>
+      <li><strong>Check Beta Before Buying:</strong> Look up a stock's beta on your brokerage platform before hitting the buy button. If it's a small-cap biotech firm with a beta of 2.5, ask yourself if you are emotionally prepared for the stock to swing wildly on a daily basis.</li>
+      <li><strong>Use Beta for Defensive Positioning:</strong> If you believe a recession or a bear market is imminent, you don't necessarily have to sell everything and hold cash. You can simply tilt your portfolio toward lower-beta stocks (like utilities or consumer staples) to reduce your systematic risk while staying invested.</li>
+      <li><strong>Understand Beta's Limitations:</strong> Beta only measures historical volatility against the market. It tells you absolutely nothing about a company's fundamental health, its debt levels, its P/E ratio, or its future earnings growth. A company headed for bankruptcy might have a low beta right up until the end.</li>
+      <li><strong>Remember that Beta Changes:</strong> A high-flying growth company today might mature into a stable dividend-payer in 10 years, and its beta will slowly decline toward 1.0 or lower. Review your portfolio's beta periodically to ensure it hasn't drifted away from your target risk profile.</li>
+    </ul>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is a good beta for a stock?</h3>
+        <p>A "good" beta depends entirely on your investment goals. If you want stability and lower risk, a beta below 1.0 is considered good. If you are seeking higher returns and can tolerate more volatility, a beta above 1.0 might be appropriate for you.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can a stock have a negative beta?</h3>
+        <p>Yes. A negative beta means the stock tends to move in the opposite direction of the broader market. Gold mining stocks or certain specialized ETFs sometimes have negative betas, acting as a hedge during market downturns, though they are relatively rare.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Is beta the same as volatility?</h3>
+        <p>Not exactly. While related, volatility (often measured by standard deviation) measures how much a stock's price fluctuates on its own. Beta measures how much that stock fluctuates in relation to the overall market (like the S&P 500).</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does a high beta mean high risk?</h3>
+        <p>A high beta indicates higher systematic risk (market risk) because the stock is more sensitive to market swings. However, it does not account for company-specific (unsystematic) risks like poor management or changing consumer trends.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How often does a stock's beta change?</h3>
+        <p>Beta is a backward-looking metric calculated using historical data (typically over 3 to 5 years). Because it is a rolling calculation, a stock's beta changes continuously as new daily or monthly closing prices are added and old ones fall off.</p>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Use CSS variables only */
+  h1 {
+    color: var(--accent-color);
+  }
+
+  h2, h3 {
+    color: var(--text-primary);
+  }
+
+  p, li, td {
+    color: var(--text-secondary);
+  }
+
+  .highlight-box {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-bg);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th {
+    color: var(--accent-color);
+    font-weight: 600;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .faq-section {
+    margin-top: 3rem;
+  }
+
+  .faq-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+</style>

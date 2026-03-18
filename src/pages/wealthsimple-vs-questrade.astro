@@ -1,0 +1,122 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Wealthsimple vs Questrade: Which Canadian Brokerage is Best in 2026?",
+    "description": "A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style.",
+    "url": "https://westmountfundamentals.com/wealthsimple-vs-questrade"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Which is cheaper: Wealthsimple or Questrade?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For buying Canadian stocks and ETFs, Wealthsimple is cheaper because it offers entirely commission-free trading. Questrade offers free ETF purchases (plus a few cents in ECN fees), but charges $4.95 to $9.95 to sell ETFs and trade stocks. However, for US stocks, Questrade is often cheaper because it supports Norbert's Gambit to bypass high currency conversion fees, whereas Wealthsimple charges a 1.5% fee or requires a premium subscription to hold USD."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I hold USD in Wealthsimple or Questrade?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, both platforms allow you to hold USD. Questrade allows you to hold USD in all account types for free. Wealthsimple requires you to upgrade to their Plus tier ($10/month) or hold over $100k in assets (Premium tier) to access USD accounts and avoid forced currency conversions on every US trade."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Wealthsimple or Questrade have better account options?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Questrade offers a wider variety of account options, including Spousal RRSPs, LIRAs, Margin accounts, and corporate accounts. Wealthsimple supports the essentials (TFSA, RRSP, FHSA, Non-Registered, RESP) but lacks some of the specialized account structures available at Questrade."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Wealthsimple vs Questrade (2026): The Ultimate Comparison",
+  description: "A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style.",
+  category: "study",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Wealthsimple vs Questrade (2026): The Ultimate Comparison"
+  description="A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style."
+  canonical="https://westmountfundamentals.com/wealthsimple-vs-questrade"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Wealthsimple vs Questrade: The 2026 Showdown</h1>
+      <p>Comparing Canada's two most popular independent brokerages across fees, features, and USD handling.</p>
+    </div>
+
+    <div class="content-section">
+      <p>For most Canadian investors stepping away from high-fee mutual funds or expensive big bank brokerages, the decision almost always comes down to two heavyweights: Wealthsimple and Questrade. Both platforms have revolutionized investing in Canada by drastically lowering costs, but they operate on fundamentally different business models and cater to slightly different types of investors.</p>
+
+      <p>In this comparison, we will dissect their fee structures, how they handle US dollars (the biggest pain point for Canadian investors), their available account types, and their trading platforms. If you want to see how they stack up against the entire landscape, including the big banks, read our master guide on the <a href="/canadian-brokerages-2026">Best Canadian Brokerages for 2026</a>.</p>
+
+      <h2>The Fee Structure: Zero Commission vs Discount Pricing</h2>
+      <p>The most immediate and obvious difference between the two platforms is how they charge you to trade.</p>
+
+      <p><strong>Wealthsimple's Model:</strong> Wealthsimple Trade (integrated into the main Wealthsimple app) built its massive user base on a simple premise: zero commissions on all Canadian stock and ETF trades. There are no account minimums, no inactivity fees, and no ECN fees. If you buy one share of an ETF for $30, it costs exactly $30. This makes Wealthsimple incredibly appealing for beginners or investors who make frequent, small contributions (dollar-cost averaging).</p>
+
+      <p><strong>Questrade's Model:</strong> Questrade operates on a traditional discount brokerage model, albeit heavily discounted compared to the banks. Their hallmark feature is free ETF purchases. When you buy an ETF, you pay no commission, only a tiny ECN fee (usually a few cents). However, selling an ETF, or buying/selling an individual stock, incurs a commission of 1 cent per share, with a minimum of $4.95 and a maximum of $9.95. If your strategy is to buy and hold a few broad-market ETFs for decades, Questrade's fees are practically zero. But if you trade individual stocks frequently, those $4.95 commissions add up quickly.</p>
+
+      <h2>The USD Problem: How They Handle American Stocks</h2>
+      <p>Trading US-listed stocks and ETFs is where the comparison becomes nuanced and critical. Canadian investors face foreign exchange (FX) fees when converting CAD to USD, and how brokerages handle this dramatically impacts your returns.</p>
+
+      <p><strong>Wealthsimple's Hidden Cost:</strong> Wealthsimple offers "free" US trades, but this is a misnomer. While there is no standard commission, Wealthsimple makes its money by charging a 1.5% currency conversion fee on both the buy and sell sides of US trades by default. If you buy $10,000 worth of Apple stock, you pay $150 in hidden fees. To mitigate this, Wealthsimple introduced USD accounts via their Plus subscription ($10/month) or for free if you hold over $100,000 in assets (Premium tier). With a USD account, you only pay the 1.5% fee once when converting CAD to USD; subsequent trades within the USD account are commission-free.</p>
+
+      <p><strong>Questrade and Norbert's Gambit:</strong> Questrade allows you to hold USD in all of its accounts for free. More importantly, Questrade allows a strategy called Norbert's Gambit. This involves buying a dual-listed ETF (like DLR.TO) in CAD, asking Questrade to journal those shares to the US side (DLR.U.TO), and selling them in USD. This process bypasses the standard 1.5% to 2% FX markup charged by almost all Canadian brokers, saving you thousands of dollars over a lifetime of investing. For investors heavily skewed toward US equities, Questrade's native USD handling and support for Norbert's Gambit make it vastly superior to Wealthsimple's standard tier, and arguably better than their Plus tier.</p>
+      <p>If minimizing currency fees on US trades is your primary concern, you should also heavily consider <a href="/interactive-brokers-canada">Interactive Brokers Canada</a>, which offers spot-rate conversions without the need for Norbert's Gambit.</p>
+
+      <h2>Platform and Features: Simplicity vs Capability</h2>
+      <p>The user experience between Wealthsimple and Questrade reflects their target demographics.</p>
+
+      <p><strong>Wealthsimple:</strong> The Wealthsimple app is beautiful, minimalist, and incredibly easy to use. It is designed to be frictionless. However, this simplicity comes at the cost of advanced features. There is no real desktop trading platform (only a basic web interface), charting is rudimentary, and complex order types or options trading are either missing or very basic. It is built for the "set it and forget it" investor.</p>
+
+      <p><strong>Questrade:</strong> Questrade offers a full-featured web platform and a downloadable desktop application called Questrade Edge. It provides advanced charting, Level 2 data packages, complex options trading strategies, and margin accounts. It is significantly more capable than Wealthsimple, but the learning curve is steeper, and the mobile app is often criticized for being clunky compared to Wealthsimple's slick interface. For a comparison of advanced features against another heavyweight, see <a href="/questrade-vs-ibkr">Questrade vs IBKR</a>.</p>
+
+      <h2>Account Types Available</h2>
+      <p>Before committing to a platform, you must ensure they support the account structures you need.</p>
+      <ul>
+        <li><strong>Wealthsimple supports:</strong> TFSA, RRSP, FHSA, Non-Registered (Personal), RESP, and LIRA. They do not support Spousal RRSPs or Margin accounts.</li>
+        <li><strong>Questrade supports:</strong> Everything Wealthsimple has, plus Spousal RRSPs, Margin accounts, Corporate accounts, Trust accounts, and more.</li>
+      </ul>
+
+      <h2>The Verdict: Which is Better?</h2>
+      <p>There is no definitive winner; the best choice depends entirely on your investor profile.</p>
+      <p><strong>Choose Wealthsimple if:</strong> You are a beginner, you invest primarily in Canadian-listed ETFs (like XEQT or VFV) or Canadian stocks, you value a simple mobile app, and your account balance is relatively small. The zero-commission model is unbeatable for small, frequent CAD deposits. If you are starting out, read our guide on the <a href="/best-brokerage-for-beginners">best brokerage for beginners</a>.</p>
+      <p><strong>Choose Questrade if:</strong> You have a larger portfolio, you buy individual stocks (and are willing to pay $4.95), you need specialized accounts like a Spousal RRSP, or crucially, if you plan to hold significant amounts of US dollars and want to use Norbert's Gambit to avoid crushing FX fees.</p>
+      <p>Many experienced Canadian investors actually use both: Wealthsimple for their TFSA holding Canadian index funds, and Questrade (or IBKR) for their RRSP holding US equities to avoid withholding taxes and optimize currency conversion.</p>
+    </div>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+    .content-section { margin-top: 2rem; }
+    .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+    .content-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+    .content-section ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    .content-section li { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .content-section a:hover { text-decoration: underline; }
+    .content-section strong { color: var(--text-primary); font-weight: 700; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

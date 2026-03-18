@@ -1,0 +1,381 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Rule of 72 Calculator: How Fast Will Your Money Double?",
+  description: "Calculate how long it takes to double your investment using the Rule of 72. Enter an interest rate to see the magic of compounding in action.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Rule of 72?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Rule of 72 is a quick mental math shortcut used to estimate how long it takes for an investment to double in value given a fixed annual rate of interest. You simply divide the number 72 by the annual rate of return."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is the Rule of 72?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is highly accurate for interest rates between 6% and 10%. For much higher or lower rates, it becomes slightly less precise, but remains an excellent rough estimate for quick financial planning."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can the Rule of 72 be used for inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If you divide 72 by the annual inflation rate, it tells you approximately how many years it will take for the purchasing power of your money to be cut in half."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do we use 72 instead of 69 or 70?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The actual mathematical constant derived from logarithms is closer to 69.3. However, 72 is used because it has many handy divisors (1, 2, 3, 4, 6, 8, 9, 12, etc.), making it much easier to calculate in your head."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for the Rule of 72?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The formula is simple: Years to Double = 72 / Annual Interest Rate. For example, at an 8% return, it takes 72 / 8 = 9 years to double your money."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/rule-of-72-calculator" schema={schema}>
+  <div class="page-content">
+    <h1>Rule of 72 Calculator</h1>
+    <p class="subtitle">Quickly estimate how long it takes for your investment to double.</p>
+    <div class="calculator-container">
+      <div class="calc-main">
+        <div class="input-group">
+          <label for="interest-rate">Annual Interest Rate (%)</label>
+          <div class="input-wrapper">
+            <input type="number" id="interest-rate" value="8" min="0.1" step="0.1" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="calc-result">
+          <span class="calc-result-label">Years to Double</span>
+          <div class="calc-result-value" id="years-to-double">9.0</div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-text" style="display: none;">Please enter a positive interest rate.</div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding the Rule of 72</h2>
+      <p>
+        The Rule of 72 is one of the most useful mental math shortcuts in personal finance. Instead of reaching for a complex compound interest calculator, you can instantly estimate how long it will take for an investment to double in value at a given fixed annual rate of interest.
+      </p>
+
+      <h3>How to Use the Rule</h3>
+      <p>
+        The calculation is surprisingly simple: divide the number 72 by your expected annual interest rate.
+      </p>
+      <div class="formula-box">
+        <strong>Years to Double = 72 ÷ Interest Rate</strong>
+      </div>
+      <p>
+        For example, if you invest your money in an index fund that returns an average of 8% per year, you simply divide 72 by 8. The result is 9, meaning your money will double approximately every 9 years. If you start with $10,000, you will have $20,000 in 9 years, $40,000 in 18 years, and $80,000 in 27 years.
+      </p>
+
+      <h3>Why Does the Rule Work?</h3>
+      <p>
+        The Rule of 72 is an approximation derived from the mathematical formula for compound interest, which involves logarithms. The actual mathematical constant required to find the doubling time is closer to 69.3 (because the natural logarithm of 2 is approximately 0.693).
+      </p>
+      <p>
+        So why do we use 72? Simply put, 72 is much easier to divide in your head. It is divisible by many common numbers including 2, 3, 4, 6, 8, 9, and 12. Using 72 provides a close enough estimate for practical, everyday financial planning without needing a calculator.
+      </p>
+
+      <h3>The Rule of 72 and Inflation</h3>
+      <p>
+        While investors use the Rule of 72 to calculate wealth growth, it can equally be used to calculate wealth destruction via inflation. If you want to know how long it will take for your money to lose half its purchasing power, divide 72 by the annual inflation rate.
+      </p>
+      <p>
+        For instance, at a sustained 3% inflation rate, the purchasing power of your cash will be cut in half in 24 years (72 ÷ 3 = 24). This stark reality highlights the critical importance of investing your money rather than simply holding it in a low-interest checking account.
+      </p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the Rule of 72?</summary>
+        <p>The Rule of 72 is a quick mental math shortcut used to estimate how long it takes for an investment to double in value given a fixed annual rate of interest. You simply divide the number 72 by the annual rate of return.</p>
+      </details>
+
+      <details>
+        <summary>How accurate is the Rule of 72?</summary>
+        <p>It is highly accurate for interest rates between 6% and 10%. For much higher or lower rates, it becomes slightly less precise, but remains an excellent rough estimate for quick financial planning.</p>
+      </details>
+
+      <details>
+        <summary>Can the Rule of 72 be used for inflation?</summary>
+        <p>Yes. If you divide 72 by the annual inflation rate, it tells you approximately how many years it will take for the purchasing power of your money to be cut in half.</p>
+      </details>
+
+      <details>
+        <summary>Why do we use 72 instead of 69 or 70?</summary>
+        <p>The actual mathematical constant derived from logarithms is closer to 69.3. However, 72 is used because it has many handy divisors (1, 2, 3, 4, 6, 8, 9, 12, etc.), making it much easier to calculate in your head.</p>
+      </details>
+
+      <details>
+        <summary>What is the formula for the Rule of 72?</summary>
+        <p>The formula is simple: Years to Double = 72 / Annual Interest Rate. For example, at an 8% return, it takes 72 / 8 = 9 years to double your money.</p>
+      </details>
+    </section>
+  </div>
+</SiteLayout>
+
+  <script is:inline>
+    function initializeCalculator() {
+      const rateInput = document.getElementById('interest-rate');
+      const yearsDisplay = document.getElementById('years-to-double');
+      const errorMsg = document.getElementById('error-message');
+
+      function calculate() {
+        const rate = parseFloat(rateInput.value);
+
+        if (isNaN(rate) || rate <= 0) {
+          errorMsg.style.display = 'block';
+          yearsDisplay.textContent = '—';
+          return;
+        }
+
+        errorMsg.style.display = 'none';
+
+        const years = 72 / rate;
+
+        // Format to 1 decimal place, e.g., 9.0 or 7.2
+        yearsDisplay.textContent = years.toFixed(1);
+      }
+
+      if (rateInput) {
+        rateInput.addEventListener('input', calculate);
+        calculate(); // initial calc
+      }
+    }
+
+    // Initialize on page load and on Astro view transitions
+    document.addEventListener('DOMContentLoaded', initializeCalculator);
+    document.addEventListener('astro:page-load', initializeCalculator);
+  </script>
+  <style>
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .page-content h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--accent-color);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .calculator-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 600px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .calc-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      padding-right: 2.5rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .suffix {
+      position: absolute;
+      right: 1rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .calc-result {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      width: 100%;
+    }
+
+    .calc-result-label {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .calc-result-value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+
+    .error-text {
+      color: #ef4444;
+      margin-top: 1rem;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .explainer {
+      margin: 3rem 0;
+      line-height: 1.6;
+    }
+
+    .explainer h2 {
+      font-size: 1.8rem;
+      margin: 2rem 0 1rem;
+      color: var(--accent-color);
+    }
+
+    .explainer h3 {
+      font-size: 1.4rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .explainer p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .formula-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: 8px;
+      text-align: center;
+      margin: 1.5rem 0;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1.25rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+    }
+
+    .faq-section details p {
+      margin: 1rem 0 0 0;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (min-width: 640px) {
+      .calc-main {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+      }
+
+      .input-group {
+        margin-bottom: 0;
+      }
+
+      .calc-result {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        border-left: 1px solid var(--border-color);
+        padding-left: 2rem;
+        width: auto;
+      }
+    }
+  </style>

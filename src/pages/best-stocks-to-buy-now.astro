@@ -1,0 +1,351 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Best Stocks to Buy Now: Comprehensive Guide",
+  description: "Curious which stocks are leading the market today? We analyze the best stocks to buy now, including growth opportunities and key metrics for 2025 and 2026.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are the best stocks to buy now?", "acceptedAnswer": {"@type": "Answer", "text": "Determining the best stocks to buy now involves analyzing current market trends, valuation multiples, and broader macroeconomic factors. Often, the best stocks to buy now include large-cap technology companies with robust cash flows and unassailable market positions, such as Microsoft, Apple, and Nvidia. However, the ideal choice heavily depends on individual risk tolerance, investment horizon, and existing portfolio diversification."}}, {"@type": "Question", "name": "What are the best growth stocks to buy now?", "acceptedAnswer": {"@type": "Answer", "text": "The best growth stocks to buy now typically belong to companies that reinvest their earnings to rapidly expand operations, capture market share, or innovate within their industries. Currently, AI-driven enterprises, disruptive software-as-a-service (SaaS) providers, and biotechnology firms are frequently highlighted as top growth candidates due to their potential for exponential revenue acceleration."}}, {"@type": "Question", "name": "What are the best stocks to buy now 2025?", "acceptedAnswer": {"@type": "Answer", "text": "Looking ahead to 2025, investors are actively positioning portfolios to capture structural shifts in the global economy. The best stocks to buy now for 2025 include market leaders in artificial intelligence, renewable energy infrastructure, and advanced healthcare solutions. Companies like Eli Lilly and Amazon have demonstrated resilient business models that are well-suited to navigate anticipated economic environments."}}, {"@type": "Question", "name": "What are the best growth stocks to buy now 2025?", "acceptedAnswer": {"@type": "Answer", "text": "For 2025, the narrative around the best growth stocks centers on long-term technological adoption curves and demographic trends. Growth-oriented investors are closely evaluating semiconductor manufacturers, cloud computing infrastructure providers, and disruptive healthcare technology companies that show a clear path to sustained double-digit earnings growth despite fluctuating interest rate environments."}}, {"@type": "Question", "name": "What are the best stocks to buy now 2026?", "acceptedAnswer": {"@type": "Answer", "text": "Projecting further out to 2026 requires identifying companies with highly durable competitive advantages and fortress balance sheets. The best stocks to buy now for 2026 are likely those capable of compounding intrinsic value through various market cycles. This includes businesses with strong pricing power, high barriers to entry, and secular tailwinds that insulate them from short-term cyclical downturns."}}]}, {"@context": "https://schema.org", "@type": "Article", "headline": "Best Stocks to Buy Now: Comprehensive Guide", "description": "Curious which stocks are leading the market today? We analyze the best stocks to buy now, including growth opportunities and key metrics for 2025 and 2026.", "datePublished": "2026-03-15", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}}];
+---
+<SiteLayout site="westmount" title="Best Stocks to Buy Now: Comprehensive Guide" description="Curious which stocks are leading the market today? We analyze the best stocks to buy now, including growth opportunities and key metrics for 2025 and 2026." canonical="https://westmountfundamentals.com/best-stocks-to-buy-now" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Best Stocks to Buy Now: Comprehensive Guide</h1>
+      <p class="subtitle">Discover top growth and value opportunities in today's dynamic market.</p>
+    </div>
+
+    <section class="intro-section" style="margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.8;">
+        <p>Navigating the complex landscape of financial markets requires a rigorous analytical framework, especially when searching for the best stocks to buy now. Whether you are aiming to capitalize on short-term momentum or seeking fundamentally sound equities for long-term wealth accumulation, understanding the mechanics of the market is crucial. In 2025 and moving into 2026, the investing paradigm is heavily influenced by rapid technological advancements, evolving monetary policies, and shifting geopolitical landscapes. Investors looking for the best growth stocks to buy now must weigh the promise of future earnings against present valuation multiples.</p><p>Our comprehensive guide aims to illuminate these critical factors. We have aggregated real-time data across various sectors to identify compelling opportunities. From established mega-cap technology giants to defensive consumer staples, the equities highlighted below have been selected based on their market capitalization, profitability metrics like the P/E ratio, and dividend yields. Identifying the best stocks to buy now 2025 requires a forward-looking perspective that anticipates how current capital expenditure in areas like artificial intelligence and green energy will translate into shareholder returns.</p><p>As you explore our sortable list and detailed analysis, remember that the definition of the 'best' stock is subjective and highly dependent on your personal financial goals. For a dividend investor, a stable utility company might represent the perfect opportunity, whereas a growth-oriented investor might prefer a volatile but high-potential semiconductor firm. Therefore, when evaluating the best growth stocks to buy now 2025, it is essential to contextualize the raw data with an understanding of the underlying business models, competitive moats, and macroeconomic sensitivities.</p>
+    </section>
+
+    <div class="search-container" style="margin-bottom: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h3 style="margin-top: 0; margin-bottom: 1rem;">Filter the Data</h3>
+        <input type="text" id="searchInput" placeholder="Search by ticker, name, or sector..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1rem; background: transparent; color: var(--text-primary);">
+    </div>
+
+    <div style="overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 1rem;">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)" style="cursor:pointer;" title="Sort by Ticker">Ticker &#x2195;</th>
+                    <th onclick="sortTable(1)" style="cursor:pointer;" title="Sort by Name">Name &#x2195;</th>
+                    <th onclick="sortTable(2)" style="cursor:pointer;" title="Sort by Sector">Sector &#x2195;</th>
+                    <th onclick="sortTable(3)" style="cursor:pointer;" title="Sort by Price">Price &#x2195;</th>
+                    <th onclick="sortTable(4)" style="cursor:pointer;" title="Sort by Dividend Yield">Yield &#x2195;</th>
+                    <th onclick="sortTable(5)" style="cursor:pointer;" title="Sort by P/E Ratio">P/E Ratio &#x2195;</th>
+                    <th onclick="sortTable(6)" style="cursor:pointer;" title="Sort by Market Cap">Market Cap &#x2195;</th>
+                </tr>
+            </thead>
+            <tbody>
+
+        <tr>
+            <td><strong>MSFT</strong></td>
+            <td>Microsoft Corporation</td>
+            <td>Technology</td>
+            <td>$395.55</td>
+            <td>0.92%</td>
+            <td>24.75</td>
+            <td>$2.94T</td>
+        </tr>
+        <tr>
+            <td><strong>AAPL</strong></td>
+            <td>Apple Inc.</td>
+            <td>Technology</td>
+            <td>$250.12</td>
+            <td>0.42%</td>
+            <td>31.66</td>
+            <td>$3.68T</td>
+        </tr>
+        <tr>
+            <td><strong>NVDA</strong></td>
+            <td>NVIDIA Corporation</td>
+            <td>Technology</td>
+            <td>$180.25</td>
+            <td>0.02%</td>
+            <td>36.79</td>
+            <td>$4.38T</td>
+        </tr>
+        <tr>
+            <td><strong>AMZN</strong></td>
+            <td>Amazon.com, Inc.</td>
+            <td>Consumer Cyclical</td>
+            <td>$207.67</td>
+            <td>N/A</td>
+            <td>29.00</td>
+            <td>$2.23T</td>
+        </tr>
+        <tr>
+            <td><strong>GOOGL</strong></td>
+            <td>Alphabet Inc.</td>
+            <td>Communication Services</td>
+            <td>$302.28</td>
+            <td>0.28%</td>
+            <td>27.94</td>
+            <td>$3.66T</td>
+        </tr>
+        <tr>
+            <td><strong>META</strong></td>
+            <td>Meta Platforms, Inc.</td>
+            <td>Communication Services</td>
+            <td>$613.71</td>
+            <td>0.34%</td>
+            <td>26.10</td>
+            <td>$1.55T</td>
+        </tr>
+        <tr>
+            <td><strong>TSLA</strong></td>
+            <td>Tesla, Inc.</td>
+            <td>Consumer Cyclical</td>
+            <td>$391.20</td>
+            <td>N/A</td>
+            <td>355.64</td>
+            <td>$1.47T</td>
+        </tr>
+        <tr>
+            <td><strong>AVGO</strong></td>
+            <td>Broadcom Inc.</td>
+            <td>Technology</td>
+            <td>$322.16</td>
+            <td>0.81%</td>
+            <td>62.92</td>
+            <td>$1.53T</td>
+        </tr>
+        <tr>
+            <td><strong>LLY</strong></td>
+            <td>Eli Lilly and Company</td>
+            <td>Healthcare</td>
+            <td>$985.08</td>
+            <td>0.63%</td>
+            <td>42.92</td>
+            <td>$881.67B</td>
+        </tr>
+        <tr>
+            <td><strong>JPM</strong></td>
+            <td>JP Morgan Chase & Co.</td>
+            <td>Financial Services</td>
+            <td>$283.44</td>
+            <td>2.12%</td>
+            <td>14.16</td>
+            <td>$764.45B</td>
+        </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <section style="margin-top: 3rem;">
+        <h2>Detailed Equity Analysis</h2>
+        <p style="margin-bottom: 1.5rem;">Below is a comprehensive breakdown of each stock in our list. By combining fundamental metrics like valuation multiples and dividend yields with qualitative analysis of company operations and sector dynamics, investors can make more informed portfolio allocation decisions.</p>
+        <div id="analysisContainer">
+
+        <div class="card item-card">
+            <h3>MSFT - Microsoft Corporation</h3>
+            <p><strong>Sector:</strong> Technology | <strong>Price:</strong> $395.55 | <strong>Yield:</strong> 0.92% | <strong>P/E:</strong> 24.75 | <strong>Market Cap:</strong> $2.94T</p>
+            <p>Microsoft Corporation develops and supports software, services, devices, and solutions worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=MSFT" style="color: var(--accent-color); font-weight: bold;">Compare MSFT metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>AAPL - Apple Inc.</h3>
+            <p><strong>Sector:</strong> Technology | <strong>Price:</strong> $250.12 | <strong>Yield:</strong> 0.42% | <strong>P/E:</strong> 31.66 | <strong>Market Cap:</strong> $3.68T</p>
+            <p>Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide.</p>
+            <p><a href="/stock-comparison-tool?symbols=AAPL" style="color: var(--accent-color); font-weight: bold;">Compare AAPL metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>NVDA - NVIDIA Corporation</h3>
+            <p><strong>Sector:</strong> Technology | <strong>Price:</strong> $180.25 | <strong>Yield:</strong> 0.02% | <strong>P/E:</strong> 36.79 | <strong>Market Cap:</strong> $4.38T</p>
+            <p>NVIDIA Corporation operates as a data center scale AI infrastructure company. The company operates through two segments, Compute & Networking, and Graphics segments.</p>
+            <p><a href="/stock-comparison-tool?symbols=NVDA" style="color: var(--accent-color); font-weight: bold;">Compare NVDA metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>AMZN - Amazon.com, Inc.</h3>
+            <p><strong>Sector:</strong> Consumer Cyclical | <strong>Price:</strong> $207.67 | <strong>Yield:</strong> N/A | <strong>P/E:</strong> 29.00 | <strong>Market Cap:</strong> $2.23T</p>
+            <p>Amazon.com, Inc. engages in the retail sale of consumer products, advertising, and subscriptions service through online and physical stores in North America and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=AMZN" style="color: var(--accent-color); font-weight: bold;">Compare AMZN metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>GOOGL - Alphabet Inc.</h3>
+            <p><strong>Sector:</strong> Communication Services | <strong>Price:</strong> $302.28 | <strong>Yield:</strong> 0.28% | <strong>P/E:</strong> 27.94 | <strong>Market Cap:</strong> $3.66T</p>
+            <p>Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.</p>
+            <p><a href="/stock-comparison-tool?symbols=GOOGL" style="color: var(--accent-color); font-weight: bold;">Compare GOOGL metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>META - Meta Platforms, Inc.</h3>
+            <p><strong>Sector:</strong> Communication Services | <strong>Price:</strong> $613.71 | <strong>Yield:</strong> 0.34% | <strong>P/E:</strong> 26.10 | <strong>Market Cap:</strong> $1.55T</p>
+            <p>Meta Platforms, Inc. engages in the development of products that enable people to connect and share with friends and family through mobile devices, personal computers, virtual reality (VR) headsets, and AI glasses in the United States, Canada, Europe, Asia-Pacific, and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=META" style="color: var(--accent-color); font-weight: bold;">Compare META metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>TSLA - Tesla, Inc.</h3>
+            <p><strong>Sector:</strong> Consumer Cyclical | <strong>Price:</strong> $391.20 | <strong>Yield:</strong> N/A | <strong>P/E:</strong> 355.64 | <strong>Market Cap:</strong> $1.47T</p>
+            <p>Tesla, Inc. designs, develops, manufactures, leases, and sells electric vehicles, and energy generation and storage systems in the United States, China, and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=TSLA" style="color: var(--accent-color); font-weight: bold;">Compare TSLA metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>AVGO - Broadcom Inc.</h3>
+            <p><strong>Sector:</strong> Technology | <strong>Price:</strong> $322.16 | <strong>Yield:</strong> 0.81% | <strong>P/E:</strong> 62.92 | <strong>Market Cap:</strong> $1.53T</p>
+            <p>Broadcom Inc. designs, develops, and supplies various semiconductor devices and infrastructure software solutions internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=AVGO" style="color: var(--accent-color); font-weight: bold;">Compare AVGO metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>LLY - Eli Lilly and Company</h3>
+            <p><strong>Sector:</strong> Healthcare | <strong>Price:</strong> $985.08 | <strong>Yield:</strong> 0.63% | <strong>P/E:</strong> 42.92 | <strong>Market Cap:</strong> $881.67B</p>
+            <p>Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products in the United States, Europe, China, Japan, and internationally.</p>
+            <p><a href="/stock-comparison-tool?symbols=LLY" style="color: var(--accent-color); font-weight: bold;">Compare LLY metrics &rarr;</a></p>
+        </div>
+        <div class="card item-card">
+            <h3>JPM - JP Morgan Chase & Co.</h3>
+            <p><strong>Sector:</strong> Financial Services | <strong>Price:</strong> $283.44 | <strong>Yield:</strong> 2.12% | <strong>P/E:</strong> 14.16 | <strong>Market Cap:</strong> $764.45B</p>
+            <p>JPMorgan Chase & Co. operates as a bank and financial holding company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia Pacific, Latin America, and the Caribbean.</p>
+            <p><a href="/stock-comparison-tool?symbols=JPM" style="color: var(--accent-color); font-weight: bold;">Compare JPM metrics &rarr;</a></p>
+        </div>
+        </div>
+    </section>
+
+
+    <section style="margin-top: 3rem;">
+        <h2>Our Methodology and Market Approach</h2>
+        <p>Understanding how we select and analyze equities is crucial for making informed investment decisions. Our proprietary methodology involves a rigorous, multi-factor screening process designed to identify companies with durable competitive advantages, robust financial health, and compelling valuation metrics. We begin by defining the investable universe, which typically includes large-cap and mid-cap equities trading on major global exchanges.</p>
+
+        <p>The first pillar of our analysis focuses on fundamental financial metrics. We meticulously review income statements, balance sheets, and cash flow statements to assess a company's profitability, leverage, and liquidity. Key indicators such as the Price-to-Earnings (P/E) ratio, Price-to-Book (P/B) ratio, and Free Cash Flow (FCF) yield are evaluated relative to industry peers and historical averages. A company must demonstrate consistent revenue growth and expanding profit margins to warrant consideration. Furthermore, we pay close attention to return on invested capital (ROIC), as it is a strong indicator of management's ability to efficiently allocate capital.</p>
+
+        <p>Beyond quantitative metrics, our methodology heavily weights qualitative factors. We conduct deep-dive research into the competitive landscape of each industry, identifying structural tailwinds and potential disruptive threats. Evaluating a company's economic moat—whether derived from network effects, switching costs, cost advantages, or intangible assets like patents and brand strength—is central to our approach. We look for businesses that can maintain pricing power and protect their market share over the long term.</p>
+
+        <p>Macroeconomic conditions also play a significant role in our equity selection process. We continuously monitor interest rate trends, inflation expectations, and geopolitical developments, as these factors can broadly impact market sentiment and sector performance. For instance, in a rising interest rate environment, we may pivot towards value-oriented sectors with strong near-term cash flows, whereas a low-rate environment might favor long-duration growth equities.</p>
+    </section>
+
+
+
+
+    <section class="faq-section" style="margin-top: 3rem;">
+        <h2>Frequently Asked Questions</h2>
+
+        <details>
+            <summary>What are the best stocks to buy now?</summary>
+            <p>Determining the best stocks to buy now involves analyzing current market trends, valuation multiples, and broader macroeconomic factors. Often, the best stocks to buy now include large-cap technology companies with robust cash flows and unassailable market positions, such as Microsoft, Apple, and Nvidia. However, the ideal choice heavily depends on individual risk tolerance, investment horizon, and existing portfolio diversification.</p>
+        </details>
+        <details>
+            <summary>What are the best growth stocks to buy now?</summary>
+            <p>The best growth stocks to buy now typically belong to companies that reinvest their earnings to rapidly expand operations, capture market share, or innovate within their industries. Currently, AI-driven enterprises, disruptive software-as-a-service (SaaS) providers, and biotechnology firms are frequently highlighted as top growth candidates due to their potential for exponential revenue acceleration.</p>
+        </details>
+        <details>
+            <summary>What are the best stocks to buy now 2025?</summary>
+            <p>Looking ahead to 2025, investors are actively positioning portfolios to capture structural shifts in the global economy. The best stocks to buy now for 2025 include market leaders in artificial intelligence, renewable energy infrastructure, and advanced healthcare solutions. Companies like Eli Lilly and Amazon have demonstrated resilient business models that are well-suited to navigate anticipated economic environments.</p>
+        </details>
+        <details>
+            <summary>What are the best growth stocks to buy now 2025?</summary>
+            <p>For 2025, the narrative around the best growth stocks centers on long-term technological adoption curves and demographic trends. Growth-oriented investors are closely evaluating semiconductor manufacturers, cloud computing infrastructure providers, and disruptive healthcare technology companies that show a clear path to sustained double-digit earnings growth despite fluctuating interest rate environments.</p>
+        </details>
+        <details>
+            <summary>What are the best stocks to buy now 2026?</summary>
+            <p>Projecting further out to 2026 requires identifying companies with highly durable competitive advantages and fortress balance sheets. The best stocks to buy now for 2026 are likely those capable of compounding intrinsic value through various market cycles. This includes businesses with strong pricing power, high barriers to entry, and secular tailwinds that insulate them from short-term cyclical downturns.</p>
+        </details>
+    </section>
+
+    <section class="internal-links" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+        <h3>Related Resources</h3>
+        <p style="margin-bottom: 1rem;">Expand your research by exploring our other guides and interactive tools:</p>
+        <ul>
+            <li><a href="/best-stocks-to-buy-now">Best Stocks to Buy Now</a></li>
+            <li><a href="/best-stocks-to-invest-in-2025">Best Stocks to Invest in 2025</a></li>
+            <li><a href="/dividend-stocks">Top Dividend Stocks Guide</a></li>
+            <li><a href="/stock-screener">Interactive Stock Screener</a></li>
+            <li><a href="/stock-comparison-tool">Stock Comparison Tool</a></li>
+        </ul>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+
+        // Filter table rows
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+
+        // Filter analysis cards
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(term) ? '' : 'none';
+        });
+    });
+
+    // Table sorting
+    function sortTable(n) {
+        const table = document.getElementById("dataTable");
+        let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+
+                let valX = x.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+                let valY = y.innerHTML.toLowerCase().replace(/[$,%]/g, '');
+
+                if (valX === 'n/a') valX = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valX.endsWith('t')) valX = parseFloat(valX) * 1e12;
+                else if (valX.endsWith('b')) valX = parseFloat(valX) * 1e9;
+                else if (valX.endsWith('m')) valX = parseFloat(valX) * 1e6;
+                else if (!isNaN(parseFloat(valX))) valX = parseFloat(valX);
+
+                if (valY === 'n/a') valY = dir === 'asc' ? Number.MAX_VALUE : -Number.MAX_VALUE;
+                else if (valY.endsWith('t')) valY = parseFloat(valY) * 1e12;
+                else if (valY.endsWith('b')) valY = parseFloat(valY) * 1e9;
+                else if (valY.endsWith('m')) valY = parseFloat(valY) * 1e6;
+                else if (!isNaN(parseFloat(valY))) valY = parseFloat(valY);
+
+                if (dir == "asc") {
+                    if (valX > valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (valX < valY) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; margin: 0; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background-color: rgba(0,0,0,0.02); white-space: nowrap; user-select: none; }
+    th:hover { background-color: rgba(0,0,0,0.05); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; font-size: 1.1rem; }
+    .faq-section p { margin-top: 1rem; color: var(--text-secondary); line-height: 1.6; }
+    .internal-links ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+    .internal-links a { text-decoration: none; color: var(--accent-color); font-weight: 600; padding: 0.5rem 1rem; border-radius: 6px; background: rgba(74, 143, 231, 0.1); }
+    .internal-links a:hover { background: rgba(74, 143, 231, 0.2); }
+  </style>
+</SiteLayout>

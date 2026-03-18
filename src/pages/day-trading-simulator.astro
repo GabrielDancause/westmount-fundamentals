@@ -1,0 +1,646 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Day Trading Simulator: Test Your Strategy Risk-Free",
+  description: "Practice day trading with our free, realistic simulator. Calculate potential profits, manage risk, and test strategies with real-time math before risking...",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a day trading simulator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A day trading simulator is a tool that allows you to practice buying and selling stocks, options, or other financial instruments using virtual money. It helps you understand market dynamics, test trading strategies, and learn how to manage risk without the potential for real financial loss."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much money do I need to start day trading?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Under the Pattern Day Trader (PDT) rule in the US, if you execute four or more day trades within five business days in a margin account, you must maintain a minimum equity balance of $25,000. However, in a cash account, you can day trade with less capital, limited only by your settled funds."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the typical success rate for day traders?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Studies indicate that the success rate for day traders is remarkably low. Various academic papers and brokerage data suggest that only about 1% to 10% of day traders consistently generate a profit over the long term, making practice on a simulator essential before risking real money."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you calculate potential profit in a day trade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Potential profit in a day trade is calculated by multiplying the number of shares traded by the difference between the selling price and the buying price, then subtracting any commissions and fees. For example: (Shares × (Sell Price - Buy Price)) - Total Fees."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is risk management important in day trading?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Risk management is critical because day trading involves high volatility and the potential for rapid losses. Effective risk management, such as using stop-loss orders and limiting the capital risked on a single trade (often to 1% or 2% of total account value), helps preserve capital so you can continue trading even after a series of losing trades."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/day-trading-simulator" schema={schema}>
+  <div class="page-content">
+    <h1>Day Trading Simulator & Profit Calculator</h1>
+    <p>Use our interactive day trading simulator to model potential trades, calculate risk-to-reward ratios, and see how commissions impact your bottom line. Test your strategies with hypothetical numbers before committing real capital to the market.</p>
+
+    <div class="calculator-card">
+      <div class="calc-grid">
+        <!-- Input Section -->
+        <div class="input-section">
+          <h3>Trade Setup</h3>
+
+          <div class="input-group">
+            <label for="capital">Total Account Capital ($)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="capital" value="25000" min="0" step="100">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="riskPercent">Max Risk per Trade (%)</label>
+            <div class="input-wrapper">
+              <input type="number" id="riskPercent" value="1.0" min="0.1" max="100" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+            <div class="help-text">Recommended: 1-2%</div>
+          </div>
+
+          <div class="input-row">
+             <div class="input-group">
+              <label for="entryPrice">Entry Price ($)</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="entryPrice" value="150.00" min="0.01" step="0.01">
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="stopLoss">Stop Loss Price ($)</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="stopLoss" value="148.50" min="0.01" step="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="targetPrice">Target Price ($)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="targetPrice" value="154.50" min="0.01" step="0.01">
+            </div>
+          </div>
+
+           <div class="input-group">
+            <label for="commission">Commission per Trade (Round Trip)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="commission" value="0.00" min="0" step="0.50">
+            </div>
+            <div class="help-text">Includes both buy and sell fees</div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+          <h3>Trade Analysis</h3>
+
+          <div class="result-box primary-result">
+            <span class="result-label">Position Size (Shares)</span>
+            <span class="result-value" id="positionSize">0</span>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-box">
+              <span class="result-label">Capital Required</span>
+              <span class="result-value" id="capitalRequired">$0.00</span>
+            </div>
+            <div class="result-box">
+              <span class="result-label">Max Risk Amount</span>
+              <span class="result-value risk-text" id="maxRiskAmount">$0.00</span>
+            </div>
+            <div class="result-box">
+              <span class="result-label">Potential Profit</span>
+              <span class="result-value profit-text" id="potentialProfit">$0.00</span>
+            </div>
+            <div class="result-box">
+              <span class="result-label">Risk/Reward Ratio</span>
+              <span class="result-value" id="rrRatio">0.00 : 1</span>
+            </div>
+          </div>
+
+          <div class="slider-container">
+            <label for="priceSlider">Simulate Price Movement</label>
+            <input type="range" id="priceSlider" min="0" max="200" value="100" class="slider" step="any">
+            <div class="slider-labels">
+              <span id="sliderLow">Stop Loss</span>
+              <span id="sliderCurrent">Current: $150.00</span>
+              <span id="sliderHigh">Target</span>
+            </div>
+          </div>
+
+          <div class="live-pnl-box">
+            <span class="result-label">Simulated P&L</span>
+            <span class="result-value" id="livePnL">$0.00</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <h2>Understanding Day Trading Mechanics</h2>
+    <p>Day trading involves buying and selling financial instruments within the same trading day. The goal is to capitalize on short-term price movements. Success requires strict discipline, a tested strategy, and rigorous risk management.</p>
+
+    <h3>Key Formulas Used in This Simulator</h3>
+    <ul>
+      <li><strong>Max Risk Amount:</strong> Total Capital × (Max Risk % / 100)</li>
+      <li><strong>Risk Per Share:</strong> Entry Price - Stop Loss Price</li>
+      <li><strong>Position Size (Shares):</strong> Max Risk Amount / Risk Per Share</li>
+      <li><strong>Capital Required:</strong> Position Size × Entry Price</li>
+      <li><strong>Potential Profit:</strong> (Target Price - Entry Price) × Position Size - Commissions</li>
+      <li><strong>Risk/Reward Ratio:</strong> Potential Profit / Max Risk Amount</li>
+    </ul>
+
+    <div class="highlight-box">
+      <h3>The Importance of Position Sizing</h3>
+      <p>Amateur traders often focus entirely on entry and exit signals, but professional traders know that <strong>position sizing</strong> is what keeps them in the game. By defining your risk as a percentage of your total capital (typically 1-2%) before calculating how many shares to buy, you ensure that a string of inevitable losing trades won't wipe out your account.</p>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-section">
+      <div class="faq-item">
+        <h3>What is a day trading simulator?</h3>
+        <p>A day trading simulator is a tool that allows you to practice buying and selling stocks, options, or other financial instruments using virtual money. It helps you understand market dynamics, test trading strategies, and learn how to manage risk without the potential for real financial loss.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How much money do I need to start day trading?</h3>
+        <p>Under the Pattern Day Trader (PDT) rule in the US, if you execute four or more day trades within five business days in a margin account, you must maintain a minimum equity balance of $25,000. However, in a cash account, you can day trade with less capital, limited only by your settled funds.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the typical success rate for day traders?</h3>
+        <p>Studies indicate that the success rate for day traders is remarkably low. Various academic papers and brokerage data suggest that only about 1% to 10% of day traders consistently generate a profit over the long term, making practice on a simulator essential before risking real money.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do you calculate potential profit in a day trade?</h3>
+        <p>Potential profit in a day trade is calculated by multiplying the number of shares traded by the difference between the selling price and the buying price, then subtracting any commissions and fees. For example: (Shares × (Sell Price - Buy Price)) - Total Fees.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is risk management important in day trading?</h3>
+        <p>Risk management is critical because day trading involves high volatility and the potential for rapid losses. Effective risk management, such as using stop-loss orders and limiting the capital risked on a single trade (often to 1% or 2% of total account value), helps preserve capital so you can continue trading even after a series of losing trades.</p>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Inputs
+    const capitalInput = document.getElementById("capital");
+    const riskPercentInput = document.getElementById("riskPercent");
+    const entryPriceInput = document.getElementById("entryPrice");
+    const stopLossInput = document.getElementById("stopLoss");
+    const targetPriceInput = document.getElementById("targetPrice");
+    const commissionInput = document.getElementById("commission");
+    const priceSlider = document.getElementById("priceSlider");
+
+    // Outputs
+    const positionSizeOutput = document.getElementById("positionSize");
+    const capitalRequiredOutput = document.getElementById("capitalRequired");
+    const maxRiskAmountOutput = document.getElementById("maxRiskAmount");
+    const potentialProfitOutput = document.getElementById("potentialProfit");
+    const rrRatioOutput = document.getElementById("rrRatio");
+
+    // Slider Labels
+    const sliderLow = document.getElementById("sliderLow");
+    const sliderCurrent = document.getElementById("sliderCurrent");
+    const sliderHigh = document.getElementById("sliderHigh");
+    const livePnLOutput = document.getElementById("livePnL");
+
+    // Formatters
+    const currencyFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    const numberFmt = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+
+    // State Variables
+    let currentShares = 0;
+    let currentEntry = 0;
+    let currentCommission = 0;
+
+    function calculate() {
+      // Parse inputs
+      const capital = parseFloat(capitalInput.value) || 0;
+      const riskPercent = parseFloat(riskPercentInput.value) || 0;
+      const entryPrice = parseFloat(entryPriceInput.value) || 0;
+      const stopLoss = parseFloat(stopLossInput.value) || 0;
+      const targetPrice = parseFloat(targetPriceInput.value) || 0;
+      const commission = parseFloat(commissionInput.value) || 0;
+
+      // Validation and Edge Cases
+      if (entryPrice <= 0 || stopLoss <= 0 || targetPrice <= 0) {
+        clearResults();
+        return;
+      }
+
+      // Stop Loss must be less than Entry for long positions
+      if (stopLoss >= entryPrice) {
+          positionSizeOutput.textContent = "Invalid Setup";
+          positionSizeOutput.style.color = "var(--sell-color)";
+          capitalRequiredOutput.textContent = "N/A";
+          maxRiskAmountOutput.textContent = "N/A";
+          potentialProfitOutput.textContent = "N/A";
+          rrRatioOutput.textContent = "N/A";
+          return;
+      }
+      positionSizeOutput.style.color = "";
+
+      // Calculate Risk
+      const maxRiskAmount = (capital * riskPercent) / 100;
+      const riskPerShare = entryPrice - stopLoss;
+
+      // Calculate Shares
+      // Round down to avoid exceeding risk
+      const shares = Math.floor(maxRiskAmount / riskPerShare);
+
+      if (shares <= 0 || !isFinite(shares)) {
+        clearResults();
+        return;
+      }
+
+      // Calculate Capital Required
+      const capitalRequired = shares * entryPrice;
+
+      // If capital required exceeds available capital, recalculate based on max capital
+      let finalShares = shares;
+      if (capitalRequired > capital) {
+          finalShares = Math.floor(capital / entryPrice);
+      }
+
+      if (finalShares <= 0) {
+          clearResults();
+          return;
+      }
+
+      const finalCapitalRequired = finalShares * entryPrice;
+      const finalMaxRisk = finalShares * riskPerShare;
+
+      // Calculate Profit
+      const profitPerShare = targetPrice - entryPrice;
+      const grossProfit = finalShares * profitPerShare;
+      const netProfit = grossProfit - commission;
+
+      // Calculate R:R
+      let rrRatio = 0;
+      if (finalMaxRisk > 0) {
+        rrRatio = netProfit / finalMaxRisk;
+      }
+
+      // Update Outputs
+      positionSizeOutput.textContent = numberFmt.format(finalShares);
+      capitalRequiredOutput.textContent = currencyFmt.format(finalCapitalRequired);
+      maxRiskAmountOutput.textContent = currencyFmt.format(finalMaxRisk);
+      potentialProfitOutput.textContent = currencyFmt.format(netProfit);
+
+      if (rrRatio > 0) {
+          rrRatioOutput.textContent = `${rrRatio.toFixed(2)} : 1`;
+      } else {
+          rrRatioOutput.textContent = "N/A";
+      }
+
+      // Update Slider State
+      currentShares = finalShares;
+      currentEntry = entryPrice;
+      currentCommission = commission;
+
+      sliderLow.textContent = currencyFmt.format(stopLoss);
+      sliderHigh.textContent = currencyFmt.format(targetPrice);
+
+      // Reset Slider to Middle (Entry Price)
+      priceSlider.min = stopLoss;
+      priceSlider.max = targetPrice;
+      priceSlider.value = entryPrice;
+      updateSlider();
+    }
+
+    function updateSlider() {
+      const simulatedPrice = parseFloat(priceSlider.value);
+
+      // Fix floating point errors
+      let fixedSimulatedPrice = parseFloat(simulatedPrice.toPrecision(14));
+      if (Math.abs(fixedSimulatedPrice - Math.round(fixedSimulatedPrice)) < 1e-14) {
+          fixedSimulatedPrice = Math.round(fixedSimulatedPrice);
+      }
+
+      sliderCurrent.textContent = `Current: ${currencyFmt.format(fixedSimulatedPrice)}`;
+
+      if (currentShares > 0) {
+          const pnl = (fixedSimulatedPrice - currentEntry) * currentShares - (currentCommission / 2); // Assume half commission per side for sim
+
+          let fixedPnl = parseFloat(pnl.toPrecision(14));
+           if (Math.abs(fixedPnl - Math.round(fixedPnl)) < 1e-14) {
+              fixedPnl = Math.round(fixedPnl);
+          }
+
+          livePnLOutput.textContent = currencyFmt.format(fixedPnl);
+
+          if (fixedPnl > 0) {
+              livePnLOutput.style.color = "var(--buy-color)";
+          } else if (fixedPnl < 0) {
+              livePnLOutput.style.color = "var(--sell-color)";
+          } else {
+              livePnLOutput.style.color = "var(--text-primary)";
+          }
+      } else {
+          livePnLOutput.textContent = "$0.00";
+          livePnLOutput.style.color = "var(--text-primary)";
+      }
+    }
+
+    function clearResults() {
+      positionSizeOutput.textContent = "0";
+      capitalRequiredOutput.textContent = "$0.00";
+      maxRiskAmountOutput.textContent = "$0.00";
+      potentialProfitOutput.textContent = "$0.00";
+      rrRatioOutput.textContent = "0.00 : 1";
+      livePnLOutput.textContent = "$0.00";
+      livePnLOutput.style.color = "var(--text-primary)";
+    }
+
+    // Event Listeners
+    const inputs = [capitalInput, riskPercentInput, entryPriceInput, stopLossInput, targetPriceInput, commissionInput];
+    inputs.forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    priceSlider.addEventListener('input', updateSlider);
+
+    // Initial Calculation
+    calculate();
+  });
+</script>
+
+<style>
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .input-section h3, .results-section h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .input-wrapper:has(.prefix) input[type="number"] {
+      padding-left: 2rem;
+  }
+
+  .input-wrapper:has(.suffix) input[type="number"] {
+      padding-right: 2.5rem;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .help-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .result-box {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .primary-result {
+    border-color: var(--accent-color);
+    background-color: transparent; border-width: 2px;
+  }
+
+  .primary-result .result-value {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .result-value {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .risk-text {
+    color: var(--sell-color);
+  }
+
+  .profit-text {
+    color: var(--buy-color);
+  }
+
+  /* Slider Styles */
+  .slider-container {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .slider-container label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-color);
+    outline: none;
+    margin-bottom: 1rem;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    border: none;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .live-pnl-box {
+    margin-top: 1.5rem;
+    text-align: center;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+  }
+
+  .live-pnl-box .result-value {
+    font-size: 2rem;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .calculator-card {
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .input-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

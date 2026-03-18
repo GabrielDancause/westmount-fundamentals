@@ -1,0 +1,1264 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Best AI Stocks 2026: Top Artificial Intelligence Companies",
+  description: "Which companies are truly leading the AI revolution, and which are just riding the hype? We analyze the data behind the top artificial intelligence stocks.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": ["Article", "FAQPage"],
+  "headline": "Best AI Stocks 2026: Top Artificial Intelligence Companies",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What are the best AI stocks to buy now?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The best AI stocks typically include a mix of semiconductor hardware manufacturers, large cloud service providers, and specialized enterprise software companies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it too late to invest in best AI stocks 2025?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While valuations for some AI leaders have expanded significantly, the underlying secular shift toward artificial intelligence is still in its early stages across enterprise adoption."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What sectors benefit most from AI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Technology hardware (chips), cloud computing, cybersecurity, and enterprise software currently show the clearest direct financial benefits from AI implementation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you evaluate best AI stocks 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We look for tangible revenue acceleration attributed to AI products, high margins indicating pricing power, and a clear competitive moat in data or infrastructure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are AI stocks in a bubble?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While there is significant enthusiasm, the leading AI companies are generating massive, tangible earnings growth, unlike many companies during the dot-com bubble."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/best-ai-stocks" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Best AI Stocks 2026: Top Artificial Intelligence Companies</h1>
+      <p class="subtitle">Separating the real innovators from the hype.</p>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <p>The artificial intelligence revolution is reshaping the global economy. But when looking for the <strong>best AI stocks</strong>, investors must distinguish between companies generating real revenue from AI infrastructure and those merely using it as a buzzword. Our analysis of the <strong>best AI stocks 2026</strong> focuses on the foundational players driving this megatrend.</p>
+    </div>
+
+    <section class="methodology-section" style="background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+      <h2>Methodology</h2>
+      <p>We ranked the <strong>best ai stocks 2025</strong> and beyond by focusing on scale and market dominance. Our primary ranking metric is Market Capitalization, as the immense capital expenditures required for AI infrastructure naturally favor mega-cap technology leaders. We also reviewed their primary sector exposure, from hardware to enterprise software.</p>
+    </section>
+
+    <div class="controls-section" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <label style="font-weight: bold;">Filter by Sub-Industry:</label>
+      <select id="industry-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="all">All</option>
+        <option value="Semiconductors">Semiconductors</option>
+        <option value="Software">Software</option>
+      </select>
+
+      <label style="font-weight: bold; margin-left: 1rem;">Min Market Cap:</label>
+      <select id="mcap-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="0">Any</option>
+        <option value="100000000000">$100B+</option>
+        <option value="1000000000000">$1T+</option>
+      </select>
+    </div>
+
+    <section>
+      <h2>Summary Comparison</h2>
+      <div style="overflow-x: auto;">
+        <table id="summary-table">
+          <thead>
+            <tr>
+              <th style="cursor: pointer;" onclick="sortTable(0)">Ticker ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(1)">Name ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(2)">Price ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(3)">Market Cap ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(4)">P/E Ratio ↕</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+<td><strong>NVDA</strong></td>
+<td>NVIDIA Corporation</td>
+<td>$180.25</td>
+<td>$4.38T</td>
+<td>36.79</td>
+</tr>
+<tr>
+<td><strong>GOOGL</strong></td>
+<td>Alphabet Inc.</td>
+<td>$302.28</td>
+<td>$3.66T</td>
+<td>27.94</td>
+</tr>
+<tr>
+<td><strong>MSFT</strong></td>
+<td>Microsoft Corporation</td>
+<td>$395.55</td>
+<td>$2.94T</td>
+<td>24.75</td>
+</tr>
+<tr>
+<td><strong>TSM</strong></td>
+<td>Taiwan Semiconductor Manufactur</td>
+<td>$338.31</td>
+<td>$1.75T</td>
+<td>32.56</td>
+</tr>
+<tr>
+<td><strong>META</strong></td>
+<td>Meta Platforms, Inc.</td>
+<td>$613.71</td>
+<td>$1.55T</td>
+<td>26.10</td>
+</tr>
+<tr>
+<td><strong>AVGO</strong></td>
+<td>Broadcom Inc.</td>
+<td>$322.16</td>
+<td>$1.53T</td>
+<td>62.92</td>
+</tr>
+<tr>
+<td><strong>ASML</strong></td>
+<td>ASML Holding N.V. - New York Re</td>
+<td>$1,345.69</td>
+<td>$528.40B</td>
+<td>47.17</td>
+</tr>
+<tr>
+<td><strong>MU</strong></td>
+<td>Micron Technology, Inc.</td>
+<td>$426.13</td>
+<td>$479.61B</td>
+<td>40.47</td>
+</tr>
+<tr>
+<td><strong>ORCL</strong></td>
+<td>Oracle Corporation</td>
+<td>$155.11</td>
+<td>$445.80B</td>
+<td>29.16</td>
+</tr>
+<tr>
+<td><strong>PLTR</strong></td>
+<td>Palantir Technologies Inc.</td>
+<td>$150.95</td>
+<td>$361.02B</td>
+<td>239.60</td>
+</tr>
+<tr>
+<td><strong>AMD</strong></td>
+<td>Advanced Micro Devices, Inc.</td>
+<td>$193.39</td>
+<td>$315.31B</td>
+<td>74.10</td>
+</tr>
+<tr>
+<td><strong>AMAT</strong></td>
+<td>Applied Materials, Inc.</td>
+<td>$341.53</td>
+<td>$271.04B</td>
+<td>35.10</td>
+</tr>
+<tr>
+<td><strong>IBM</strong></td>
+<td>International Business Machines</td>
+<td>$246.28</td>
+<td>$231.11B</td>
+<td>22.13</td>
+</tr>
+<tr>
+<td><strong>CRM</strong></td>
+<td>Salesforce, Inc.</td>
+<td>$192.83</td>
+<td>$180.68B</td>
+<td>24.69</td>
+</tr>
+<tr>
+<td><strong>QCOM</strong></td>
+<td>QUALCOMM Incorporated</td>
+<td>$129.82</td>
+<td>$138.65B</td>
+<td>26.17</td>
+</tr>
+<tr>
+<td><strong>PANW</strong></td>
+<td>Palo Alto Networks, Inc.</td>
+<td>$167.01</td>
+<td>$136.28B</td>
+<td>92.79</td>
+</tr>
+<tr>
+<td><strong>NOW</strong></td>
+<td>ServiceNow, Inc.</td>
+<td>$113.62</td>
+<td>$119.89B</td>
+<td>68.04</td>
+</tr>
+<tr>
+<td><strong>CRWD</strong></td>
+<td>CrowdStrike Holdings, Inc.</td>
+<td>$441.78</td>
+<td>$112.04B</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>SNOW</strong></td>
+<td>Snowflake Inc.</td>
+<td>$178.66</td>
+<td>$61.14B</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>SMCI</strong></td>
+<td>Super Micro Computer, Inc.</td>
+<td>$30.75</td>
+<td>$18.46B</td>
+<td>22.45</td>
+</tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>The Top Ranked AI Leaders</h2>
+      <div id="cards-container">
+
+    <div class="card item-card" data-sector="Technology" data-mcap="4380976218112" data-yield="0.02">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">1</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">NVIDIA Corporation (NVDA)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$180.25</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$4.38T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">36.79</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> NVIDIA Corporation ranks #1 for AI dominance due to its market cap of $4.38T combined with its position in the Semiconductors industry.</p>
+      <p>NVIDIA Corporation operates as a data center scale AI infrastructure company. The company operates through two segments, Compute & Networking, and Graphics segments. The Compute & Networking segment...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="3656681259008" data-yield="0.28">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">2</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Alphabet Inc. (GOOGL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$302.28</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$3.66T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">27.94</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Alphabet Inc. ranks #2 for AI dominance due to its market cap of $3.66T combined with its position in the Internet Content & Information industry.</p>
+      <p>Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America. It operates through Google Services, Google...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Internet Content & Information</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="2939877064704" data-yield="0.92">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">3</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Microsoft Corporation (MSFT)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$395.55</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$2.94T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">24.75</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Microsoft Corporation ranks #3 for AI dominance due to its market cap of $2.94T combined with its position in the Software - Infrastructure industry.</p>
+      <p>Microsoft Corporation develops and supports software, services, devices, and solutions worldwide. The Productivity and Business Processes segment offers Microsoft 365 commercial, enterprise mobility +...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Infrastructure</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="1754646446080" data-yield="1.04">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">4</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Taiwan Semiconductor Manufactur (TSM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$338.31</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$1.75T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">32.56</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Taiwan Semiconductor Manufactur ranks #4 for AI dominance due to its market cap of $1.75T combined with its position in the Semiconductors industry.</p>
+      <p>Taiwan Semiconductor Manufacturing Company Limited, together with its subsidiaries, manufactures, packages, tests, and sells integrated circuits and other semiconductor devices in Taiwan, China,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="1552413491200" data-yield="0.34">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">5</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Meta Platforms, Inc. (META)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$613.71</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$1.55T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">26.10</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Meta Platforms, Inc. ranks #5 for AI dominance due to its market cap of $1.55T combined with its position in the Internet Content & Information industry.</p>
+      <p>Meta Platforms, Inc. engages in the development of products that enable people to connect and share with friends and family through mobile devices, personal computers, virtual reality (VR) headsets,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Internet Content & Information</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="1527448731648" data-yield="0.81">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">6</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Broadcom Inc. (AVGO)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$322.16</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$1.53T</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">62.92</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Broadcom Inc. ranks #6 for AI dominance due to its market cap of $1.53T combined with its position in the Semiconductors industry.</p>
+      <p>Broadcom Inc. designs, develops, and supplies various semiconductor devices and infrastructure software solutions internationally. The company operates in two segments: Semiconductor Solutions and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="528396845056" data-yield="0.65">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">7</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">ASML Holding N.V. - New York Re (ASML)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$1,345.69</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$528.40B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">47.17</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> ASML Holding N.V. - New York Re ranks #7 for AI dominance due to its market cap of $528.40B combined with its position in the Semiconductor Equipment & Materials industry.</p>
+      <p>ASML Holding N.V. provides lithography solutions for the development, production, marketing, sales, upgrading, and servicing of advanced semiconductor equipment systems. The company offers...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductor Equipment & Materials</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="479613255680" data-yield="0.11">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">8</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Micron Technology, Inc. (MU)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$426.13</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$479.61B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">40.47</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Micron Technology, Inc. ranks #8 for AI dominance due to its market cap of $479.61B combined with its position in the Semiconductors industry.</p>
+      <p>Micron Technology, Inc. designs, develops, manufactures, and sells memory and storage products in the United States, Taiwan, Japan, Mainland China, Hong Kong, Europe, and internationally. It operates ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="445800251392" data-yield="1.29">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">9</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Oracle Corporation (ORCL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$155.11</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$445.80B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">29.16</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Oracle Corporation ranks #9 for AI dominance due to its market cap of $445.80B combined with its position in the Software - Infrastructure industry.</p>
+      <p>Oracle Corporation offers products and services that address enterprise information technology environments worldwide. Its Oracle cloud software as a service offering include various cloud software...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Infrastructure</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="361023438848" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">10</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Palantir Technologies Inc. (PLTR)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$150.95</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$361.02B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">239.60</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Palantir Technologies Inc. ranks #10 for AI dominance due to its market cap of $361.02B combined with its position in the Software - Infrastructure industry.</p>
+      <p>Palantir Technologies Inc. builds and deploys software platforms for the intelligence community to assist in counterterrorism investigations and operations in the United States, the United Kingdom,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Infrastructure</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="315305164800" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">11</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Advanced Micro Devices, Inc. (AMD)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$193.39</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$315.31B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">74.10</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Advanced Micro Devices, Inc. ranks #11 for AI dominance due to its market cap of $315.31B combined with its position in the Semiconductors industry.</p>
+      <p>Advanced Micro Devices, Inc. operates as a semiconductor company internationally. It operates in three segments: Data Center, Client and Gaming, and Embedded. The company offers artificial...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="271041576960" data-yield="0.62">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">12</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Applied Materials, Inc. (AMAT)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$341.53</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$271.04B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">35.10</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Applied Materials, Inc. ranks #12 for AI dominance due to its market cap of $271.04B combined with its position in the Semiconductor Equipment & Materials industry.</p>
+      <p>Applied Materials, Inc. provides materials engineering solutions, equipment, services, and software to the semiconductor and related industries in the United States, China, Korea, Taiwan, Japan,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductor Equipment & Materials</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="231111393280" data-yield="2.73">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">13</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">International Business Machines (IBM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$246.28</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$231.11B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">22.13</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> International Business Machines ranks #13 for AI dominance due to its market cap of $231.11B combined with its position in the Information Technology Services industry.</p>
+      <p>International Business Machines Corporation, together with its subsidiaries, provides integrated solutions and services in the Americas, Europe, the Middle East, Africa, and the Asia Pacific. It...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Information Technology Services</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="180681719808" data-yield="0.91">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">14</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Salesforce, Inc. (CRM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$192.83</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$180.68B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">24.69</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Salesforce, Inc. ranks #14 for AI dominance due to its market cap of $180.68B combined with its position in the Software - Application industry.</p>
+      <p>Salesforce, Inc. provides customer relationship management technology services that connect companies and customers together in the United States, Europe, and the Asia Pacific. The company offers...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Application</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="138653630464" data-yield="2.74">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">15</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">QUALCOMM Incorporated (QCOM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$129.82</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$138.65B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">26.17</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> QUALCOMM Incorporated ranks #15 for AI dominance due to its market cap of $138.65B combined with its position in the Semiconductors industry.</p>
+      <p>QUALCOMM Incorporated engages in the development and commercialization of foundational technologies for the wireless industry worldwide. It operates through three segments: Qualcomm CDMA Technologies ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="136284241920" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">16</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Palo Alto Networks, Inc. (PANW)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$167.01</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$136.28B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">92.79</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Palo Alto Networks, Inc. ranks #16 for AI dominance due to its market cap of $136.28B combined with its position in the Software - Infrastructure industry.</p>
+      <p>Palo Alto Networks, Inc. provides cybersecurity solutions in the Americas, Europe, the Middle East, Africa, the Asia Pacific, and Japan. It offers Prisma Access, a secure access service edge solution;...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Infrastructure</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="119885348864" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">17</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">ServiceNow, Inc. (NOW)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$113.62</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$119.89B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">68.04</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> ServiceNow, Inc. ranks #17 for AI dominance due to its market cap of $119.89B combined with its position in the Software - Application industry.</p>
+      <p>ServiceNow, Inc. provides cloud-based solution for digital workflows in the North America, Europe, the Middle East and Africa, Asia Pacific, and internationally. The company provides asset management,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Application</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="112041631744" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">18</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">CrowdStrike Holdings, Inc. (CRWD)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$441.78</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$112.04B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> CrowdStrike Holdings, Inc. ranks #18 for AI dominance due to its market cap of $112.04B combined with its position in the Software - Infrastructure industry.</p>
+      <p>CrowdStrike Holdings, Inc. provides cybersecurity solutions in the United States and internationally. Its unified platform provides cloud-delivered protection of endpoints, cloud workloads, identity, ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Infrastructure</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="61137453056" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">19</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Snowflake Inc. (SNOW)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$178.66</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$61.14B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Snowflake Inc. ranks #19 for AI dominance due to its market cap of $61.14B combined with its position in the Software - Application industry.</p>
+      <p>Snowflake Inc. provides a cloud-based data platform for various organizations in the United States and internationally. The company's platform includes artificial intelligence (AI) Data Cloud, which...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Software - Application</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="18464819200" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">20</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Super Micro Computer, Inc. (SMCI)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$30.75</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">$18.46B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">22.45</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Super Micro Computer, Inc. ranks #20 for AI dominance due to its market cap of $18.46B combined with its position in the Computer Hardware industry.</p>
+      <p>Super Micro Computer, Inc., together with its subsidiaries, develops and sells server and storage solutions based on modular and open-standard architecture in the United States, Asia, Europe, and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Computer Hardware</li>
+            <li>Attractive market cap</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+      </div>
+    </section>
+
+
+
+    <section class="deep-dive-section" style="margin-top: 3rem; background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>Comprehensive Guide to Investing Strategy</h2>
+
+      <h3>1. Understanding Core Fundamentals</h3>
+      <p>Before committing capital to any individual equity, a thorough understanding of underlying financial metrics is essential. Valuation ratios such as the Price-to-Earnings (P/E) multiple, Price-to-Book (P/B), and Enterprise Value-to-EBITDA provide a starting point for determining whether a stock is trading at a discount or premium relative to its historical averages and industry peers. However, static ratios are insufficient without context. Investors must analyze the trajectory of revenue growth, operating margins, and free cash flow generation. A company may appear cheap based on trailing earnings, but if forward guidance indicates secular decline, the seemingly attractive valuation may represent a value trap rather than a genuine opportunity.</p>
+
+      <h3>2. The Role of Economic Moats</h3>
+      <p>Sustainable competitive advantages, often referred to as "economic moats," are the primary drivers of long-term outperformance. These moats can take several forms: intangible assets like patents and strong brand identity, network effects where the service becomes more valuable as more people use it, switching costs that make it difficult for customers to leave, and cost advantages achieved through economies of scale. When analyzing stocks, identifying the presence and durability of these moats is critical. A company with a wide moat is better equipped to protect its market share from competitors, maintain pricing power during inflationary periods, and generate consistent returns on invested capital over decades.</p>
+
+      <h3>3. Macroeconomic Factors and Sector Rotation</h3>
+      <p>Individual stock performance is inextricably linked to broader macroeconomic conditions. Interest rates, inflation expectations, and GDP growth influence different sectors in varying ways. For instance, rising interest rates generally negatively impact growth stocks, as their future cash flows are discounted at higher rates, while potentially benefiting financials due to widening net interest margins. Conversely, during economic expansions, cyclical sectors like industrials and consumer discretionary tend to outperform defensive sectors like utilities and consumer staples. Understanding these macro dynamics allows investors to implement sector rotation strategies, adjusting portfolio weightings to align with the current phase of the business cycle.</p>
+
+      <h3>4. Risk Management and Portfolio Diversification</h3>
+      <p>Capital preservation is just as important as capital appreciation. Effective risk management begins with diversification across asset classes, sectors, and geographies to mitigate idiosyncratic risk. However, true diversification requires understanding the correlation between different investments; adding numerous highly correlated tech stocks does not meaningfully reduce portfolio volatility. Position sizing is another crucial element. Allocating a predetermined percentage of capital to each position based on its risk profile prevents any single failure from catastrophic impact. Additionally, utilizing stop-loss orders or hedging strategies through options can provide downside protection during periods of extreme market stress.</p>
+
+      <h3>5. Psychological Discipline in Investing</h3>
+      <p>Perhaps the most challenging aspect of investing is managing behavioral biases. The market is prone to periods of irrational exuberance and unwarranted panic. Investors frequently fall victim to recency bias, assuming current trends will persist indefinitely, or confirmation bias, actively seeking information that supports their existing beliefs while ignoring contradictory evidence. Maintaining a long-term perspective requires the discipline to stick to a well-defined investment thesis, the patience to allow compound interest to work, and the emotional fortitude to resist the herd mentality. Successful investing is often less about superior intellect and more about superior temperament.</p>
+
+      <h3>6. The Importance of Free Cash Flow</h3>
+      <p>While earnings per share (EPS) is a widely reported metric, it can be subject to accounting manipulation. Free cash flow (FCF) provides a more transparent view of a company's financial health. FCF represents the cash a company generates after accounting for cash outflows to support operations and maintain its capital assets. Unlike earnings, cash cannot be easily manipulated. A company with robust and growing free cash flow has the flexibility to reinvest in its business, pursue strategic acquisitions, reduce debt, buy back shares, or pay out dividends to shareholders. Tracking FCF yield is a powerful tool for identifying undervalued companies with genuine financial strength.</p>
+
+      <h3>7. Analyzing Management and Capital Allocation</h3>
+      <p>The quality of a company's leadership team is a significant determinant of long-term success. Effective management not only executes operational strategies efficiently but also excels at capital allocation. How a CEO and board of directors choose to deploy retained earnings—whether through organic growth initiatives, M&A, debt reduction, or shareholder returns—directly impacts the compounding of shareholder value. Analyzing a management team's track record of generating a high return on invested capital (ROIC) and their alignment with shareholders, often demonstrated through insider ownership, is a qualitative but vital step in the equity research process.</p>
+    </section>
+
+    <section class="related-articles" style="margin-top: 3rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>More Investing Guides</h2>
+      <ul style="list-style-type: none; padding-left: 0;">
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/highest-dividend-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Highest Dividend Stocks 2026: Top Yields Ranked</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/cheap-stocks-to-buy-now" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Cheap Stocks to Buy Now: Undervalued Picks 2026</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/best-ai-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Best AI Stocks 2026: Top Artificial Intelligence Companies</a></li>
+      </ul>
+    </section>
+
+    <section class="faq-section" style="margin-top: 3rem;">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What are the best AI stocks to buy now?</summary>
+        <p>The best AI stocks typically include a mix of semiconductor hardware manufacturers, large cloud service providers, and specialized enterprise software companies.</p>
+      </details>
+      <details>
+        <summary>Is it too late to invest in best AI stocks 2025?</summary>
+        <p>While valuations for some AI leaders have expanded significantly, the underlying secular shift toward artificial intelligence is still in its early stages across enterprise adoption.</p>
+      </details>
+      <details>
+        <summary>What sectors benefit most from AI?</summary>
+        <p>Technology hardware (chips), cloud computing, cybersecurity, and enterprise software currently show the clearest direct financial benefits from AI implementation.</p>
+      </details>
+      <details>
+        <summary>How do you evaluate best AI stocks 2026?</summary>
+        <p>We look for tangible revenue acceleration attributed to AI products, high margins indicating pricing power, and a clear competitive moat in data or infrastructure.</p>
+      </details>
+      <details>
+        <summary>Are AI stocks in a bubble?</summary>
+        <p>While there is significant enthusiasm, the leading AI companies are generating massive, tangible earnings growth, unlike many companies during the dot-com bubble.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Sortable table
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("summary-table");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let valX = x.innerHTML.replace(/[\$,%]/g, '').trim();
+          let valY = y.innerHTML.replace(/[\$,%]/g, '').trim();
+
+          if (valX === 'N/A') valX = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valX.includes('B')) valX = parseFloat(valX) * 1e9;
+          else if (valX.includes('T')) valX = parseFloat(valX) * 1e12;
+          else if (valX.includes('M')) valX = parseFloat(valX) * 1e6;
+          else if (!isNaN(valX)) valX = parseFloat(valX);
+
+          if (valY === 'N/A') valY = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valY.includes('B')) valY = parseFloat(valY) * 1e9;
+          else if (valY.includes('T')) valY = parseFloat(valY) * 1e12;
+          else if (valY.includes('M')) valY = parseFloat(valY) * 1e6;
+          else if (!isNaN(valY)) valY = parseFloat(valY);
+
+          if (dir == "asc") {
+            if (valX > valY) { shouldSwitch = true; break; }
+          } else if (dir == "desc") {
+            if (valX < valY) { shouldSwitch = true; break; }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    // Filtering
+    document.getElementById('industry-filter').addEventListener('change', filterCards);
+    document.getElementById('mcap-filter').addEventListener('change', filterCards);
+
+    function filterCards() {
+      const ind = document.getElementById('industry-filter').value;
+      const minMcap = parseFloat(document.getElementById('mcap-filter').value);
+      const cards = document.querySelectorAll('.item-card');
+
+      cards.forEach(card => {
+        const cardMcap = parseFloat(card.getAttribute('data-mcap'));
+        const cardContent = card.innerHTML;
+
+        let show = true;
+        if (ind !== 'all' && !cardContent.includes(ind)) show = false; // Simple text check for industry since sector/industry mapping varies
+        if (cardMcap < minMcap) show = false;
+
+        card.style.display = show ? 'block' : 'none';
+      });
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .rank-badge { background: var(--accent-color); color: white; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(0,0,0,0.05); white-space: nowrap; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

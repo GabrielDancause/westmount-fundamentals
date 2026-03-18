@@ -1,0 +1,444 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Dow Jones vs S&P 500: Key Differences and Comparison Tool",
+    "description": "Compare the Dow Jones Industrial Average and the S&P 500 index. Understand the methodology, differences, and why the S&P 500 is often considered a better market benchmark.",
+    "datePublished": "2026-03-15",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between the Dow Jones and the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Dow Jones Industrial Average tracks 30 prominent blue-chip companies and is price-weighted. The S&P 500 tracks 500 of the largest U.S. companies and is market-capitalization-weighted, offering a broader view of the market."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is the S&P 500 considered a better benchmark?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The S&P 500 includes 500 companies compared to the Dow's 30, meaning it covers a much larger segment of the economy. Additionally, its market-cap weighting reflects a company's total market value, whereas the Dow's price weighting can be skewed by arbitrary stock prices."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the Dow Jones price-weighted?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In a price-weighted index like the Dow, stocks with higher per-share prices have a greater impact on the index's movement, regardless of the company's actual overall size or value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When were the Dow Jones and S&P 500 established?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Dow Jones Industrial Average was established in 1896 by Charles Dow. The S&P 500, in its current 500-stock form, was introduced by Standard & Poor's in 1957."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you invest directly in the Dow Jones or S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You cannot invest directly in an index. However, you can invest in exchange-traded funds (ETFs) or index funds that track their performance, such as DIA for the Dow or VOO/SPY for the S&P 500."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Dow Jones vs S&P 500: Key Differences and Comparison Tool",
+  description: "Compare the Dow Jones Industrial Average and the S&P 500 index. Understand the methodology, differences, and why the S&P 500 is often considered a better...",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Dow Jones vs S&P 500: Key Differences and Comparison Tool"
+  description="Compare the Dow Jones Industrial Average and the S&P 500 index. Understand the methodology, differences, and why the S&P 500 is often considered a better."
+  canonical="https://westmountfundamentals.com/dow-jones-vs-sp500"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Dow Jones vs S&P 500</h1>
+      <p class="subtitle">Comparing the World's Most Famous Stock Market Benchmarks</p>
+    </div>
+
+    <section>
+      <p>
+        When you watch the evening news and the anchor says, "The market was up today," they are almost always referring to either the <strong>Dow Jones Industrial Average (DJIA)</strong> or the <strong>S&P 500</strong>. These two indices are the most widely followed measures of U.S. stock market performance, but they are constructed in fundamentally different ways.
+      </p>
+
+      <h2>A Brief History</h2>
+      <p>
+        The <strong>Dow Jones Industrial Average</strong> is the older of the two, established in 1896 by Charles Dow and Edward Jones. Originally, it consisted of just 12 heavy industry companies—railroads, cotton, gas, and sugar. Today, it tracks 30 prominent, "blue-chip" companies across various sectors (excluding transportation and utilities, which have their own indices).
+      </p>
+
+      <p>
+        The <strong>S&P 500</strong>, on the other hand, was introduced in its current 500-stock form by Standard & Poor's in 1957. It was designed to provide a much broader and more accurate representation of the overall U.S. economy.
+      </p>
+
+      <h2>The Weighting Difference: Price vs. Market Cap</h2>
+      <p>
+        The most critical difference between the two indices is <em>how</em> they are calculated.
+      </p>
+
+      <div class="card">
+        <h3>The Dow: Price-Weighted</h3>
+        <p>
+          The DJIA is a <strong>price-weighted index</strong>. This means the index value is calculated based solely on the per-share price of its 30 components, regardless of how large the actual company is.
+        </p>
+        <p>
+          <strong>Example:</strong> If Company A trades at $500 per share and Company B trades at $50 per share, Company A will have 10 times the influence on the Dow's daily movement—even if Company B is a much larger, more valuable business overall. This methodology is often criticized as outdated because a company's per-share price is arbitrary (it can be changed via stock splits).
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>The S&P 500: Market-Cap Weighted</h3>
+        <p>
+          The S&P 500 is a <strong>market-capitalization-weighted index</strong>. A company's influence on the index is determined by its total market value (Share Price × Total Outstanding Shares).
+        </p>
+        <p>
+          <strong>Example:</strong> A $3 Trillion company like Apple or Microsoft will have a massive influence on the S&P 500's movement, while a $20 Billion company at the bottom of the index will have virtually zero impact. This approach reflects the true economic footprint of each company.
+        </p>
+      </div>
+
+      <h2>Which is the Better Benchmark?</h2>
+      <p>
+        For modern investors and financial professionals, the <strong>S&P 500</strong> is almost universally considered the superior benchmark. Because it includes 500 companies—representing roughly 80% of the total value of the U.S. stock market—it provides a much more accurate picture of how the broader economy is performing.
+      </p>
+
+      <p>
+        The Dow's limitation of only 30 stocks means it can miss entirely new sectors of the economy for years, and its price-weighted nature makes its daily movements less mathematically sound. However, because of its long history, the Dow remains deeply ingrained in the public consciousness.
+      </p>
+
+      <p>
+        If you want to see exactly which companies make up the broader market, check out our <a href="/sp500-companies-complete-list-2026">Complete List of S&P 500 Companies</a>.
+      </p>
+    </section>
+
+    <div class="calculator-card">
+      <h3 style="text-align: center; margin-bottom: 1.5rem;">Interactive Comparison</h3>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('facts')">Key Facts</button>
+        <button class="tab-btn" onclick="switchTab('methodology')">Methodology</button>
+        <button class="tab-btn" onclick="switchTab('representation')">Representation</button>
+      </div>
+
+      <div class="tab-content active" id="tab-facts">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Dow Jones (DJIA)</th>
+                <th>S&amp;P 500</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Established</strong></td>
+                <td>1896</td>
+                <td>1957 (in current 500-stock form)</td>
+              </tr>
+              <tr>
+                <td><strong>Number of Companies</strong></td>
+                <td>30</td>
+                <td>500</td>
+              </tr>
+              <tr>
+                <td><strong>Weighting Method</strong></td>
+                <td>Price-Weighted</td>
+                <td>Market-Cap Weighted</td>
+              </tr>
+              <tr>
+                <td><strong>Selection Process</strong></td>
+                <td>Committee selected (qualitative)</td>
+                <td>Rules-based + Committee (quantitative)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-methodology">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Dow Jones (DJIA)</th>
+                <th>S&amp;P 500</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>How value is calculated</strong></td>
+                <td>Sum of all 30 stock prices divided by the "Dow Divisor"</td>
+                <td>Sum of all 500 companies' market caps divided by an index divisor</td>
+              </tr>
+              <tr>
+                <td><strong>Impact of a $100 price move</strong></td>
+                <td>Massive impact on the index</td>
+                <td>Minimal impact unless the company has a massive share count</td>
+              </tr>
+              <tr>
+                <td><strong>Impact of a Stock Split</strong></td>
+                <td>Reduces the company's weight/influence in the index</td>
+                <td>Zero impact (market cap remains the same)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-representation">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Representation</th>
+                <th>Dow Jones (DJIA)</th>
+                <th>S&amp;P 500</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Market Coverage</strong></td>
+                <td>~25% of U.S. stock market value</td>
+                <td>~80% of U.S. stock market value</td>
+              </tr>
+              <tr>
+                <td><strong>Sector Focus</strong></td>
+                <td>Heavy on Industrials, Financials, Healthcare. Excludes Transportation and Utilities.</td>
+                <td>Broad coverage across all 11 GICS sectors.</td>
+              </tr>
+              <tr>
+                <td><strong>Primary Use Case</strong></td>
+                <td>Historical reference, mainstream news headlines</td>
+                <td>Professional benchmark for investment performance, index fund investing</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      function switchTab(tabId) {
+        // Remove active class from all buttons and contents
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        // Add active class to clicked button and target content
+        event.currentTarget.classList.add('active');
+        document.getElementById('tab-' + tabId).classList.add('active');
+      }
+    </script>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>What is the difference between the Dow Jones and the S&P 500?</h3>
+        <p>The Dow Jones Industrial Average tracks 30 prominent blue-chip companies and is price-weighted. The S&P 500 tracks 500 of the largest U.S. companies and is market-capitalization-weighted, offering a broader view of the market.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why is the S&P 500 considered a better benchmark?</h3>
+        <p>The S&P 500 includes 500 companies compared to the Dow's 30, meaning it covers a much larger segment of the economy. Additionally, its market-cap weighting reflects a company's total market value, whereas the Dow's price weighting can be skewed by arbitrary stock prices.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How is the Dow Jones price-weighted?</h3>
+        <p>In a price-weighted index like the Dow, stocks with higher per-share prices have a greater impact on the index's movement, regardless of the company's actual overall size or value.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>When were the Dow Jones and S&P 500 established?</h3>
+        <p>The Dow Jones Industrial Average was established in 1896 by Charles Dow. The S&P 500, in its current 500-stock form, was introduced by Standard & Poor's in 1957.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can you invest directly in the Dow Jones or S&P 500?</h3>
+        <p>You cannot invest directly in an index. However, you can invest in exchange-traded funds (ETFs) or index funds that track their performance, such as DIA for the Dow or VOO/SPY for the S&P 500.</p>
+      </div>
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .calculator-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 3rem 0;
+    }
+
+    /* Tabs Styling */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: var(--text-primary);
+      background: var(--accent-color);
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Table Styling overrides */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--text-primary);
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    td {
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .faq-section {
+      margin-top: 4rem;
+    }
+
+    .faq-item {
+      margin-bottom: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+    }
+
+    .faq-item p {
+      color: var(--text-secondary);
+      margin-bottom: 0;
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</SiteLayout>

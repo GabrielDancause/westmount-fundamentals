@@ -1,0 +1,313 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Stock Profit Calculator | Westmount Fundamentals",
+  description: "Calculate your true stock profit, return on investment (ROI), and break-even price. What are hidden fees costing you?",
+  category: "tool",
+  published: "2026-03-15",
+};
+
+const schema = [{"@context": "https://schema.org", "@type": "Article", "headline": "Stock Profit Calculator", "description": "Calculate your true stock profit, return on investment (ROI), and break-even price. What are hidden fees costing you?", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}, "publisher": {"@type": "Organization", "name": "Westmount Fundamentals"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://westmountfundamentals.com/stock-profit-calculator"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do you calculate profit on a stock?", "acceptedAnswer": {"@type": "Answer", "text": "Stock profit is calculated by finding the total revenue from selling shares (shares \u00d7 sell price) and subtracting the total cost to acquire them (shares \u00d7 buy price). You must also subtract any commissions or fees paid when buying and selling."}}, {"@type": "Question", "name": "How do stock commissions affect my profit?", "acceptedAnswer": {"@type": "Answer", "text": "Commissions directly reduce your net profit. Buying commissions increase your initial total investment cost, while selling commissions decrease your final revenue. Both must be factored into your calculation to find your true return on investment (ROI)."}}, {"@type": "Question", "name": "What is a good ROI for stocks?", "acceptedAnswer": {"@type": "Answer", "text": "A 'good' ROI depends on your goals, but historically, the S&P 500 has returned an average of about 7% to 10% annually, adjusted for inflation. Individual stock returns can be much higher or lower depending on market conditions and the company's performance."}}, {"@type": "Question", "name": "Does this calculator account for capital gains taxes?", "acceptedAnswer": {"@type": "Answer", "text": "No, this calculator determines your pre-tax net profit. Capital gains taxes vary based on your country, income tax bracket, and whether the investment was held short-term or long-term. You should consult a tax professional for precise tax liabilities."}}, {"@type": "Question", "name": "How do I calculate my break-even price?", "acceptedAnswer": {"@type": "Answer", "text": "To calculate your break-even price, add your total buying costs (including commissions) to your expected selling commissions, then divide that total by the number of shares. This gives the exact share price required to sell without losing money."}}]}];
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stock-profit-calculator" schema={JSON.stringify(schema)}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Stock Profit Calculator</h1>
+      <p class="subtitle">Calculate your net profit, ROI, and break-even price.</p>
+    </div>
+
+    <div class="calculator-container" id="calculator">
+      <div class="calc-grid">
+        <div class="calc-inputs-panel">
+          <div class="input-group">
+            <label for="shares">Number of Shares</label>
+            <input type="number" id="shares" min="0" step="1" placeholder="e.g., 100" />
+          </div>
+
+          <div class="input-group">
+            <label for="buy-price">Buy Price (per share)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="buy-price" min="0" step="0.01" placeholder="e.g., 150.00" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="buy-commission">Buy Commission / Fees</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="buy-commission" min="0" step="0.01" placeholder="e.g., 5.00" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="sell-price">Sell Price (per share)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="sell-price" min="0" step="0.01" placeholder="e.g., 175.00" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="sell-commission">Sell Commission / Fees</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="sell-commission" min="0" step="0.01" placeholder="e.g., 5.00" />
+            </div>
+          </div>
+
+          <div id="error-message" class="error-message"></div>
+        </div>
+
+        <div class="calc-results-panel">
+          <h3>Trade Summary</h3>
+
+          <div class="result-row">
+            <span class="result-label">Total Cost</span>
+            <span class="result-value" id="res-cost">$0.00</span>
+          </div>
+
+          <div class="result-row">
+            <span class="result-label">Total Revenue</span>
+            <span class="result-value" id="res-revenue">$0.00</span>
+          </div>
+
+          <div class="result-row highlight-result">
+            <span class="result-label">Net Profit / Loss</span>
+            <span class="result-value" id="res-profit">$0.00</span>
+          </div>
+
+          <div class="result-row highlight-result">
+            <span class="result-label">Return on Investment (ROI)</span>
+            <span class="result-value" id="res-roi">0.00%</span>
+          </div>
+
+          <div class="result-row break-even-row">
+            <span class="result-label">Break-Even Share Price</span>
+            <span class="result-value" id="res-breakeven">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="explainer">
+      <h2>Understanding Stock Profit and Return on Investment (ROI)</h2>
+      <p>Investing in the stock market can be a highly rewarding endeavor, but understanding exactly how much money you are making—or losing—is the absolute foundation of successful investing. Too often, beginner investors look solely at the difference between the buy price and the sell price of a stock, completely neglecting the hidden costs that can eat into their returns. Our Stock Profit Calculator is designed to provide you with a comprehensive, transparent view of your true net profit, your return on investment (ROI), and the break-even price you need to achieve just to cover your costs. In this guide, we will break down the methodology behind these calculations, the formulas you need to know, and the critical factors that influence your final bottom line.</p>
+
+      <h3>The Core Formula for Stock Profit</h3>
+      <p>At its most basic level, stock profit is simply the money you make after selling a stock, minus the money you spent to acquire it. However, the calculation must include the exact number of shares traded to be accurate. The fundamental formula for Gross Profit is: <strong>Gross Profit = (Sell Price &times; Number of Shares) - (Buy Price &times; Number of Shares)</strong>. While this formula gives you a high-level overview of your trade's success, it is inherently flawed because it ignores the reality of trading costs. If you buy 100 shares of a company at $50 each and sell them at $60 each, your gross profit is $1,000. But did you actually put $1,000 in your pocket? The answer is almost always no, and this is why transitioning from Gross Profit to Net Profit is so essential.</p>
+
+      <h3>Understanding Gross Profit vs. Net Profit</h3>
+      <p>The difference between gross profit and net profit is the difference between theory and reality. Gross profit is your total revenue minus your cost of goods sold (in this case, the raw cost of the shares). Net profit, on the other hand, is what remains after all operating expenses, commissions, and fees have been deducted. It is the true measure of your investment's success. When you evaluate a trade, focusing on gross profit can lead to a false sense of security. You might think you had a winning trade, only to realize that after broker fees and other costs are accounted for, you barely broke even. Our calculator specifically targets Net Profit to ensure you always know exactly where you stand financially after a trade is fully settled.</p>
+
+      <div class="highlight-box">
+        <strong>Key Insight:</strong> Never measure your investing success using gross profit. Net profit is the only metric that accurately reflects the cash added to your portfolio balance. Always track your trades using net figures.
+      </div>
+
+      <h3>Factoring in Trading Commissions and Fees</h3>
+      <p>While many modern brokerages have moved toward commission-free trading models, trading costs have not entirely disappeared. You may still encounter per-share commissions, flat-fee transaction costs for specific types of securities (like penny stocks or options), regulatory fees (such as SEC fees in the United States), and routing fees. Every single one of these costs must be accounted for. The complete formula for Net Profit is: <strong>Net Profit = ((Sell Price &times; Shares) - Sell Commissions) - ((Buy Price &times; Shares) + Buy Commissions)</strong>. Notice how buying commissions are added to your initial cost base, while selling commissions are subtracted from your final revenue. If you are an active day trader or swing trader making dozens of trades a week, these seemingly small fees compound rapidly, significantly dragging down your overall portfolio performance. Always input your exact broker fees into the calculator for the most precise result.</p>
+
+      <h3>Calculating Return on Investment (ROI)</h3>
+      <p>Knowing your net profit in dollar terms is important, but it doesn't tell the whole story. Earning a $100 profit is fantastic if your initial investment was only $10. It is much less impressive if your initial investment was $10,000. This is where Return on Investment (ROI) becomes critical. ROI measures the efficiency and profitability of an investment relative to its cost. The formula is: <strong>ROI = (Net Profit / Total Investment Cost) &times; 100</strong>. By converting your profit into a percentage, you can compare the performance of different trades on an apples-to-apples basis, regardless of the amount of capital deployed. Tracking your average ROI over time is one of the best ways to gauge your effectiveness as an investor and adjust your strategies accordingly.</p>
+
+      <h3>Determining Your Break-Even Price</h3>
+      <p>One of the most valuable, yet frequently overlooked, metrics in trading is the break-even price. Your break-even price is the exact price at which a stock must be sold so that your net profit is exactly zero. In other words, it is the price required to cover both the cost of the shares and all associated trading fees. The formula for the break-even price is: <strong>Break-Even Price = (Total Buy Cost + Sell Commissions) / Number of Shares</strong>. Knowing this number before you even enter a trade allows you to set realistic stop-loss orders and profit targets. If you calculate your break-even price and realize it requires a massive, improbable leap in the stock's value just to cover your broker fees, you may decide the trade is too risky to take in the first place.</p>
+
+      <h3>The Impact of Capital Gains Taxes</h3>
+      <p>It is important to note that this calculator provides your pre-tax net profit. In the real world, the government will want a share of your success. Capital gains taxes are levied on the profits you make from selling assets like stocks. In many jurisdictions, the tax rate you pay depends heavily on how long you held the asset. Short-term capital gains (usually on assets held for less than a year) are typically taxed at your ordinary income tax rate, which can be quite high. Long-term capital gains (on assets held for more than a year) often benefit from lower, preferential tax rates. While our calculator does not compute your tax liability—since tax brackets vary wildly by individual and region—you should always mentally earmark a portion of your net profit for tax obligations to avoid surprises come tax season.</p>
+
+      <h3>Conclusion and Final Thoughts</h3>
+      <p>Successful investing requires a blend of market knowledge, emotional discipline, and rigorous financial accounting. A stock profit calculator is an indispensable tool in your financial toolkit, providing immediate clarity on your past trades and helping you project the viability of future investments. By consistently monitoring your net profit, ROI, and break-even points, you transition from gambling on stock price movements to managing a structured, data-driven investment portfolio. For a more comprehensive view of how individual trades fit into your broader financial strategy, we highly recommend exploring our <a href="/portfolio-allocation-calculator">Portfolio Allocation Calculator</a>, which will help you ensure your capital is optimally distributed across different asset classes to manage risk and maximize long-term growth.</p>
+    </div>
+
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>How do you calculate profit on a stock?</summary>
+        <p>Stock profit is calculated by finding the total revenue from selling shares (shares × sell price) and subtracting the total cost to acquire them (shares × buy price). You must also subtract any commissions or fees paid when buying and selling.</p>
+      </details>
+
+      <details>
+        <summary>How do stock commissions affect my profit?</summary>
+        <p>Commissions directly reduce your net profit. Buying commissions increase your initial total investment cost, while selling commissions decrease your final revenue. Both must be factored into your calculation to find your true return on investment (ROI).</p>
+      </details>
+
+      <details>
+        <summary>What is a good ROI for stocks?</summary>
+        <p>A 'good' ROI depends on your goals, but historically, the S&P 500 has returned an average of about 7% to 10% annually, adjusted for inflation. Individual stock returns can be much higher or lower depending on market conditions and the company's performance.</p>
+      </details>
+
+      <details>
+        <summary>Does this calculator account for capital gains taxes?</summary>
+        <p>No, this calculator determines your pre-tax net profit. Capital gains taxes vary based on your country, income tax bracket, and whether the investment was held short-term or long-term. You should consult a tax professional for precise tax liabilities.</p>
+      </details>
+
+      <details>
+        <summary>How do I calculate my break-even price?</summary>
+        <p>To calculate your break-even price, add your total buying costs (including commissions) to your expected selling commissions, then divide that total by the number of shares. This gives the exact share price required to sell without losing money.</p>
+      </details>
+
+    </section>
+  </div>
+<script is:inline>
+  function initStockProfitCalculator() {
+    const container = document.getElementById('calculator');
+    if (!container || container.dataset.initialized) return;
+    container.dataset.initialized = 'true';
+
+    const inputs = ['shares', 'buy-price', 'buy-commission', 'sell-price', 'sell-commission'].map(id => document.getElementById(id));
+
+    const resCost = document.getElementById('res-cost');
+    const resRevenue = document.getElementById('res-revenue');
+    const resProfit = document.getElementById('res-profit');
+    const resRoi = document.getElementById('res-roi');
+    const resBreakeven = document.getElementById('res-breakeven');
+    const errorMessage = document.getElementById('error-message');
+
+    const currencyFormatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    const percentFormatter = new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function getVal(id) {
+      const el = document.getElementById(id);
+      if (!el || el.value === '') return 0;
+      const val = parseFloat(el.value);
+      return isNaN(val) ? 0 : val;
+    }
+
+    function calculate() {
+      inputs.forEach(input => input.classList.remove('input-error'));
+      errorMessage.textContent = '';
+      errorMessage.style.display = 'none';
+
+      const shares = getVal('shares');
+      const buyPrice = getVal('buy-price');
+      const buyComm = getVal('buy-commission');
+      const sellPrice = getVal('sell-price');
+      const sellComm = getVal('sell-commission');
+
+      let hasError = false;
+      let errorText = '';
+
+      if (shares < 0 || buyPrice < 0 || buyComm < 0 || sellPrice < 0 || sellComm < 0) {
+          hasError = true;
+          errorText = 'Values cannot be negative.';
+          inputs.forEach(input => {
+              if (getVal(input.id) < 0) input.classList.add('input-error');
+          });
+      }
+
+      if (hasError) {
+          errorMessage.textContent = errorText;
+          errorMessage.style.display = 'block';
+
+          resCost.textContent = '-';
+          resRevenue.textContent = '-';
+          resProfit.textContent = '-';
+          resRoi.textContent = '-';
+          resBreakeven.textContent = '-';
+          return;
+      }
+
+      const cost = (shares * buyPrice) + buyComm;
+      const revenue = shares > 0 ? (shares * sellPrice) - sellComm : 0;
+      const profit = revenue > 0 || shares > 0 ? revenue - cost : 0 - cost;
+      const roi = cost > 0 ? profit / cost : 0;
+      const breakeven = shares > 0 ? (cost + sellComm) / shares : 0;
+
+      resCost.textContent = currencyFormatter.format(cost);
+      resRevenue.textContent = currencyFormatter.format(revenue);
+      resProfit.textContent = currencyFormatter.format(profit);
+      resRoi.textContent = percentFormatter.format(roi);
+      resBreakeven.textContent = currencyFormatter.format(breakeven);
+
+      const buyColor = 'var(--buy-color, #22c55e)';
+      const sellColor = 'var(--sell-color, #ef4444)';
+      const neutralColor = 'var(--text-primary)';
+
+      if (profit > 0) {
+        resProfit.style.color = buyColor;
+        resRoi.style.color = buyColor;
+      } else if (profit < 0) {
+        resProfit.style.color = sellColor;
+        resRoi.style.color = sellColor;
+      } else {
+        resProfit.style.color = neutralColor;
+        resRoi.style.color = neutralColor;
+      }
+    }
+
+    inputs.forEach(input => {
+      if(input) {
+        input.addEventListener('input', calculate);
+      }
+    });
+
+    calculate();
+  }
+
+  document.addEventListener('DOMContentLoaded', initStockProfitCalculator);
+  document.addEventListener('astro:page-load', initStockProfitCalculator);
+</script>
+<style is:inline>
+  .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .hero { text-align: center; padding: 3rem 0 2rem; }
+  .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+  .calculator-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .input-group { margin-bottom: 1.5rem; }
+  .input-group label { display: block; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+  .input-wrapper { position: relative; display: flex; align-items: center; }
+  .prefix { position: absolute; left: 1rem; color: var(--text-secondary); font-family: var(--font-mono); font-size: 1rem; pointer-events: none; }
+
+  input[type="number"] { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); font-family: var(--font-mono); font-size: 1.1rem; padding: 0.75rem 1rem; border-radius: 8px; transition: border-color 0.2s; -moz-appearance: textfield; }
+  .prefix + input[type="number"] { padding-left: 2.5rem; }
+  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"]:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+  input.input-error { border-color: var(--sell-color, #ef4444); }
+
+  .error-message { color: var(--sell-color, #ef4444); font-size: 0.9rem; margin-top: 1rem; display: none; }
+
+  .calc-results-panel { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+  .calc-results-panel h3 { margin-top: 0; margin-bottom: 0.5rem; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.75rem; border-bottom: 1px dashed var(--border-color); }
+  .result-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .result-label { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; }
+  .result-value { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
+
+  .highlight-result { padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
+  .highlight-result .result-label { color: var(--text-primary); font-size: 1.05rem; }
+  .highlight-result .result-value { font-size: 1.5rem; }
+  .break-even-row { margin-top: 0.5rem; }
+
+  .explainer { margin-top: 3rem; line-height: 1.6; }
+  .explainer h2 { margin-top: 2rem; margin-bottom: 1rem; }
+  .explainer h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; }
+  .highlight-box { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+
+  .faq-section { margin-top: 3rem; }
+  .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+  .faq-section summary { font-weight: 600; cursor: pointer; color: var(--text-primary); list-style: none; position: relative; padding-right: 1.5rem; }
+  .faq-section summary::-webkit-details-marker { display: none; }
+  .faq-section summary::after { content: '+'; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
+  .faq-section details[open] summary::after { content: '−'; }
+  .faq-section p { margin-top: 1rem; margin-bottom: 0; color: var(--text-secondary); line-height: 1.5; }
+</style>
+</SiteLayout>

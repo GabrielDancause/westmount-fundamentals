@@ -1,0 +1,678 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Options Calculator | Black-Scholes Pricing & Greeks",
+  description: "Want to know the true fair value of an option before you trade? Most beginners overpay because they ignore one critical pricing factor.",
+  category: "tool",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/options-calculator"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is an options calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An options calculator is a mathematical tool that uses pricing models, typically the Black-Scholes model, to estimate the theoretical fair value of a financial option based on underlying price, strike price, time to expiration, volatility, and interest rates."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do options calculators need an interest rate?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Options pricing models require a risk-free interest rate because they account for the time value of money. Buying an option instead of the underlying stock frees up capital that could theoretically be invested at the risk-free rate (like in Treasury bills)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does implied volatility mean in an options calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Implied volatility represents the market's expectation of future price fluctuations for the underlying asset. Unlike historical volatility, which looks backward, implied volatility is derived from the current market price of the option and is the only variable in the Black-Scholes model that cannot be directly observed in the underlying asset."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can an options calculator guarantee profits?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. An options calculator only provides a theoretical fair value based on fixed inputs. The actual market price of an option is determined by supply and demand. Furthermore, realized volatility often differs from implied volatility, meaning the theoretical model is only an estimate, not a guarantee."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the limitations of the Black-Scholes options calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The standard Black-Scholes model assumes European-style options (which can only be exercised at expiration), constant volatility, constant interest rates, and no dividends. It also assumes stock prices follow a lognormal distribution, which can sometimes underestimate the probability of extreme market moves."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/options-calculator" schema={schema}>
+  <div class="page-content">
+    <header class="hero-section">
+      <h1>Options Calculator</h1>
+      <p class="subtitle">Calculate the theoretical fair value of European call and put options using the Black-Scholes model.</p>
+    </header>
+
+    <div class="calculator-container">
+      <div class="input-panel">
+        <h2>Option Parameters</h2>
+
+        <div class="input-group">
+          <label for="underlyingPrice">Underlying Price (S) [$]</label>
+          <input type="number" id="underlyingPrice" value="100.00" step="0.01" min="0.01" />
+        </div>
+
+        <div class="input-group">
+          <label for="strikePrice">Strike Price (K) [$]</label>
+          <input type="number" id="strikePrice" value="100.00" step="0.01" min="0.01" />
+        </div>
+
+        <div class="input-group">
+          <label for="timeToExpiration">Time to Expiration (Years)</label>
+          <input type="number" id="timeToExpiration" value="1.0" step="0.01" min="0.001" />
+          <div class="hint">1 year = 1.0; 6 months = 0.5; 30 days ≈ 0.082</div>
+        </div>
+
+        <div class="input-group">
+          <label for="volatility">Volatility (σ) [%]</label>
+          <input type="number" id="volatility" value="20.0" step="0.1" min="0.1" />
+          <div class="hint">Annualized implied or historical volatility</div>
+        </div>
+
+        <div class="input-group">
+          <label for="interestRate">Risk-Free Interest Rate (r) [%]</label>
+          <input type="number" id="interestRate" value="5.0" step="0.1" />
+          <div class="hint">Annual risk-free rate (e.g., US Treasury yield)</div>
+        </div>
+
+        <div class="input-group">
+          <label for="dividendYield">Dividend Yield (q) [%]</label>
+          <input type="number" id="dividendYield" value="0.0" step="0.1" />
+        </div>
+
+        <button id="calculateBtn" class="primary-btn">Calculate Option Value</button>
+      </div>
+
+      <div class="results-panel">
+        <h2>Theoretical Value</h2>
+        <div class="results-grid">
+          <div class="stat-card call-card">
+            <h3>Call Option Price</h3>
+            <div class="stat-value" id="callPriceResult">$0.00</div>
+            <div class="stat-label">Theoretical Premium</div>
+          </div>
+          <div class="stat-card put-card">
+            <h3>Put Option Price</h3>
+            <div class="stat-value" id="putPriceResult">$0.00</div>
+            <div class="stat-label">Theoretical Premium</div>
+          </div>
+        </div>
+
+        <h3>The Greeks (Sensitivity Measures)</h3>
+        <div class="greeks-grid">
+          <div class="greek-item">
+            <span class="greek-name">Delta (Δ)</span>
+            <div class="greek-values">
+              <span class="call-val" id="callDelta">0.0000</span> / <span class="put-val" id="putDelta">0.0000</span>
+            </div>
+            <div class="greek-desc">Change in option price per $1 change in underlying</div>
+          </div>
+          <div class="greek-item">
+            <span class="greek-name">Gamma (Γ)</span>
+            <div class="greek-values" id="gamma">0.0000</div>
+            <div class="greek-desc">Change in Delta per $1 change in underlying (Same for Call/Put)</div>
+          </div>
+          <div class="greek-item">
+            <span class="greek-name">Theta (Θ)</span>
+            <div class="greek-values">
+              <span class="call-val" id="callTheta">0.0000</span> / <span class="put-val" id="putTheta">0.0000</span>
+            </div>
+            <div class="greek-desc">Daily time decay of option price</div>
+          </div>
+          <div class="greek-item">
+            <span class="greek-name">Vega (ν)</span>
+            <div class="greek-values" id="vega">0.0000</div>
+            <div class="greek-desc">Change in option price per 1% change in volatility</div>
+          </div>
+          <div class="greek-item">
+            <span class="greek-name">Rho (ρ)</span>
+            <div class="greek-values">
+              <span class="call-val" id="callRho">0.0000</span> / <span class="put-val" id="putRho">0.0000</span>
+            </div>
+            <div class="greek-desc">Change in option price per 1% change in interest rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <article class="educational-content">
+      <h2>Comprehensive Guide to Options Pricing</h2>
+
+      <p>Understanding how options are priced is arguably the most critical skill for any derivatives trader. Whether you are a retail investor dabbling in covered calls or an institutional trader managing a complex portfolio, an <strong>options calculator</strong> is an indispensable tool. It bridges the gap between the raw variables of the market—stock price, time, and volatility—and the actual premium you pay or receive when executing a trade.</p>
+
+      <p>Many new traders make the mistake of buying options based solely on their directional bias. They might believe a stock is going to increase in value, so they buy a call option. However, without consulting an options pricing model, they might overpay for that call option due to elevated implied volatility. In such cases, even if the underlying stock moves in the anticipated direction, the option buyer can still lose money because the "vega" (volatility contraction) erodes the premium faster than the "delta" (directional movement) can add to it. This phenomenon is known as the "volatility crush."</p>
+
+      <p>If you are simply looking to map out your potential profit and loss scenarios based on different expiration prices, an <a href="/options-profit-calculator">options profit calculator</a> might be more appropriate. For evaluating employee compensation packages, you should consult a dedicated <a href="/stock-options-calculator">stock options calculator</a>. However, if your goal is to understand the <em>theoretical fair value</em> of a standard equity or index option, the Black-Scholes calculator above is the industry standard starting point.</p>
+
+      <h3>The Mechanics of the Options Calculator</h3>
+
+      <p>The calculator provided on this page utilizes the Black-Scholes-Merton model, adapted to include continuous dividend yields. This model, developed in the early 1970s by Fischer Black, Myron Scholes, and Robert Merton, revolutionized the financial industry. It provided the first mathematically rigorous framework for determining the fair price of a European-style option.</p>
+
+      <p>The model requires several key inputs, each playing a distinct role in the final calculation:</p>
+
+      <ul>
+        <li><strong>Underlying Price (S):</strong> The current market price of the stock, ETF, or index. As this price moves closer to or further from the strike price, the option's value changes dynamically.</li>
+        <li><strong>Strike Price (K):</strong> The predetermined price at which the option buyer has the right to buy (call) or sell (put) the underlying asset. The relationship between the underlying price and the strike price determines whether the option is "in-the-money" (ITM), "at-the-money" (ATM), or "out-of-the-money" (OTM).</li>
+        <li><strong>Time to Expiration (T):</strong> Expressed in years. The longer the time until expiration, the greater the probability that the underlying asset will move favorably for the option holder. This is known as "time value." As expiration approaches, this time value decays exponentially, a concept measured by the Greek "Theta."</li>
+        <li><strong>Volatility (σ):</strong> This is the most crucial and often misunderstood input. Volatility is a statistical measure of the dispersion of returns for a given security. In options pricing, we are primarily concerned with <em>implied volatility</em>, which is the market's forecast of a likely movement in a security's price. Higher volatility means larger expected price swings, which increases the probability of the option expiring in-the-money, thus making the option more expensive.</li>
+        <li><strong>Risk-Free Interest Rate (r):</strong> The theoretical rate of return of an investment with zero risk, typically represented by U.S. Treasury bill yields. Interest rates affect options pricing due to the cost of carry. Buying a call option requires less capital than buying the underlying stock outright; the saved capital can theoretically be invested at the risk-free rate. Therefore, higher interest rates generally increase call prices and decrease put prices.</li>
+        <li><strong>Dividend Yield (q):</strong> For stocks that pay dividends, the expected dividend payments during the life of the option must be factored in. Since a stock's price typically drops by the amount of the dividend on the ex-dividend date, higher dividend yields generally lower the price of call options and raise the price of put options.</li>
+      </ul>
+
+      <p>If you are entirely new to derivatives and are debating whether to trade options or just buy the underlying equities, we strongly recommend reading our comprehensive guide on <a href="/options-vs-stocks">options vs stocks</a> before risking your capital. Furthermore, before placing any live trades, it is wise to test your strategies using an <a href="/options-trading-simulator">options trading simulator</a>.</p>
+
+      <h3>The Black-Scholes Formula Explained</h3>
+
+      <p>While the calculator handles the heavy lifting, understanding the underlying mathematics can provide profound insights into how options behave under varying market conditions. The standard formula for a non-dividend paying stock is:</p>
+
+      <div class="formula-box" style="background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 2rem 0; overflow-x: auto;">
+        <p><strong>Call Option (C)</strong> = S * N(d1) - K * e<sup>-rT</sup> * N(d2)</p>
+        <p><strong>Put Option (P)</strong> = K * e<sup>-rT</sup> * N(-d2) - S * N(-d1)</p>
+        <p>Where:</p>
+        <p>d1 = [ln(S/K) + (r + σ<sup>2</sup>/2) * T] / (σ * √T)</p>
+        <p>d2 = d1 - σ * √T</p>
+      </div>
+
+      <p>Here, <em>N(x)</em> represents the cumulative distribution function of the standard normal distribution. In simpler terms, <em>N(d1)</em> roughly translates to the probability that the option will expire in-the-money, adjusted for risk. <em>N(d2)</em> is the probability that the option will be exercised in a risk-neutral world.</p>
+
+      <h4>A Worked Example (Show Your Math)</h4>
+
+      <p>Let's walk through a practical scenario to see how these variables interact. Suppose you are analyzing a tech stock currently trading at $150. You want to price a European call option with a strike price of $155 that expires in exactly 6 months (0.5 years). The annual risk-free rate is 4% (0.04), and the implied volatility is 30% (0.30). The stock pays no dividends.</p>
+
+      <ul>
+        <li>S = 150</li>
+        <li>K = 155</li>
+        <li>T = 0.5</li>
+        <li>r = 0.04</li>
+        <li>σ = 0.30</li>
+      </ul>
+
+      <p>First, we calculate d1:</p>
+      <p>d1 = [ln(150/155) + (0.04 + 0.30<sup>2</sup> / 2) * 0.5] / (0.30 * √0.5)</p>
+      <p>d1 = [-0.032789 + (0.04 + 0.045) * 0.5] / (0.30 * 0.7071)</p>
+      <p>d1 = [-0.032789 + 0.0425] / 0.21213</p>
+      <p>d1 = 0.009711 / 0.21213 ≈ 0.0458</p>
+
+      <p>Next, we calculate d2:</p>
+      <p>d2 = 0.0458 - (0.30 * √0.5)</p>
+      <p>d2 = 0.0458 - 0.21213 ≈ -0.1663</p>
+
+      <p>Now, we find the cumulative normal distribution values for d1 and d2 (typically looked up in a Z-table or calculated via software):</p>
+      <p>N(0.0458) ≈ 0.5183</p>
+      <p>N(-0.1663) ≈ 0.4340</p>
+
+      <p>Finally, we plug these into the Call Option formula:</p>
+      <p>C = (150 * 0.5183) - (155 * e<sup>-(0.04 * 0.5)</sup> * 0.4340)</p>
+      <p>C = 77.745 - (155 * 0.9802 * 0.4340)</p>
+      <p>C = 77.745 - 65.937</p>
+      <p>C ≈ $11.81</p>
+
+      <p>According to the Black-Scholes model, the theoretical fair value of this call option is $11.81 per share. Since options typically represent 100 shares, the total premium you would expect to pay is $1,181.</p>
+
+      <p>While this math is fundamental to options trading, investors must also manage broader portfolio metrics. For instance, evaluating how your options trades impact your overall capital appreciation requires an understanding of historical performance, such as the <a href="/average-stock-market-return">average stock market return</a> over long periods. Additionally, corporate actions like stock splits can alter options contracts; if a company announces a split, you might need a <a href="/stock-split-calculator">stock split calculator</a> to adjust your strike prices and contract multipliers accordingly.</p>
+
+      <h3>Real-World Context: When Do Investors Actually Use This?</h3>
+
+      <p>If the market already prices options dynamically throughout the trading day, why do individual investors and institutional traders need an options calculator? The answer lies in the distinction between <em>market price</em> and <em>theoretical value</em>.</p>
+
+      <p><strong>1. Implied Volatility Analysis:</strong> The most common real-world use case for an options calculator is to back-solve for implied volatility (IV). Because the market price of the option is known, traders can plug the market price into the calculator and adjust the volatility input until the theoretical price matches the market price. This allows traders to determine if an option is historically "cheap" or "expensive." If the IV is significantly higher than the stock's historical volatility, a trader might prefer to sell options to collect the inflated premium. Conversely, if IV is exceptionally low, it might be an opportune time to buy options.</p>
+
+      <p><strong>2. Scenario Planning:</strong> Professional traders rarely enter a position without knowing how it will react to various market scenarios. An options calculator allows a trader to project the value of their position days or weeks into the future. For example: "If the stock drops 5% by next Tuesday, and implied volatility spikes by 10%, what will my put option be worth?" This type of stress testing is crucial for effective risk management.</p>
+
+      <p><strong>3. Hedging Portfolios:</strong> Institutional investors use options calculators to determine the exact number of contracts needed to hedge a portfolio against a specific downside risk. By calculating the Delta of the options (which measures the rate of change in the option's price relative to the underlying asset), they can create a "delta-neutral" portfolio that is immunized against small, short-term market movements.</p>
+
+      <h3>The Greeks: Understanding Option Sensitivities</h3>
+
+      <p>The options calculator doesn't just output a single price; it also calculates "The Greeks." These are first and second-order derivatives of the pricing formula that quantify the option's sensitivity to various risk factors.</p>
+
+      <ul>
+        <li><strong>Delta (Δ):</strong> Measures directional risk. It estimates how much the option price will change for a $1 move in the underlying asset. A call option with a delta of 0.50 will theoretically increase in value by $0.50 if the underlying stock goes up by $1. Delta also serves as a proxy for the probability that the option will expire in-the-money.</li>
+        <li><strong>Gamma (Γ):</strong> Measures the rate of change of Delta. It indicates how much the Delta will change for a $1 move in the underlying asset. Gamma is highest for at-the-money options and accelerates as expiration approaches. High gamma means the option's delta (and thus its price) is highly sensitive to small movements in the underlying stock.</li>
+        <li><strong>Theta (Θ):</strong> Measures time decay. It represents the amount the option's price will decrease every day as it approaches expiration, assuming all other factors remain constant. Theta is generally negative for option buyers and positive for option sellers. The rate of time decay accelerates rapidly in the final weeks before expiration.</li>
+        <li><strong>Vega (ν):</strong> Measures sensitivity to volatility. It indicates how much the option's price will change for a 1% change in implied volatility. Options with longer times to expiration have higher Vega, meaning their prices are more heavily influenced by shifts in market volatility expectations.</li>
+        <li><strong>Rho (ρ):</strong> Measures sensitivity to interest rates. It estimates the change in the option's price for a 1% change in the risk-free interest rate. Rho is generally the least significant of the Greeks for short-term options, but it becomes more relevant for Long-Term Equity Anticipation Securities (LEAPS) due to the longer duration of capital commitment.</li>
+      </ul>
+
+      <h3>Common Mistakes People Make with Options Calculations</h3>
+
+      <p>Despite the mathematical precision of the Black-Scholes model, relying on it blindly can lead to significant trading errors. The model relies on several assumptions that do not perfectly align with real-world market dynamics.</p>
+
+      <p><strong>Mistake 1: Ignoring the Volatility Smile/Skew.</strong> The Black-Scholes model assumes that volatility is constant across all strike prices and expiration dates. In reality, options markets exhibit a "volatility skew," where out-of-the-money puts often trade at higher implied volatilities than out-of-the-money calls (a phenomenon that became pronounced after the 1987 stock market crash). Using a single volatility input for all strikes on an options calculator can result in mispriced out-of-the-money options.</p>
+
+      <p><strong>Mistake 2: Confusing American vs. European Options.</strong> The standard Black-Scholes formula is designed for European options, which can only be exercised at expiration. Most equity options traded in the U.S. are American-style, meaning they can be exercised at any time before expiration. While the difference in pricing is often negligible for non-dividend-paying stocks, it can be substantial for stocks that pay high dividends, as the early exercise feature holds intrinsic value. Calculating the price of an American option using a European model may lead to undervaluation.</p>
+
+      <p><strong>Mistake 3: Underestimating "Fat Tails".</strong> The Black-Scholes model assumes that stock returns follow a lognormal distribution. This implies that extreme price movements (crashes or massive spikes) are statistically highly improbable. However, empirical financial data shows that markets have "fat tails"—extreme events happen much more frequently than a normal distribution would predict. As a result, standard options calculators often underprice deep out-of-the-money options, as they underestimate the probability of "black swan" events.</p>
+
+      <h3>Practical Tips and Professional Rules of Thumb</h3>
+
+      <p>Professional options traders combine mathematical models with practical heuristics developed through years of market experience. Here are a few rules of thumb that complement the output of an options calculator:</p>
+
+      <ul>
+        <li><strong>The Rule of 16:</strong> To convert annualized implied volatility into a daily expected move, divide the IV by 16 (since there are roughly 256 trading days in a year, and the square root of 256 is 16). For example, if a stock has an IV of 32%, the market is pricing in an expected daily move of roughly 2% (32 / 16 = 2).</li>
+        <li><strong>Selling Premium in High IV Environments:</strong> Professional traders generally prefer to be net sellers of options when implied volatility is in the upper percentiles of its historical range. They use calculators to identify when option premiums are historically rich, aiming to profit from the mean reversion of volatility.</li>
+        <li><strong>Delta as a Probability Proxy:</strong> While not mathematically exact, traders often use Delta as a quick shorthand for the percentage chance that an option will expire in-the-money. A 0.20 Delta option is generally considered to have roughly a 20% chance of expiring ITM.</li>
+        <li><strong>Watch the Earnings Crush:</strong> Implied volatility typically inflates heading into a known binary event, such as an earnings announcement. Using a calculator, you can see how much "event risk" is priced into the option. The day after earnings, IV typically plummets, causing a massive reduction in option premiums. This "volatility crush" can turn a winning directional bet into a losing trade if the IV drop outpaces the directional gain. Always model the post-earnings IV drop in your calculator before buying options into an earnings event.</li>
+      </ul>
+
+      <p>By mastering the options calculator and understanding both its power and its limitations, you transition from a speculator relying on gut feeling to a more systematic trader making decisions based on statistical probabilities and theoretical fair value.</p>
+    </article>
+  </div>
+</SiteLayout>
+
+<style>
+  .hero-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-section .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+  }
+
+  .calculator-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .calculator-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .input-panel, .results-panel {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+  }
+
+  .input-panel h2, .results-panel h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .input-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    color-scheme: light dark;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 59, 130, 246), 0.2);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .primary-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 1rem;
+  }
+
+  .primary-btn:hover {
+    opacity: 0.9;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 0.25rem;
+    word-break: break-all;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .call-card .stat-value {
+    color: var(--accent-color);
+  }
+
+  .put-card .stat-value {
+    color: var(--text-primary);
+  }
+
+  .results-panel h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .greeks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .greek-item {
+    background: var(--bg-color);
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    grid-template-areas:
+      "name values"
+      "name desc";
+    align-items: center;
+  }
+
+  .greek-name {
+    grid-area: name;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+  }
+
+  .greek-values {
+    grid-area: values;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: right;
+    color: var(--text-primary);
+  }
+
+  .greek-desc {
+    grid-area: desc;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+    margin-top: 0.25rem;
+  }
+
+  .call-val { color: var(--accent-color); }
+  .put-val { color: var(--text-primary); }
+
+  .educational-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .educational-content h2 {
+    font-size: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content h3 {
+    font-size: 1.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content h4 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .educational-content p {
+    margin-bottom: 1.25rem;
+  }
+
+  .educational-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .educational-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .educational-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
+
+  .educational-content a:hover {
+    text-decoration: none;
+  }
+</style>
+
+<script is:inline>
+  // Normal distribution cumulative density function using rational approximation
+  function CND(x) {
+    if (Math.abs(x) > 10) {
+      return x > 0 ? 1 : 0;
+    }
+    const a1 = 0.31938153;
+    const a2 = -0.356563782;
+    const a3 = 1.781477937;
+    const a4 = -1.821255978;
+    const a5 = 1.330274429;
+    const L = Math.abs(x);
+    const K = 1.0 / (1.0 + 0.2316419 * L);
+    const dCND = 1.0 - 1.0 / Math.sqrt(2 * Math.PI) * Math.exp(-L * L / 2.0) * (a1 * K + a2 * Math.pow(K, 2) + a3 * Math.pow(K, 3) + a4 * Math.pow(K, 4) + a5 * Math.pow(K, 5));
+    if (x < 0) {
+      return 1.0 - dCND;
+    }
+    return dCND;
+  }
+
+  // Standard normal probability density function
+  function ND(x) {
+    return Math.exp(-x * x / 2.0) / Math.sqrt(2 * Math.PI);
+  }
+
+  function calculateBlackScholes() {
+    const S = parseFloat(document.getElementById('underlyingPrice').value);
+    const K = parseFloat(document.getElementById('strikePrice').value);
+    const T = parseFloat(document.getElementById('timeToExpiration').value);
+    const sigma = parseFloat(document.getElementById('volatility').value) / 100;
+    const r = parseFloat(document.getElementById('interestRate').value) / 100;
+    const q = parseFloat(document.getElementById('dividendYield').value) / 100;
+
+    // Edge cases
+    if (isNaN(S) || isNaN(K) || isNaN(T) || isNaN(sigma) || isNaN(r) || isNaN(q)) return;
+    if (S <= 0 || K <= 0 || T <= 0 || sigma <= 0) {
+      updateUIWithZeros();
+      return;
+    }
+
+    const d1 = (Math.log(S / K) + (r - q + Math.pow(sigma, 2) / 2.0) * T) / (sigma * Math.sqrt(T));
+    const d2 = d1 - sigma * Math.sqrt(T);
+
+    // Call and Put Prices
+    const callPrice = S * Math.exp(-q * T) * CND(d1) - K * Math.exp(-r * T) * CND(d2);
+    const putPrice = K * Math.exp(-r * T) * CND(-d2) - S * Math.exp(-q * T) * CND(-d1);
+
+    // Greeks
+    const callDelta = Math.exp(-q * T) * CND(d1);
+    const putDelta = -Math.exp(-q * T) * CND(-d1);
+
+    const gamma = (Math.exp(-q * T) * ND(d1)) / (S * sigma * Math.sqrt(T));
+
+    // Theta (per day, dividing by 365)
+    const callTheta = (- (S * sigma * Math.exp(-q * T) * ND(d1)) / (2 * Math.sqrt(T))
+                       + q * S * Math.exp(-q * T) * CND(d1)
+                       - r * K * Math.exp(-r * T) * CND(d2)) / 365.0;
+
+    const putTheta = (- (S * sigma * Math.exp(-q * T) * ND(d1)) / (2 * Math.sqrt(T))
+                      - q * S * Math.exp(-q * T) * CND(-d1)
+                      + r * K * Math.exp(-r * T) * CND(-d2)) / 365.0;
+
+    const vega = (S * Math.exp(-q * T) * ND(d1) * Math.sqrt(T)) / 100.0; // Per 1% change
+
+    const callRho = (K * T * Math.exp(-r * T) * CND(d2)) / 100.0; // Per 1% change
+    const putRho = (-K * T * Math.exp(-r * T) * CND(-d2)) / 100.0;
+
+    // Avoid JS floating point artifacts
+    const fixFloat = (val, digits = 4) => {
+      let fixed = parseFloat(val.toPrecision(14));
+      if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+        fixed = Math.round(fixed);
+      }
+      return fixed.toFixed(digits);
+    };
+
+    const formatCurrency = (val) => {
+      let fixed = parseFloat(val.toPrecision(14));
+      if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+        fixed = Math.round(fixed);
+      }
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(fixed);
+    };
+
+    // Update UI
+    document.getElementById('callPriceResult').textContent = formatCurrency(callPrice);
+    document.getElementById('putPriceResult').textContent = formatCurrency(putPrice);
+
+    document.getElementById('callDelta').textContent = fixFloat(callDelta);
+    document.getElementById('putDelta').textContent = fixFloat(putDelta);
+
+    document.getElementById('gamma').textContent = fixFloat(gamma);
+
+    document.getElementById('callTheta').textContent = fixFloat(callTheta);
+    document.getElementById('putTheta').textContent = fixFloat(putTheta);
+
+    document.getElementById('vega').textContent = fixFloat(vega);
+
+    document.getElementById('callRho').textContent = fixFloat(callRho);
+    document.getElementById('putRho').textContent = fixFloat(putRho);
+  }
+
+  function updateUIWithZeros() {
+    document.getElementById('callPriceResult').textContent = "$0.00";
+    document.getElementById('putPriceResult').textContent = "$0.00";
+    document.getElementById('callDelta').textContent = "0.0000";
+    document.getElementById('putDelta').textContent = "0.0000";
+    document.getElementById('gamma').textContent = "0.0000";
+    document.getElementById('callTheta').textContent = "0.0000";
+    document.getElementById('putTheta').textContent = "0.0000";
+    document.getElementById('vega').textContent = "0.0000";
+    document.getElementById('callRho').textContent = "0.0000";
+    document.getElementById('putRho').textContent = "0.0000";
+  }
+
+  // Add event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('calculateBtn');
+    if (btn) {
+      btn.addEventListener('click', calculateBlackScholes);
+    }
+
+    const inputs = document.querySelectorAll('.input-group input');
+    inputs.forEach(input => {
+      input.addEventListener('input', calculateBlackScholes);
+    });
+
+    // Initial calculation
+    calculateBlackScholes();
+  });
+</script>

@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP Deadline & Key Dates",
+    "description": "Never miss your RRSP contribution deadline. Key dates, carry-forward room rules, over-contribution penalties, and strategies to maximize your tax-deferred savings.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "When is the deadline for RRSP contributions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The deadline is usually March 1st, or the last day of February during leap years. This deadline applies for deducting the contribution from the previous year's income."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if I miss the RRSP deadline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can still contribute at any time, but if you miss the first 60 days of the year, the deduction can only be claimed for the current tax year, not the previous one."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I claim a contribution made in January for the previous year?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, contributions made during the first 60 days of the calendar year can be claimed as deductions against the previous year's income, or carried forward to a future year."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP Deadline & Key Dates",
+  description: "Never miss your RRSP contribution deadline. Key dates, carry-forward room rules, over-contribution penalties, and strategies to maximize your tax-deferred.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP Deadline & Key Dates" description="Important contribution deadlines and carry-forward rules." canonical="https://westmountfundamentals.com/rrsp-deadline-reminder" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP Deadline & Key Dates</h1><p>Important contribution deadlines and carry-forward rules.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-contribution-calculator">Rrsp Contribution Calculator</a></li>
+        <li><a href="/rrsp-overcontribution-guide">Rrsp Overcontribution Guide</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>When is the deadline for RRSP contributions?</h3>
+      <p>The deadline is usually March 1st, or the last day of February during leap years. This deadline applies for deducting the contribution from the previous year's income.</p>
+      <h3>What happens if I miss the RRSP deadline?</h3>
+      <p>You can still contribute at any time, but if you miss the first 60 days of the year, the deduction can only be claimed for the current tax year, not the previous one.</p>
+      <h3>Can I claim a contribution made in January for the previous year?</h3>
+      <p>Yes, contributions made during the first 60 days of the calendar year can be claimed as deductions against the previous year's income, or carried forward to a future year.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Importance of the March 1st Deadline</h2>
+      <p>The annual deadline for contributing to a Registered Retirement Savings Plan (RRSP) is a critical date on the Canadian financial calendar. Generally set for March 1st (or the final day of February during leap years), this deadline dictates whether a contribution can be applied as a tax deduction against your income from the previous calendar year. If the deadline falls on a weekend, the Canada Revenue Agency (CRA) typically extends it to the next business day. Missing this deadline has significant implications for your immediate tax situation.</p>
+
+      <p>The primary reason the deadline exists is to provide Canadians with a 60-day window at the beginning of the new year to finalize their tax strategies. Many individuals do not know their exact total income, bonus amounts, or final tax liability until January or February when they receive their T4 slips and other tax documents. This grace period allows investors to calculate exactly how much they need to contribute to an RRSP to achieve a specific tax outcome, such as dropping down a tax bracket or maximizing a refund to reinvest.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Flexibility of the "First 60 Days" Rule</h2>
+      <p>Contributions made during the first 60 days of the calendar year offer a unique strategic advantage: you have the option to apply them to either the preceding tax year or the current tax year. When you file your taxes, you must report all contributions made during this period on Schedule 7. However, you are not obligated to claim the deduction immediately. You can choose to designate the contribution for the previous year to lower that specific tax bill, or you can record the contribution but carry the deduction forward.</p>
+
+      <p>Carrying the deduction forward is a powerful tactic if you anticipate your income will be significantly higher in the current or future years. By delaying the claim, you save the deduction for a time when you are in a higher marginal tax bracket, thereby increasing the value of the tax refund. This flexibility requires careful documentation and an understanding of your projected income trajectory, but it is a cornerstone of advanced tax planning.</p>
+    </div>
+
+    <div class="card">
+      <h2>Consequences of Missing the Deadline</h2>
+      <p>It is important to clarify that you can contribute to your RRSP at any time of the year; the account does not "close." However, the consequence of making a contribution after the March 1st deadline is that you entirely lose the ability to apply that deduction against your income from the previous year. If you discover in April that you owe a substantial amount of tax for the prior year, making an RRSP contribution at that point will not help reduce that specific debt; it will only generate a deduction for the current year.</p>
+
+      <p>For investors who utilize pre-authorized contribution (PAC) plans to automate their savings throughout the year, the deadline is less stressful. These individuals are continuously utilizing their contribution room. However, for those who rely on a lump-sum contribution strategy right before tax season, leaving it until the final week of February is risky. Administrative delays, banking errors, or simply failing to transfer the funds in time can result in missing the deadline, losing the intended tax refund, and potentially disrupting an entire financial plan.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

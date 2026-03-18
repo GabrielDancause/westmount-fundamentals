@@ -1,0 +1,379 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Best Stocks to Buy Right Now (2026 Picks)",
+  description: "Discover the best stocks to buy right now. We analyzed top market performers by P/E, dividend yield, and growth. These core portfolio holds may surprise you.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Best Stocks to Buy Right Now",
+    "description": "Analysis of the best stocks to buy right now.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What are the best stocks to buy right now?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The best stocks to buy right now depend heavily on your individual time horizon, risk tolerance, and investment goals. However, blue-chip market leaders with strong balance sheets, consistent dividend growth, and sustainable competitive advantages—such as Apple (AAPL), Visa (V), and JPMorgan Chase (JPM)—are often considered strong foundational holds for long-term investors."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many stocks should I own?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For individual stock pickers, owning between 15 to 30 well-researched stocks across different sectors provides a good balance of diversification without becoming overly complicated to track."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is now a good time to buy stocks in 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trying to time the market is notoriously difficult. Historically, the best approach is to consistently invest in high-quality companies or index funds over time, regardless of short-term market fluctuations, a strategy known as dollar-cost averaging."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good P/E ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A 'good' P/E ratio varies by industry. However, comparing a company's P/E to its historical average and its competitors can help determine if it is undervalued. A P/E below 15 is often considered value territory, while higher P/Es are typical for high-growth tech stocks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I invest in individual stocks or index funds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For most passive investors, low-cost S&P 500 or total market index funds offer the most reliable path to wealth creation. Individual stocks should generally only make up a smaller, satellite portion of your overall portfolio unless you have the time and expertise to thoroughly analyze financial statements."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title="Best Stocks to Buy Right Now (2026 Picks)" description="Discover the best stocks to buy right now. We analyzed top market performers by P/E, dividend yield, and growth. These core portfolio holds may surprise you." canonical="https://westmountfundamentals.com/best-stocks-to-buy-right-now" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Best Stocks to Buy Right Now</h1>
+      <p class="subtitle">Complete Data & Analysis of Top Market Performers</p>
+    </div>
+
+    <section class="content-section">
+      <p>Building a resilient portfolio requires identifying the <strong>best stocks to buy right now</strong>. In the face of economic uncertainties, fluctuating interest rates, and rapid technological shifts, focusing on high-quality companies with proven business models is more important than ever.</p>
+
+      <p>Whether you are searching for the <strong>best stocks to buy right now 2025</strong> into 2026, or simply looking to anchor your investments with reliable dividend payers and steady compounders, our curated list below highlights several standout equities. We evaluate these companies based on their market capitalizations, valuation multiples, and dividend yields.</p>
+
+      <h2>Core Market Leaders & Data</h2>
+      <p>Use the search box to filter by symbol or company name, and click the table headers to sort the data to find the metrics that align with your investing strategy.</p>
+
+      <div class="controls" style="margin-bottom: 1rem;">
+        <input type="text" id="searchInput" placeholder="Search by symbol or name..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); font-size: 1rem;" />
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)" style="cursor:pointer">Symbol ↕</th>
+              <th onclick="sortTable(1)" style="cursor:pointer">Name ↕</th>
+              <th onclick="sortTable(2)" style="cursor:pointer">Price ↕</th>
+              <th onclick="sortTable(3)" style="cursor:pointer">P/E ↕</th>
+              <th onclick="sortTable(4)" style="cursor:pointer">Market Cap ↕</th>
+              <th onclick="sortTable(5)" style="cursor:pointer">Yield ↕</th>
+            </tr>
+          </thead>
+          <tbody>
+      <tr class="stock-row">
+        <td><strong>AAPL</strong></td>
+        <td>Apple Inc.</td>
+        <td data-sort="250.12">$250.12</td>
+        <td data-sort="31.660759">31.66</td>
+        <td data-sort="3676245065728">$3676.25B</td>
+        <td data-sort="0.42">0.42%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>V</strong></td>
+        <td>Visa Inc.</td>
+        <td data-sort="307.14">$307.14</td>
+        <td data-sort="28.812384">28.81</td>
+        <td data-sort="592178118656">$592.18B</td>
+        <td data-sort="0.87">0.87%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>JPM</strong></td>
+        <td>JP Morgan Chase & Co.</td>
+        <td data-sort="283.44">$283.44</td>
+        <td data-sort="14.164918">14.16</td>
+        <td data-sort="764446900224">$764.45B</td>
+        <td data-sort="2.12">2.12%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>WMT</strong></td>
+        <td>Walmart Inc.</td>
+        <td data-sort="126.52">$126.52</td>
+        <td data-sort="46.344322">46.34</td>
+        <td data-sort="1008725131264">$1008.73B</td>
+        <td data-sort="0.78">0.78%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>UNH</strong></td>
+        <td>UnitedHealth Group Incorporated</td>
+        <td data-sort="282.09">$282.09</td>
+        <td data-sort="21.321997">21.32</td>
+        <td data-sort="256046268416">$256.05B</td>
+        <td data-sort="3.13">3.13%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>JNJ</strong></td>
+        <td>Johnson & Johnson</td>
+        <td data-sort="241.52">$241.52</td>
+        <td data-sort="21.876812">21.88</td>
+        <td data-sort="582038847488">$582.04B</td>
+        <td data-sort="2.15">2.15%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>XOM</strong></td>
+        <td>Exxon Mobil Corporation</td>
+        <td data-sort="156.12">$156.12</td>
+        <td data-sort="23.301493">23.30</td>
+        <td data-sort="650515120128">$650.52B</td>
+        <td data-sort="2.64">2.64%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>PG</strong></td>
+        <td>Procter & Gamble Company (The)</td>
+        <td data-sort="150.65">$150.65</td>
+        <td data-sort="22.318518">22.32</td>
+        <td data-sort="352594100224">$352.59B</td>
+        <td data-sort="2.81">2.81%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>HD</strong></td>
+        <td>Home Depot, Inc. (The)</td>
+        <td data-sort="339.03">$339.03</td>
+        <td data-sort="23.808287">23.81</td>
+        <td data-sort="337508270080">$337.51B</td>
+        <td data-sort="2.75">2.75%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>MA</strong></td>
+        <td>Mastercard Incorporated</td>
+        <td data-sort="497.99">$497.99</td>
+        <td data-sort="30.126434">30.13</td>
+        <td data-sort="444425043968">$444.43B</td>
+        <td data-sort="0.7">0.70%</td>
+      </tr>
+      <tr class="stock-row">
+        <td><strong>COST</strong></td>
+        <td>Costco Wholesale Corporation</td>
+        <td data-sort="1008.43">$1008.43</td>
+        <td data-sort="52.358772">52.36</td>
+        <td data-sort="447432327168">$447.43B</td>
+        <td data-sort="0.52">0.52%</td>
+      </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Brief Analysis: Top Blue-Chip Stocks</h2>
+      <p>Here is a closer look at these foundational companies based on their most recent financial data and operational footprint. Investing in established businesses provides stability during periods of broader market volatility.</p>
+
+    <div class="card">
+      <h3>Apple Inc. (AAPL)</h3>
+      <p><strong>Current Price:</strong> $250.12 | <strong>P/E Ratio:</strong> 31.66 | <strong>Dividend Yield:</strong> 0.42% | <strong>Market Cap:</strong> $3676.25B</p><p>Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories comprising AirPods, Apple Vision Pro, Apple TV, Apple Watch, Beats products, and HomePod, as well as Apple branded and third-party accessories.</p><p>From a fundamental perspective, AAPL's valuation of 31.66 P/E reflects market sentiment regarding its future earnings potential in the Technology space. A market capitalization of $3676.25B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Apple Inc. for a blue-chip portfolio should weigh its yield of 0.42% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $250.12.</p>
+    </div>
+
+    <div class="card">
+      <h3>Visa Inc. (V)</h3>
+      <p><strong>Current Price:</strong> $307.14 | <strong>P/E Ratio:</strong> 28.81 | <strong>Dividend Yield:</strong> 0.87% | <strong>Market Cap:</strong> $592.18B</p><p>Visa Inc. operates as a payment technology company in the United States and internationally. The company operates VisaNet, a transaction processing network that enables authorization, clearing, and settlement of payment transactions. It also offers credit, debit, and prepaid card products; tap to pay, tokenization, and click to pay services; Visa Direct, a platform which facilitates money movement, enabling clients to collect, hold, convert, and send funds across its network; and issuing solutions, such as airport lounge access, dining reservations, shopping experiences, event tickets, and seller offers.</p><p>From a fundamental perspective, V's valuation of 28.81 P/E reflects market sentiment regarding its future earnings potential in the Financial Services space. A market capitalization of $592.18B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Visa Inc. for a blue-chip portfolio should weigh its yield of 0.87% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $307.14.</p>
+    </div>
+
+    <div class="card">
+      <h3>JP Morgan Chase & Co. (JPM)</h3>
+      <p><strong>Current Price:</strong> $283.44 | <strong>P/E Ratio:</strong> 14.16 | <strong>Dividend Yield:</strong> 2.12% | <strong>Market Cap:</strong> $764.45B</p><p>JPMorgan Chase & Co. operates as a bank and financial holding company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia Pacific, Latin America, and the Caribbean. It operates in three segments: Consumer & Community Banking, Commercial & Investment Bank, and Asset & Wealth Management.</p><p>From a fundamental perspective, JPM's valuation of 14.16 P/E reflects market sentiment regarding its future earnings potential in the Financial Services space. A market capitalization of $764.45B firmly establishes its scale and operational capacity.</p><p>Investors evaluating JP Morgan Chase & Co. for a blue-chip portfolio should weigh its yield of 2.12% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $283.44.</p>
+    </div>
+
+    <div class="card">
+      <h3>Walmart Inc. (WMT)</h3>
+      <p><strong>Current Price:</strong> $126.52 | <strong>P/E Ratio:</strong> 46.34 | <strong>Dividend Yield:</strong> 0.78% | <strong>Market Cap:</strong> $1008.73B</p><p>Walmart Inc. engages in the operation of retail and wholesale stores and clubs, eCommerce websites, and mobile applications worldwide. The company operates through three segments: Walmart U.S., Walmart International, and Sam's Club. It operates supercenters, supermarkets, warehouse clubs, cash and carry stores, and discount stores under Walmart and Walmart Neighborhood Market brands; membership-only warehouse clubs; and ecommerce websites, such as walmart.</p><p>From a fundamental perspective, WMT's valuation of 46.34 P/E reflects market sentiment regarding its future earnings potential in the Consumer Defensive space. A market capitalization of $1008.73B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Walmart Inc. for a blue-chip portfolio should weigh its yield of 0.78% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $126.52.</p>
+    </div>
+
+    <div class="card">
+      <h3>UnitedHealth Group Incorporated (UNH)</h3>
+      <p><strong>Current Price:</strong> $282.09 | <strong>P/E Ratio:</strong> 21.32 | <strong>Dividend Yield:</strong> 3.13% | <strong>Market Cap:</strong> $256.05B</p><p>UnitedHealth Group Incorporated operates as a health care company in the United States and internationally. It operates through four segments: Optum Health, Optum Insight, Optum Rx; and UnitedHealthcare. The Optum Health segment provides care delivery, care management, wellness and consumer engagement, and health financial services with patients, consumers, care delivery systems, providers, employers, payers, and public-sector entities.</p><p>From a fundamental perspective, UNH's valuation of 21.32 P/E reflects market sentiment regarding its future earnings potential in the Healthcare space. A market capitalization of $256.05B firmly establishes its scale and operational capacity.</p><p>Investors evaluating UnitedHealth Group Incorporated for a blue-chip portfolio should weigh its yield of 3.13% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $282.09.</p>
+    </div>
+
+    <div class="card">
+      <h3>Johnson & Johnson (JNJ)</h3>
+      <p><strong>Current Price:</strong> $241.52 | <strong>P/E Ratio:</strong> 21.88 | <strong>Dividend Yield:</strong> 2.15% | <strong>Market Cap:</strong> $582.04B</p><p>Johnson & Johnson, together with its subsidiaries, engages in the research and development, manufacture, and sale of a range of products in the healthcare field worldwide. It operates in two segments, Innovative Medicine and MedTech. The Innovative Medicine segment offers products for various therapeutic areas, such as oncology, immunology, neuroscience, pulmonary hypertension, infectious diseases, and cardiovascular and metabolism distributed through retailers, wholesalers, distributors, hospitals, and healthcare professionals for prescription use.</p><p>From a fundamental perspective, JNJ's valuation of 21.88 P/E reflects market sentiment regarding its future earnings potential in the Healthcare space. A market capitalization of $582.04B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Johnson & Johnson for a blue-chip portfolio should weigh its yield of 2.15% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $241.52.</p>
+    </div>
+
+    <div class="card">
+      <h3>Exxon Mobil Corporation (XOM)</h3>
+      <p><strong>Current Price:</strong> $156.12 | <strong>P/E Ratio:</strong> 23.30 | <strong>Dividend Yield:</strong> 2.64% | <strong>Market Cap:</strong> $650.52B</p><p>Exxon Mobil Corporation engages in the exploration and production of crude oil and natural gas in the United States, Canada, and internationally. The company operates through Upstream, Energy Products, Chemical Products, and Specialty Products segments. Its Upstream segment explores for and produces crude oil and natural gas.</p><p>From a fundamental perspective, XOM's valuation of 23.30 P/E reflects market sentiment regarding its future earnings potential in the Energy space. A market capitalization of $650.52B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Exxon Mobil Corporation for a blue-chip portfolio should weigh its yield of 2.64% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $156.12.</p>
+    </div>
+
+    <div class="card">
+      <h3>Procter & Gamble Company (The) (PG)</h3>
+      <p><strong>Current Price:</strong> $150.65 | <strong>P/E Ratio:</strong> 22.32 | <strong>Dividend Yield:</strong> 2.81% | <strong>Market Cap:</strong> $352.59B</p><p>The Procter & Gamble Company provides branded consumer packaged goods worldwide. It operates through Beauty; Grooming; Health Care; Fabric & Home Care; and Baby, Feminine & Family Care segments. The company offers conditioners, shampoos, styling aids, and treatments under the Head & Shoulders, Herbal Essences, Pantene, and Rejoice brands; antiperspirants, deodorants, and personal cleansing products under the Native, Old Spice, Safeguard, and Secret brands; and facial moisturizers, cleaners, and treatments under the Olay and SK-II brands.</p><p>From a fundamental perspective, PG's valuation of 22.32 P/E reflects market sentiment regarding its future earnings potential in the Consumer Defensive space. A market capitalization of $352.59B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Procter & Gamble Company (The) for a blue-chip portfolio should weigh its yield of 2.81% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $150.65.</p>
+    </div>
+
+    <div class="card">
+      <h3>Home Depot, Inc. (The) (HD)</h3>
+      <p><strong>Current Price:</strong> $339.03 | <strong>P/E Ratio:</strong> 23.81 | <strong>Dividend Yield:</strong> 2.75% | <strong>Market Cap:</strong> $337.51B</p><p>The Home Depot, Inc. operates as a home improvement retailer in the United States and internationally. It sells various building materials, home improvement products, lawn and garden products, and décor products, as well as facilities maintenance, repair, and operations products. The company also offers installation services for flooring, water heaters, baths, garage doors, cabinets, cabinet makeovers, countertops, sheds, furnaces and central air systems, and windows.</p><p>From a fundamental perspective, HD's valuation of 23.81 P/E reflects market sentiment regarding its future earnings potential in the Consumer Cyclical space. A market capitalization of $337.51B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Home Depot, Inc. (The) for a blue-chip portfolio should weigh its yield of 2.75% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $339.03.</p>
+    </div>
+
+    <div class="card">
+      <h3>Mastercard Incorporated (MA)</h3>
+      <p><strong>Current Price:</strong> $497.99 | <strong>P/E Ratio:</strong> 30.13 | <strong>Dividend Yield:</strong> 0.70% | <strong>Market Cap:</strong> $444.43B</p><p>Mastercard Incorporated, a technology company, provides transaction processing and other payment-related products and services in the United States and internationally. The company offers products and services for account holders, merchants, financial institutions, digital partners, businesses, governments, and other organizations, such as programs that enable issuers to provide consumers with credits to defer payments; payment products and solutions that allow its customers to access funds in deposit and other accounts; prepaid programs services; consumer bill payment services; and commercial credit, debit, and prepaid payment products and solutions.</p><p>From a fundamental perspective, MA's valuation of 30.13 P/E reflects market sentiment regarding its future earnings potential in the Financial Services space. A market capitalization of $444.43B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Mastercard Incorporated for a blue-chip portfolio should weigh its yield of 0.70% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $497.99.</p>
+    </div>
+
+    <div class="card">
+      <h3>Costco Wholesale Corporation (COST)</h3>
+      <p><strong>Current Price:</strong> $1008.43 | <strong>P/E Ratio:</strong> 52.36 | <strong>Dividend Yield:</strong> 0.52% | <strong>Market Cap:</strong> $447.43B</p><p>Costco Wholesale Corporation, together with its subsidiaries, engages in the operation of membership warehouses in the United States, Puerto Rico, Canada, Mexico, Japan, the United Kingdom, Korea, Australia, Taiwan, China, Spain, France, Iceland, New Zealand, and Sweden. It offers merchandise, including sundries, dry groceries, candies, coolers, freezers, deli, liquor, and tobacco; non-food merchandise comprising appliances, small electronics, health and beauty aids, hardware, lawn and garden, sporting goods, tires, toys and seasonal, automotive, stamps, tickets, apparel, furniture, domestics, housewares, special order kiosks, and jewelry; and fresh food, such as meat, produce, service deli, and bakery products.</p><p>From a fundamental perspective, COST's valuation of 52.36 P/E reflects market sentiment regarding its future earnings potential in the Consumer Defensive space. A market capitalization of $447.43B firmly establishes its scale and operational capacity.</p><p>Investors evaluating Costco Wholesale Corporation for a blue-chip portfolio should weigh its yield of 0.52% against overall growth expectations. Strategic execution over the coming quarters will be critical to sustaining its current price trajectory of $1008.43.</p>
+    </div>
+
+    </section>
+
+    <section class="content-section">
+      <h2>Diversifying Beyond the Core</h2>
+      <p>While establishing a base of stable, blue-chip stocks is critical for long-term wealth preservation, investors with a higher risk tolerance might also want to explore high-growth sectors. For instance, you can check out our analysis on the <a href="/ai-stocks-to-buy">best AI stocks to buy</a> to capture cutting-edge tech upside.</p>
+      <p>Conversely, if you are working with a smaller capital base, it's essential to prioritize fractional shares or low-cost equities to ensure proper diversification. See our guide on the <a href="/best-stocks-for-beginners-with-little-money">best stocks for beginners with little money</a> for practical strategies on getting started.</p>
+      <p>Remember that the "best" stock is highly subjective and depends on your timeline. A retiree might prioritize the consistent yield of a consumer staple like Procter & Gamble (PG), while a young professional might prefer the capital appreciation potential of a tech conglomerate.</p>
+      <p>Always review a company's earnings reports, free cash flow generation, and debt levels before making an investment. A low P/E ratio can sometimes signal a "value trap" rather than a bargain if the underlying business is structurally deteriorating.</p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What are the best stocks to buy right now?</summary>
+        <p>The best stocks to buy right now depend heavily on your individual time horizon, risk tolerance, and investment goals. However, blue-chip market leaders with strong balance sheets, consistent dividend growth, and sustainable competitive advantages—such as Apple (AAPL), Visa (V), and JPMorgan Chase (JPM)—are often considered strong foundational holds for long-term investors.</p>
+      </details>
+
+      <details>
+        <summary>How many stocks should I own?</summary>
+        <p>For individual stock pickers, owning between 15 to 30 well-researched stocks across different sectors provides a good balance of diversification without becoming overly complicated to track.</p>
+      </details>
+
+      <details>
+        <summary>Is now a good time to buy stocks in 2026?</summary>
+        <p>Trying to time the market is notoriously difficult. Historically, the best approach is to consistently invest in high-quality companies or index funds over time, regardless of short-term market fluctuations, a strategy known as dollar-cost averaging.</p>
+      </details>
+
+      <details>
+        <summary>What is a good P/E ratio?</summary>
+        <p>A 'good' P/E ratio varies by industry. However, comparing a company's P/E to its historical average and its competitors can help determine if it is undervalued. A P/E below 15 is often considered value territory, while higher P/Es are typical for high-growth tech stocks.</p>
+      </details>
+
+      <details>
+        <summary>Should I invest in individual stocks or index funds?</summary>
+        <p>For most passive investors, low-cost S&P 500 or total market index funds offer the most reliable path to wealth creation. Individual stocks should generally only make up a smaller, satellite portion of your overall portfolio unless you have the time and expertise to thoroughly analyze financial statements.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const term = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.stock-row');
+        rows.forEach(row => {
+          const symbol = row.cells[0].textContent.toLowerCase();
+          const name = row.cells[1].textContent.toLowerCase();
+          if (symbol.includes(term) || name.includes(term)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    function sortTable(n) {
+      const table = document.getElementById("dataTable");
+      let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      switching = true;
+      dir = "asc";
+
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let xVal = x.getAttribute('data-sort') !== null ? parseFloat(x.getAttribute('data-sort')) : x.textContent.toLowerCase();
+          let yVal = y.getAttribute('data-sort') !== null ? parseFloat(y.getAttribute('data-sort')) : y.textContent.toLowerCase();
+
+          if (x.textContent === 'N/A') xVal = dir === 'asc' ? Infinity : -Infinity;
+          if (y.textContent === 'N/A') yVal = dir === 'asc' ? Infinity : -Infinity;
+
+          if (dir == "asc") {
+            if (xVal > yVal) {
+              shouldSwitch = true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (xVal < yVal) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .content-section { margin-bottom: 3rem; line-height: 1.6; }
+    .content-section p { margin-bottom: 1rem; }
+    .content-section h2 { margin: 2rem 0 1rem; font-size: 1.5rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .card h3 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.25rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: var(--card-bg); font-weight: 600; white-space: nowrap; user-select: none; }
+    th:hover { background: var(--border-color); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; list-style-position: inside; }
+    .faq-section p { margin-top: 0.5rem; margin-bottom: 0; color: var(--text-secondary); }
+  </style>
+</SiteLayout>

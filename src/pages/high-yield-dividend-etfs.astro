@@ -1,0 +1,225 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Top High-Yield Dividend ETFs for Passive Income",
+  description: "Want to boost your portfolio's income without picking individual stocks? Discover the highest yielding dividend ETFs that balance safety with serious cash flow.",
+  category: "list",
+  published: "2025-02-15",
+};
+
+const schema = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are high-yield dividend ETFs?", "acceptedAnswer": {"@type": "Answer", "text": "High-yield dividend ETFs are exchange-traded funds that specifically target stocks paying above-average dividend yields. They provide investors with a diversified basket of income-generating securities in a single investment vehicle."}}, {"@type": "Question", "name": "Are high-yield dividend ETFs safe?", "acceptedAnswer": {"@type": "Answer", "text": "They are generally safer than holding a single high-yield stock because the risk is spread across dozens or hundreds of companies. However, very high yields can sometimes signal underlying risk (yield traps), so funds that also screen for quality and dividend growth are often preferred."}}, {"@type": "Question", "name": "What is the difference between SCHD and VYM?", "acceptedAnswer": {"@type": "Answer", "text": "SCHD (Schwab US Dividend Equity ETF) focuses heavily on dividend growth and financial quality metrics, typically holding around 100 stocks. VYM (Vanguard High Dividend Yield ETF) is a broader fund holding over 400 stocks, focusing purely on companies with high trailing yields."}}, {"@type": "Question", "name": "How often do high-yield dividend ETFs pay?", "acceptedAnswer": {"@type": "Answer", "text": "The vast majority of US-based high-yield dividend ETFs pay distributions on a quarterly basis, though some specialized funds (like covered call ETFs or certain bond proxies) may pay monthly."}}, {"@type": "Question", "name": "Should retirees invest in high-yield dividend ETFs?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, high-yield dividend ETFs are often a core component of retirement portfolios. They provide a predictable stream of passive income to cover living expenses without forcing the retiree to sell off principal during market downturns."}}]};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/high-yield-dividend-etfs" schema={JSON.stringify(schema)}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>The Ultimate Guide to High-Yield Dividend ETFs</h1>
+      <p class="subtitle">Generate reliable passive income with diversified, high-quality exchange-traded funds.</p>
+    </div>
+
+    <section class="intro-section">
+      <p>Building a reliable stream of passive income doesn't mean you have to become a full-time stock picker. For many investors, the optimal route to generating cash flow is through <strong>high-yield dividend ETFs</strong>. These funds offer instant diversification, professional methodology, and low expense ratios, making them a cornerstone of modern income investing.</p>
+
+      <p>While chasing the absolute highest yield in individual stocks can lead you straight into "yield traps" (companies with unsustainably high payouts due to collapsing share prices), ETF providers use sophisticated screening criteria to weed out distressed businesses.</p>
+
+      <p>Whether you are comparing these funds against individual <a href="/dividend-kings">Dividend Kings</a> or looking for a defensive anchor while exploring the <a href="/best-stocks-to-buy">best stocks to buy</a> for growth, understanding the different strategies employed by top dividend ETFs is essential.</p>
+    </section>
+
+    <section class="analysis-section">
+      <h2>Understanding ETF Income Strategies</h2>
+      <p>Not all dividend ETFs are created equal. They generally fall into three distinct categories based on their underlying index methodology:</p>
+
+      <h3>1. Pure High Yield</h3>
+      <p>These funds simply screen a broad market index for companies with the highest trailing or forward dividend yields and weight them accordingly. They provide maximum immediate income but can sometimes be overweight in slow-growing or cyclically challenged sectors like utilities and legacy telecommunications.</p>
+
+      <h3>2. Dividend Growth & Quality</h3>
+      <p>These are arguably the most popular funds among long-term investors. Rather than just looking for a high starting yield, funds in this category (like SCHD or DGRO) screen for companies with a history of increasing their payouts, strong cash flows, and robust balance sheets. They offer a "Goldilocks" scenario: a respectable starting yield that grows faster than inflation over time.</p>
+
+      <h3>3. Alternative Income (Covered Calls)</h3>
+      <p>A newer breed of high-yield dividend ETFs (like JEPI or JEPQ) generates income not just from corporate dividends, but by selling call options against their holdings. These funds can offer massive, double-digit yields and monthly payouts. However, the tradeoff is that they often cap your upside potential during strong bull markets.</p>
+    </section>
+
+    <section class="table-section">
+      <h2>Top High-Yield Dividend ETFs in 2025</h2>
+      <p>Below is a curated list of top-performing dividend ETFs across various strategies. Use the search box to filter by ticker or name, or click the headers to sort by yield, expense ratio, or strategy.</p>
+
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search by ticker or ETF name..." aria-label="Search Dividend ETFs" />
+      </div>
+
+      <div class="table-container">
+        <table id="etfTable">
+          <thead>
+            <tr>
+              <th data-sort="ticker" class="sortable">ETF (Ticker) <span>↕</span></th>
+              <th data-sort="strategy" class="sortable">Strategy Focus <span>↕</span></th>
+              <th data-sort="yield" class="sortable">Est. Yield (%) <span>↕</span></th>
+              <th data-sort="expense" class="sortable">Expense Ratio <span>↕</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Schwab US Dividend Equity ETF (SCHD)</td><td>Quality & Growth</td><td>3.4%</td><td>0.06%</td></tr>
+            <tr><td>Vanguard High Dividend Yield ETF (VYM)</td><td>Pure High Yield</td><td>2.8%</td><td>0.06%</td></tr>
+            <tr><td>iShares Core High Dividend ETF (HDV)</td><td>Quality & High Yield</td><td>3.7%</td><td>0.08%</td></tr>
+            <tr><td>SPDR S&P Dividend ETF (SDY)</td><td>Dividend Aristocrats</td><td>2.5%</td><td>0.35%</td></tr>
+            <tr><td>iShares Select Dividend ETF (DVY)</td><td>5-Year Dividend Payers</td><td>3.6%</td><td>0.38%</td></tr>
+            <tr><td>Vanguard Dividend Appreciation ETF (VIG)</td><td>Dividend Growth (10+ Yrs)</td><td>1.8%</td><td>0.06%</td></tr>
+            <tr><td>iShares Core Dividend Growth ETF (DGRO)</td><td>Dividend Growth</td><td>2.3%</td><td>0.08%</td></tr>
+            <tr><td>JPMorgan Equity Premium Income (JEPI)</td><td>Covered Call / Alt Income</td><td>7.5%</td><td>0.35%</td></tr>
+            <tr><td>JPMorgan Nasdaq Equity Premium (JEPQ)</td><td>Covered Call (Tech Focus)</td><td>9.2%</td><td>0.35%</td></tr>
+            <tr><td>Global X SuperDividend US ETF (DIV)</td><td>Pure High Yield / Low Vol</td><td>6.8%</td><td>0.45%</td></tr>
+            <tr><td>Invesco S&P 500 High Dividend Low Vol (SPHD)</td><td>High Yield / Low Volatility</td><td>4.1%</td><td>0.30%</td></tr>
+            <tr><td>Schwab International Dividend Equity (SCHY)</td><td>International Quality</td><td>4.2%</td><td>0.14%</td></tr>
+            <tr><td>Vanguard International High Div (VYMI)</td><td>International High Yield</td><td>4.5%</td><td>0.22%</td></tr>
+            <tr><td>First Trust Value Line Dividend (FVD)</td><td>Safety/Value Weighted</td><td>2.0%</td><td>0.65%</td></tr>
+            <tr><td>WisdomTree US High Dividend (DHS)</td><td>Fundamental Weighted</td><td>3.9%</td><td>0.38%</td></tr>
+            <tr><td>ProShares S&P 500 Dividend Aristocrats (NOBL)</td><td>Dividend Aristocrats (25+ Yrs)</td><td>2.0%</td><td>0.35%</td></tr>
+            <tr><td>Global X NASDAQ 100 Covered Call (QYLD)</td><td>Covered Call</td><td>11.5%</td><td>0.60%</td></tr>
+            <tr><td>Amplify CWP Enhanced Dividend (DIVO)</td><td>Active/Tactical Call Writing</td><td>4.6%</td><td>0.55%</td></tr>
+            <tr><td>FlexShares Quality Dividend (QDF)</td><td>Quality Optimization</td><td>2.4%</td><td>0.32%</td></tr>
+            <tr><td>WisdomTree US Quality Dividend Gr (DGRW)</td><td>Forward Earnings Growth</td><td>1.5%</td><td>0.28%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="disclaimer"><em>Note: Yields are based on 12-month trailing distributions as of early 2025 and will fluctuate. Expense ratios are subject to change by the fund provider.</em></p>
+    </section>
+
+    <section class="deep-dive">
+      <h2>Deep Dive: Which ETF fits your portfolio?</h2>
+
+      <h3>The Core Holding: SCHD vs. VYM</h3>
+      <p>For most investors seeking a foundational income asset, the debate usually comes down to SCHD and VYM. VYM casts a very wide net, holding hundreds of stocks with above-average yields. It acts almost like a value-tilted proxy for the entire market. SCHD, conversely, uses a strict fundamental screen (looking at return on equity, cash flow to debt, and 10 years of consistent payments) to narrow its list to roughly 100 high-quality companies. While SCHD's yield is often slightly higher and its dividend growth rate historically superior, VYM offers broader sector diversification.</p>
+
+      <h3>The Retiree's Dilemma: JEPI and Covered Calls</h3>
+      <p>If you are actively in retirement and need immediate cash flow to pay bills, waiting a decade for SCHD's dividend to compound might not be feasible. This is where covered call ETFs like JEPI shine. By trading away some of the capital appreciation you'd get in a raging bull market, JEPI generates a massive, bond-beating yield paid out monthly. It's a fantastic tool for generating current income, but it should not be viewed as a long-term wealth compounding vehicle in the same way traditional equity ETFs are.</p>
+
+      <h3>The Importance of Expense Ratios</h3>
+      <p>When investing in ETFs, the expense ratio (the annual fee charged by the fund) directly eats into your dividend yield. If a fund yields 3.0% but charges 0.50% in fees, your real yield is only 2.5%. This is why funds from Schwab, Vanguard, and iShares (BlackRock) are so popular—their expense ratios often sit below 0.10%, meaning you keep almost all of the income generated by the underlying companies.</p>
+    </section>
+
+    <section class="strategic-approach">
+       <h2>Building a "Dividend Voltron"</h2>
+       <p>Rather than picking just one fund, many savvy investors build what is affectionately known in the financial community as a "Dividend Voltron"—a custom portfolio made of non-overlapping ETFs to create the perfect blend of yield, growth, and safety. For example, a portfolio split evenly between SCHD (for quality and dividend growth), DGRO (for broad market growth), and an international fund like SCHY provides global diversification, a starting yield around 3%, and strong long-term capital appreciation potential.</p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What are high-yield dividend ETFs?</summary>
+        <p>High-yield dividend ETFs are exchange-traded funds that specifically target stocks paying above-average dividend yields. They provide investors with a diversified basket of income-generating securities in a single investment vehicle.</p>
+      </details>
+      <details>
+        <summary>Are high-yield dividend ETFs safe?</summary>
+        <p>They are generally safer than holding a single high-yield stock because the risk is spread across dozens or hundreds of companies. However, very high yields can sometimes signal underlying risk (yield traps), so funds that also screen for quality and dividend growth are often preferred.</p>
+      </details>
+      <details>
+        <summary>What is the difference between SCHD and VYM?</summary>
+        <p>SCHD (Schwab US Dividend Equity ETF) focuses heavily on dividend growth and financial quality metrics, typically holding around 100 stocks. VYM (Vanguard High Dividend Yield ETF) is a broader fund holding over 400 stocks, focusing purely on companies with high trailing yields.</p>
+      </details>
+      <details>
+        <summary>How often do high-yield dividend ETFs pay?</summary>
+        <p>The vast majority of US-based high-yield dividend ETFs pay distributions on a quarterly basis, though some specialized funds (like covered call ETFs or certain bond proxies) may pay monthly.</p>
+      </details>
+      <details>
+        <summary>Should retirees invest in high-yield dividend ETFs?</summary>
+        <p>Yes, high-yield dividend ETFs are often a core component of retirement portfolios. They provide a predictable stream of passive income to cover living expenses without forcing the retiree to sell off principal during market downturns.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      const table = document.getElementById('etfTable');
+      if (!searchInput || !table) return;
+
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const headers = table.querySelectorAll('th.sortable');
+
+      // Search functionality
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(term) ? '' : 'none';
+        });
+      });
+
+      // Sort functionality
+      let currentSortColumn = -1;
+      let sortAscending = true;
+
+      headers.forEach((header, index) => {
+        header.addEventListener('click', () => {
+          // Update sort direction
+          if (currentSortColumn === index) {
+            sortAscending = !sortAscending;
+          } else {
+            sortAscending = true;
+            currentSortColumn = index;
+          }
+
+          // Update header arrows
+          headers.forEach(h => h.querySelector('span').textContent = '↕');
+          header.querySelector('span').textContent = sortAscending ? '↑' : '↓';
+
+          // Sort rows
+          const sortType = header.getAttribute('data-sort');
+
+          rows.sort((a, b) => {
+            let aVal = a.cells[index].textContent.trim();
+            let bVal = b.cells[index].textContent.trim();
+
+            if (sortType === 'yield' || sortType === 'expense') {
+              // Remove % and parse float
+              aVal = parseFloat(aVal.replace(/[%]/g, '')) || 0;
+              bVal = parseFloat(bVal.replace(/[%]/g, '')) || 0;
+            } else {
+              aVal = aVal.toLowerCase();
+              bVal = bVal.toLowerCase();
+            }
+
+            if (aVal < bVal) return sortAscending ? -1 : 1;
+            if (aVal > bVal) return sortAscending ? 1 : -1;
+            return 0;
+          });
+
+          // Append sorted rows
+          rows.forEach(row => tbody.appendChild(row));
+        });
+      });
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.6; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+    h3 { font-size: 1.4rem; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1rem; }
+
+    a { color: var(--accent-color, #4a8fe7); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+
+    .controls { margin: 1.5rem 0; }
+    #searchInput { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; }
+
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; min-width: 600px; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th.sortable { cursor: pointer; background: var(--card-bg); user-select: none; }
+    th.sortable:hover { background: var(--bg-secondary); }
+    th span { font-size: 0.8em; margin-left: 0.2rem; }
+
+    .disclaimer { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

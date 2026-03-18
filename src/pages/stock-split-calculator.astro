@@ -1,0 +1,796 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": ["Article", "FAQPage"],
+  "headline": "Stock Split Calculator & Guide: How Forward and Reverse Splits Work",
+  "description": "Calculate your new share count and price after a stock split. See how forward and reverse splits impact your portfolio value—and why companies do them.",
+  "datePublished": "2026-03-17",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "how does a stock split work",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A stock split divides a company's existing shares into multiple new shares to boost liquidity. The total dollar value of the shares remains the same, as the share price drops proportionately. For example, in a 2-for-1 split, you get twice as many shares, but each share is worth half as much."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "does a stock split change market cap",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, a stock split does not change the overall market capitalization of a company. It simply divides the existing market cap into more (or fewer, in a reverse split) slices. Your total investment value remains exactly the same immediately after the split."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "what is a reverse stock split",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A reverse stock split consolidates a company's existing shares into fewer, more valuable shares. It is typically done by companies whose stock price has fallen too low, often to avoid being delisted from a stock exchange."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "how to calculate shares after stock split",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To calculate your new share count, multiply your current number of shares by the first number in the split ratio, then divide by the second number. For example, in a 3-for-1 split, if you own 100 shares, you multiply 100 by 3 and divide by 1 to get 300 shares."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "when do stock splits happen",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Stock splits usually happen when a company's stock price has risen significantly and the board of directors decides to make the stock more accessible to retail investors. The exact timing is announced by the company, including the record date and the execution (ex-dividend) date."
+      }
+    }
+  ]
+};
+
+export const meta = {
+  title: "Stock Split Calculator & Guide: How Forward and Reverse Splits Work",
+  description: "Calculate your new share count and price after a stock split. See how forward and reverse splits impact your portfolio value—and why companies do them.",
+  category: "tool",
+  published: "2026-03-17",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/stock-split-calculator"
+  schema={schema}
+>
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 32px;
+      margin: 40px 0 60px;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .panel h2 {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      margin-top: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-prefix {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    input[type="number"].has-prefix {
+      padding-left: 32px;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    /* Ratio inputs */
+    .ratio-inputs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ratio-inputs input {
+      text-align: center;
+    }
+
+    .ratio-separator {
+      font-weight: bold;
+      color: var(--text-secondary);
+    }
+
+    /* Reverse split toggle */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: rgba(74, 143, 231, 0.05);
+      border: 1px solid rgba(74, 143, 231, 0.2);
+      border-radius: 8px;
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-color);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border-color);
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Results stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent-color);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Comparison table */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-table th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table td {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .comparison-table td:first-child {
+      font-family: var(--font-ui);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .val-highlight {
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Content styling */
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .content-section h2 {
+      font-size: 1.8rem;
+      color: var(--text-primary);
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .content-section h3 {
+      font-size: 1.4rem;
+      color: var(--text-primary);
+      margin-top: 30px;
+      margin-bottom: 16px;
+    }
+
+    .content-section p {
+      margin-bottom: 16px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .content-section ul, .content-section ol {
+      margin-left: 20px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+    }
+
+    .content-section li {
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+
+    /* Data table for historical examples */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .history-table th, .history-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table th {
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .history-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .ticker {
+      background: rgba(74, 143, 231, 0.1);
+      color: var(--accent-color);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* FAQ formatting */
+    .faq-container {
+      margin-top: 40px;
+    }
+
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    .faq-a {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .calculator-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
+
+  <div class="container">
+
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">Stock Split Calculator</h1>
+      <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Calculate your new share count, new share price, and total portfolio value after a forward or reverse stock split.</p>
+    </div>
+
+    <div class="calculator-grid">
+      <!-- Inputs Panel -->
+      <div class="panel">
+        <h2>Split Parameters</h2>
+
+        <div class="input-group">
+          <label>Number of Shares Owned</label>
+          <input type="number" id="input-shares" value="100" min="0" step="0.001">
+        </div>
+
+        <div class="input-group">
+          <label>Current Share Price</label>
+          <div class="input-wrapper">
+            <span class="input-prefix">$</span>
+            <input type="number" id="input-price" value="500.00" class="has-prefix" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="toggle-container">
+          <span class="toggle-label" id="split-type-label">Forward Split</span>
+          <label class="switch">
+            <input type="checkbox" id="input-reverse-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="input-group">
+          <label>Split Ratio (For Every X Shares, Get Y)</label>
+          <div class="ratio-inputs">
+            <select id="preset-ratios" style="flex: 1;">
+              <option value="custom">Custom Ratio</option>
+              <option value="2:1">2 for 1</option>
+              <option value="3:1">3 for 1</option>
+              <option value="4:1" selected>4 for 1</option>
+              <option value="5:1">5 for 1</option>
+              <option value="10:1">10 for 1</option>
+              <option value="3:2">3 for 2</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group" id="custom-ratio-group" style="display: none;">
+          <label>Custom Ratio</label>
+          <div class="ratio-inputs">
+            <input type="number" id="input-ratio-y" value="4" min="1" step="1">
+            <span class="ratio-separator">for</span>
+            <input type="number" id="input-ratio-x" value="1" min="1" step="1">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px;" id="ratio-description">You will receive 4 shares for every 1 share you own.</p>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="panel">
+        <h2>Post-Split Results</h2>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">New Share Price</div>
+            <div class="stat-value" id="res-price">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">New Share Count</div>
+            <div class="stat-value" id="res-shares">0</div>
+          </div>
+          <div class="stat-card" style="border-color: var(--accent-color);">
+            <div class="stat-label">Total Value</div>
+            <div class="stat-value" id="res-value" style="color: var(--text-primary);">$0.00</div>
+          </div>
+        </div>
+
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Before Split</th>
+                <th>After Split</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Share Count</td>
+                <td id="table-before-shares">100</td>
+                <td id="table-after-shares" class="val-highlight">400</td>
+              </tr>
+              <tr>
+                <td>Price Per Share</td>
+                <td id="table-before-price">$500.00</td>
+                <td id="table-after-price" class="val-highlight">$125.00</td>
+              </tr>
+              <tr>
+                <td>Total Value</td>
+                <td id="table-before-value">$50,000.00</td>
+                <td id="table-after-value" style="color: var(--text-primary);">$50,000.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 24px; font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+          <strong>Notice:</strong> Your total investment value <span style="color: var(--text-primary);">remains exactly the same</span> immediately following a stock split.
+        </p>
+      </div>
+    </div>
+
+    <div id="content-container">
+
+      <div class="content-section">
+        <h2>What is a Stock Split?</h2>
+        <p>A stock split is a corporate action in which a company divides its existing shares into multiple new shares to boost the stock's liquidity. While the number of shares outstanding increases by a specific multiple, the total dollar value of the shares remains the same compared to pre-split amounts. The market capitalization of the company—the total value of all its shares—does not change.</p>
+        <p>Think of a stock split like cutting a pizza. If you have an 8-slice pizza and you cut every slice in half, you now have 16 slices. The pieces are smaller, but you still have the exact same amount of pizza. In the stock market, if a company executes a 2-for-1 forward split, a shareholder who owned 100 shares priced at $100 each will now own 200 shares priced at $50 each. The total value remains $10,000.</p>
+
+        <h3>Why Do Companies Split Their Stock?</h3>
+        <p>Stock splits are primarily driven by psychology, accessibility, and market mechanics. The fundamental value of the underlying business is completely unaltered, but the perception of the stock changes.</p>
+        <ul>
+          <li><strong>Accessibility for Retail Investors:</strong> As a company grows, its share price can reach hundreds or even thousands of dollars. While fractional shares are common today, high nominal share prices can still psychologically deter small retail investors. A split brings the price down to a more "accessible" level.</li>
+          <li><strong>Increased Liquidity:</strong> A lower share price often leads to higher trading volume. With more shares available at a lower price, the bid-ask spread can tighten, making it easier for investors to buy and sell without moving the market.</li>
+          <li><strong>Options Trading Mechanics:</strong> Standard options contracts represent 100 shares of the underlying stock. If a stock trades at $1,000, a single options contract requires $100,000 in capital to exercise. Splitting the stock brings the options market back into reach for a wider range of traders.</li>
+          <li><strong>Psychological Signaling:</strong> A forward stock split is generally viewed as a bullish signal by the market. It implies that the company's management is confident that the stock price will continue to grow from its new, lower baseline.</li>
+          <li><strong>Index Inclusion:</strong> Certain stock market indices, like the Dow Jones Industrial Average, are price-weighted. This means a stock with a $500 price has 10 times the influence of a $50 stock, regardless of their actual market caps. Companies may split their stock to qualify for inclusion in price-weighted indices without overly skewing the index.</li>
+        </ul>
+
+        <h3>How Stock Splits Work Mechanically</h3>
+        <p>When a company decides to split its stock, the board of directors must pass a resolution and seek shareholder approval. Once approved, the company will announce three critical dates:</p>
+        <ol>
+          <li><strong>Announcement Date:</strong> The day the company publicly declares its intention to split the stock, including the ratio and the timeline.</li>
+          <li><strong>Record Date:</strong> The date on which you must be listed on the company's books as a shareholder to be eligible to receive the newly created shares. However, due to standard market settlement rules, you actually need to buy the stock before this date.</li>
+          <li><strong>Ex-Date (Execution Date):</strong> The date the stock begins trading on a post-split basis at the newly adjusted price. If you sell your shares on the day before the ex-date, you are selling away your right to the split shares.</li>
+        </ol>
+      </div>
+
+      <div class="content-section">
+        <h2>Forward Splits vs. Reverse Splits</h2>
+        <p>Stock splits come in two distinct flavors: forward splits and reverse splits. While the mathematical mechanics are similar, the underlying motivations are entirely opposite.</p>
+
+        <h3>Forward Stock Splits</h3>
+        <p>A forward stock split increases the number of shares and decreases the price per share. These are the splits that make headlines and are generally celebrated by investors because they usually follow a period of significant price appreciation and corporate success.</p>
+        <p>Common forward split ratios include 2-for-1 (2:1), 3-for-1 (3:1), and even 10-for-1 (10:1). In a 10-for-1 split, if you hold 10 shares at $1,000, you will end up with 100 shares at $100.</p>
+
+        <h3>Reverse Stock Splits</h3>
+        <p>A reverse stock split consolidates the number of existing shares into fewer, more valuable shares. For example, in a 1-for-10 (1:10) reverse split, every 10 shares you own are merged into a single share, and the price per share is multiplied by 10.</p>
+        <p>Unlike forward splits, reverse splits are almost universally viewed as a bearish signal. They are typically executed as a defensive measure by companies whose stock price has plummeted. The most common reason for a reverse split is to maintain compliance with major exchange listing requirements. Exchanges like the NYSE and NASDAQ require stocks to maintain a minimum bid price (usually $1.00). If a stock falls below this threshold for an extended period, it faces delisting. A reverse split artificially inflates the share price above the minimum requirement, buying the company time to turn its business around.</p>
+      </div>
+
+      <div class="content-section">
+        <h2>Notable Historical Stock Splits</h2>
+        <p>Many of the world's largest and most successful companies have split their stock multiple times over their history. Here are some notable examples of high-profile forward splits from the modern era:</p>
+
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Ticker</th>
+              <th>Split Ratio</th>
+              <th>Execution Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nvidia</td>
+              <td><span class="ticker">NVDA</span></td>
+              <td>10 for 1</td>
+              <td>June 2024</td>
+            </tr>
+            <tr>
+              <td>Walmart</td>
+              <td><span class="ticker">WMT</span></td>
+              <td>3 for 1</td>
+              <td>February 2024</td>
+            </tr>
+            <tr>
+              <td>Amazon</td>
+              <td><span class="ticker">AMZN</span></td>
+              <td>20 for 1</td>
+              <td>June 2022</td>
+            </tr>
+            <tr>
+              <td>Alphabet (Google)</td>
+              <td><span class="ticker">GOOGL</span></td>
+              <td>20 for 1</td>
+              <td>July 2022</td>
+            </tr>
+            <tr>
+              <td>Tesla</td>
+              <td><span class="ticker">TSLA</span></td>
+              <td>5 for 1</td>
+              <td>August 2020</td>
+            </tr>
+            <tr>
+              <td>Apple</td>
+              <td><span class="ticker">AAPL</span></td>
+              <td>4 for 1</td>
+              <td>August 2020</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>And here is a notable example of a reverse split executed by a legacy industrial giant undergoing massive restructuring:</p>
+
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Ticker</th>
+              <th>Split Ratio</th>
+              <th>Execution Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>General Electric</td>
+              <td><span class="ticker">GE</span></td>
+              <td>1 for 8 (Reverse)</td>
+              <td>August 2021</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-section">
+        <h2>Do Stock Splits Affect Options Contracts?</h2>
+        <p>Yes, stock splits have a direct and immediate impact on options contracts. Because an options contract is a derivative of the underlying stock, the Options Clearing Corporation (OCC) must adjust the contracts to ensure that neither the buyer nor the seller is unfairly penalized or enriched by the corporate action.</p>
+        <p>The adjustment process depends on the type of split:</p>
+        <ul>
+          <li><strong>Whole Forward Splits (e.g., 2-for-1):</strong> The number of options contracts you hold increases by the split ratio, and the strike price is divided by the split ratio. The multiplier remains at 100 shares per contract. If you hold 1 call option with a strike of $100, after a 2-for-1 split, you will hold 2 call options with a strike of $50.</li>
+          <li><strong>Fractional Splits (e.g., 3-for-2):</strong> The strike price is adjusted (divided by 1.5), but instead of giving you fractional contracts, the multiplier of the contract is increased. One contract will now represent 150 shares instead of 100.</li>
+          <li><strong>Reverse Splits:</strong> The strike price is multiplied by the reverse split ratio, and the contract multiplier is reduced. For example, after a 1-for-10 reverse split, a standard contract that previously represented 100 shares will be adjusted to represent only 10 shares of the new, higher-priced stock.</li>
+        </ul>
+        <p>These adjustments ensure that the total notional value and the intrinsic value of the options contracts remain perfectly balanced before and after the split.</p>
+      </div>
+
+      <div class="content-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+          <div class="faq-item">
+            <h3 class="faq-q">how does a stock split work</h3>
+            <p class="faq-a">A stock split divides a company's existing shares into multiple new shares to boost liquidity. The total dollar value of the shares remains the same, as the share price drops proportionately. For example, in a 2-for-1 split, you get twice as many shares, but each share is worth half as much.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-q">does a stock split change market cap</h3>
+            <p class="faq-a">No, a stock split does not change the overall market capitalization of a company. It simply divides the existing market cap into more (or fewer, in a reverse split) slices. Your total investment value remains exactly the same immediately after the split.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-q">what is a reverse stock split</h3>
+            <p class="faq-a">A reverse stock split consolidates a company's existing shares into fewer, more valuable shares. It is typically done by companies whose stock price has fallen too low, often to avoid being delisted from a stock exchange.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-q">how to calculate shares after stock split</h3>
+            <p class="faq-a">To calculate your new share count, multiply your current number of shares by the first number in the split ratio, then divide by the second number. For example, in a 3-for-1 split, if you own 100 shares, you multiply 100 by 3 and divide by 1 to get 300 shares.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-q">when do stock splits happen</h3>
+            <p class="faq-a">Stock splits usually happen when a company's stock price has risen significantly and the board of directors decides to make the stock more accessible to retail investors. The exact timing is announced by the company, including the record date and the execution (ex-dividend) date.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section" style="margin-top: 60px; padding: 24px; background: rgba(74, 143, 231, 0.05); border: 1px solid rgba(74, 143, 231, 0.2); border-radius: 12px;">
+        <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--accent-color);">Related Investing Resources</h3>
+        <p style="margin-bottom: 0;">Once you understand how stock splits affect your portfolio mechanics, you might also want to explore our <a href="/dividend-yield-calculator">Dividend Yield Calculator</a> to project annual income, or see how long-term market trends play out in our guide on the <a href="/average-stock-market-return">Average Stock Market Return</a>.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script is:inline>
+
+    // UI Elements
+    const elShares = document.getElementById('input-shares');
+    const elPrice = document.getElementById('input-price');
+    const toggleReverse = document.getElementById('input-reverse-toggle');
+    const labelReverse = document.getElementById('split-type-label');
+    const selectPreset = document.getElementById('preset-ratios');
+    const customRatioGroup = document.getElementById('custom-ratio-group');
+    const inputRatioY = document.getElementById('input-ratio-y'); // New shares you get
+    const inputRatioX = document.getElementById('input-ratio-x'); // Old shares you give
+    const ratioDescription = document.getElementById('ratio-description');
+
+    // Output Elements
+    const resPrice = document.getElementById('res-price');
+    const resShares = document.getElementById('res-shares');
+    const resValue = document.getElementById('res-value');
+
+    const tblBeforeShares = document.getElementById('table-before-shares');
+    const tblBeforePrice = document.getElementById('table-before-price');
+    const tblBeforeValue = document.getElementById('table-before-value');
+
+    const tblAfterShares = document.getElementById('table-after-shares');
+    const tblAfterPrice = document.getElementById('table-after-price');
+    const tblAfterValue = document.getElementById('table-after-value');
+
+    const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    const formatShares = (val) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 }).format(val);
+
+    function getRatio() {
+      let isReverse = toggleReverse.checked;
+      let ratioStr = selectPreset.value;
+      let y, x;
+
+      if (ratioStr === 'custom') {
+        y = parseFloat(inputRatioY.value) || 1;
+        x = parseFloat(inputRatioX.value) || 1;
+        customRatioGroup.style.display = 'block';
+      } else {
+        customRatioGroup.style.display = 'none';
+        const parts = ratioStr.split(':');
+        y = parseFloat(parts[0]);
+        x = parseFloat(parts[1]);
+
+        // Update custom inputs to match preset so if they switch to custom, it holds the last preset
+        inputRatioY.value = y;
+        inputRatioX.value = x;
+      }
+
+      if (isReverse) {
+        // Swap y and x for reverse split
+        return { y: x, x: y, isReverse: true };
+      }
+      return { y: y, x: x, isReverse: false };
+    }
+
+    function calculate() {
+      const shares = parseFloat(elShares.value) || 0;
+      const price = parseFloat(elPrice.value) || 0;
+
+      const ratio = getRatio();
+      const splitFactor = ratio.y / ratio.x;
+
+      // Describe ratio
+      if (ratio.isReverse) {
+        labelReverse.innerText = 'Reverse Split';
+        ratioDescription.innerText = `You will receive ${ratio.y} new share(s) for every ${ratio.x} share(s) you own.`;
+      } else {
+        labelReverse.innerText = 'Forward Split';
+        ratioDescription.innerText = `You will receive ${ratio.y} new share(s) for every ${ratio.x} share(s) you own.`;
+      }
+
+      // Calculations
+      const newShares = shares * splitFactor;
+      const newPrice = price / splitFactor;
+
+      // To avoid floating point bugs, we snap to integer cents, and total value is ALWAYS shares * price.
+      // E.g. 100 * 500 = 50,000
+      const totalValueOriginal = shares * price;
+
+      // Update UI Result Panels
+      resShares.innerText = formatShares(newShares);
+      resPrice.innerText = formatCurrency(newPrice);
+      resValue.innerText = formatCurrency(totalValueOriginal);
+
+      // Update Table
+      tblBeforeShares.innerText = formatShares(shares);
+      tblBeforePrice.innerText = formatCurrency(price);
+      tblBeforeValue.innerText = formatCurrency(totalValueOriginal);
+
+      tblAfterShares.innerText = formatShares(newShares);
+      tblAfterPrice.innerText = formatCurrency(newPrice);
+      tblAfterValue.innerText = formatCurrency(totalValueOriginal);
+    }
+
+    // Event Listeners
+    [elShares, elPrice, toggleReverse, selectPreset, inputRatioY, inputRatioX].forEach(el => {
+      if(el) {
+        el.addEventListener('input', calculate);
+        el.addEventListener('change', calculate);
+      }
+    });
+
+    // Initial calculation
+    calculate();
+
+  </script>
+</SiteLayout>

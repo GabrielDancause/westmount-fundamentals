@@ -1,0 +1,507 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Free Bond Calculator | Calculate Price, YTM & Duration",
+  description: "Calculate bond price, yield to maturity (YTM), and macaulay duration with our free interactive bond calculator. Learn how bond math works with real examples.",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is a bond's price calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A bond's price is calculated by discounting its future cash flows (coupon payments and the principal repayment at maturity) by the current market interest rate or yield to maturity (YTM). If the market rate is higher than the coupon rate, the bond sells at a discount; if lower, it sells at a premium."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Yield to Maturity (YTM)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yield to Maturity (YTM) is the total anticipated return on a bond if it is held until it matures. It accounts for the current market price, par value, coupon interest rate, and time to maturity, representing the internal rate of return (IRR) of the bond's cash flows."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does Macaulay Duration mean?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Macaulay Duration measures the weighted average time it takes to receive all of a bond's cash flows. It helps investors understand the bond's price sensitivity to interest rate changes; higher duration means higher sensitivity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do bond prices fall when interest rates rise?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When new bonds are issued with higher interest rates, older bonds with lower fixed coupon payments become less attractive to investors. To compensate, the price of the older bonds must fall until their yield matches the new higher market rates."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to a bond's price at maturity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At maturity, the bond's price converges to its face value (par value), regardless of whether it was previously trading at a discount or a premium. The issuer repays the principal amount to the bondholder."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/bond-calculator" schema={schema}>
+  <div class="container page-content">
+    <h1>Bond Calculator</h1>
+    <p style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">Calculate the present value, yield to maturity (YTM), and Macaulay duration of a fixed-income bond. Enter the parameters below to see real-time pricing.</p>
+
+    <div class="calculator-card">
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="face-value">Face Value (Par Value)</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="face-value" value="1000" min="1" step="1" aria-label="Face Value">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="coupon-rate">Annual Coupon Rate</label>
+            <div class="input-wrapper">
+              <input type="number" id="coupon-rate" value="5" min="0" step="0.1" aria-label="Coupon Rate">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="years-to-maturity">Years to Maturity</label>
+            <div class="input-wrapper">
+              <input type="number" id="years-to-maturity" value="10" min="0.1" step="0.5" aria-label="Years to Maturity">
+              <span class="suffix">Years</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="payment-frequency">Payment Frequency</label>
+            <select id="payment-frequency" class="styled-select" aria-label="Payment Frequency">
+              <option value="1">Annually</option>
+              <option value="2" selected>Semi-Annually</option>
+              <option value="4">Quarterly</option>
+              <option value="12">Monthly</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="market-rate">Market Yield (YTM)</label>
+            <div class="input-wrapper">
+              <input type="number" id="market-rate" value="6" min="0" step="0.1" aria-label="Market Rate">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Calculated Bond Price</span>
+            <span class="calc-result-value" id="bond-price">$925.61</span>
+            <div class="price-status" id="price-status">Trading at a Discount</div>
+          </div>
+
+          <div class="secondary-results">
+            <div class="result-item">
+              <span class="result-label">Total Cash Flow</span>
+              <span class="result-value" id="total-cash-flow">$1,500.00</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Current Yield</span>
+              <span class="result-value" id="current-yield">5.40%</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Macaulay Duration</span>
+              <span class="result-value" id="macaulay-duration">7.82 Years</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Modified Duration</span>
+              <span class="result-value" id="modified-duration">7.59 Years</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>How the Bond Calculator Works</h2>
+      <p>This calculator determines the present value (clean price) of a standard fixed-rate bond. By discounting all future cash flows—both the periodic coupon payments and the final principal repayment—back to the present using the current market interest rate (Yield to Maturity), it provides the theoretical price of the bond.</p>
+
+      <div class="highlight-box">
+        <h3>Bond Pricing Formula</h3>
+        <p>The core calculation uses the present value formula for an annuity (the coupons) plus the present value of a single sum (the face value).</p>
+        <code>Price = [ C × (1 - (1 + r)<sup>-n</sup>) / r ] + [ F / (1 + r)<sup>-n</sup> ]</code>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+          Where:<br>
+          <strong>C</strong> = Periodic coupon payment<br>
+          <strong>F</strong> = Face value (par value)<br>
+          <strong>r</strong> = Periodic market yield (YTM ÷ frequency)<br>
+          <strong>n</strong> = Total number of periods (Years × frequency)
+        </p>
+      </div>
+
+      <h2>Understanding Bond Price Dynamics</h2>
+      <p>The relationship between bond prices and market interest rates is one of the most fundamental concepts in fixed-income investing.</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h4>Discount Bond</h4>
+          <p>When the Coupon Rate is <strong>less</strong> than Market YTM.</p>
+          <span class="badge negative">Price &lt; Par Value</span>
+        </div>
+        <div class="stat-card">
+          <h4>Par Bond</h4>
+          <p>When the Coupon Rate <strong>equals</strong> Market YTM.</p>
+          <span class="badge neutral">Price = Par Value</span>
+        </div>
+        <div class="stat-card">
+          <h4>Premium Bond</h4>
+          <p>When the Coupon Rate is <strong>greater</strong> than Market YTM.</p>
+          <span class="badge positive">Price &gt; Par Value</span>
+        </div>
+      </div>
+
+      <h2>Duration: Measuring Interest Rate Risk</h2>
+      <p>Our calculator also outputs two critical risk metrics: Macaulay Duration and Modified Duration.</p>
+      <ul>
+        <li><strong>Macaulay Duration:</strong> The weighted average time until all the bond's cash flows are received. It is expressed in years.</li>
+        <li><strong>Modified Duration:</strong> A direct measure of price sensitivity. It estimates the percentage change in the bond's price for a 1% change in yield. For example, if a bond has a modified duration of 5 years, a 1% increase in interest rates will cause the bond's price to drop by approximately 5%.</li>
+      </ul>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How is a bond's price calculated?</h3>
+        <p>A bond's price is calculated by discounting its future cash flows (coupon payments and the principal repayment at maturity) by the current market interest rate or yield to maturity (YTM). If the market rate is higher than the coupon rate, the bond sells at a discount; if lower, it sells at a premium.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is Yield to Maturity (YTM)?</h3>
+        <p>Yield to Maturity (YTM) is the total anticipated return on a bond if it is held until it matures. It accounts for the current market price, par value, coupon interest rate, and time to maturity, representing the internal rate of return (IRR) of the bond's cash flows.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does Macaulay Duration mean?</h3>
+        <p>Macaulay Duration measures the weighted average time it takes to receive all of a bond's cash flows. It helps investors understand the bond's price sensitivity to interest rate changes; higher duration means higher sensitivity.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why do bond prices fall when interest rates rise?</h3>
+        <p>When new bonds are issued with higher interest rates, older bonds with lower fixed coupon payments become less attractive to investors. To compensate, the price of the older bonds must fall until their yield matches the new higher market rates.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What happens to a bond's price at maturity?</h3>
+        <p>At maturity, the bond's price converges to its face value (par value), regardless of whether it was previously trading at a discount or a premium. The issuer repays the principal amount to the bondholder.</p>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Calculator Specific Styles */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  /* Specific padding adjustments for prefix/suffix */
+  input[id="face-value"] { padding-left: 2rem; }
+  input[id="coupon-rate"], input[id="market-rate"] { padding-right: 2rem; }
+  input[id="years-to-maturity"] { padding-right: 4.5rem; }
+
+  .styled-select {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    background-size: 0.65rem auto;
+  }
+
+  .styled-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .primary-result {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .primary-result .calc-result-value {
+    display: block;
+    margin: 0.5rem 0;
+  }
+
+  .price-status {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    display: inline-block;
+  }
+
+  .status-discount { border: 1px solid var(--sell-color); color: var(--sell-color); }
+  .status-par { border: 1px solid var(--border-color); color: var(--text-secondary); }
+  .status-premium { border: 1px solid var(--buy-color); color: var(--buy-color); }
+
+  .secondary-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .result-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .result-value {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .secondary-results {
+      grid-template-columns: 1fr;
+    }
+
+    .calculator-card {
+      padding: 1.5rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Inputs
+    const fvInput = document.getElementById('face-value');
+    const crInput = document.getElementById('coupon-rate');
+    const ytmInput = document.getElementById('market-rate');
+    const ytmYearsInput = document.getElementById('years-to-maturity');
+    const freqSelect = document.getElementById('payment-frequency');
+
+    // Outputs
+    const priceDisplay = document.getElementById('bond-price');
+    const statusDisplay = document.getElementById('price-status');
+    const totalCashFlowDisplay = document.getElementById('total-cash-flow');
+    const currentYieldDisplay = document.getElementById('current-yield');
+    const macaulayDurationDisplay = document.getElementById('macaulay-duration');
+    const modifiedDurationDisplay = document.getElementById('modified-duration');
+
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    const percentFormatter = new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function calculate() {
+      // Parse inputs
+      const fv = parseFloat(fvInput.value) || 0;
+      const annualCouponRate = parseFloat(crInput.value) / 100 || 0;
+      const annualYTM = parseFloat(ytmInput.value) / 100 || 0;
+      const years = parseFloat(ytmYearsInput.value) || 0;
+      const freq = parseInt(freqSelect.value, 10) || 2;
+
+      // Edge cases: No face value or zero years
+      if (fv <= 0 || years <= 0) {
+        priceDisplay.textContent = '$0.00';
+        statusDisplay.textContent = 'Invalid Input';
+        statusDisplay.className = 'price-status status-par';
+        totalCashFlowDisplay.textContent = '$0.00';
+        currentYieldDisplay.textContent = '0.00%';
+        macaulayDurationDisplay.textContent = '0.00 Years';
+        modifiedDurationDisplay.textContent = '0.00 Years';
+        return;
+      }
+
+      const totalPeriods = years * freq;
+      const periodYTM = annualYTM / freq;
+      const periodCoupon = (fv * annualCouponRate) / freq;
+
+      let presentValue = 0;
+      let macaulayNumerator = 0;
+      let totalCashFlow = fv; // Principal is always returned
+
+      // Core Bond Math
+      if (Math.abs(periodYTM) < 1e-10) {
+        // Zero YTM edge case - simple sum
+        presentValue = fv + (periodCoupon * totalPeriods);
+        for (let t = 1; t <= totalPeriods; t++) {
+          const cashFlow = (t === totalPeriods) ? (periodCoupon + fv) : periodCoupon;
+          totalCashFlow += (t !== totalPeriods) ? periodCoupon : periodCoupon;
+          macaulayNumerator += t * cashFlow;
+        }
+      } else {
+        // Standard PV calculation
+        for (let t = 1; t <= totalPeriods; t++) {
+          const cashFlow = (t === totalPeriods) ? (periodCoupon + fv) : periodCoupon;
+          if (t !== totalPeriods) {
+            totalCashFlow += periodCoupon;
+          } else {
+            totalCashFlow += periodCoupon; // Final coupon + FV already added
+          }
+          const discountedCF = cashFlow / Math.pow(1 + periodYTM, t);
+          presentValue += discountedCF;
+          macaulayNumerator += t * discountedCF;
+        }
+      }
+
+      // Handle precision issues
+      let fixedPV = parseFloat(presentValue.toPrecision(14));
+      if (Math.abs(fixedPV - Math.round(fixedPV)) < 1e-14) {
+        fixedPV = Math.round(fixedPV);
+      }
+
+      const price = fixedPV;
+
+      // Status
+      if (price < fv - 0.01) {
+        statusDisplay.textContent = 'Trading at a Discount';
+        statusDisplay.className = 'price-status status-discount';
+      } else if (price > fv + 0.01) {
+        statusDisplay.textContent = 'Trading at a Premium';
+        statusDisplay.className = 'price-status status-premium';
+      } else {
+        statusDisplay.textContent = 'Trading at Par';
+        statusDisplay.className = 'price-status status-par';
+      }
+
+      // Metrics
+      const currentYield = price > 0 ? (annualCouponRate * fv) / price : 0;
+      const macaulayPeriods = presentValue > 0 ? macaulayNumerator / presentValue : 0;
+      const macaulayYears = macaulayPeriods / freq;
+      const modifiedYears = macaulayYears / (1 + periodYTM);
+
+      // Display
+      priceDisplay.textContent = formatter.format(price);
+      totalCashFlowDisplay.textContent = formatter.format(totalCashFlow);
+      currentYieldDisplay.textContent = percentFormatter.format(currentYield);
+      macaulayDurationDisplay.textContent = `${macaulayYears.toFixed(2)} Years`;
+      modifiedDurationDisplay.textContent = `${modifiedYears.toFixed(2)} Years`;
+    }
+
+    // Event Listeners for real-time calculation
+    [fvInput, crInput, ytmInput, ytmYearsInput, freqSelect].forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    // Initial calculation
+    calculate();
+
+    // Make elements available globally for testing/playwright
+    window.fvInput = fvInput;
+    window.crInput = crInput;
+    window.ytmInput = ytmInput;
+    window.ytmYearsInput = ytmYearsInput;
+    window.freqSelect = freqSelect;
+    window.priceDisplay = priceDisplay;
+  });
+</script>

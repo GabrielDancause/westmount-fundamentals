@@ -1,0 +1,534 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "US Inflation Calculator (1913-2024) | Real-Time CPI Data",
+  description: "Calculate how inflation has eroded purchasing power over time. Uses official US Consumer Price Index (CPI) data from 1913 to today.",
+  category: "tool"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does this inflation calculator work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator uses the Consumer Price Index for All Urban Consumers (CPI-U) to track purchasing power over time. It compares the CPI from your starting year to your ending year to determine the percentage change in prices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the formula for calculating inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The formula to calculate the equivalent purchasing power is: Final Value = Initial Value × (Ending CPI / Starting CPI). To calculate the total inflation rate, use: ((Ending CPI - Starting CPI) / Starting CPI) × 100."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is considered a normal rate of inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The US Federal Reserve targets an average annual inflation rate of 2% over the long term. This is considered low enough to preserve purchasing power, but high enough to encourage spending and avoid deflation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do some periods experience negative inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Negative inflation, known as deflation, occurs when the general price level of goods and services falls. This typically happens during severe economic contractions, such as the Great Depression in the 1930s or briefly during the 2008 financial crisis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this calculator use recent data?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, this calculator is periodically updated to reflect the latest officially published US Consumer Price Index figures, capturing recent inflationary periods accurately."
+      }
+    }
+  ]
+});
+
+const cpiData = {"1913": 9.8, "1914": 10.0, "1915": 10.1, "1916": 10.4, "1917": 11.7, "1918": 14.0, "1919": 16.5, "1920": 19.3, "1921": 19.0, "1922": 16.9, "1923": 16.8, "1924": 17.3, "1925": 17.3, "1926": 17.9, "1927": 17.5, "1928": 17.3, "1929": 17.1, "1930": 17.1, "1931": 15.9, "1932": 14.3, "1933": 12.9, "1934": 13.2, "1935": 13.6, "1936": 13.8, "1937": 14.1, "1938": 14.2, "1939": 14.0, "1940": 13.9, "1941": 14.1, "1942": 15.7, "1943": 16.9, "1944": 17.4, "1945": 17.8, "1946": 18.2, "1947": 21.5, "1948": 23.7, "1949": 24.0, "1950": 23.5, "1951": 25.4, "1952": 26.5, "1953": 26.6, "1954": 26.9, "1955": 26.7, "1956": 26.8, "1957": 27.6, "1958": 28.6, "1959": 29.0, "1960": 29.3, "1961": 29.8, "1962": 30.0, "1963": 30.4, "1964": 30.9, "1965": 31.2, "1966": 31.8, "1967": 32.9, "1968": 34.1, "1969": 35.6, "1970": 37.8, "1971": 39.8, "1972": 41.1, "1973": 42.6, "1974": 46.6, "1975": 52.1, "1976": 55.6, "1977": 58.5, "1978": 62.5, "1979": 68.3, "1980": 77.8, "1981": 87.0, "1982": 94.3, "1983": 97.8, "1984": 101.9, "1985": 105.5, "1986": 109.6, "1987": 111.2, "1988": 115.7, "1989": 121.1, "1990": 127.4, "1991": 134.6, "1992": 138.1, "1993": 142.6, "1994": 146.2, "1995": 150.3, "1996": 154.4, "1997": 159.1, "1998": 161.6, "1999": 164.3, "2000": 168.8, "2001": 175.1, "2002": 177.1, "2003": 181.7, "2004": 185.2, "2005": 190.7, "2006": 198.3, "2007": 202.416, "2008": 211.08, "2009": 211.143, "2010": 216.687, "2011": 220.223, "2012": 226.665, "2013": 230.28, "2014": 233.916, "2015": 233.707, "2016": 236.916, "2017": 242.839, "2018": 247.867, "2019": 251.712, "2020": 257.971, "2021": 261.582, "2022": 281.148, "2023": 299.17, "2024": 308.417};
+const cpiYears = Object.keys(cpiData).map(Number);
+const minYear = Math.min(...cpiYears);
+const maxYear = Math.max(...cpiYears);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/inflation-calculator" schema={schema}>
+  <div class="page-content">
+    <h1>US Inflation Calculator (1913 - {maxYear})</h1>
+    <p>Calculate how inflation has affected purchasing power using historical Consumer Price Index (CPI) data.</p>
+
+    <div class="calculator-container">
+      <div class="input-section">
+        <div class="input-group">
+          <label for="startAmount">Starting Amount ($)</label>
+          <input type="number" id="startAmount" value="100.00" min="0" step="0.01" />
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label for="startYear">Start Year</label>
+            <input type="number" id="startYear" value="2000" min={minYear} max={maxYear} step="1" />
+            <small class="year-hint">Between {minYear} and {maxYear}</small>
+          </div>
+          <div class="input-group">
+            <label for="endYear">End Year</label>
+            <input type="number" id="endYear" value={maxYear} min={minYear} max={maxYear} step="1" />
+            <small class="year-hint">Between {minYear} and {maxYear}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <div class="result-card primary">
+          <span class="result-label">Equivalent Value in <span id="displayEndYear">{maxYear}</span></span>
+          <span class="result-value" id="equivalentValue">$0.00</span>
+        </div>
+
+        <div class="secondary-results">
+          <div class="result-card">
+            <span class="result-label">Cumulative Inflation</span>
+            <span class="result-value" id="cumulativeInflation">0.0%</span>
+          </div>
+          <div class="result-card">
+            <span class="result-label">Avg. Annual Inflation</span>
+            <span class="result-value" id="annualInflation">0.0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-header">
+        <h3>Purchasing Power of <span id="chartTitleAmount">$100</span> Over This Period</h3>
+      </div>
+      <div class="bar-chart" id="purchasingPowerChart">
+        <!-- Bars will be inserted via JS -->
+      </div>
+    </div>
+
+<style>
+  .calculator-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb, 0, 0, 0), 0.1);
+  }
+
+  .year-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .result-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .result-card.primary {
+    padding: 24px;
+    background: rgba(var(--accent-color-rgb, 0, 0, 0), 0.05);
+    border: 2px solid var(--accent-color);
+  }
+
+  .secondary-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .result-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .result-card.primary .result-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .chart-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+
+  .chart-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .chart-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+  }
+
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 250px;
+    padding-top: 30px;
+    border-bottom: 2px solid var(--text-secondary);
+    gap: 4px;
+  }
+
+  :global(.chart-bar-wrapper) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    height: 100%; /* Ensure container fills parent height */
+    justify-content: flex-end;
+  }
+
+  :global(.chart-bar) {
+    width: 100%;
+    max-width: 40px;
+    background-color: var(--accent-color);
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+    transition: height 0.3s ease;
+    opacity: 0.8;
+  }
+
+  :global(.chart-bar:hover) {
+    opacity: 1;
+  }
+
+  :global(.chart-value) {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  :global(.chart-year) {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .calculator-container {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.chart-bar) {
+      max-width: 20px;
+    }
+
+    .chart-value, :global(.chart-year) {
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
+<script id="cpi-data" type="application/json" set:html={JSON.stringify(cpiData)}></script>
+
+<script is:inline>
+  const initCalculator = () => {
+    const rawData = document.getElementById('cpi-data').textContent;
+    let cpiData;
+    try {
+      cpiData = JSON.parse(rawData);
+    } catch (e) {
+      console.error("Failed to parse CPI data", e);
+      return;
+    }
+
+    const cpiYears = Object.keys(cpiData).map(Number);
+    const minYear = Math.min(...cpiYears);
+    const maxYear = Math.max(...cpiYears);
+
+    const startAmountInput = document.getElementById('startAmount');
+    const startYearInput = document.getElementById('startYear');
+    const endYearInput = document.getElementById('endYear');
+
+    const displayEndYear = document.getElementById('displayEndYear');
+    const equivalentValueDisplay = document.getElementById('equivalentValue');
+    const cumulativeInflationDisplay = document.getElementById('cumulativeInflation');
+    const annualInflationDisplay = document.getElementById('annualInflation');
+    const purchasingPowerChart = document.getElementById('purchasingPowerChart');
+
+    // Formatting function
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    };
+
+    const formatPercent = (value) => {
+      const sign = value > 0 ? '+' : '';
+      return `${sign}${value.toFixed(1)}%`;
+    };
+
+    function calculate() {
+      // Validate inputs
+      const amount = parseFloat(startAmountInput.value) || 0;
+      let startYear = parseInt(startYearInput.value);
+      let endYear = parseInt(endYearInput.value);
+
+      if (startYear < minYear) startYear = minYear;
+      if (startYear > maxYear) startYear = maxYear;
+      if (endYear < minYear) endYear = minYear;
+      if (endYear > maxYear) endYear = maxYear;
+
+      // Allow forward and backward calculations
+      // If start > end, we are calculating backwards in time
+
+      const startCpi = cpiData[startYear];
+      const endCpi = cpiData[endYear];
+
+      if (!startCpi || !endCpi) return;
+
+      // Calculate equivalent value
+      const multiplier = endCpi / startCpi;
+      // Fixed precision to avoid floating point anomalies
+      const equivalentValue = parseFloat((amount * multiplier).toPrecision(14));
+
+      // Calculate Cumulative Inflation
+      const cumulativeInflation = ((endCpi - startCpi) / startCpi) * 100;
+
+      // Calculate Average Annual Inflation (CAGR)
+      const yearsDiff = Math.abs(endYear - startYear);
+      let annualInflation = 0;
+      if (yearsDiff > 0) {
+        // Handle backwards vs forwards
+        if (endYear > startYear) {
+           annualInflation = (Math.pow(endCpi / startCpi, 1 / yearsDiff) - 1) * 100;
+        } else {
+           annualInflation = (Math.pow(startCpi / endCpi, 1 / yearsDiff) - 1) * 100;
+        }
+      }
+
+      // Update DOM
+      displayEndYear.textContent = endYear;
+      document.getElementById('chartTitleAmount').textContent = formatCurrency(amount);
+      equivalentValueDisplay.textContent = formatCurrency(equivalentValue);
+      cumulativeInflationDisplay.textContent = formatPercent(cumulativeInflation);
+      annualInflationDisplay.textContent = formatPercent(annualInflation);
+
+      // Update coloring based on inflation direction
+      if (cumulativeInflation > 0) {
+        cumulativeInflationDisplay.style.color = "var(--sell-color, #ef4444)";
+        annualInflationDisplay.style.color = "var(--sell-color, #ef4444)";
+      } else if (cumulativeInflation < 0) {
+        cumulativeInflationDisplay.style.color = "var(--buy-color, #22c55e)";
+        annualInflationDisplay.style.color = "var(--buy-color, #22c55e)";
+      } else {
+        cumulativeInflationDisplay.style.color = "var(--text-primary)";
+        annualInflationDisplay.style.color = "var(--text-primary)";
+      }
+
+      drawChart(amount, startYear, endYear);
+    }
+
+    function drawChart(amount, startY, endY) {
+      // Ensure we draw forwards for visual clarity
+      let chartStart = Math.min(startY, endY);
+      let chartEnd = Math.max(startY, endY);
+      const span = chartEnd - chartStart;
+
+      // Determine number of bars (max 6 for clarity)
+      let steps = 5;
+      if (span < 5) steps = span;
+      if (steps === 0) steps = 1;
+
+      const years = [];
+      const stepSize = Math.max(1, Math.floor(span / steps));
+
+      for (let i = 0; i < steps; i++) {
+        years.push(chartStart + (i * stepSize));
+      }
+      if (years[years.length - 1] !== chartEnd && span > 0) {
+        years.push(chartEnd);
+      }
+      if (years.length === 1 && chartStart !== chartEnd) {
+        years.push(chartEnd);
+      }
+
+      // Remove duplicates
+      const uniqueYears = [...new Set(years)].sort((a,b) => a - b);
+
+      // Calculate purchasing power relative to the STARTING year requested by user
+      const baseYear = startY;
+      const baseCpi = cpiData[baseYear];
+
+      const dataPoints = uniqueYears.map(y => {
+        const yCpi = cpiData[y];
+        // How much would `amount` from `baseYear` be worth in year `y`?
+        const val = amount * (yCpi / baseCpi);
+        return {
+          year: y,
+          value: parseFloat(val.toPrecision(14))
+        };
+      });
+
+      // Find max value to scale bars
+      const maxVal = Math.max(...dataPoints.map(d => d.value));
+
+      purchasingPowerChart.innerHTML = '';
+
+      dataPoints.forEach(dp => {
+        const heightPercent = maxVal > 0 ? (dp.value / maxVal) * 100 : 0;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'chart-bar-wrapper';
+
+        const valueLabel = document.createElement('span');
+        valueLabel.className = 'chart-value';
+        // Simplify large numbers for the chart
+        let displayVal = '$' + Math.round(dp.value).toLocaleString();
+        valueLabel.textContent = displayVal;
+
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        // Max height of the bar container is roughly 200px
+        bar.style.height = `${Math.max(4, (heightPercent / 100) * 180)}px`;
+
+        const yearLabel = document.createElement('span');
+        yearLabel.className = 'chart-year';
+        yearLabel.textContent = dp.year;
+
+        wrapper.appendChild(valueLabel);
+        wrapper.appendChild(bar);
+        wrapper.appendChild(yearLabel);
+
+        purchasingPowerChart.appendChild(wrapper);
+      });
+    }
+
+    // Event listeners for real-time calculation
+    ['input'].forEach(evt => {
+      startAmountInput.addEventListener(evt, calculate);
+      startYearInput.addEventListener(evt, calculate);
+      endYearInput.addEventListener(evt, calculate);
+    });
+
+    // Initial calculation
+    calculate();
+  };
+  // Run immediately on standard load, and on View Transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalculator);
+  } else {
+    initCalculator();
+  }
+  document.addEventListener('astro:page-load', initCalculator);
+</script>
+
+    <section class="content-section">
+      <h2>How to Use the Inflation Calculator</h2>
+      <p>This calculator measures how inflation has historically eroded the purchasing power of the US Dollar from 1913 up through the present day. To calculate the equivalent value of your money:</p>
+      <ul>
+        <li><strong>Starting Amount:</strong> Enter a dollar value.</li>
+        <li><strong>Start Year:</strong> Enter the historical year you want to compare against.</li>
+        <li><strong>End Year:</strong> Enter the target year you want the equivalent value in. (Usually the current year).</li>
+      </ul>
+      <p>The tool calculates the <strong>cumulative inflation</strong> (the total percentage increase in prices) and the <strong>average annual inflation</strong> (the compound annual growth rate) between the two chosen years.</p>
+
+      <h2>What is Inflation?</h2>
+      <p>Inflation is the rate at which the general level of prices for goods and services rises, subsequently reducing purchasing power. When the general price level rises, each dollar buys fewer goods and services. A small amount of inflation is considered a sign of a healthy economy, but high inflation can quickly erode savings and investments.</p>
+
+      <h2>How is Purchasing Power Calculated?</h2>
+      <p>The calculation relies on the <strong>Consumer Price Index for All Urban Consumers (CPI-U)</strong> provided by the US Bureau of Labor Statistics. The CPI is a measure that examines the weighted average of prices of a basket of consumer goods and services, such as transportation, food, and medical care.</p>
+
+      <p>The mathematical formula to determine the equivalent value is:</p>
+      <div style="background: var(--card-bg); padding: 15px; border-radius: 8px; font-family: monospace; border: 1px solid var(--border-color); text-align: center; margin: 20px 0;">
+        Final Value = Initial Value × (Ending Year CPI ÷ Starting Year CPI)
+      </div>
+
+      <h3>Practical Examples of Inflation</h3>
+      <ul>
+        <li><strong>The Roaring Twenties to the Great Depression:</strong> Between 1920 and 1933, the United States actually experienced a significant period of <em>deflation</em>. The CPI dropped from 19.3 to 12.9. This meant $100 in 1920 had the same purchasing power as $66.84 in 1933.</li>
+        <li><strong>The Great Inflation (1970s):</strong> The 1970s were categorized by rapid inflation. Between 1970 and 1980, prices more than doubled, driven by energy crises and monetary policy. $100 in 1970 required over $205 in 1980 just to maintain the same standard of living.</li>
+        <li><strong>Modern Post-Pandemic Inflation:</strong> Following the global events of 2020, inflation spiked sharply. Between 2020 and 2024, cumulative inflation reached nearly 20%, significantly impacting household budgets across the country.</li>
+      </ul>
+
+      <h2>Why Does the Federal Reserve Target 2% Inflation?</h2>
+      <p>You might wonder why central banks like the Federal Reserve aim for any inflation at all, rather than 0%. The primary reason is that a low, steady rate of inflation encourages economic growth. If consumers know prices will be slightly higher in the future, they are more likely to spend or invest their money today rather than hoarding it. Furthermore, it provides a "buffer" against the risks of deflation, which can lead to severe economic contractions and high unemployment.</p>
+    </section>
+  </div>
+</SiteLayout>

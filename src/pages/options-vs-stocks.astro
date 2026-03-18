@@ -1,0 +1,469 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Options vs Stocks: The Honest Difference No One Tells You",
+  description: "Everyone talks about the leverage options provide, but most beginners completely misunderstand the true cost of time decay.",
+  category: "guide",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/options-vs-stocks"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Are options safer than stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Options are generally considered riskier than stocks because they have an expiration date and can expire completely worthless. However, when used as a hedge (like buying a put option to protect a stock you own), they can actually reduce your overall portfolio risk."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you lose more than you invest in options?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If you are buying options (long calls or long puts), the most you can lose is the premium you paid. However, if you are selling (writing) naked options, your potential losses can be theoretically unlimited, far exceeding your initial investment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do options pay dividends like stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, options do not pay dividends. Only the underlying stock pays a dividend. In fact, upcoming dividend payments are often priced into the option's premium because the stock price typically drops by the dividend amount on the ex-dividend date."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it better to buy options or stocks for long-term investing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Stocks are generally better for long-term investing because they do not expire and often pay dividends. Options are derivatives with expiration dates, making them better suited for short-term trading, hedging, or generating income on existing stock positions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do most options expire worthless?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many options expire worthless because they are out-of-the-money (OTM) at expiration. Buyers often purchase OTM options because they are cheaper, but the underlying stock must move significantly before the expiration date for these options to become profitable."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/options-vs-stocks"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="container">
+      <h1>{meta.title}</h1>
+
+      <p class="intro">
+        If you spend enough time around finance forums or investing groups, you will eventually encounter the debate of <strong>options vs stocks</strong>. Beginners often view options as a "get rich quick" button because of their immense leverage. Experienced investors view them as surgical tools for managing risk or generating income. The truth? Comparing options directly to stocks is like comparing renting an apartment to buying a house.
+      </p>
+
+      <p>
+        They both give you a place to live in the market, but the rules, costs, and commitments are completely different. When you buy a stock, you own a literal piece of a company. You can hold it forever, collect dividends, and patiently ride out market volatility. An option, however, is simply a <em>contract</em>. It gives you the right to buy or sell that stock at a specific price, but it comes with a ticking clock.
+      </p>
+
+      <p>
+        In this comprehensive guide, we are going to strip away the complex mathematical jargon and look at how options actually behave in the real world compared to holding pure equity. We will examine exactly why the leverage of options comes at such a high hidden cost, and when it actually makes sense to use one over the other.
+      </p>
+
+      <h2>The Core Difference: Ownership vs. Contracts</h2>
+
+      <p>
+        Before we dive into real-world math, we need to clearly define what you are actually buying in each scenario. The fundamental difference between options and stocks dictates everything about how they behave in your portfolio.
+      </p>
+
+      <h3>Buying Stocks (Equity)</h3>
+      <p>
+        When you purchase shares of a company, you are buying equity. If you buy 100 shares of Microsoft (MSFT) at current market prices (around $399.95), you own those shares outright.
+      </p>
+      <ul>
+        <li><strong>No Expiration:</strong> You can hold MSFT for a day, a year, or pass it down to your grandchildren. The shares never expire.</li>
+        <li><strong>Dividends:</strong> If Microsoft pays a dividend, you receive that cash directly in your account simply for being a shareholder.</li>
+        <li><strong>Voting Rights:</strong> You get a say (proportional to your shares) in corporate governance.</li>
+        <li><strong>Capital Required:</strong> Buying 100 shares of MSFT outright requires significant capital (100 x $399.95).</li>
+      </ul>
+
+      <h3>Trading Options (Derivatives)</h3>
+      <p>
+        An option is a <em>derivative</em>. Its value is entirely derived from the price of an underlying asset (like MSFT stock). An option contract gives you the right, but not the obligation, to buy (a Call option) or sell (a Put option) 100 shares of the stock at a pre-agreed price (the Strike Price) by a specific date (the Expiration Date).
+      </p>
+      <ul>
+        <li><strong>The Ticking Clock:</strong> Every single option has an expiration date. If your prediction does not come true by that exact date, the option can expire completely worthless.</li>
+        <li><strong>No Ownership Perks:</strong> Option holders do not receive dividends, nor do they get voting rights. You do not own the company; you own a piece of paper <em>about</em> the company.</li>
+        <li><strong>Leverage:</strong> One standard option contract controls 100 shares of stock. You can gain exposure to 100 shares of MSFT for a fraction of the cost of buying the shares outright.</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h3>The Hidden Cost of Options: Time Decay (Theta)</h3>
+        <p>
+          This is the #1 concept beginners fail to grasp. When you buy a stock, time is your friend. You can wait years for your investment thesis to play out. When you buy an option, <strong>time is your enemy</strong>. Options are decaying assets. Every single day that passes, the option loses a small amount of its value simply because there is less time remaining for the stock to make a favorable move. This daily loss in value is known as "Theta." You aren't just betting on <em>what</em> the stock will do; you are betting on <em>when</em> it will do it.
+        </p>
+      </div>
+
+      <h2>Real World Example: The AAPL Trade</h2>
+
+      <p>
+        Let's look at a concrete, real-world example to illustrate exactly how the leverage and time decay of options interact compared to simply holding stock. Imagine you are extremely bullish on Apple (AAPL). The stock is currently trading at exactly $252.82. You have $2,000 to invest.
+      </p>
+
+      <h3>Scenario A: Buying the Stock</h3>
+      <p>
+        You decide to keep things simple. You take your $2,000 and buy AAPL shares outright. At $252.82 per share, you can afford to buy roughly 7 shares (assuming fractional shares are not used for this example, let's say you buy 7 shares).
+      </p>
+      <p>
+        <strong>What happens next?</strong>
+      </p>
+      <ul>
+        <li>If AAPL goes up 10%, your shares are now worth 10% more. You made a $200 profit.</li>
+        <li>If AAPL goes sideways for 6 months and does absolutely nothing, your shares are still worth roughly $2,000. You haven't made money, but you haven't lost anything either. You also likely collected a couple of dividend payments along the way.</li>
+        <li>If AAPL drops 10%, your position is down $200. You can simply choose not to sell, holding the stock and waiting for a recovery over the next few years.</li>
+      </ul>
+
+      <h3>Scenario B: Buying Call Options</h3>
+      <p>
+        Instead of buying the stock, you want leverage. You believe AAPL is going to surge after their next earnings report next month. Instead of buying 7 shares, you decide to buy Call Options.
+      </p>
+      <p>
+        You look at an options chain and find a Call Option expiring in 45 days, with a strike price slightly above the current price (say, 257.82). The premium (price) of this contract is $5.00. Since one contract controls 100 shares, the total cost for one contract is $500 ($5.00 x 100).
+      </p>
+      <p>
+        With your $2,000, you buy 4 of these contracts. You now control 400 shares of Apple stock! This is the incredible leverage of options. You control 101128.00 worth of stock for only $2,000.
+      </p>
+
+      <p>
+        <strong>But what actually happens next?</strong> Let's run the exact same three scenarios from before.
+      </p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Market Scenario (45 Days Later)</th>
+              <th>Stock Investor (7 Shares)</th>
+              <th>Options Trader (4 Call Contracts)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>AAPL goes up 10%</strong></td>
+              <td><span style="color: var(--accent-color); font-weight: bold;">+$200 Profit</span>. Solid, safe return.</td>
+              <td><span style="color: var(--accent-color); font-weight: bold;">Massive Profit</span>. The intrinsic value of the options skyrockets. The 400 controlled shares multiplied by the price increase could yield $3,000+ in profit. 150%+ return on investment.</td>
+            </tr>
+            <tr>
+              <td><strong>AAPL stays flat</strong> (Trades sideways)</td>
+              <td><span style="color: var(--text-secondary);">Break Even ($0)</span>. Capital is preserved.</td>
+              <td><span style="color: var(--sell-color); font-weight: bold;">-100% Loss (-$2,000)</span>. Because the stock didn't move above the strike price before the expiration date, the options expire completely worthless. Total wipeout.</td>
+            </tr>
+            <tr>
+              <td><strong>AAPL drops 10%</strong></td>
+              <td><span style="color: var(--sell-color);">-$200 Loss</span>. Unpleasant, but can wait for recovery.</td>
+              <td><span style="color: var(--sell-color); font-weight: bold;">-100% Loss (-$2,000)</span>. The options expire worthless. The money is gone permanently. There is no waiting for a recovery.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        This table illustrates the brutal reality of options trading for beginners. You can be entirely right about the <em>direction</em> of the stock (thinking it will go up), but if your timing is wrong by even a few days, or if the stock doesn't go up <em>enough</em> to cover the premium you paid, you can lose your entire investment. If a stock trades sideways, the stock investor is fine; the options trader gets crushed by time decay.
+      </p>
+
+
+      <h2>The "Why": Why Do Experienced Investors Use Options?</h2>
+
+      <p>
+        If options are decaying assets that frequently expire worthless, why does any rational investor use them? The answer is that professionals rarely use options the way beginners do (buying out-of-the-money calls hoping for a lottery ticket). Professionals use options to manipulate their exact risk profile, generate income, or hedge existing positions.
+      </p>
+
+      <h3>1. Hedging (Insurance)</h3>
+      <p>
+        Imagine you own 1,000 shares of an S&P 500 ETF (like SPY) and you rely on it for your retirement. You are deeply concerned about an upcoming macroeconomic event (like a major election or an interest rate decision). You don't want to sell your shares and trigger massive capital gains taxes, but you want to protect your portfolio from a sudden crash.
+      </p>
+      <p>
+        You can <strong>buy Put Options</strong> on SPY. A put option gives you the right to <em>sell</em> your shares at a specific price. If the market crashes, the value of your stock portfolio drops, but the value of your put options will skyrocket, offsetting your losses. It functions exactly like buying fire insurance on a house. You pay a premium, and you hope you never have to use it, but it prevents you from being wiped out.
+      </p>
+
+      <h3>2. Income Generation (Selling Options)</h3>
+      <p>
+        If buying options is a losing game due to time decay (Theta), then logic dictates that <em>selling</em> options must benefit from time decay. This is exactly what many experienced investors do.
+      </p>
+      <p>
+        A popular strategy is the <strong>Covered Call</strong>. If you already own 100 shares of a stock you like, you can sell a call option against those shares. You are giving someone else the right to buy your shares at a higher price, and in exchange, they pay you a premium right now. You keep that premium no matter what happens. If the stock stays flat or goes down, the option expires worthless, and you keep your shares <em>and</em> the cash premium. You have effectively created your own dividend. You can explore how these scenarios play out in our <a href="/options-profit-calculator">options profit calculator</a> or our comprehensive <a href="/stock-options-calculator">stock options calculator</a>.
+      </p>
+
+      <h2>Comparing the Two: Pros and Cons</h2>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="badge positive" style="margin-bottom: 1rem;">Stocks (Equity)</div>
+          <ul style="text-align: left; font-size: 0.95rem;">
+            <li><span style="color: var(--buy-color);">+</span> No expiration date</li>
+            <li><span style="color: var(--buy-color);">+</span> Collect dividends</li>
+            <li><span style="color: var(--buy-color);">+</span> Historically appreciate over long term</li>
+            <li><span style="color: var(--sell-color);">-</span> Requires high capital upfront</li>
+            <li><span style="color: var(--sell-color);">-</span> Lower percentage returns</li>
+          </ul>
+        </div>
+        <div class="stat-card">
+          <div class="badge neutral" style="margin-bottom: 1rem;">Options (Derivatives)</div>
+          <ul style="text-align: left; font-size: 0.95rem;">
+            <li><span style="color: var(--buy-color);">+</span> High leverage (control more for less)</li>
+            <li><span style="color: var(--buy-color);">+</span> Can profit in falling or flat markets</li>
+            <li><span style="color: var(--buy-color);">+</span> Excellent for hedging risk</li>
+            <li><span style="color: var(--sell-color);">-</span> Time decay (Theta) destroys value</li>
+            <li><span style="color: var(--sell-color);">-</span> High probability of total loss</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Common Misconceptions Addressed</h2>
+
+      <p>
+        <strong>Misconception #1: "Options are inherently riskier than stocks."</strong><br>
+        This is entirely dependent on how you use them. Buying naked, out-of-the-money options is incredibly risky and akin to gambling. However, using options to hedge an existing stock portfolio actually <em>reduces</em> your overall risk. Selling covered calls against stocks you already own is often considered a conservative, income-generating strategy. If you want to see how these strategies function over time without risking real capital, try our <a href="/options-trading-simulator">options trading simulator</a>.
+      </p>
+
+      <p>
+        <strong>Misconception #2: "You have to hold the option until expiration."</strong><br>
+        You can buy or sell an option contract at any point before it expires, as long as the market is open. If you buy a call option and the stock shoots up the very next day, you can immediately sell the contract back into the open market to lock in your profit. You do not need to wait for expiration, nor do you need to actually buy or sell the underlying 100 shares. To calculate the current value of a contract based on implied volatility and time remaining, you can use our <a href="/options-calculator">options calculator</a>.
+      </p>
+
+      <p>
+        <strong>Misconception #3: "Options are affected by stock splits."</strong><br>
+        When a stock splits, the options contracts are automatically adjusted by the Options Clearing Corporation (OCC) to ensure that neither the buyer nor the seller is unfairly advantaged or disadvantaged. The number of contracts you hold will increase, and the strike price will decrease proportionally. If you are holding equity and want to see the math on corporate actions, see our <a href="/stock-split-calculator">stock split calculator</a>.
+      </p>
+
+      <h2>The Bottom Line</h2>
+
+      <p>
+        If your goal is to build long-term wealth, passively compound your money, and benefit from the <a href="/average-stock-market-return">average stock market return</a> over decades, you should primarily be buying stocks or index funds. The math is overwhelmingly in your favor, and time acts as a powerful tailwind.
+      </p>
+
+      <p>
+        If your goal is to actively manage risk, generate supplemental income on a large existing portfolio, or make highly leveraged, short-term directional bets (speculation), then options are the appropriate tool. Just remember that with options, you are fighting a two-front war: you have to be right about the direction of the underlying stock, and you have to be right about the timing.
+      </p>
+
+      <!-- FAQ Section for Schema -->
+      <div class="faq-section">
+
+      <h2>Understanding the Greeks: The Secret Language of Options</h2>
+      <p>
+        If you want to move beyond the beginner level, you must understand the "Greeks." The Greeks are a set of risk measures that dictate how much an option's price will change based on various factors. When you buy stock, you only care about one dimension: price movement. When you trade options, you are trading multiple dimensions simultaneously: price, time, and volatility.
+      </p>
+      <p>
+        <strong>Delta: The Directional Component.</strong> Delta measures how much an option's price is expected to move for every $1 change in the underlying stock. A Delta of 0.50 means the option's price will theoretically increase by $0.50 for a $1 upward move in the stock. Delta is also used as a rough proxy for the probability of an option expiring in-the-money. A 0.20 Delta implies roughly a 20% chance of being in the money at expiration. Beginners often make the mistake of buying deep out-of-the-money options with a Delta of 0.05, hoping for a lottery ticket payout, completely ignoring the fact that there's a 95% mathematical probability of losing everything.
+      </p>
+      <p>
+        <strong>Gamma: The Rate of Change.</strong> Gamma measures the rate of change of Delta. If Delta is speed, Gamma is acceleration. Gamma is highest for at-the-money options and increases as expiration approaches. This creates explosive price movements (both for and against you) in the final days before expiration. Professional traders carefully manage their "Gamma risk" to avoid catastrophic losses from sudden, unexpected stock movements.
+      </p>
+      <p>
+        <strong>Theta: The Silent Killer.</strong> Theta measures the rate of time decay. It tells you how much value an option loses each day, assuming all other factors remain constant. As we discussed earlier, options are decaying assets. Theta accelerates as expiration approaches. For option buyers, Theta is a relentless enemy eroding their position. For option sellers, Theta is their primary source of profit. The ability to collect Theta decay is why many professional trading strategies revolve around selling options rather than buying them.
+      </p>
+      <p>
+        <strong>Vega: The Impact of Volatility.</strong> Vega measures an option's sensitivity to changes in implied volatility. Implied volatility is the market's expectation of future price swings. When investors are fearful (e.g., before an earnings report or during a market crash), implied volatility skyrockets, and option prices inflate drastically. When you buy options in high-volatility environments, you are overpaying. Even if the stock moves in your desired direction, a subsequent drop in volatility (the "Vega crush") can wipe out your profits. Conversely, buying options when volatility is historically low can provide cheap leverage.
+      </p>
+      <p>
+        <strong>Rho: The Interest Rate Factor.</strong> Rho measures an option's sensitivity to changes in the risk-free interest rate. While generally the least impactful of the Greeks for short-term retail traders, it becomes significant in high-interest-rate environments and for long-term options (LEAPS). When interest rates rise, call options become slightly more expensive, and put options become slightly cheaper.
+      </p>
+      <p>
+        The interaction between these Greeks is what makes options trading so complex. A perfectly timed directional bet (getting the Delta right) can still result in a loss if time decay (Theta) outpaces the move, or if implied volatility (Vega) collapses. Stocks, on the other hand, have a Delta of exactly 1.0 (they move dollar-for-dollar with themselves) and zero Gamma, Theta, Vega, or Rho. This simplicity is the greatest advantage of stock ownership.
+      </p>
+
+      <h2>The Lifecycle of an Options Trade vs. a Stock Investment</h2>
+      <p>
+        Let's walk through the psychological and mechanical differences over the lifespan of a position.
+      </p>
+      <p>
+        <strong>Day 1: The Entry.</strong>
+        When you buy a stock, the transaction is straightforward. You pay the market price, and the shares sit securely in your brokerage account. There is no urgency.
+        When you buy an option, the clock starts ticking immediately. You are entering a contract with a definitive end date. You must select the right strike price and the right expiration date, balancing the cost of the option against the probability of success. Every decision adds a layer of complexity and potential failure.
+      </p>
+      <p>
+        <strong>Day 30: The Holding Period.</strong>
+        Thirty days later, if the stock has traded completely flat, the stock investor has lost nothing (excluding minor opportunity costs). The stock is still there, patiently waiting.
+        The options trader, however, is sweating. Thirty days of Theta decay have eaten away at the value of their contract. Even though the stock price hasn't changed, the option has lost a significant percentage of its value. The pressure mounts. The options trader needs the stock to move, and they need it to move *soon*. This psychological pressure often leads to forced errors and emotional decision-making.
+      </p>
+      <p>
+        <strong>Day 90: Expiration vs. Continuation.</strong>
+        If you bought a 90-day option and the stock hasn't reached your breakeven point by expiration Friday, the game is over. The broker removes the worthless contract from your account. The capital is permanently destroyed.
+        For the stock investor, day 90 is just another day. They might collect a quarterly dividend. They can hold for 90 days, 90 weeks, or 90 years. The concept of "expiration" does not apply to equity ownership (unless the company goes bankrupt, which is a fundamentally different risk profile).
+      </p>
+      <p>
+        This difference in lifecycle dictates completely different approaches to risk management. Stock investing is about patience, fundamental analysis, and compounding over time. Options trading is about timing, volatility assessment, and managing the relentless pressure of the calendar.
+      </p>
+
+      <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>Are options safer than stocks?</h3>
+          <p>Options are generally considered riskier than stocks because they have an expiration date and can expire completely worthless. However, when used as a hedge (like buying a put option to protect a stock you own), they can actually reduce your overall portfolio risk.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Can you lose more than you invest in options?</h3>
+          <p>If you are buying options (long calls or long puts), the most you can lose is the premium you paid. However, if you are selling (writing) naked options, your potential losses can be theoretically unlimited, far exceeding your initial investment.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Do options pay dividends like stocks?</h3>
+          <p>No, options do not pay dividends. Only the underlying stock pays a dividend. In fact, upcoming dividend payments are often priced into the option's premium because the stock price typically drops by the dividend amount on the ex-dividend date.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Is it better to buy options or stocks for long-term investing?</h3>
+          <p>Stocks are generally better for long-term investing because they do not expire and often pay dividends. Options are derivatives with expiration dates, making them better suited for short-term trading, hedging, or generating income on existing stock positions.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Why do most options expire worthless?</h3>
+          <p>Many options expire worthless because they are out-of-the-money (OTM) at expiration. Buyers often purchase OTM options because they are cheaper, but the underlying stock must move significantly before the expiration date for these options to become profitable.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+
+<style>
+  .intro {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+  .highlight-box {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  th {
+    background-color: rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    color: var(--text-primary);
+  }
+  td {
+    color: var(--text-secondary);
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .stat-card {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+  .stat-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stat-card li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+  }
+  .stat-card li:last-child {
+    border-bottom: none;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: bold;
+  }
+  .badge.positive {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--buy-color, #22c55e);
+  }
+  .badge.neutral {
+    background-color: rgba(168, 85, 247, 0.1);
+    color: var(--accent-color, #a855f7);
+  }
+  .faq-section {
+    margin: 3rem 0;
+  }
+  .faq-item {
+    margin-bottom: 1.5rem;
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+  .faq-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+  .faq-item p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+</style>

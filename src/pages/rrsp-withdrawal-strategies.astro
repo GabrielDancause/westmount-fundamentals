@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP Withdrawal Strategies",
+    "description": "Minimize taxes and optimize RRIF conversion timing. Free interactive tool from RRSP Withdrawal Strategies. No sign-up required.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "At what age do I have to close my RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You must close your RRSP by December 31st of the year you turn 71 years old."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are my options when I close my RRSP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can convert the account to a Registered Retirement Income Fund (RRIF), use the funds to purchase an annuity, or cash it out completely (which triggers immediate and significant taxes)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are RRSP withdrawals taxed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All RRSP withdrawals are added to your taxable income for the year and taxed at your marginal rate. Additionally, your financial institution will apply a withholding tax at the time of withdrawal."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP Withdrawal Strategies",
+  description: "Minimize taxes and optimize RRIF conversion timing. A complete, practical guide with examples, tips, and actionable steps you can follow today.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP Withdrawal Strategies" description="Minimize taxes and optimize RRIF conversion timing." canonical="https://westmountfundamentals.com/rrsp-withdrawal-strategies" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP Withdrawal Strategies</h1><p>Minimize taxes and optimize RRIF conversion timing.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/spousal-rrsp-guide">Spousal Rrsp Guide</a></li>
+        <li><a href="/rrsp-home-buyers-plan">Rrsp Home Buyers Plan</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>At what age do I have to close my RRSP?</h3>
+      <p>You must close your RRSP by December 31st of the year you turn 71 years old.</p>
+      <h3>What are my options when I close my RRSP?</h3>
+      <p>You can convert the account to a Registered Retirement Income Fund (RRIF), use the funds to purchase an annuity, or cash it out completely (which triggers immediate and significant taxes).</p>
+      <h3>How are RRSP withdrawals taxed?</h3>
+      <p>All RRSP withdrawals are added to your taxable income for the year and taxed at your marginal rate. Additionally, your financial institution will apply a withholding tax at the time of withdrawal.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Inevitability of Taxation in Retirement</h2>
+      <p>Throughout your working years, the Registered Retirement Savings Plan (RRSP) acts as a powerful tax deferral mechanism. However, this deferral is only temporary. The fundamental rule of the RRSP is that every single dollar withdrawn from the account—including the original contributions, all capital gains, dividends, and interest—will eventually be fully taxed as regular income at your marginal tax rate. Understanding this reality is the first step in developing an effective withdrawal strategy.</p>
+
+      <p>Because withdrawals are treated as regular income, they stack on top of your other sources of retirement income, such as the Canada Pension Plan (CPP), Old Age Security (OAS), and any workplace pensions. If your combined income is too high, you could find yourself in a surprisingly high tax bracket during retirement, effectively mitigating the benefits of the original tax deduction. Therefore, the goal of a withdrawal strategy is to smooth out your income over your retirement years to keep your marginal tax rate as low and consistent as possible.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Age 71 Mandate and RRIF Conversion</h2>
+      <p>You cannot keep your money sheltered within an RRSP indefinitely. The government requires that you begin withdrawing and paying taxes on these funds. By December 31st of the year you turn 71, you must collapse your RRSP. While you have the option to cash out the entire account (triggering a massive, punitive tax bill) or purchase an annuity, the vast majority of Canadians choose to convert their RRSP into a Registered Retirement Income Fund (RRIF).</p>
+
+      <p>Converting to a RRIF allows your investments to continue growing tax-deferred, but it introduces mandatory minimum annual withdrawals. The CRA dictates a minimum percentage of the total account value that must be withdrawn each year, and this percentage increases as you get older. A common strategy to reduce these mandatory minimums is to base the calculation on the age of your younger spouse (if applicable). This allows you to retain more capital within the tax-sheltered environment for a longer period.</p>
+    </div>
+
+    <div class="card">
+      <h2>Strategic Early Meltdowns and OAS Clawbacks</h2>
+      <p>Waiting until age 71 to begin withdrawing from your RRSP is not always the best strategy. If you retire early, perhaps in your early 60s, there may be a window where your taxable income is very low before you begin collecting CPP and OAS. This is the ideal time to execute an "RRSP meltdown strategy." By intentionally withdrawing funds from your RRSP during these low-income years, you pay taxes at a very low marginal rate, essentially clearing out the account cheaply before the mandatory minimums kick in later.</p>
+
+      <p>Another critical consideration is the impact of RRSP/RRIF withdrawals on your Old Age Security (OAS) benefits. The OAS program features a "recovery tax," commonly known as a clawback. If your total net income exceeds a certain threshold (which is adjusted annually for inflation), your OAS payments will be reduced by 15 cents for every dollar above the threshold. Large, forced withdrawals from a substantial RRIF can easily push a retiree over this threshold. Careful withdrawal planning, potentially involving utilizing TFSA funds to supplement income without affecting taxable limits, is essential to protect these government benefits.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

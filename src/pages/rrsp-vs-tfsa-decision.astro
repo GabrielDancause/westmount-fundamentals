@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP vs TFSA: How to Choose",
+    "description": "Income-based decision tool and marginal rate analysis. Free interactive tool from RRSP vs TFSA: How to Choose. No sign-up required.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the main difference between an RRSP and a TFSA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "RRSP contributions are tax-deductible but withdrawals are taxed as regular income. In contrast, TFSA contributions are made with after-tax dollars, but all investment growth and withdrawals are entirely tax-free."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I hold both an RRSP and a TFSA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, you can and often should utilize both. A comprehensive financial plan often leverages the tax deduction of an RRSP and the tax-free flexibility of a TFSA."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which account is better for short-term savings?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A TFSA is vastly superior for short-term savings because you can withdraw the funds tax-free at any time, and you get the contribution room back in the following calendar year."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP vs TFSA: How to Choose",
+  description: "Income-based decision tool and marginal rate analysis. Original research with data analysis, methodology, key findings, and interactive visualizations.",
+  category: "study",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP vs TFSA: How to Choose" description="Income-based decision tool and marginal rate analysis." canonical="https://westmountfundamentals.com/rrsp-vs-tfsa-decision" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP vs TFSA: How to Choose</h1><p>Income-based decision tool and marginal rate analysis.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-contribution-calculator">Rrsp Contribution Calculator</a></li>
+        <li><a href="/spousal-rrsp-guide">Spousal Rrsp Guide</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>What is the main difference between an RRSP and a TFSA?</h3>
+      <p>RRSP contributions are tax-deductible but withdrawals are taxed as regular income. In contrast, TFSA contributions are made with after-tax dollars, but all investment growth and withdrawals are entirely tax-free.</p>
+      <h3>Can I hold both an RRSP and a TFSA?</h3>
+      <p>Yes, you can and often should utilize both. A comprehensive financial plan often leverages the tax deduction of an RRSP and the tax-free flexibility of a TFSA.</p>
+      <h3>Which account is better for short-term savings?</h3>
+      <p>A TFSA is vastly superior for short-term savings because you can withdraw the funds tax-free at any time, and you get the contribution room back in the following calendar year.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Core Difference: Taxation Timing</h2>
+      <p>The fundamental distinction between a Registered Retirement Savings Plan (RRSP) and a Tax-Free Savings Account (TFSA) lies in when the government applies taxes to your money. An RRSP operates on a tax-deferred basis. When you contribute funds, you receive an immediate deduction that lowers your taxable income for that year. However, every dollar you withdraw in the future, including both the original contribution and any investment growth, will be fully taxed at your marginal rate at the time of withdrawal.</p>
+
+      <p>Conversely, the TFSA is funded with after-tax dollars. You do not receive any upfront tax deduction for your contributions. The massive advantage, however, is that all investments within the account grow completely tax-free, and any withdrawals you make are entirely exempt from taxation. This structural difference makes the RRSP a tool for deferring taxes to a (hopefully) lower-income retirement, while the TFSA permanently eliminates taxes on investment gains.</p>
+    </div>
+
+    <div class="card">
+      <h2>Marginal Tax Rate Analysis: The Golden Rule</h2>
+      <p>The decision between prioritizing an RRSP or a TFSA often boils down to a single principle: comparing your current marginal tax rate to your expected marginal tax rate in retirement. If your current income is high, your marginal tax rate is correspondingly high. A contribution to an RRSP provides a substantial tax refund at this high rate. If you expect your income to be lower in retirement, you will withdraw the funds and pay taxes at a lower rate. In this scenario, the RRSP is the clear winner, as you effectively arbitrage the difference in tax rates.</p>
+
+      <p>On the other hand, if your current income is relatively low (for example, early in your career, working part-time, or between jobs), your marginal tax rate is low. The upfront tax deduction provided by an RRSP is worth very little. In this situation, it is generally much better to contribute to a TFSA. If your income increases significantly later in life, you can always withdraw funds from the TFSA and deposit them into an RRSP to claim a larger deduction when it is more valuable.</p>
+    </div>
+
+    <div class="card">
+      <h2>Flexibility and Impact on Government Benefits</h2>
+      <p>Beyond simple math, the TFSA offers superior flexibility. Because withdrawals are tax-free and the contribution room is regained the following calendar year, the TFSA can serve as an emergency fund, a vehicle for medium-term goals like a car purchase or home renovation, or a long-term retirement account. Withdrawing from an RRSP for anything other than the Home Buyers' Plan or Lifelong Learning Plan permanently destroys that contribution room and triggers immediate taxation.</p>
+
+      <p>Another crucial consideration for retirees is the impact on means-tested government benefits, specifically Old Age Security (OAS) and the Guaranteed Income Supplement (GIS). Because RRSP withdrawals are considered taxable income, large withdrawals can trigger the OAS clawback, reducing the amount of government support you receive. TFSA withdrawals, however, do not count as taxable income and therefore have zero impact on your eligibility for OAS or GIS. For many middle-income retirees, a large TFSA balance is essential for avoiding these clawbacks.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

@@ -1,0 +1,412 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Future Value Calculator",
+  description: "Stop guessing how much your money will grow. See the exact math behind compounding interest and why your current savings rate might leave you short.",
+  category: "tool",
+  published: "2026-03-17",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Future Value Calculator",
+    "description": "Calculate the future value of your present investments to understand the power of compound interest.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Future Value (FV)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Future Value is the value of a current asset at a specified date in the future based on an assumed rate of growth. It is a core concept in finance to evaluate the potential of investments."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is Future Value calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The formula for Future Value is FV = PV * (1 + r/n)^(n*t), where PV is the Present Value, r is the annual interest rate, n is the number of compounding periods per year, and t is the number of years."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is compounding frequency important?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Compounding frequency determines how often interest is calculated and added to the principal. More frequent compounding (e.g., daily vs. annually) results in a higher future value because you earn interest on your interest sooner."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if inflation is higher than my return?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If inflation outpaces your rate of return, the nominal future value will grow, but your real purchasing power will decrease over time. You must aim for a return that beats inflation to actually grow wealth."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a rule of thumb for future value?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Rule of 72 is a common shortcut. Divide 72 by your annual interest rate to estimate how many years it will take for your initial investment to double."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/future-value-calculator" schema={schema}>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .calculator-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+    .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    label { font-weight: 600; color: var(--text-primary); }
+    input, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 1rem; }
+    input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+    .error-msg { color: var(--accent-color); font-size: 0.85rem; margin-top: 0.25rem; min-height: 1.25rem; }
+    .results-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 2rem; }
+    .result-card { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 2rem; text-align: center; }
+    .result-card h3 { margin: 0 0 0.5rem 0; color: var(--text-primary); font-size: 1.2rem; }
+    .result-value { font-size: 3rem; font-weight: 800; color: var(--accent-color); word-break: break-all; }
+    .explainer { margin: 3rem 0; line-height: 1.7; color: var(--text-primary); }
+    .explainer h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+    .explainer h3 { font-size: 1.4rem; margin: 1.5rem 0 1rem; }
+    .explainer p { margin-bottom: 1.2rem; }
+    .explainer ul { margin-bottom: 1.2rem; padding-left: 1.5rem; }
+    .explainer a { color: var(--accent-color); text-decoration: underline; }
+    .math-box { background: var(--bg-color); border-left: 4px solid var(--accent-color); padding: 1.5rem; font-family: monospace; margin: 1.5rem 0; font-size: 1.1rem; }
+    .related-links { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-top: 3rem; }
+    .related-links h3 { margin-top: 0; }
+    .related-links ul { list-style-type: none; padding: 0; }
+    .related-links li { margin-bottom: 0.5rem; }
+    .related-links a { text-decoration: none; color: var(--accent-color); font-weight: 500; }
+    .related-links a:hover { text-decoration: underline; }
+  </style>
+
+  <div class="page-content">
+    <div class="hero">
+      <h1>Future Value Calculator</h1>
+      <p class="subtitle">See the exact math behind compounding interest and calculate the true potential of your money.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="calc-grid">
+        <div class="input-group">
+          <label for="pv-input">Present Value (PV)</label>
+          <input type="number" id="pv-input" placeholder="e.g. 10000" value="10000" step="any" required>
+          <div class="error-msg" id="pv-error"></div>
+        </div>
+
+        <div class="input-group">
+          <label for="pmt-input">Monthly Contribution</label>
+          <input type="number" id="pmt-input" placeholder="e.g. 500" value="500" step="any" required>
+          <div class="error-msg" id="pmt-error"></div>
+        </div>
+
+        <div class="input-group">
+          <label for="rate-input">Annual Interest Rate (%)</label>
+          <input type="number" id="rate-input" placeholder="e.g. 7.5" value="7.5" step="any" required>
+          <div class="error-msg" id="rate-error"></div>
+        </div>
+
+        <div class="input-group">
+          <label for="years-input">Years to Grow</label>
+          <input type="number" id="years-input" placeholder="e.g. 10" value="10" step="1" min="0" required>
+          <div class="error-msg" id="years-error"></div>
+        </div>
+
+        <div class="input-group">
+          <label for="compound-input">Compounding Frequency</label>
+          <select id="compound-input">
+            <option value="1">Annually (1x/yr)</option>
+            <option value="4">Quarterly (4x/yr)</option>
+            <option value="12" selected>Monthly (12x/yr)</option>
+            <option value="365">Daily (365x/yr)</option>
+          </select>
+          <div class="error-msg" id="compound-error"></div>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <h3>Future Value (FV)</h3>
+          <div class="result-value" id="fv-result">$0.00</div>
+        </div>
+      </div>
+
+      <div class="calc-grid" style="margin-top: 1.5rem;">
+        <div class="result-card" style="padding: 1rem; background: transparent; border-color: var(--border-color);">
+          <h3>Total Principal Invested</h3>
+          <div class="result-value" id="total-principal" style="font-size: 1.8rem; color: var(--text-primary);">$0.00</div>
+        </div>
+        <div class="result-card" style="padding: 1rem; background: transparent; border-color: var(--border-color);">
+          <h3>Total Interest Earned</h3>
+          <div class="result-value" id="total-interest" style="font-size: 1.8rem; color: var(--accent-color);">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding Future Value (FV)</h2>
+      <p>
+        Future value (FV) is an indispensable metric within the financial world that estimates the value of a current asset at a specific date in the future based on an assumed, steady rate of growth. This metric forms the bedrock of time value of money (TVM) principles, an economic theory declaring that a dollar received today is intrinsically worth more than a dollar received tomorrow. Why? Because a dollar held today can be immediately invested to generate interest or dividends, thereby compounding over time into a larger sum. Whether you are an individual investor planning for a distant retirement, a corporate finance manager evaluating a multi-million dollar capital expenditure, or simply someone trying to decide between two competing savings accounts, understanding future value is absolutely essential.
+      </p>
+      <p>
+        The future value equation generally assumes a constant rate of growth, an uninterrupted compounding schedule, and a single upfront payment (the principal) that is left completely untouched for the full duration of the investment horizon. While real-world market returns fluctuate violently—experiencing drastic swings between bull and bear markets—using a constant rate allows investors to project an average, normalized growth trajectory over decades. By establishing a realistic baseline expectation, you can model different scenarios to see how various savings rates, timelines, and asset allocations will impact your ultimate net worth.
+      </p>
+      <p>
+        Investors predominantly use the future value calculation to mathematically determine if a proposed investment will yield a sufficient return to justify the inherent risks involved. For instance, if you are considering locking your money into a 10-year illiquid asset, you need to know exactly what that money could have earned if left in a standard, risk-free savings account or a broad market index fund. By calculating the future value of both options, you can quantify the "opportunity cost" of your capital. Essentially, it tells you how much a given amount of money today will transform into at a specific time in the future, assuming a certain interest rate.
+      </p>
+      <p>
+        Of course, the math works in both directions. Sometimes you know exactly how much money you need in the future (perhaps a down payment for a house or a target retirement nest egg), and you need to figure out what that future sum is worth right now. To understand this inverse relationship—what future cash flows are worth in today's money—you must calculate the present value. Check out our comprehensive <a href="/present-value-calculator">present value calculator</a> to run these reverse calculations and discover if inflation is secretly eating away at your purchasing power.
+      </p>
+
+      <h2>The Future Value Formula and Mathematics</h2>
+      <p>While online calculators are incredibly convenient, understanding the actual mathematics beneath the hood empowers you to make smarter, faster financial decisions. The mathematical formula to calculate the Future Value of a single, standalone lump sum investment is relatively straightforward, yet it drives the entire global financial system:</p>
+      <div class="math-box">
+        FV = PV * (1 + r/n)^(n*t)
+      </div>
+      <p>To use this formula correctly, you must understand each variable:</p>
+      <ul>
+        <li><strong>FV (Future Value):</strong> The final amount of money you will have at the end of the investment period. This includes your initial investment plus all the accumulated compound interest.</li>
+        <li><strong>PV (Present Value):</strong> Your initial investment amount, also known as the principal. This is the capital you are putting to work today.</li>
+        <li><strong>r (Annual Interest Rate):</strong> The expected annual rate of return, expressed as a decimal. For example, a 7% return must be written as 0.07. An 8.5% return is 0.085.</li>
+        <li><strong>n (Compounding Frequency):</strong> The number of compounding periods per year. If interest compounds annually, this number is 1. If it compounds monthly, it is 12. If it compounds daily, it is 365. This variable is crucial because more frequent compounding leads to slightly higher total returns.</li>
+        <li><strong>t (Time in Years):</strong> The total duration of the investment, measured in years. If you are investing for 6 months, this would be 0.5.</li>
+      </ul>
+
+      <h3>A Detailed Worked Example</h3>
+      <p>
+        Let's put the formula into practice with a realistic scenario. Imagine you have received a $10,000 bonus from your employer today. You decide to invest this entire lump sum into a diversified index fund that historically returns an 8% annual yield. You plan to leave this money completely untouched, letting the interest compound annually. You want to know exactly what it will be worth in 10 years when you plan to use it for a major purchase.
+      </p>
+      <div class="math-box">
+        PV = $10,000<br>
+        r = 0.08 (8% expressed as a decimal)<br>
+        n = 1 (interest compounds once per year)<br>
+        t = 10 (the money is invested for a full decade)<br><br>
+        Step 1: Divide the rate by the frequency: (0.08 / 1) = 0.08<br>
+        Step 2: Add 1 to the result: (1 + 0.08) = 1.08<br>
+        Step 3: Multiply frequency by years: (1 * 10) = 10<br>
+        Step 4: Raise the base to the power of periods: (1.08)^10 = 2.158925<br>
+        Step 5: Multiply by Present Value: $10,000 * 2.158925<br><br>
+        <strong>FV = $21,589.25</strong>
+      </div>
+      <p>
+        The results of this calculation perfectly illustrate the magical power of compound interest. Over a 10-year period, your initial $10,000 investment has more than doubled to $21,589.25. You did not have to work for or contribute a single additional dollar; the $11,589.25 profit was generated entirely by your money working relentlessly on your behalf.
+      </p>
+      <p>
+        However, it is important to note that this formula assumes a perfectly static return. In reality, your portfolio might return 20% one year and lose 10% the next. To accurately figure out the required, smoothed annual growth rate needed to get from a specific starting balance to a target ending balance over a set number of years, you would use a <a href="/cagr-calculator">CAGR (Compound Annual Growth Rate) calculator</a> instead. CAGR provides a standardized way to measure growth regardless of volatility.
+      </p>
+
+      <h2>The Profound Impact of Regular Monthly Contributions</h2>
+      <p>
+        While calculating the future value of a single lump sum is useful for inheritances or bonuses, it does not reflect how most regular people actually build wealth. The vast majority of investors save for retirement by consistently contributing a smaller amount of money every single month—perhaps $500 straight from their paycheck into a 401(k) or IRA. In financial mathematics, a series of equal, regular payments is known as an Annuity.
+      </p>
+      <p>
+        When you make regular monthly contributions, your future value explodes because you are constantly feeding new capital into the compounding machine. The math required to calculate the future value of an annuity is significantly more complex than a simple lump sum. It requires summing up the individual future values of every single payment you make over the decades.
+      </p>
+      <p>
+        Our comprehensive calculator at the top of this page effortlessly accounts for this complex reality. It calculates the future value of your initial lump sum (the Present Value) and mathematically adds the integrated future value of all your regular monthly contributions (the Annuity). By experimenting with the "Monthly Contribution" field, you will quickly discover that consistently saving even small amounts over long periods of time can lead to staggering multi-million dollar portfolios, vastly outperforming larger, one-time investments made later in life.
+      </p>
+
+      <h2>Common Mistakes and Pitfalls in Future Value Calculations</h2>
+      <p>While the math itself is objective, the assumptions you plug into the formula are highly subjective and prone to human error. Here are the most dangerous mistakes investors make when projecting their future wealth:</p>
+      <ul>
+        <li><strong>Ignoring the Devastating Effects of Inflation:</strong> The number you calculate on this page is a "nominal" figure—meaning it does not account for the changing value of currency. Simply put, $1,000,000 in 30 years will absolutely not buy what $1,000,000 buys today. Over a 30-year horizon, even a modest 3% inflation rate will cut your purchasing power in half. When projecting long-term returns for retirement planning, professional financial advisors often subtract the expected rate of inflation from the expected market return to find the "real return". For example, an optimistic 10% market return minus 3% average inflation yields a 7% real return. Always project your wealth using real returns to ensure you can actually afford your future lifestyle.</li>
+        <li><strong>Overestimating Future Market Returns:</strong> It is incredibly tempting to plug a 15% or 20% annual return into the calculator just to see the numbers go up. However, assuming an abnormally high rate of return drastically skews the outcome due to the exponential nature of compounding. If you assume 15% and the market only delivers 7%, you will fall hundreds of thousands of dollars short of your goal. It is much safer, and significantly more realistic, to assume the historical <a href="/average-stock-market-return">average stock market return</a> over long investment horizons, which generally hovers around 9-10% nominally (or 6-7% adjusted for inflation).</li>
+        <li><strong>Ignoring the Drag of Taxes and Fees:</strong> In the real world, investing is not free. Mutual fund expense ratios, financial advisor management fees, trading commissions, and taxes on capital gains or dividends all act as persistent friction, dragging down your actual net return. A 1% management fee might sound small and inconsequential, but over a 30-year investing lifespan, that tiny 1% fee can consume nearly a third of your total potential compounding gains. Always use net returns (after fees) when projecting future wealth.</li>
+        <li><strong>Miscalculating the Compounding Frequency:</strong> Assuming an annual compounding frequency when an account actually compounds daily or monthly can lead to slightly inaccurate projections. While the difference might seem small in the short term, over several decades, the more frequent the compounding, the higher the ultimate yield. A high-yield savings account typically compounds daily and pays monthly, while a bond might only compound semi-annually.</li>
+        <li><strong>Forgetting About Sequence of Returns Risk:</strong> Future value calculators assume a straight, smooth line of growth. In reality, the stock market is volatile. If you experience a severe market crash right at the beginning of your investment journey (or worse, right as you retire and begin withdrawing funds), your actual ending balance could be drastically lower than what a simple average return calculator predicts.</li>
+      </ul>
+
+      <h2>Practical Tips and Rules of Thumb for Savvy Investors</h2>
+      <p>
+        While our calculator provides exact, precise figures down to the penny, it is often useful to be able to estimate future values quickly in your head during conversations or meetings. To do this without a calculator, you must learn the legendary <strong>Rule of 72</strong>.
+      </p>
+      <p>
+        The Rule of 72 is a brilliant mental math shortcut that tells you approximately how long it will take for your invested capital to double at a given, fixed annual rate of interest. To use the rule, simply divide the number 72 by your expected annual rate of return. The resulting number is the approximate number of years it will take for your money to increase by 100%.
+      </p>
+      <p>
+        For instance, if you anticipate earning an 8% annual return on your portfolio: 72 ÷ 8 = 9 years. Every 9 years, your money will double. If you are a more aggressive investor aiming for a 10% average return: 72 ÷ 10 = 7.2 years. At a highly conservative 4% return, it would take 18 long years (72 ÷ 4) to achieve the same doubling effect. This simple rule highlights why chasing higher yields, even by a few percentage points, has such a massive impact on your timeline to financial independence.
+      </p>
+      <p>
+        Furthermore, remember that as an equity investor, you will occasionally encounter corporate actions that fundamentally change the number of shares you hold in a company, even if the underlying total value of your investment remains exactly the same. When a company executes a stock split, your share count increases while the share price drops proportionally. You can easily calculate the exact post-split metrics and adjusted cost basis using our dedicated <a href="/stock-split-calculator">stock split calculator</a>.
+      </p>
+      <p>
+        Ultimately, mastering the concept of future value allows you to transition from hoping you will have enough money to mathematically engineering a plan to guarantee it. Play with the calculator, adjust the variables, and visualize the true, long-term potential of your capital.
+      </p>
+
+      <div class="faq-section" style="margin-top: 4rem;">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-primary);">What is Future Value (FV)?</h3>
+          <p style="margin: 0; color: var(--text-secondary);">Future Value is the value of a current asset at a specified date in the future based on an assumed rate of growth. It is a core concept in finance to evaluate the potential of investments.</p>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-primary);">How is Future Value calculated?</h3>
+          <p style="margin: 0; color: var(--text-secondary);">The formula for Future Value is FV = PV * (1 + r/n)^(n*t), where PV is the Present Value, r is the annual interest rate, n is the number of compounding periods per year, and t is the number of years.</p>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-primary);">Why is compounding frequency important?</h3>
+          <p style="margin: 0; color: var(--text-secondary);">Compounding frequency determines how often interest is calculated and added to the principal. More frequent compounding (e.g., daily vs. annually) results in a higher future value because you earn interest on your interest sooner.</p>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-primary);">What happens if inflation is higher than my return?</h3>
+          <p style="margin: 0; color: var(--text-secondary);">If inflation outpaces your rate of return, the nominal future value will grow, but your real purchasing power will decrease over time. You must aim for a return that beats inflation to actually grow wealth.</p>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <h3 style="margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-primary);">Is there a rule of thumb for future value?</h3>
+          <p style="margin: 0; color: var(--text-secondary);">The Rule of 72 is a common shortcut. Divide 72 by your annual interest rate to estimate how many years it will take for your initial investment to double.</p>
+        </div>
+      </div>
+
+      <div class="related-links">
+        <h3>Related Tools & Guides</h3>
+        <ul>
+          <li><a href="/present-value-calculator">Present Value (PV) Calculator</a></li>
+          <li><a href="/cagr-calculator">Compound Annual Growth Rate (CAGR) Calculator</a></li>
+          <li><a href="/stock-split-calculator">Stock Split Calculator</a></li>
+          <li><a href="/average-stock-market-return">Average Stock Market Return Guide</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      const pvInput = document.getElementById('pv-input');
+      const pmtInput = document.getElementById('pmt-input');
+      const rateInput = document.getElementById('rate-input');
+      const yearsInput = document.getElementById('years-input');
+      const compoundInput = document.getElementById('compound-input');
+
+      const fvResult = document.getElementById('fv-result');
+      const totalPrincipalResult = document.getElementById('total-principal');
+      const totalInterestResult = document.getElementById('total-interest');
+
+      const pvError = document.getElementById('pv-error');
+      const pmtError = document.getElementById('pmt-error');
+      const rateError = document.getElementById('rate-error');
+      const yearsError = document.getElementById('years-error');
+      const compoundError = document.getElementById('compound-error');
+
+      function formatCurrency(number) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(number);
+      }
+
+      function safeParse(input, fieldName, errorEl, min = -Infinity, max = Infinity) {
+        const val = parseFloat(input.value);
+        errorEl.textContent = '';
+        if (isNaN(val)) {
+          errorEl.textContent = `Please enter a valid number for ${fieldName}.`;
+          return null;
+        }
+        if (val < min) {
+          errorEl.textContent = `${fieldName} must be at least ${min}.`;
+          return null;
+        }
+        if (val > max) {
+          errorEl.textContent = `${fieldName} must be no more than ${max}.`;
+          return null;
+        }
+        return val;
+      }
+
+      function calculateFV() {
+        // Reset errors
+        pvError.textContent = '';
+        pmtError.textContent = '';
+        rateError.textContent = '';
+        yearsError.textContent = '';
+        compoundError.textContent = '';
+
+        const pv = safeParse(pvInput, "Present Value", pvError);
+        const pmt = safeParse(pmtInput, "Monthly Contribution", pmtError);
+        const ratePercent = safeParse(rateInput, "Interest Rate", rateError);
+        const years = safeParse(yearsInput, "Years", yearsError, 0, 200);
+        const n = parseInt(compoundInput.value);
+
+        if (pv === null || pmt === null || ratePercent === null || years === null || isNaN(n)) {
+          fvResult.textContent = "$0.00";
+          totalPrincipalResult.textContent = "$0.00";
+          totalInterestResult.textContent = "$0.00";
+          return;
+        }
+
+        const r = ratePercent / 100;
+
+        let fv = 0;
+        let totalPrincipal = pv + (pmt * 12 * years); // Fixed 12 months for PMT
+
+        // Edge case: 0% interest rate
+        if (Math.abs(r) < 1e-10) {
+            fv = totalPrincipal;
+        } else {
+            // Future Value of Present Value (Lump Sum)
+            // FV_pv = PV * (1 + r/n)^(n*t)
+            const fv_pv = pv * Math.pow((1 + r/n), (n * years));
+
+            // FV of annuity
+            // The standard PMT in our input is monthly. So PMT_year = PMT * 12.
+            // We can convert this to PMT per compounding period:
+            const pmt_per_period = (pmt * 12) / n;
+
+            // The standard FV of an annuity formula (assuming payments at END of period)
+            // FV_annuity = PMT * [ ((1 + r/n)^(n*t) - 1) / (r/n) ]
+            const fv_annuity = pmt_per_period * ( (Math.pow(1 + r/n, n * years) - 1) / (r/n) );
+
+            fv = fv_pv + fv_annuity;
+        }
+
+        // Float rounding fix
+        let fixedFV = parseFloat(fv.toPrecision(14));
+        if (Math.abs(fixedFV - Math.round(fixedFV)) < 1e-14) {
+          fixedFV = Math.round(fixedFV);
+        }
+
+        const totalInterest = fixedFV - totalPrincipal;
+
+        fvResult.textContent = formatCurrency(fixedFV);
+        totalPrincipalResult.textContent = formatCurrency(totalPrincipal);
+        totalInterestResult.textContent = formatCurrency(Math.max(0, totalInterest));
+      }
+
+      [pvInput, pmtInput, rateInput, yearsInput, compoundInput].forEach(el => {
+        el.addEventListener('input', calculateFV);
+      });
+
+      // Initial calculation
+      calculateFV();
+    });
+  </script>
+
+</SiteLayout>

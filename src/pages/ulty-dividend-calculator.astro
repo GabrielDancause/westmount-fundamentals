@@ -1,0 +1,216 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": [
+    "Article",
+    "FAQPage"
+  ],
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does the ULTY dividend calculator work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The ULTY dividend calculator estimates your potential monthly and annual income based on the number of shares you own and the current or projected distribution rate. It multiplies your share count by the estimated monthly distribution to project your income stream, allowing you to model different investment scenarios."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are ULTY's massive dividend yields sustainable long-term?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, ULTY's extreme triple-digit yields are a direct byproduct of heightened market volatility and are not supported by fundamental corporate earnings or cash flows. The fund generates income by writing short-dated covered calls on highly volatile stocks. While this strategy harvests massive premiums in chaotic markets, a sustained period of low volatility or severe downside moves in the underlying assets will inevitably cause the distribution rate and the Net Asset Value (NAV) to decline significantly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the biggest risk of relying on ULTY for income?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The primary risk of holding ULTY for income is substantial principal decay. The fund's strategy of aggressively selling covered calls on highly volatile equities inherently captures the full downside risk of those volatile assets while strictly capping any upside potential. Over time, this asymmetrical payoff structure is highly likely to erode the fund's NAV, meaning that while you may receive large cash distributions, the total value of your initial investment could suffer severe losses."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does ULTY pay its dividends?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The YieldMax Ultra Option Income Strategy ETF (ULTY) pays distributions on a monthly basis. This frequent payout schedule is attractive for income-seeking investors, but the actual dollar amount distributed each month can fluctuate wildly depending on the option premiums the fund successfully harvested during the preceding period."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I reinvest my ULTY dividends?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Deciding whether to reinvest ULTY dividends depends entirely on your investment goals and risk tolerance. Reinvesting distributions (DRIP) can rapidly increase your share count and compound future payouts. However, given the severe risk of NAV decay associated with ULTY's strategy, many investors choose to take the cash distributions and reallocate them into more stable, fundamentally sound assets to diversify their risk and protect their principal."
+      }
+    }
+  ]
+};
+
+export const meta = {
+  title: "ULTY Dividend Calculator & Income Projection",
+  description: "Calculate projected monthly and annual income from your YieldMax Ultra Option Income Strategy ETF (ULTY) shares.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="ULTY Dividend Calculator & Income Projection" description="Calculate projected monthly and annual income from ULTY (YieldMax Ultra Option Income Strategy ETF). Analyze yield and distribution risks." canonical="https://westmountfundamentals.com/ulty-dividend-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>ULTY Dividend Calculator</h1>
+      <p class="subtitle">Project Your Monthly and Annual Distributions</p>
+    </div>
+
+    <section>
+      <h2>Understanding the ULTY Income Generation Engine</h2>
+      <p>The YieldMax Ultra Option Income Strategy ETF (ULTY) stands apart from traditional dividend investments. Unlike funds that hold steady dividend-paying companies like utilities or consumer staples, ULTY employs an aggressively managed covered call strategy specifically targeting highly volatile stocks. The fund's objective is to systematically harvest immense option premiums by writing short-dated call options against a rotating basket of the market's most turbulent equities. These massive premiums are the sole source of the ETF's staggering, triple-digit distribution yields, making it entirely reliant on sustained market chaos rather than fundamental corporate cash flows.</p>
+
+      <p>Because the distributions are a direct byproduct of implied volatility (IV), the monthly payout is inherently unstable. In periods of extreme market fear or rapid price swings, option premiums inflate dramatically, allowing the fund managers to capture outsized returns for shareholders. Conversely, during extended periods of market calm or steady upward momentum, implied volatility crushes across the board. When IV drops, the premiums available for harvest collapse, directly and inevitably causing the monthly distribution to plummet. Investors using this calculator must input conservative estimates, understanding that past payouts generated during peak volatility will not be replicated in a placid market environment.</p>
+
+      <div class="callout" style="background: var(--card-bg); border-left: 4px solid var(--accent-color); padding: 1.5rem; margin: 2rem 0; border-radius: 4px;">
+        <h3>⚠️ Critical Risk Disclaimer</h3>
+        <p style="margin-bottom: 0;">ULTY is designed to maximize immediate income at the direct expense of long-term capital preservation. The fund captures the full downside risk of its highly volatile underlying holdings while strictly capping its upside potential. Over time, this asymmetrical risk profile almost guarantees severe Net Asset Value (NAV) decay. While the distributions are real cash, a significant portion effectively represents a return of your own principal as the share price steadily erodes. You must track your Total Return—accounting for both distributions received and the declining share price—to evaluate the true profitability of holding this instrument.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Interactive Income Projection Model</h2>
+      <p>Use the tool below to model your potential monthly and annual cash flow based on your current or anticipated position size. The calculator allows you to input your exact share count and adjust the estimated monthly distribution rate per share to stress-test your income expectations under different market conditions.</p>
+
+      <div class="card" id="calculator-card">
+        <h3>ULTY Distribution Calculator</h3>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label for="sharesInput" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">Number of ULTY Shares Owned</label>
+          <input type="number" id="sharesInput" value="500" min="0" step="1" placeholder="e.g. 1000" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); font-size: 1.1rem;">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label for="distInput" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">Estimated Monthly Distribution per Share ($)</label>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; margin-top: -0.25rem;">Enter a conservative estimate based on recent payouts.</p>
+          <input type="number" id="distInput" value="1.50" min="0" step="0.01" placeholder="e.g. 1.50" style="width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-primary); font-size: 1.1rem;">
+        </div>
+
+        <div id="resultsContainer" style="margin-top: 2rem; padding: 1.5rem; background: color-mix(in srgb, var(--accent-color) 10%, var(--card-bg)); border-radius: 8px; border: 1px solid var(--accent-color);">
+          <h4 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--text-primary);">Projected Income Summary</h4>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
+            <span style="font-weight: 600; color: var(--text-secondary);">Estimated Monthly Income:</span>
+            <span id="monthlyOutput" style="font-size: 1.5rem; font-weight: 800; color: var(--accent-color);">$0.00</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; color: var(--text-secondary);">Estimated Annualized Income:</span>
+            <span id="annualOutput" style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Analyzing the Total Return Paradigm</h2>
+      <p>When modeling your cash flow with the calculator, it is imperative to look beyond the headline distribution figures. The allure of depositing massive sums of cash directly into your brokerage account every month is undeniably strong, but viewing those payments in isolation leads to a fundamentally flawed assessment of your investment's performance. The true metric of success for an aggressive yield instrument is total return, which strictly requires you to calculate the sum of all distributions received minus the total capital depreciation of your initial principal.</p>
+
+      <p>Consider a hypothetical scenario where an investor purchases shares at inception and receives a 120% annualized yield over twelve months in cash distributions. If the underlying price of the ETF rapidly decays by 60% over that same twelve-month period due to severe downside moves in its highly volatile basket, the net total return is significantly lower than the stated yield implies. Furthermore, the massive distributions are actively taxed at your highest ordinary income tax rates, creating a severe, immediate tax drag that further diminishes the actual wealth created. This structural flaw makes ULTY wholly unsuited for traditional "buy-and-hold" income portfolios.</p>
+    </section>
+
+    <section>
+      <h2>Strategic Allocation and Risk Mitigation</h2>
+      <p>Successfully navigating an ultra-high-yield option strategy requires extreme discipline and a strict allocation framework. Financial advisors universally recommend that highly speculative assets should never exceed a low, single-digit percentage of a comprehensive investment portfolio. By severely capping your position sizing, you explicitly define and limit your maximum potential loss if the fund's NAV experiences catastrophic failure, while still allowing the massive yield to contribute meaningful absolute cash flow to your overall portfolio.</p>
+
+      <p>The most crucial tactic for managing risk with these instruments is the aggressive reallocation of the cash distributions. Automatically reinvesting the massive payouts back into the same decaying asset rapidly accelerates capital destruction. Instead, successful investors treat the fund as a cash-generating engine, systematically siphoning the distributions out of the position and aggressively reallocating that capital into stable, fundamentally robust assets such as broad market index funds or established dividend aristocrats. This deliberate strategy effectively converts chaotic, short-term volatility premiums into long-term, durable wealth.</p>
+    </section>
+
+    <section>
+      <h2>Internal Links and Further Research</h2>
+      <p>Compare the mechanics of extreme yield generation by analyzing historical payout data and strategy reviews of related funds:</p>
+      <ul>
+        <li><a href="/ulty-dividend-history">ULTY Historical Dividend Analysis</a></li>
+        <li><a href="/jepq-dividend">JEPQ Covered Call Strategy Overview</a></li>
+      </ul>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <details>
+          <summary>How does the ULTY dividend calculator work?</summary>
+          <p>The ULTY dividend calculator estimates your potential monthly and annual income based on the number of shares you own and the current or projected distribution rate. It multiplies your share count by the estimated monthly distribution to project your income stream, allowing you to model different investment scenarios.</p>
+        </details>
+
+        <details>
+          <summary>Are ULTY's massive dividend yields sustainable long-term?</summary>
+          <p>No, ULTY's extreme triple-digit yields are a direct byproduct of heightened market volatility and are not supported by fundamental corporate earnings or cash flows. The fund generates income by writing short-dated covered calls on highly volatile stocks. While this strategy harvests massive premiums in chaotic markets, a sustained period of low volatility or severe downside moves in the underlying assets will inevitably cause the distribution rate and the Net Asset Value (NAV) to decline significantly.</p>
+        </details>
+
+        <details>
+          <summary>What is the biggest risk of relying on ULTY for income?</summary>
+          <p>The primary risk of holding ULTY for income is substantial principal decay. The fund's strategy of aggressively selling covered calls on highly volatile equities inherently captures the full downside risk of those volatile assets while strictly capping any upside potential. Over time, this asymmetrical payoff structure is highly likely to erode the fund's NAV, meaning that while you may receive large cash distributions, the total value of your initial investment could suffer severe losses.</p>
+        </details>
+
+        <details>
+          <summary>How often does ULTY pay its dividends?</summary>
+          <p>The YieldMax Ultra Option Income Strategy ETF (ULTY) pays distributions on a monthly basis. This frequent payout schedule is attractive for income-seeking investors, but the actual dollar amount distributed each month can fluctuate wildly depending on the option premiums the fund successfully harvested during the preceding period.</p>
+        </details>
+
+        <details>
+          <summary>Should I reinvest my ULTY dividends?</summary>
+          <p>Deciding whether to reinvest ULTY dividends depends entirely on your investment goals and risk tolerance. Reinvesting distributions (DRIP) can rapidly increase your share count and compound future payouts. However, given the severe risk of NAV decay associated with ULTY's strategy, many investors choose to take the cash distributions and reallocate them into more stable, fundamentally sound assets to diversify their risk and protect their principal.</p>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sharesInput = document.getElementById('sharesInput');
+      const distInput = document.getElementById('distInput');
+      const monthlyOutput = document.getElementById('monthlyOutput');
+      const annualOutput = document.getElementById('annualOutput');
+
+      function calculateIncome() {
+        const shares = parseFloat(sharesInput.value) || 0;
+        const dist = parseFloat(distInput.value) || 0;
+
+        const monthlyIncome = shares * dist;
+        const annualIncome = monthlyIncome * 12;
+
+        monthlyOutput.textContent = '$' + monthlyIncome.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        annualOutput.textContent = '$' + annualIncome.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      }
+
+      sharesInput.addEventListener('input', calculateIncome);
+      distInput.addEventListener('input', calculateIncome);
+
+      // Initial calculation
+      calculateIncome();
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+    .card h3 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+
+    .faq-section details { margin: 1rem 0; padding: 1.25rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 700; cursor: pointer; font-size: 1.1rem; outline: none; }
+    .faq-section summary::-webkit-details-marker { color: var(--accent-color); }
+    .faq-section p { margin-top: 1rem; margin-bottom: 0; color: var(--text-secondary); }
+
+    a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+
+    h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: 1.6rem; color: var(--text-primary); }
+    p { line-height: 1.7; margin-bottom: 1.25rem; color: var(--text-primary); font-size: 1.05rem; }
+    ul { margin-bottom: 1.5rem; padding-left: 1.5rem; line-height: 1.7; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</SiteLayout>

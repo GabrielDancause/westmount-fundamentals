@@ -1,0 +1,492 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "How to Sell Stocks: A Complete Guide for Investors",
+  description: "Selling stocks isn't just about hitting a button. Here's what beginners miss—and what experienced investors know about minimizing taxes and maximizing returns.",
+  category: "guide",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/how-to-sell-stocks"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How exactly do you sell a stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "To sell a stock, log into your brokerage account, locate your portfolio, select the stock you wish to sell, enter the number of shares, and choose an order type (such as a market or limit order). Review the details and submit the trade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the best time to sell stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The best time to sell depends on your investment strategy. Consider selling when a stock hits your price target, if the company's fundamentals permanently deteriorate, or when you need to rebalance your portfolio. Always factor in potential tax implications."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between a market order and a limit order?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A market order executes immediately at the best available current price. A limit order only executes if the stock reaches a specific price you set, giving you control over the execution price but not guaranteeing the trade will happen."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to pay taxes when I sell a stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, if you sell a stock for a profit in a taxable account, you owe capital gains taxes. Holding the stock for more than a year typically qualifies you for lower long-term capital gains tax rates. Selling at a loss can sometimes be used to offset other gains."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How quickly do I get my money after selling a stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Under current T+1 settlement rules in the US, trade settlement happens the next business day. Once settled, the funds appear in your brokerage account as cash, which you can then reinvest or withdraw to your bank."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/how-to-sell-stocks"
+  schema={schema}
+>
+  <div class="page-content">
+    <header class="hero-section">
+      <h1>{meta.title}</h1>
+      <p class="subtitle">Understanding the mechanics, tax implications, and strategies for selling shares effectively.</p>
+      <div class="meta-info">
+        <span class="category">{meta.category.toUpperCase()}</span>
+        <span class="date">Published: {meta.published}</span>
+      </div>
+    </header>
+
+    <main class="content-body">
+      <section>
+        <h2>The Basics: What Does It Mean to Sell a Stock?</h2>
+        <p>Selling a stock means you are liquidating a portion or all of your ownership stake in a publicly traded company. While <a href="/how-to-buy-stocks">buying stocks</a> is often driven by optimism and the expectation of future growth, selling requires a different mindset. It forces you to realize either a gain or a loss.</p>
+        <p>In practice, the transaction is handled through your brokerage platform. You are offering your shares on the open market, and your broker finds a buyer willing to pay the current market price (or a specific price you dictate).</p>
+      </section>
+
+      <section>
+        <h2>How It Actually Works in Practice</h2>
+        <p>Beginners often assume selling a stock is as instantaneous as handing over cash at a grocery store. While modern technology makes it feel that way, the background mechanics are important to understand.</p>
+
+        <h3>The Order Types</h3>
+        <p>When you hit "Sell," you aren't just sending shares into the void. You must specify <em>how</em> you want to sell them. The two most common methods are:</p>
+        <ul>
+          <li><strong>Market Order:</strong> You instruct your broker to sell immediately at the best available current price. This guarantees execution but not the price. In highly volatile markets, the price you get might be slightly different from what you saw on your screen.</li>
+          <li><strong>Limit Order:</strong> You specify the exact minimum price you are willing to accept. For example, if Apple (AAPL) is trading at $170, but you only want to sell if it hits $175, you place a Limit Order at $175. This guarantees the price, but does <em>not</em> guarantee execution. If the stock never reaches $175, your shares remain unsold.</li>
+        </ul>
+
+        <h3>Real Example: Selling Microsoft (MSFT)</h3>
+        <p>Suppose you bought 10 shares of Microsoft at $250. Today, it is trading at $400. You want to lock in some profits.</p>
+        <ol>
+            <li>You log into your brokerage account.</li>
+            <li>You navigate to your portfolio and select your MSFT position.</li>
+            <li>You click "Trade" or "Sell."</li>
+            <li>You enter the quantity: 5 shares.</li>
+            <li>You select your order type: Limit Order at $400.</li>
+            <li>You review the order ticket. It shows an estimated credit of $2,000 (5 shares * $400).</li>
+            <li>You submit the order.</li>
+        </ol>
+        <p>Once the stock hits $400 and a buyer is found, the trade executes. Your account shows 5 fewer shares of MSFT and $2,000 more in cash.</p>
+
+        <h3>The Settlement Period (T+1)</h3>
+        <p>When the trade executes, you don't instantly have the cash cleared for withdrawal. In the US, stock trades settle on a <strong>T+1</strong> basis. This means Trade Date plus one business day. If you sell on Monday, the cash is fully settled and available to transfer to your bank on Tuesday. You can, however, usually use the unsettled funds immediately to <a href="/how-to-trade-stocks">trade other stocks</a>.</p>
+      </section>
+
+      <section>
+        <h2>Why Investors Sell Stocks</h2>
+        <p>Knowing <em>how</em> to sell is the easy part. Knowing <em>when</em> to sell is what separates successful investors from novices. Here are the most common valid reasons to sell:</p>
+
+        <h3>1. Reaching a Target Price or Valuation</h3>
+        <p>Disciplined investors often buy a stock with a specific price target or valuation metric in mind. If a company's stock price surges well beyond its fundamental value (e.g., its P/E ratio reaches historically unsustainable highs), selling to lock in gains is a prudent move.</p>
+
+        <h3>2. Fundamental Deterioration</h3>
+        <p>A thesis break occurs when the original reason you bought the stock is no longer true. Perhaps a new competitor has destroyed their market share, management is engaging in poor acquisitions, or the core business model is obsolete. If the underlying business is permanently broken, holding onto the stock hoping it will "bounce back" is a common trap.</p>
+
+        <h3>3. Portfolio Rebalancing</h3>
+        <p>If you have a target portfolio allocation (e.g., 70% stocks, 30% bonds), and a massive bull market pushes your stock allocation to 85%, you are taking on more risk than you intended. Selling some of your winning stocks to buy bonds restores your desired risk profile.</p>
+
+        <h3>4. Needing the Cash</h3>
+        <p>The ultimate goal of investing is to fund your life goals—buying a house, paying for education, or retiring. Liquidating assets to fund these events is a natural part of the investing lifecycle.</p>
+      </section>
+
+      <section>
+        <h2>The Tax Implications: What Beginners Miss</h2>
+        <p>In a taxable brokerage account, selling a stock triggers a tax event. The IRS wants its share of your profits. This is called Capital Gains Tax.</p>
+
+        <div class="callout">
+            <strong>The Golden Rule of Taxes:</strong> How long you hold the stock determines your tax rate.
+        </div>
+
+        <ul>
+            <li><strong>Short-Term Capital Gains:</strong> If you hold the stock for one year or less before selling, your profits are taxed at your ordinary income tax rate. This can be as high as 37%.</li>
+            <li><strong>Long-Term Capital Gains:</strong> If you hold the stock for more than one year, you benefit from lower, preferential tax rates (typically 0%, 15%, or 20%, depending on your income).</li>
+        </ul>
+
+        <p>Experienced investors meticulously track their holding periods. Selling a stock at a massive profit on day 364 instead of day 366 can cost you thousands of dollars in unnecessary taxes.</p>
+        <p>Conversely, selling at a loss isn't always entirely bad. You can use capital losses to offset your capital gains, a strategy known as tax-loss harvesting. If your losses exceed your gains, you can even use up to $3,000 of those losses to offset your ordinary income.</p>
+      </section>
+
+      <section class="calculator-section">
+        <h2>Capital Gains Estimator</h2>
+        <p>Use this calculator to estimate the tax implications of selling a stock based on your holding period and tax bracket. (Note: This is an educational estimate, not professional tax advice).</p>
+
+        <div class="calculator-container">
+          <div class="input-group">
+            <label for="purchasePrice">Purchase Price (Total $)</label>
+            <input type="number" id="purchasePrice" min="0" step="0.01" value="10000">
+          </div>
+          <div class="input-group">
+            <label for="sellPrice">Selling Price (Total $)</label>
+            <input type="number" id="sellPrice" min="0" step="0.01" value="15000">
+          </div>
+          <div class="input-group">
+            <label for="holdingPeriod">Holding Period</label>
+            <select id="holdingPeriod">
+              <option value="short">1 Year or Less (Short-Term)</option>
+              <option value="long" selected>More than 1 Year (Long-Term)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="taxBracket">Estimated Tax Bracket (%)</label>
+            <input type="number" id="taxBracket" min="0" max="50" step="1" value="15">
+            <small class="helper-text">Typically 15% for Long-Term, or your ordinary income rate for Short-Term.</small>
+          </div>
+
+          <button id="calculateTaxes" class="calc-button">Estimate Tax Impact</button>
+
+          <div id="calcResults" class="results-container" style="display: none;">
+            <div class="result-row">
+              <span>Gross Profit:</span>
+              <span id="resGrossProfit" class="highlight"></span>
+            </div>
+            <div class="result-row">
+              <span>Estimated Taxes:</span>
+              <span id="resTaxes" class="highlight-negative"></span>
+            </div>
+            <div class="result-row total-row">
+              <span>Net Profit After Tax:</span>
+              <span id="resNetProfit" class="highlight-positive"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Common Mistakes to Avoid</h2>
+        <p>Even seasoned investors make mistakes when hitting the sell button. Here are pitfalls to watch out for:</p>
+
+        <h3>Selling Winners Too Early (and Holding Losers Too Long)</h3>
+        <p>Psychologically, humans hate taking losses. Beginners often sell their best-performing stocks to "lock in a gain" while refusing to sell stocks that are down 50% because they are waiting for them to "get back to even." This results in a portfolio full of underperforming companies. As the saying goes, "Cut your flowers and water your weeds."</p>
+
+        <h3>Panic Selling During Market Corrections</h3>
+        <p>When the <a href="/average-stock-market-return">stock market averages</a> drop 10% or 20%, panic sets in. The news is overwhelmingly negative. Selling during a crash turns temporary paper losses into permanent realized losses. Historically, the market has always recovered from crashes.</p>
+
+        <h3>Forgetting About Wash Sales</h3>
+        <p>If you sell a stock for a loss to claim a tax deduction, you cannot buy that same stock (or a "substantially identical" one) within 30 days before or after the sale. If you do, the IRS triggers a "Wash Sale" rule, disallowing the tax loss.</p>
+      </section>
+
+      <section>
+        <h2>Advanced Considerations</h2>
+        <p>As you build a more complex portfolio, you might encounter scenarios like stock splits. It's important to understand that a stock split does not change the fundamental value of your investment; it just changes the number of shares and the price per share. You can use a <a href="/stock-split-calculator">stock split calculator</a> to understand how your share count and cost basis adjust, which is critical for calculating taxes when you eventually sell.</p>
+
+        <p>Furthermore, if you are struggling with <a href="/how-to-pick-stocks">how to pick stocks</a> in the first place, relying on broad-market ETFs and holding them for decades is a proven strategy that minimizes the need to make frequent, difficult selling decisions.</p>
+      </section>
+
+      <section>
+        <h2>Conclusion</h2>
+        <p>Selling stocks is a critical mechanical skill, but the true challenge lies in the strategy and discipline behind the decision. By understanding order types, managing your tax liabilities, and avoiding emotional panic selling, you can protect your capital and maximize your long-term returns.</p>
+      </section>
+    </main>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .hero-section {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .meta-info {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .category {
+    background-color: var(--card-bg);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  ul, ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  a {
+    color: var(--accent-color);
+    text-decoration: underline;
+  }
+
+  .callout {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Calculator Styles */
+  .calculator-section {
+    margin: 3rem 0;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+  }
+
+  .calculator-container {
+    margin-top: 1.5rem;
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  input, select {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .helper-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .calc-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+  }
+
+  .calc-button:hover {
+    opacity: 0.9;
+  }
+
+  .results-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .total-row {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--border-color);
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+
+  .highlight { color: var(--text-primary); }
+  .highlight-positive { color: #10b981; }
+  .highlight-negative { color: #ef4444; }
+
+  @media (max-width: 768px) {
+    .page-content {
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    .calculator-section {
+      padding: 1.5rem 1rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const calculateBtn = document.getElementById('calculateTaxes');
+    if (!calculateBtn) return;
+
+    calculateBtn.addEventListener('click', () => {
+      const purchasePrice = parseFloat(document.getElementById('purchasePrice').value);
+      const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+      const taxBracket = parseFloat(document.getElementById('taxBracket').value);
+
+      if (isNaN(purchasePrice) || isNaN(sellPrice) || isNaN(taxBracket)) {
+        alert('Please enter valid numbers for all fields.');
+        return;
+      }
+
+      const rawGrossProfit = sellPrice - purchasePrice;
+
+      // Handle floating point precision issues
+      let grossProfit = parseFloat(rawGrossProfit.toPrecision(14));
+      if (Math.abs(grossProfit - Math.round(grossProfit)) < 1e-14) {
+        grossProfit = Math.round(grossProfit);
+      }
+
+      let taxes = 0;
+      let netProfit = 0;
+
+      if (grossProfit > 0) {
+        const rawTaxes = grossProfit * (taxBracket / 100);
+        taxes = parseFloat(rawTaxes.toPrecision(14));
+        if (Math.abs(taxes - Math.round(taxes)) < 1e-14) {
+          taxes = Math.round(taxes);
+        }
+
+        const rawNet = grossProfit - taxes;
+        netProfit = parseFloat(rawNet.toPrecision(14));
+        if (Math.abs(netProfit - Math.round(netProfit)) < 1e-14) {
+          netProfit = Math.round(netProfit);
+        }
+      } else {
+        netProfit = grossProfit; // If loss, net is the loss
+      }
+
+      // Formatting
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+
+      document.getElementById('resGrossProfit').textContent = formatter.format(grossProfit);
+      document.getElementById('resTaxes').textContent = grossProfit > 0 ? '-' + formatter.format(taxes) : '$0.00';
+      document.getElementById('resNetProfit').textContent = formatter.format(netProfit);
+
+      // Color coding based on profit/loss
+      const resNetEl = document.getElementById('resNetProfit');
+      if (netProfit > 0) {
+        resNetEl.className = 'highlight-positive';
+      } else if (netProfit < 0) {
+        resNetEl.className = 'highlight-negative';
+      } else {
+        resNetEl.className = 'highlight';
+      }
+
+      document.getElementById('calcResults').style.display = 'block';
+    });
+  });
+</script>

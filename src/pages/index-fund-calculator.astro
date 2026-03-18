@@ -1,0 +1,488 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Index Fund Calculator: See Your True Investment Potential",
+  description: "Calculate how your money grows in index funds over time, factoring in compound interest and expense ratios. Interactive tool with no sign-up required.",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a good expected return for an index fund?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Historically, the S&P 500 index has returned an average of about 10% per year before inflation, or roughly 7% after inflation. However, future returns are never guaranteed, and it's wise to use conservative estimates like 6-8% when projecting long-term growth."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does an expense ratio affect my index fund returns?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An expense ratio is the annual fee charged by the fund, expressed as a percentage of your investment. It is deducted continuously from the fund's assets, lowering your net return. Over decades, even a seemingly small fee difference (e.g., 0.5% vs 0.05%) can cost you tens of thousands of dollars in lost compound interest."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does compound interest apply to index funds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While index funds don't 'compound' exactly like a savings account that pays monthly interest, the compounding effect happens continuously as the underlying companies grow their earnings, increase their stock prices, and reinvest or pay out dividends."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between an index fund and an ETF?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An index fund is a type of mutual fund or Exchange-Traded Fund (ETF) that tracks a specific market index. The main difference is how they trade: ETFs trade on an exchange throughout the day like stocks, while traditional index mutual funds price only once at the end of the trading day."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to pay taxes on my index fund gains?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you hold your index fund in a standard taxable brokerage account, you will pay taxes on any dividends received each year and capital gains taxes when you sell shares for a profit. Holding index funds in tax-advantaged accounts like a 401(k) or IRA can help defer or eliminate these taxes."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/index-fund-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Index Fund Calculator</h1>
+      <p style="text-align: center; max-width: 600px; margin: 0 auto 2rem;">
+        See how the power of compound interest and low fees can grow your wealth over time. This calculator factors in your initial investment, monthly contributions, expected returns, and the fund's expense ratio.
+      </p>
+
+
+      <div class="calculator-card">
+        <div class="calc-grid">
+          <div class="calc-inputs">
+            <h3>Investment Details</h3>
+
+            <div class="input-group">
+              <label for="initial">Initial Investment</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="initial" value="10000" min="0" step="100">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="monthly">Monthly Contribution</label>
+              <div class="input-wrapper">
+                <span class="prefix">$</span>
+                <input type="number" id="monthly" value="500" min="0" step="50">
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="years">Years to Grow</label>
+              <div class="input-wrapper">
+                <input type="number" id="years" value="20" min="1" max="100" step="1">
+                <span class="suffix">Yrs</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="return">Expected Annual Return</label>
+              <div class="input-wrapper">
+                <input type="number" id="return" value="8" min="0" max="30" step="0.1">
+                <span class="suffix">%</span>
+              </div>
+              <p class="input-hint">Historical S&P 500 average is ~10% (before inflation).</p>
+            </div>
+
+            <div class="input-group">
+              <label for="expense">Expense Ratio</label>
+              <div class="input-wrapper">
+                <input type="number" id="expense" value="0.05" min="0" max="5" step="0.01">
+                <span class="suffix">%</span>
+              </div>
+              <p class="input-hint">Low-cost index funds often charge 0.03% to 0.10%.</p>
+            </div>
+          </div>
+
+          <div class="calc-outputs">
+            <h3>Projected Results</h3>
+
+            <div class="result-box primary-result">
+              <span class="result-label">Future Balance</span>
+              <span class="result-value" id="final-balance">$0</span>
+            </div>
+
+            <div class="results-breakdown">
+              <div class="breakdown-item">
+                <span class="b-label">Total Contributions</span>
+                <span class="b-value" id="total-contributions">$0</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="b-label">Total Earnings</span>
+                <span class="b-value positive" id="total-earnings">$0</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="b-label">Fees Paid</span>
+                <span class="b-value negative" id="total-fees">$0</span>
+              </div>
+            </div>
+
+            <div class="chart-summary">
+              <p>Without the <strong><span id="display-expense">0.05</span>%</strong> expense ratio, your final balance would have been <strong><span id="balance-no-fee">$0</span></strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <h2>How to Use This Index Fund Calculator</h2>
+        <p>This calculator helps you understand the long-term potential of investing in index funds. It takes into account your initial deposit, regular contributions, the expected market return, and crucially, the fund's expense ratio.</p>
+
+        <h3>The Math Behind the Growth</h3>
+        <p>The calculator uses standard financial formulas for compound interest. We calculate the future value of your initial investment and the future value of your monthly contributions separately, then add them together.</p>
+        <p>The core formula for compound interest with regular contributions is:</p>
+        <code>FV = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) - 1) / (r/n)]</code>
+        <p>Where:</p>
+        <ul>
+          <li><strong>FV:</strong> Future Value</li>
+          <li><strong>P:</strong> Principal (Initial Investment)</li>
+          <li><strong>PMT:</strong> Monthly Contribution</li>
+          <li><strong>r:</strong> Annual interest rate (Return - Expense Ratio)</li>
+          <li><strong>n:</strong> Number of compounding periods per year (12 for monthly)</li>
+          <li><strong>t:</strong> Number of years</li>
+        </ul>
+
+        <h3>Why the Expense Ratio Matters</h3>
+        <p>The expense ratio is an annual fee charged by the mutual fund or ETF to cover operating costs. While a 0.5% or 1% fee might sound small, it can eat up a massive portion of your returns over decades due to the lost compounding effect. This is why low-cost index funds (often charging less than 0.10%) are favored by many long-term investors.</p>
+      </div>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        {JSON.parse(schema).mainEntity.map((item: any) => (
+          <div class="faq-item">
+            <h3>{item.name}</h3>
+            <p>{item.acceptedAnswer.text}</p>
+          </div>
+        ))}
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = {
+        initial: document.getElementById('initial'),
+        monthly: document.getElementById('monthly'),
+        years: document.getElementById('years'),
+        return: document.getElementById('return'),
+        expense: document.getElementById('expense')
+      };
+
+      const outputs = {
+        finalBalance: document.getElementById('final-balance'),
+        totalContributions: document.getElementById('total-contributions'),
+        totalEarnings: document.getElementById('total-earnings'),
+        totalFees: document.getElementById('total-fees'),
+        displayExpense: document.getElementById('display-expense'),
+        balanceNoFee: document.getElementById('balance-no-fee')
+      };
+
+      const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      });
+
+      function calculateFutureValue(principal, monthlyContrib, annualRate, years) {
+        const n = 12; // monthly compounding
+        const r = annualRate / 100;
+        const t = years;
+
+        // Edge case: 0% return
+        if (Math.abs(r) < 1e-10) {
+            return principal + (monthlyContrib * n * t);
+        }
+
+        const rn = r / n;
+        const nt = n * t;
+
+        const fvPrincipal = principal * Math.pow(1 + rn, nt);
+        const fvContributions = monthlyContrib * ((Math.pow(1 + rn, nt) - 1) / rn);
+
+        return fvPrincipal + fvContributions;
+      }
+
+      function updateCalculator() {
+        const principal = parseFloat(inputs.initial.value) || 0;
+        const monthly = parseFloat(inputs.monthly.value) || 0;
+        const years = parseFloat(inputs.years.value) || 0;
+        const grossReturn = parseFloat(inputs.return.value) || 0;
+        const expenseRatio = parseFloat(inputs.expense.value) || 0;
+
+        const netReturn = grossReturn - expenseRatio;
+
+        const totalContributions = principal + (monthly * 12 * years);
+
+        // Calculate with fees
+        const fvWithFees = calculateFutureValue(principal, monthly, netReturn, years);
+
+        // Calculate without fees
+        const fvWithoutFees = calculateFutureValue(principal, monthly, grossReturn, years);
+
+        const totalEarnings = fvWithFees - totalContributions;
+        const totalFees = fvWithoutFees - fvWithFees;
+
+        outputs.finalBalance.textContent = formatter.format(fvWithFees);
+        outputs.totalContributions.textContent = formatter.format(totalContributions);
+        outputs.totalEarnings.textContent = formatter.format(totalEarnings > 0 ? totalEarnings : 0);
+        outputs.totalFees.textContent = formatter.format(totalFees > 0 ? totalFees : 0);
+
+        outputs.displayExpense.textContent = expenseRatio.toFixed(2);
+        outputs.balanceNoFee.textContent = formatter.format(fvWithoutFees);
+      }
+
+      Object.values(inputs).forEach(input => {
+        input.addEventListener('input', updateCalculator);
+      });
+
+      // Initial calculation
+      updateCalculator();
+    });
+  </script>
+</SiteLayout>
+
+
+<style>
+  /* Use CSS variables only: var(--accent-color), var(--card-bg), var(--border-color), var(--text-primary), var(--text-secondary), var(--bg-color) */
+  /* NO :root declarations */
+
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .calc-inputs h3, .calc-outputs h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .input-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .input-wrapper:has(.prefix) input {
+    padding-left: 2rem;
+  }
+
+  .input-wrapper:has(.suffix) input {
+    padding-right: 2.5rem;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .input-hint {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.4rem;
+    margin-bottom: 0;
+  }
+
+  .calc-outputs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-box {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .primary-result {
+    border-color: var(--accent-color);
+    background-color: rgba(74, 143, 231, 0.05); /* very light accent bg */
+  }
+
+  .result-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    font-family: var(--font-mono);
+    line-height: 1.2;
+  }
+
+  .results-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .b-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .b-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .b-value.positive {
+    color: var(--buy-color, #22c55e);
+  }
+
+  .b-value.negative {
+    color: var(--sell-color, #ef4444);
+  }
+
+  .chart-summary {
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: auto;
+  }
+
+  .chart-summary p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .chart-summary strong {
+    color: var(--sell-color, #ef4444);
+  }
+
+  .content-section {
+    margin-top: 3rem;
+  }
+
+  .faq-section {
+    margin-top: 3rem;
+  }
+
+  .faq-item {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .faq-item p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .result-value {
+      font-size: 2rem;
+    }
+  }
+</style>

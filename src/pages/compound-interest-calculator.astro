@@ -1,0 +1,353 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Compound Interest Growth Calculator",
+  description: "See exactly how much your money will grow over time. The results might surprise you...",
+  category: "tool",
+  published: "2026-03-15",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Compound Interest Growth Calculator",
+    "description": "Calculate how your money grows over time with compound interest.",
+    "author": {
+      "@type": "Organization",
+      "name": "SiliconBased"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is compound interest?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Compound interest is the interest you earn on both your original money and on the interest you keep accumulating. It allows your wealth to grow exponentially over time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is compound interest calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The formula for compound interest is A = P(1 + r/n)^(nt), where A is the final amount, P is the principal, r is the annual interest rate, n is the number of times interest is compounded per year, and t is the time in years."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is compounding frequency important?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The more frequently interest is compounded (e.g., daily vs. annually), the more money you will earn, because you are earning interest on your interest more often."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good interest rate for a savings account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A good interest rate for a high-yield savings account is typically around 4% to 5% APY, depending on current economic conditions and central bank rates."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does inflation affect my savings?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Inflation reduces the purchasing power of your money over time. If your savings account interest rate is lower than the inflation rate, you are effectively losing money in real terms."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/compound-interest-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Compound Interest Growth Calculator</h1>
+      <p class="subtitle">Calculate your financial future and visualize the power of compounding.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="input-group">
+        <label for="principal">Initial Deposit ($)</label>
+        <input type="number" id="principal" value="10000" min="0" step="100" />
+      </div>
+
+      <div class="input-group">
+        <label for="monthly">Monthly Contribution ($)</label>
+        <input type="number" id="monthly" value="500" min="0" step="50" />
+      </div>
+
+      <div class="input-group">
+        <label for="rate">Annual Interest Rate (%)</label>
+        <input type="number" id="rate" value="7" min="0" step="0.1" />
+      </div>
+
+      <div class="input-group">
+        <label for="years">Years to Grow</label>
+        <input type="number" id="years" value="20" min="1" max="100" step="1" />
+      </div>
+
+      <div class="input-group">
+        <label for="frequency">Compounding Frequency</label>
+        <select id="frequency">
+          <option value="1">Annually</option>
+          <option value="12" selected>Monthly</option>
+          <option value="365">Daily</option>
+        </select>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <h3>Total Balance</h3>
+          <div class="result-value" id="total-amount">$0.00</div>
+        </div>
+
+        <div class="secondary-results">
+          <div class="sub-result">
+            <h4>Total Principal</h4>
+            <div id="total-principal">$0.00</div>
+          </div>
+          <div class="sub-result">
+            <h4>Total Interest Earned</h4>
+            <div id="total-interest">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-text" style="display: none;">Please enter valid positive numbers.</div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding Compound Interest</h2>
+      <p>
+        Compound interest is often referred to as the eighth wonder of the world, and for good reason. It is the fundamental mechanism through which wealth is built over time. Unlike simple interest, which only calculates interest on your initial principal deposit, compound interest calculates interest on both your initial principal <em>and</em> the accumulated interest from previous periods.
+      </p>
+
+      <h3>The Mechanics of Compounding</h3>
+      <p>
+        Imagine you invest $10,000 at a 7% annual interest rate. After the first year, you earn $700 in interest, bringing your total to $10,700. In the second year, you don't just earn 7% on your original $10,000; you earn 7% on the new total of $10,700. That means your interest for year two is $749, bringing your total to $11,449.
+      </p>
+      <p>
+        While this might seem like a small difference initially, over decades, this exponential growth leads to massive accumulations of wealth. The longer your money has to compound, the more pronounced the effect becomes. This is why financial advisors constantly emphasize the importance of starting to invest early.
+      </p>
+
+      <h3>The Mathematics Behind the Magic</h3>
+      <p>
+        The mathematical formula for calculating compound interest is:
+      </p>
+      <div class="formula-box">
+        <strong>A = P(1 + r/n)<sup>nt</sup></strong>
+      </div>
+      <p>Where:</p>
+      <ul>
+        <li><strong>A</strong> is the total amount accumulated after n years, including interest.</li>
+        <li><strong>P</strong> is the principal amount (the initial deposit or loan amount).</li>
+        <li><strong>r</strong> is the annual interest rate (decimal).</li>
+        <li><strong>n</strong> is the number of times that interest is compounded per unit t (e.g., 12 for monthly, 365 for daily).</li>
+        <li><strong>t</strong> is the time the money is invested or borrowed for, in years.</li>
+      </ul>
+
+      <h3>Adding Regular Contributions</h3>
+      <p>
+        The formula becomes more complex when you add regular, ongoing contributions (like investing $500 every month). The future value of a series of regular payments (an annuity) is calculated differently and then added to the compounded principal.
+      </p>
+      <p>
+        Our calculator handles this complex math for you. By combining an initial principal deposit with regular monthly contributions, you can model realistic savings and retirement scenarios. You'll quickly see that regular, disciplined saving combined with the power of compounding interest is a reliable path to financial independence.
+      </p>
+
+      <h3>The Impact of Compounding Frequency</h3>
+      <p>
+        How often your interest is calculated and added to your balance (compounding frequency) also affects your final total. Interest can be compounded annually, semi-annually, quarterly, monthly, or even daily. The more frequently interest is compounded, the higher your effective yield will be, as you are earning interest on your interest sooner.
+      </p>
+      <p>
+        For instance, an account that compounds daily will yield slightly more over time than an account with the exact same interest rate that only compounds annually. This difference is encapsulated in the Annual Percentage Yield (APY), which accounts for compounding frequency, unlike the nominal interest rate (APR).
+      </p>
+
+      <h3>Variables You Control</h3>
+      <p>
+        When planning for your financial future, there are three primary variables you can control that affect your compound growth:
+      </p>
+      <ol>
+        <li><strong>Time:</strong> The most powerful variable. Starting earlier gives your money more time to compound.</li>
+        <li><strong>Contributions:</strong> The amount of money you regularly add to your investment.</li>
+        <li><strong>Rate of Return:</strong> The interest rate or growth rate you achieve. Higher rates carry higher risk.</li>
+      </ol>
+      <p>
+        Use this tool alongside our other calculators to make informed, data-driven decisions about your finances.
+      </p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is compound interest?</summary>
+        <p>Compound interest is the interest you earn on both your original money and on the interest you keep accumulating. It allows your wealth to grow exponentially over time, as opposed to simple interest which only grows linearly.</p>
+      </details>
+
+      <details>
+        <summary>How is compound interest calculated?</summary>
+        <p>The standard formula for compound interest is A = P(1 + r/n)^(nt). 'A' is the final amount, 'P' is the principal, 'r' is the annual interest rate, 'n' is the number of times interest is compounded per year, and 't' is the time in years.</p>
+      </details>
+
+      <details>
+        <summary>Why is compounding frequency important?</summary>
+        <p>The more frequently interest is compounded (e.g., daily vs. annually), the more money you will earn. This happens because the interest is calculated and added to your balance more often, meaning you start earning "interest on your interest" sooner.</p>
+      </details>
+
+      <details>
+        <summary>What is a good interest rate for a savings account?</summary>
+        <p>A good interest rate for a high-yield savings account is typically around 4% to 5% APY, depending on current economic conditions and central bank rates. Traditional savings accounts often offer much less, sometimes below 0.5%.</p>
+      </details>
+
+      <details>
+        <summary>How does inflation affect my savings?</summary>
+        <p>Inflation reduces the purchasing power of your money over time. If your savings account interest rate is 2% but inflation is 3%, you are effectively losing 1% of purchasing power every year. To grow real wealth, your investments must yield a return higher than the rate of inflation.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+
+    function calculateCompoundInterest() {
+      const principalInput = document.getElementById('principal');
+      const monthlyInput = document.getElementById('monthly');
+      const rateInput = document.getElementById('rate');
+      const yearsInput = document.getElementById('years');
+      const frequencyInput = document.getElementById('frequency');
+      const errorMsg = document.getElementById('error-message');
+
+      const principal = parseFloat(principalInput.value);
+      const monthly = parseFloat(monthlyInput.value);
+      const rate = parseFloat(rateInput.value);
+      const years = parseFloat(yearsInput.value);
+      const frequency = parseInt(frequencyInput.value);
+
+      if (isNaN(principal) || isNaN(monthly) || isNaN(rate) || isNaN(years) ||
+          principal < 0 || monthly < 0 || rate < 0 || years <= 0) {
+        errorMsg.style.display = 'block';
+        document.getElementById('total-amount').textContent = '$0.00';
+        document.getElementById('total-principal').textContent = '$0.00';
+        document.getElementById('total-interest').textContent = '$0.00';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+
+      // r/n
+      const r = rate / 100;
+      const ratePerPeriod = r / frequency;
+      const totalPeriods = years * frequency;
+
+      // Principal compound
+      let totalValue = principal * Math.pow(1 + ratePerPeriod, totalPeriods);
+
+      // Future value of a series (monthly contributions)
+      if (monthly > 0) {
+          // Because contributions are monthly, we need to adapt if frequency is not monthly.
+          // For simplicity and common practice in these calculators:
+          // If compounding is monthly, n=12.
+          // PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+
+          let effectiveMonthlyRate;
+          if (frequency === 12) {
+              effectiveMonthlyRate = ratePerPeriod;
+          } else {
+              // Calculate effective monthly rate based on APY
+              const apy = Math.pow(1 + ratePerPeriod, frequency) - 1;
+              effectiveMonthlyRate = Math.pow(1 + apy, 1/12) - 1;
+          }
+
+          if (effectiveMonthlyRate > 0) {
+              const months = years * 12;
+              const futureValueOfSeries = monthly * ((Math.pow(1 + effectiveMonthlyRate, months) - 1) / effectiveMonthlyRate);
+              // Assume contributions are made at the end of the month
+              totalValue += futureValueOfSeries;
+          } else {
+              totalValue += monthly * years * 12;
+          }
+      }
+
+      const totalPrincipal = principal + (monthly * years * 12);
+      const totalInterest = totalValue - totalPrincipal;
+
+      document.getElementById('total-amount').textContent = formatCurrency(totalValue);
+      document.getElementById('total-principal').textContent = formatCurrency(totalPrincipal);
+      document.getElementById('total-interest').textContent = formatCurrency(totalInterest > 0 ? totalInterest : 0);
+    }
+
+    const inputs = ['principal', 'monthly', 'rate', 'years', 'frequency'];
+    inputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', calculateCompoundInterest);
+    });
+
+    // Initial calculation
+    calculateCompoundInterest();
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .calculator-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+
+    .input-group { margin-bottom: 1.25rem; }
+    .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; }
+
+    input, select { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 1rem; }
+    input:focus, select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+
+    .results-grid { margin-top: 2rem; }
+    .result-card { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
+    .result-card h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--text-secondary); }
+    .result-value { font-size: 2.5rem; font-weight: 800; color: var(--accent-color); }
+
+    .secondary-results { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .sub-result { background: var(--bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; text-align: center; }
+    .sub-result h4 { margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+    .sub-result div { font-size: 1.2rem; font-weight: 700; }
+
+    .error-text { color: #ef4444; margin-top: 1rem; font-weight: 600; text-align: center; }
+
+    .explainer { margin: 3rem 0; line-height: 1.6; }
+    .explainer h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+    .explainer h3 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; }
+    .explainer p { margin-bottom: 1rem; color: var(--text-secondary); }
+    .explainer ul, .explainer ol { margin-bottom: 1rem; color: var(--text-secondary); padding-left: 1.5rem; }
+    .explainer li { margin-bottom: 0.5rem; }
+
+    .formula-box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; text-align: center; margin: 1.5rem 0; font-size: 1.2rem; }
+
+    .faq-section { margin-top: 3rem; }
+    .faq-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    .faq-section details p { margin: 1rem 0 0 0; color: var(--text-secondary); line-height: 1.5; }
+
+    @media (min-width: 640px) {
+      .calculator-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+      .results-grid { grid-column: 1 / -1; margin-top: 0; }
+      .input-group { margin-bottom: 0; }
+      .input-group:nth-child(5) { grid-column: 1 / -1; } /* Make frequency span full width */
+    }
+  </style>
+</SiteLayout>

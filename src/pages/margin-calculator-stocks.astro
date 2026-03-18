@@ -1,0 +1,631 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Margin Calculator: Stock Borrowing & Maintenance Needs",
+  description: "Understand the risks and mechanics of leveraged investing. Calculate total position value, maximum loan amounts, and critical margin call thresholds instantly.",
+  category: "tool",
+  published: "2026-03-15",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a margin calculator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A margin calculator helps investors determine the financial requirements and risks of borrowing money from a broker to purchase stock. It computes the total position value, the loan amount, and the crucial margin call price."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does 'initial margin requirement' mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The initial margin requirement is the minimum amount of equity (your own money) you must have in your account to open a leveraged position. Under Regulation T, this is typically 50% of the total purchase price."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a margin call?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A margin call occurs when the value of your margin account falls below the broker's required maintenance margin. To satisfy the call, you must deposit additional cash or marginable securities, or sell some of your existing assets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does margin interest work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When you use margin, you are essentially taking out a loan from your broker. The broker charges you interest on this borrowed amount, typically calculated on a daily basis and posted to your account monthly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I lose more than my initial investment on margin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Because margin involves borrowing money, a decline in the stock price amplifies your percentage losses. If the stock price drops severely, you are still responsible for repaying the entire loan amount plus interest, potentially resulting in losses exceeding your initial cash investment."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "datePublished": meta.published
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/margin-calculator-stocks" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Stock Margin Calculator</h1>
+      <p class="subtitle">Calculate borrowing limits, leverage, and critical margin call thresholds</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="stockPrice">Stock Price ($)</label>
+          <input type="number" id="stockPrice" value="100" min="0.01" step="0.01">
+          <div class="error-message" id="error-price">Please enter a valid stock price.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="numShares">Number of Shares</label>
+          <input type="number" id="numShares" value="100" min="1" step="1">
+          <div class="error-message" id="error-shares">Please enter a valid number of shares.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="initialMargin">Initial Margin Requirement (%)</label>
+          <input type="number" id="initialMargin" value="50" min="1" max="100" step="1">
+          <div class="error-message" id="error-initial">Must be between 1% and 100%.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="maintenanceMargin">Maintenance Margin (%)</label>
+          <input type="number" id="maintenanceMargin" value="25" min="1" max="100" step="1">
+          <div class="error-message" id="error-maintenance">Must be between 1% and 100%.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="marginInterest">Annual Margin Interest Rate (%)</label>
+          <input type="number" id="marginInterest" value="8.5" min="0" max="50" step="0.1">
+          <div class="error-message" id="error-interest">Please enter a valid interest rate.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="availableCash">Available Cash to Invest ($)</label>
+          <input type="number" id="availableCash" value="6000" min="0" step="100">
+          <div class="error-message" id="error-cash">Please enter your available cash.</div>
+        </div>
+      </div>
+
+      <div class="alert-box" id="warningBox" style="display: none;">
+        <strong>Warning:</strong> Your available cash is less than the required initial margin for this trade.
+      </div>
+
+      <div class="results-container">
+        <div class="result-card secondary">
+          <h3>Total Position Value</h3>
+          <div class="result-value" id="totalValue">$0.00</div>
+          <p class="result-label">Your Equity: <span id="yourEquity">$0.00</span></p>
+        </div>
+
+        <div class="result-card danger">
+          <h3>Margin Call Price</h3>
+          <div class="result-value" id="marginCallPrice">$0.00</div>
+          <p class="result-label">Drop needed: <span id="dropNeeded">0.00%</span></p>
+        </div>
+      </div>
+
+      <div class="breakdown-grid">
+        <div class="breakdown-item">
+          <h4>Required Initial Cash</h4>
+          <span id="requiredCash">$0.00</span>
+        </div>
+        <div class="breakdown-item">
+          <h4>Amount Borrowed (Loan)</h4>
+          <span id="loanAmount">$0.00</span>
+        </div>
+        <div class="breakdown-item">
+          <h4>Leverage Ratio</h4>
+          <span id="leverageRatio">1.00x</span>
+        </div>
+        <div class="breakdown-item">
+          <h4>Annual Interest Cost</h4>
+          <span id="annualInterest">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding Margin Trading</h2>
+
+      <p>Margin trading involves borrowing money from your brokerage to purchase securities. While this leverage can amplify your gains if the stock price moves in your favor, it simultaneously amplifies your losses if the stock declines. A stock margin calculator is an essential risk management tool for understanding the exact mechanics of a leveraged trade before you execute it.</p>
+
+      <p>By inputting the specifics of your desired trade, this calculator reveals your total borrowing, the interest costs you will incur, and most importantly, the exact price level at which you will face a dreaded margin call. Taking the time to mathematically project downside risk ensures that traders are rarely caught completely off-guard by a rapid market downturn or a sudden surge in portfolio volatility.</p>
+
+      <h3>How the Math Works: The Margin Formulas</h3>
+      <p>The calculations behind margin trading are governed by strict formulas set by regulatory bodies (like FINRA in the US) and individual brokerages. Understanding these formulas is crucial for active traders attempting to deploy capital efficiently across a diverse range of assets. When you utilize our margin calculator, it automatically executes the following sequences in real-time.</p>
+
+      <h4>1. Total Position Value</h4>
+      <p>This is simply the total market value of the shares you are purchasing. This figure represents the total exposure you have to the asset. Even though you are only deploying a fraction of your own capital, the performance of the Total Position Value dictates your absolute dollar returns.</p>
+      <p><strong>Formula:</strong> <code>Stock Price × Number of Shares</code></p>
+
+      <h4>2. Required Initial Cash (Initial Margin)</h4>
+      <p>Regulation T of the Federal Reserve Board allows investors to borrow up to 50% of the purchase price of securities on margin. This means the <em>Initial Margin</em> is typically 50%, though brokerages can require higher amounts for volatile stocks, penny stocks, or leveraged exchange-traded funds (ETFs).</p>
+      <p><strong>Formula:</strong> <code>Total Position Value × Initial Margin %</code></p>
+
+      <h4>3. Loan Amount</h4>
+      <p>This is the actual amount you are borrowing from the broker to complete the purchase. This is the exact dollar amount that will begin accruing interest charges the moment the trade settles. It is derived by taking the total value of the assets minus your own equity injection.</p>
+      <p><strong>Formula:</strong> <code>Total Position Value - Your Cash Investment</code></p>
+
+      <h4>4. Margin Call Price</h4>
+      <p>This is the most critical metric. The maintenance margin is the minimum amount of equity (your money) that must be maintained in the account after the purchase. FINRA requires a minimum of 25%, but many brokers require 30% or more. If the stock price falls and your equity drops below this percentage, you receive a margin call.</p>
+      <p><strong>Formula:</strong> <code>Loan Amount / (Number of Shares × (1 - Maintenance Margin %))</code></p>
+
+      <h3>Key Variables and Inputs</h3>
+      <p>To accurately model a leveraged trade, you must correctly configure the following variables:</p>
+
+      <ul>
+        <li><strong>Stock Price & Number of Shares:</strong> These define the size of the position you want to take.</li>
+        <li><strong>Initial Margin Requirement:</strong> The percentage of the purchase price you must pay with your own cash. The default is typically 50% for standard equities.</li>
+        <li><strong>Maintenance Margin:</strong> The percentage of the total position value that must be your equity at all times. If the stock drops and your equity percentage falls below this number, a margin call is triggered.</li>
+        <li><strong>Margin Interest Rate:</strong> The annualized interest rate the broker charges on the borrowed loan amount. This reduces your overall profitability and must be factored into the trade's expected return.</li>
+        <li><strong>Available Cash:</strong> The actual cash you have sitting in your account ready to deploy. If this is lower than the required initial cash, the calculator will display a warning.</li>
+      </ul>
+
+      <h3>The Risks of Leverage and Margin Calls</h3>
+      <p>The primary danger of margin trading is the margin call. When a stock price drops to the Margin Call Price calculated above, the brokerage will demand that you immediately deposit more cash or marginable securities into your account to bring your equity back up to the maintenance requirement.</p>
+
+      <p>If you fail to meet the margin call (often within 2 to 5 days, or even immediately in volatile markets), <strong>the broker has the right to sell your securities without notifying you</strong>. Furthermore, you cannot choose which securities they sell. They will liquidate assets until the account meets the minimum requirements.</p>
+
+      <p>Because you are borrowing fixed capital to buy a fluctuating asset, your losses can exceed your initial investment. For example, if you buy $10,000 of stock using $5,000 in cash and $5,000 on margin, and the stock drops 50% to $5,000, your entire $5,000 cash equity is wiped out, but you still owe the broker the $5,000 loan plus interest.</p>
+
+      <p>Margin is a powerful tool for short-term trading, but it is rarely suitable for long-term buy-and-hold strategies due to compounding interest costs and volatility risks. For analyzing long-term, unleveraged wealth building, check out our <a href="/drip-calculator">DRIP Calculator</a> to see how dividend reinvestment accelerates portfolio growth safely.</p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What is a margin calculator?</summary>
+        <p>A margin calculator helps investors determine the financial requirements and risks of borrowing money from a broker to purchase stock. It computes the total position value, the loan amount, and the crucial margin call price.</p>
+      </details>
+      <details>
+        <summary>What does 'initial margin requirement' mean?</summary>
+        <p>The initial margin requirement is the minimum amount of equity (your own money) you must have in your account to open a leveraged position. Under Regulation T, this is typically 50% of the total purchase price.</p>
+      </details>
+      <details>
+        <summary>What is a margin call?</summary>
+        <p>A margin call occurs when the value of your margin account falls below the broker's required maintenance margin. To satisfy the call, you must deposit additional cash or marginable securities, or sell some of your existing assets.</p>
+      </details>
+      <details>
+        <summary>How does margin interest work?</summary>
+        <p>When you use margin, you are essentially taking out a loan from your broker. The broker charges you interest on this borrowed amount, typically calculated on a daily basis and posted to your account monthly.</p>
+      </details>
+      <details>
+        <summary>Can I lose more than my initial investment on margin?</summary>
+        <p>Yes. Because margin involves borrowing money, a decline in the stock price amplifies your percentage losses. If the stock price drops severely, you are still responsible for repaying the entire loan amount plus interest, potentially resulting in losses exceeding your initial cash investment.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = {
+        price: document.getElementById('stockPrice'),
+        shares: document.getElementById('numShares'),
+        initial: document.getElementById('initialMargin'),
+        maintenance: document.getElementById('maintenanceMargin'),
+        interest: document.getElementById('marginInterest'),
+        cash: document.getElementById('availableCash')
+      };
+
+      const errors = {
+        price: document.getElementById('error-price'),
+        shares: document.getElementById('error-shares'),
+        initial: document.getElementById('error-initial'),
+        maintenance: document.getElementById('error-maintenance'),
+        interest: document.getElementById('error-interest'),
+        cash: document.getElementById('error-cash')
+      };
+
+      const warningBox = document.getElementById('warningBox');
+
+      const formatCurrency = (value) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(value);
+      };
+
+      const formatPercent = (value) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'percent',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(value);
+      };
+
+      const validateInputs = () => {
+        let isValid = true;
+
+        const price = parseFloat(inputs.price.value);
+        if (isNaN(price) || price <= 0) {
+          errors.price.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.price.style.display = 'none';
+        }
+
+        const shares = parseInt(inputs.shares.value);
+        if (isNaN(shares) || shares <= 0) {
+          errors.shares.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.shares.style.display = 'none';
+        }
+
+        const initial = parseFloat(inputs.initial.value);
+        if (isNaN(initial) || initial < 1 || initial > 100) {
+          errors.initial.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.initial.style.display = 'none';
+        }
+
+        const maintenance = parseFloat(inputs.maintenance.value);
+        if (isNaN(maintenance) || maintenance < 1 || maintenance > 100) {
+          errors.maintenance.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.maintenance.style.display = 'none';
+        }
+
+        const interest = parseFloat(inputs.interest.value);
+        if (isNaN(interest) || interest < 0) {
+          errors.interest.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.interest.style.display = 'none';
+        }
+
+        const cash = parseFloat(inputs.cash.value);
+        if (isNaN(cash) || cash < 0) {
+          errors.cash.style.display = 'block';
+          isValid = false;
+        } else {
+          errors.cash.style.display = 'none';
+        }
+
+        // Maintenance margin cannot be higher than initial margin logically
+        if (isValid && maintenance > initial) {
+            errors.maintenance.textContent = 'Maintenance margin cannot exceed initial margin.';
+            errors.maintenance.style.display = 'block';
+            isValid = false;
+        }
+
+        return isValid ? {
+          price,
+          shares,
+          initial: initial / 100,
+          maintenance: maintenance / 100,
+          interest: interest / 100,
+          cash
+        } : null;
+      };
+
+      const calculate = () => {
+        const vals = validateInputs();
+        if (!vals) return;
+
+        const totalValue = vals.price * vals.shares;
+        const requiredCash = totalValue * vals.initial;
+
+        // Determine how much cash is actually being used for the trade
+        // Cap the cash used at the total value of the trade (no margin used)
+        const cashInvested = Math.min(vals.cash, totalValue);
+
+        // Check if user has enough cash for the initial requirement
+        if (vals.cash < requiredCash) {
+            warningBox.style.display = 'block';
+        } else {
+            warningBox.style.display = 'none';
+        }
+
+        const loanAmount = Math.max(0, totalValue - cashInvested);
+        const annualInterest = loanAmount * vals.interest;
+        const leverageRatio = totalValue > 0 && cashInvested > 0 ? totalValue / cashInvested : 1;
+
+        // Margin Call Price Calculation
+        // MC Price = Loan Amount / (Shares * (1 - Maintenance Margin Requirement))
+        let marginCallPrice = 0;
+        let dropNeeded = 0;
+
+        if (loanAmount > 0) {
+            marginCallPrice = loanAmount / (vals.shares * (1 - vals.maintenance));
+            dropNeeded = (vals.price - marginCallPrice) / vals.price;
+        }
+
+        // Update DOM
+        document.getElementById('totalValue').textContent = formatCurrency(totalValue);
+        document.getElementById('yourEquity').textContent = formatCurrency(cashInvested);
+
+        if (loanAmount === 0) {
+            document.getElementById('marginCallPrice').textContent = 'N/A';
+            document.getElementById('dropNeeded').textContent = 'No Margin Used';
+        } else {
+            document.getElementById('marginCallPrice').textContent = formatCurrency(marginCallPrice);
+            document.getElementById('dropNeeded').textContent = formatPercent(dropNeeded);
+        }
+
+        document.getElementById('requiredCash').textContent = formatCurrency(requiredCash);
+        document.getElementById('loanAmount').textContent = formatCurrency(loanAmount);
+        document.getElementById('leverageRatio').textContent = leverageRatio.toFixed(2) + 'x';
+        document.getElementById('annualInterest').textContent = formatCurrency(annualInterest);
+      };
+
+      // Add event listeners to all inputs
+      Object.values(inputs).forEach(input => {
+        input.addEventListener('input', calculate);
+      });
+
+      // Initial calculation
+      calculate();
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .calculator-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    input, select {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 0.85rem;
+      display: none;
+      margin-top: 0.25rem;
+    }
+
+    .alert-box {
+      background: color-mix(in srgb, #ef4444 10%, transparent);
+      border: 1px solid #ef4444;
+      color: #b91c1c;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .result-card {
+      background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+      border: 1px solid var(--accent-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .result-card.secondary {
+      background: var(--bg-color);
+      border-color: var(--border-color);
+    }
+
+    .result-card.danger {
+      background: color-mix(in srgb, #ef4444 10%, transparent);
+      border-color: #ef4444;
+    }
+
+    .result-card h3 {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .result-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+
+    .result-card.secondary .result-value {
+      color: var(--text-primary);
+      font-size: 2rem;
+    }
+
+    .result-card.danger .result-value {
+      color: #ef4444;
+    }
+
+    .result-label {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+
+    .breakdown-item {
+      background: var(--bg-color);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .breakdown-item h4 {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .breakdown-item span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .explainer {
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin: 3rem 0;
+    }
+
+    .explainer h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .explainer h3 {
+      font-size: 1.4rem;
+      margin: 2rem 0 1rem;
+      color: var(--accent-color);
+    }
+
+    .explainer h4 {
+      font-size: 1.2rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .explainer p {
+      margin-bottom: 1.2rem;
+    }
+
+    .explainer ul {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .explainer li {
+      margin-bottom: 0.5rem;
+    }
+
+    .explainer a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .explainer a:hover {
+      text-decoration: underline;
+    }
+
+    .faq-section {
+      margin-top: 3rem;
+    }
+
+    .faq-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1.2rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+    }
+
+    .faq-section p {
+      margin-top: 1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+  </style>
+</SiteLayout>

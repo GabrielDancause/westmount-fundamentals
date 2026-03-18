@@ -1,0 +1,197 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "What is a 52-Week High? Using Price History to Pick Stocks",
+    "description": "Learn what the 52-week high metric means, why investors use it as an indicator of momentum, and how to incorporate it into your trading strategy.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/what-is-a-52-week-high"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is a 52-week high?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A 52-week high is the highest closing price at which a specific stock has traded over the preceding 52 weeks (one year)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is it good when a stock hits a 52-week high?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Generally, yes. It indicates that the company is performing well, investor sentiment is positive, and the stock is in a strong upward trend. Many successful investors actively buy stocks breaking out to new highs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do stocks often drop after hitting a 52-week high?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "They often drop because of psychological \"resistance.\" Investors who bought the stock at lower prices over the past year decide to sell their shares to \"lock in profits\" when the price reaches the previous high, creating downward pressure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a false breakout?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A false breakout occurs when a stock briefly surpasses its 52-week high, attracting momentum buyers, but then quickly reverses direction and falls back below the resistance level due to a lack of sustained buying pressure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do value investors use the 52-week high?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Value investors use it as a benchmark to find bargains. They screen for stocks trading significantly below their 52-week high, hoping to buy fundamentally sound companies that have been temporarily beaten down by the market."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "What is a 52-Week High? Using Price History to Pick Stocks",
+  description: "Learn what the 52-week high metric means, why investors use it as an indicator of momentum, and how to incorporate it into your trading strategy.",
+  category: "guide",
+  published: "2026-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="What is a 52-Week High? Using Price History to Pick Stocks"
+  description="Learn what the 52-week high metric means, why investors use it as an indicator of momentum, and how to incorporate it into your trading strategy."
+  canonical="https://westmountfundamentals.com/what-is-a-52-week-high"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>What is a 52-Week High?</h1>
+      <p class="subtitle">Decoding one of the most popular stock screening metrics</p>
+    </div>
+
+    <section id="content">
+
+      <p>When you open any financial news website or check a stock quote on your brokerage app, you will almost certainly see a metric labeled "52-Week High/Low." Despite its ubiquity in <a href="/stock-market-fundamentals-guide">stock market fundamentals</a>, many novice investors fail to grasp how powerful this simple piece of data can be. It is not just a historical trivia fact; it is a psychological barrier, a momentum indicator, and a key component in many successful trading strategies.</p>
+
+      <h2>What Exactly is a 52-Week High?</h2>
+      <p>The definition is straightforward: a 52-week high is the highest price at which a specific stock has traded during the previous 52 weeks (essentially, the trailing one-year period). It is calculated based on the daily closing price of the security.</p>
+
+      <p>For example, if it is currently October 1st, the 52-week high represents the highest closing price that the stock reached between October 1st of the previous year and today. As each new trading day concludes, the oldest day in the 52-week window is dropped, and the new day is added, meaning the 52-week high is a constantly rolling metric.</p>
+
+      <p>Conversely, the 52-week low is the lowest price the stock has traded at during that same one-year period.</p>
+
+      <h2>The Psychological Significance of the 52-Week High</h2>
+      <p>The stock market is driven as much by human psychology as it is by mathematical valuation. The 52-week high is a perfect example of this phenomenon. It acts as a powerful psychological anchor for both buyers and sellers.</p>
+
+      <h3>The "Anchoring" Effect</h3>
+      <p>When a stock approaches its 52-week high, current shareholders who bought the stock at lower prices over the past year begin to feel an overwhelming urge to "lock in profits." They remember the stock struggling at lower levels and see the current high price as an optimal exit point. This collective urge creates what technical analysts call "resistance"—a massive wall of sell orders that prevents the stock from climbing higher.</p>
+
+      <h3>The "Breakout" Phenomenon</h3>
+      <p>However, if the buying pressure is strong enough to absorb all those sell orders and the stock successfully pushes past its previous 52-week high, something remarkable happens. This is known as a "breakout."</p>
+      <p>Once a stock breaks to a new 52-week high, there is no historical "resistance" above it. Everyone who currently owns the stock is making a profit, meaning there are far fewer desperate sellers. Furthermore, the breakout triggers automated buy signals in algorithmic trading systems and attracts momentum traders who want to ride the upward wave. As a result, stocks that break through a 52-week high often experience a rapid and sustained period of capital appreciation.</p>
+
+      <div class="callout">
+        <strong>The Counter-Intuitive Truth:</strong> Novice investors often refuse to buy a stock making a new 52-week high because they feel they "missed the boat" or that the stock is "too expensive." Professional momentum traders, however, actively seek out these stocks, knowing that a new high is often a signal of underlying fundamental strength and future outperformance.
+      </div>
+
+      <h2>How Investors Use the 52-Week High</h2>
+      <p>Depending on their investing philosophy, market participants use the 52-week high metric in several different ways.</p>
+
+      <h3>1. Momentum Investing Strategy</h3>
+      <p>Momentum investors operate on the principle that "objects in motion tend to stay in motion." They look for stocks that are already winning, under the assumption that the positive news, strong earnings, or broad market trends pushing the stock up will continue. For these investors, a stock hitting a new 52-week high is a primary buy signal. They will often screen the market daily for stocks breaking out and buy them aggressively, aiming to ride the trend until the momentum clearly breaks.</p>
+      <p>This strategy is particularly effective with <a href="/what-are-growth-stocks">growth stocks</a> in innovative sectors. When a disruptive company proves its business model, the market continually reprices it higher, leading to a succession of new 52-week highs.</p>
+
+      <h3>2. Value Investing Strategy</h3>
+      <p>Value investors view the 52-week high through a completely different lens. They are looking for bargains—stocks that are trading well below their intrinsic value. Therefore, they often use the 52-week high as a point of comparison to find stocks that have been beaten down by the market.</p>
+      <p>A value investor might screen for stocks that are currently trading 30%, 40%, or 50% below their 52-week high. They will then analyze these companies to determine if the price drop is due to a temporary, fixable problem (an opportunity) or a permanent impairment to the business (a value trap). This approach is often applied to <a href="/what-are-cyclical-stocks">cyclical stocks</a> that have fallen out of favor due to macroeconomic fears.</p>
+
+      <h3>3. The "Pullback" Strategy</h3>
+      <p>A common middle-ground approach is the pullback strategy. Investors using this method identify a stock that has recently hit a new 52-week high but wait for a temporary price dip (a pullback) before buying. The logic is that the stock is clearly in a strong uptrend, but buying on a slight dip provides a better entry price and a lower risk of immediate loss than buying at the absolute peak.</p>
+
+      <h2>The Risks of Buying at the High</h2>
+      <p>While momentum strategies can be highly profitable, buying stocks at their 52-week high carries significant risks.</p>
+
+      <p>The primary risk is the "fakeout" or "false breakout." This occurs when a stock briefly pushes past its 52-week high, triggering buy signals for momentum traders, but lacks the underlying fundamental strength to sustain the move. Institutional investors may use the breakout to unload massive positions, causing the stock to quickly reverse course and plummet. Momentum traders who bought at the top are left holding the bag.</p>
+
+      <p>This risk is particularly acute with <a href="/what-are-the-most-volatile-stocks">the most volatile stocks</a>, such as small-cap biotech or highly speculative tech companies. A new high driven by rumor rather than solid financial results is highly susceptible to a rapid crash.</p>
+
+      <h2>Context is Everything</h2>
+      <p>Like any single metric, the 52-week high is useless in a vacuum. It must be viewed in the context of broader market conditions and the specific company's fundamentals.</p>
+
+      <p>If the entire S&P 500 is in a raging bull market and hitting new all-time highs every week, a specific stock hitting a 52-week high is less impressive; it is simply rising with the tide. However, if the broader market is flat or declining, and a specific stock breaks out to a new 52-week high, that shows incredible "relative strength." It indicates that institutional investors believe so strongly in that specific company that they are willing to buy it even when the rest of the market is weak.</p>
+
+      <p>Before buying a stock at its 52-week high, an investor should always ask <em>why</em> it is there. Has the company just reported blowout earnings? Did they announce a revolutionary new product? Or is the stock simply caught up in a speculative retail frenzy? Buying a stock backed by strong fundamentals at a new high is investing; buying a stock at a new high simply because a chart looks good without understanding the underlying business is gambling.</p>
+
+      <h2>Conclusion</h2>
+      <p>The 52-week high is much more than a simple data point on a stock chart. It is a critical psychological battleground between buyers and sellers, a beacon of strength for momentum investors, and a benchmark for value investors seeking bargains. By understanding the mechanics of breakouts, the anchoring effect, and the importance of underlying fundamentals, investors can effectively incorporate the 52-week high into a comprehensive strategy to identify the market's strongest performers and build a more resilient portfolio.</p>
+
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is a 52-week high?</summary>
+        <p>A 52-week high is the highest closing price at which a specific stock has traded over the preceding 52 weeks (one year).</p>
+      </details>
+      <details>
+        <summary>Is it good when a stock hits a 52-week high?</summary>
+        <p>Generally, yes. It indicates that the company is performing well, investor sentiment is positive, and the stock is in a strong upward trend. Many successful investors actively buy stocks breaking out to new highs.</p>
+      </details>
+      <details>
+        <summary>Why do stocks often drop after hitting a 52-week high?</summary>
+        <p>They often drop because of psychological "resistance." Investors who bought the stock at lower prices over the past year decide to sell their shares to "lock in profits" when the price reaches the previous high, creating downward pressure.</p>
+      </details>
+      <details>
+        <summary>What is a false breakout?</summary>
+        <p>A false breakout occurs when a stock briefly surpasses its 52-week high, attracting momentum buyers, but then quickly reverses direction and falls back below the resistance level due to a lack of sustained buying pressure.</p>
+      </details>
+      <details>
+        <summary>How do value investors use the 52-week high?</summary>
+        <p>Value investors use it as a benchmark to find bargains. They screen for stocks trading significantly below their 52-week high, hoping to buy fundamentally sound companies that have been temporarily beaten down by the market.</p>
+      </details>
+
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    p { line-height: 1.6; margin-bottom: 1rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    ol { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+    li { margin-bottom: 0.5rem; }
+    ul { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+  </style>
+</SiteLayout>

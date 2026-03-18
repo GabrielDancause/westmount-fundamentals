@@ -1,0 +1,793 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Options Profit Calculator",
+  description: "Stop guessing your breakeven. Enter your options trade to instantly see exact maximum profit, loss limits, and a payoff chart matrix before you risk a dollar.",
+  category: "tool",
+  published: "2026-03-17",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is the options profit calculator different from a basic payoff chart?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An options profit calculator instantly translates complex mathematical formulas into exact dollar figures for your maximum risk, maximum reward, and breakeven point. Unlike a static payoff chart, it provides a dynamic matrix showing exact profit or loss at specific target prices, eliminating the guesswork of estimating values from a graph."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is my maximum loss capped when buying options?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When you buy a long call or long put option, you are purchasing the right, but not the obligation, to exercise the contract. The absolute worst-case scenario is that the option expires completely worthless. Therefore, your maximum loss is strictly capped at the total premium you paid upfront to enter the trade."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this options profit calculator account for time decay (theta)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This standard options profit calculator models the theoretical value of the option precisely at expiration. It assumes you hold the contract until the expiration date, which removes the complex variables of time decay (theta) and implied volatility (vega) from the equation, giving you a definitive 'finish line' scenario."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if my option is exactly at the strike price at expiration?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If an option expires precisely at the strike price, it is considered 'at the money' and has zero intrinsic value. Because it offers no price advantage over simply buying or selling the stock in the open market, it will expire worthless, resulting in the loss of your entire initial premium."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use this calculator for short selling options?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This specific calculator is designed for single-leg long positions (buying calls and buying puts). Shorting options (selling naked calls or puts) carries an entirely different, theoretically infinite risk profile and requires a different mathematical approach to model effectively."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "Options Profit Calculator",
+      "description": "Stop guessing your breakeven. Enter your options trade to instantly see exact maximum profit, loss limits, and a payoff chart matrix before you risk a dollar.",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": "2026-03-17",
+      "dateModified": "2026-03-17"
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/options-profit-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="hero">
+      <h1>Options Profit Calculator</h1>
+      <p class="subtitle">Instantly calculate exact profit limits, max risk bounds, and your definitive breakeven point. Enter your single-leg option trade below.</p>
+    </div>
+
+    <div class="calculator-container">
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="optionType">Option Strategy type</label>
+          <select id="optionType">
+            <option value="call">Buy Call (Long Call)</option>
+            <option value="put">Buy Put (Long Put)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="strikePrice">Option Strike Price ($)</label>
+          <input type="number" id="strikePrice" min="0" step="0.01" value="150" required />
+        </div>
+
+        <div class="input-group">
+          <label for="premium">Premium Cost per Share ($)</label>
+          <input type="number" id="premium" min="0.01" step="0.01" value="4.25" required />
+          <small class="helper-text">Cost of 1 share</small>
+        </div>
+
+        <div class="input-group">
+          <label for="contracts">Number of Contracts</label>
+          <input type="number" id="contracts" min="1" step="1" value="1" required />
+          <small class="helper-text">1 contract = 100 shares</small>
+        </div>
+
+        <div class="input-group">
+          <label for="currentPrice">Current Stock Price ($)</label>
+          <input type="number" id="currentPrice" min="0" step="0.01" value="145" required />
+          <small class="helper-text">Used for payout matrix</small>
+        </div>
+
+        <div class="input-group">
+          <label for="targetPrice">Target Price at Expiration ($)</label>
+          <input type="number" id="targetPrice" min="0" step="0.01" value="160" required />
+          <small class="helper-text">Calculate specific P/L</small>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-state" style="display: none;">
+        Please enter valid positive numbers for all fields to calculate.
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Strict Breakeven Point</div>
+          <div class="result-value" id="resBreakeven">$0.00</div>
+          <div class="result-subtext" id="resBreakevenSub">Target price must be above/below this</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Maximum Risk (Loss Cap)</div>
+          <div class="result-value negative" id="resMaxLoss">-$0.00</div>
+          <div class="result-subtext">Total upfront premium paid</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Maximum Reward (Profit Limit)</div>
+          <div class="result-value positive" id="resMaxProfit">$0.00</div>
+          <div class="result-subtext" id="resMaxProfitSub">Theoretical cap</div>
+        </div>
+        <div class="result-card highlight">
+          <div class="result-label">Estimated P/L at Target Price</div>
+          <div class="result-value" id="resTargetPL">$0.00</div>
+          <div class="result-subtext" id="resTargetPLSub">Gross return before broker commissions</div>
+        </div>
+      </div>
+
+      <div class="matrix-container" id="matrixContainer">
+        <h3>Payoff Matrix at Expiration</h3>
+        <p>This table visualizes your exact profit or loss if the stock hits these prices at the expiration date. It assumes the option is held to expiration (no time decay remaining).</p>
+        <div class="table-wrapper">
+          <table class="data-table" id="payoutMatrix">
+            <thead>
+              <tr>
+                <th>Stock Price at Expiration</th>
+                <th>Option Value (Intrinsic)</th>
+                <th>Net Profit / Loss ($)</th>
+                <th>Return on Risk (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Generated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <h2>Understanding the Options Profit Calculator and Your Payoff Matrix</h2>
+      <p>Entering an options trade without calculating your exact risk parameters is akin to driving a racecar without checking the brakes. Unlike traditional equity investing, where risk is linear and the maximum loss is always your initial investment, options trading introduces significant leverage, non-linear payouts, and a strict expiration timeline. The <strong>Options Profit Calculator</strong> is the definitive tool to visualize your trade’s mathematical boundaries: determining precisely when a trade becomes profitable, the maximum downside risk, and the theoretical ceiling on your potential reward.</p>
+
+      <p>This calculator is specifically designed to demystify single-leg options strategies—specifically, buying calls (long calls) and buying puts (long puts). It instantly processes the variables of strike price, premium paid, and target stock price to generate a comprehensive payoff matrix at expiration. By holding an option to its expiration date, we effectively remove the complex external variables of time decay (theta) and implied volatility (vega). What remains is the pure intrinsic value of the contract, giving you a crystal-clear understanding of the exact breakeven threshold.</p>
+
+      <h3>The Mechanics Behind Options Profitability</h3>
+      <p>Before utilizing the calculator, it is essential to understand the core structural elements of an options contract. An option is a derivative, meaning its value is intrinsically tied to the underlying security (the stock or ETF). However, its profitability is dictated by a rigid set of parameters established at the time of purchase.</p>
+
+      <ul>
+        <li><strong>Option Type (Call vs. Put):</strong> This dictates the directional intent of the trade. A <em>Long Call</em> is a fundamentally bullish position; you are paying a premium for the right to buy shares at a predetermined price, hoping the stock price surges past that point. Conversely, a <em>Long Put</em> is a bearish position; you pay a premium for the right to sell shares at a set price, anticipating a steep drop in the stock’s value.</li>
+        <li><strong>Strike Price:</strong> The contractual price at which the option can be exercised. The relationship between the current stock price and the strike price defines whether the option is "in-the-money" (has intrinsic value) or "out-of-the-money" (has zero intrinsic value).</li>
+        <li><strong>Premium:</strong> The upfront cost required to purchase the option contract. Options are quoted per share, but standard equity contracts represent 100 shares. Therefore, a quoted premium of $4.25 represents a total capital outlay of $425 per contract. This total premium is the absolute maximum risk for a long option buyer.</li>
+        <li><strong>Contracts:</strong> The volume multiplier. The total number of contracts purchased scales both the maximum potential loss and the theoretical profit proportionally.</li>
+      </ul>
+
+      <h3>The Formulas: Calculating Breakeven, Max Loss, and Max Profit</h3>
+      <p>The calculator automates these computations, but understanding the underlying math is critical for any trader striving for long-term consistency.</p>
+
+      <h4>1. The Breakeven Point</h4>
+      <p>The breakeven point is the most critical metric in options trading. It represents the exact price the underlying stock must reach at expiration for the trade to net exactly zero profit and zero loss. Crucially, the breakeven point is always worse than the strike price because it must account for the upfront cost of the premium.</p>
+
+      <div class="formula-block">
+        <p><strong>Long Call Breakeven:</strong> Strike Price + Premium Paid</p>
+        <p><strong>Long Put Breakeven:</strong> Strike Price - Premium Paid</p>
+      </div>
+
+      <p><strong>Worked Example (Call Option):</strong> Imagine a stock is currently trading at $145. You believe it is severely undervalued and decide to purchase a Call Option with a $150 strike price. The premium for this out-of-the-money call is $4.25 per share. Because options cover 100 shares, the total cost (and max loss) is $425. To simply break even at expiration, the stock must rise to $154.25 ($150 strike + $4.25 premium). If the stock closes at $152, the option is technically in-the-money, but the intrinsic value ($2) is less than the premium paid ($4.25), resulting in a net loss of $225.</p>
+
+      <h4>2. Maximum Risk (The Loss Cap)</h4>
+      <p>One of the primary benefits of buying options (as opposed to shorting stock or selling naked options) is the strictly defined risk profile. Regardless of how catastrophically the underlying stock moves against your position, your loss is capped.</p>
+
+      <div class="formula-block">
+        <p><strong>Maximum Risk (Long Call & Long Put):</strong> Premium Paid &times; 100 &times; Number of Contracts</p>
+      </div>
+
+      <p>If the option expires out-of-the-money (e.g., a call option where the stock price is below the strike price), the contract expires worthless. The maximum risk is simply the total capital you deployed to enter the trade. The calculator highlights this in red as your definitive maximum loss.</p>
+
+      <h4>3. Maximum Profit Limits</h4>
+      <p>The maximum potential profit differs fundamentally between calls and puts.</p>
+
+      <ul>
+        <li><strong>Long Call Max Profit (Theoretically Infinite):</strong> A call option’s profit ceiling is uncapped because there is theoretically no limit to how high a stock's price can rise. If you buy a $150 strike call and the stock miraculously surges to $1,000, your option captures that entire upside minus the initial premium.</li>
+        <li><strong>Long Put Max Profit (Capped):</strong> While highly lucrative during a market crash, the maximum profit for a put option is mathematically limited. A stock's price can only fall to $0; it cannot go negative. Therefore, the absolute maximum profit occurs if the company goes bankrupt.</li>
+      </ul>
+
+      <div class="formula-block">
+        <p><strong>Max Put Profit:</strong> (Strike Price &times; 100 &times; Contracts) - Total Premium Paid</p>
+      </div>
+
+
+      <h3>Advanced Greeks: Moving Beyond Expiration Value</h3>
+      <p>While this calculator powerfully illustrates the definitive outcomes at expiration, intermediate traders must eventually understand how the option's value fluctuates <em>before</em> that expiration date arrives. The pricing models that govern options, most notably the Black-Scholes model, rely on several dynamic variables collectively known as "The Greeks." Even though our payoff matrix assumes you hold to expiration (thereby nullifying time and volatility fluctuations), a robust understanding of the Greeks is essential for managing your position mid-trade.</p>
+
+      <p><strong>Delta (&Delta;): The Directional Engine</strong></p>
+      <p>Delta is arguably the most crucial Greek for retail traders. It measures the rate of change in an option's theoretical value for every $1.00 move in the underlying stock's price. For example, if you buy a call option with a Delta of 0.50, and the underlying stock rises by exactly $1.00, your option's premium should theoretically increase by $0.50 (excluding other variables). Call options have a positive Delta (ranging from 0 to 1.0), meaning their value increases as the stock price goes up. Put options have a negative Delta (ranging from -1.0 to 0), meaning their value increases as the stock price falls.</p>
+      <p>Delta also serves as a rough proxy for the probability that the option will expire in-the-money. A call option with a Delta of 0.20 has approximately a 20% chance of finishing in-the-money at expiration. When you use our calculator and set a strike price far out-of-the-money, you are essentially buying a low-Delta option. It's cheap, but the probability of reaching your breakeven point is statistically low.</p>
+
+      <p><strong>Theta (&Theta;): The Silent Killer</strong></p>
+      <p>Theta represents the rate of time decay on an option's premium. Options are wasting assets; every day that passes brings the contract closer to expiration. Theta measures exactly how much value the option loses per day, assuming all other variables remain constant. This decay is not linear—it accelerates rapidly in the final 30 to 45 days before expiration. When you look at the payoff matrix in our calculator, you are looking at the scenario where Theta has reached its final destination: zero. All time value has evaporated, leaving only intrinsic value. This is why novice traders who buy short-term, out-of-the-money options often lose their entire investment. Even if the stock moves in their predicted direction, it might not move fast enough to outpace the aggressive decay of Theta.</p>
+
+      <p><strong>Vega (&nu;): The Volatility Premium</strong></p>
+      <p>Vega measures an option's sensitivity to changes in the implied volatility (IV) of the underlying asset. Implied volatility is the market's expectation of how much the stock will fluctuate in the future. High IV means the market expects wild swings (e.g., ahead of an earnings report or an FDA drug approval). Low IV indicates expected stability. Vega tells you how much the option's premium will change for every 1% change in implied volatility. Crucially, when you buy options, you are "long Vega." If volatility spikes, your option becomes more valuable, even if the stock price doesn't move. Conversely, if volatility crushes (as it almost always does the morning after an earnings report), the option's premium will collapse rapidly, an event known as "IV Crush." Many traders correctly guess the direction of a stock after earnings but still lose money because they overpaid for inflated IV that instantly disappeared.</p>
+
+      <p><strong>Gamma (&Gamma;): The Accelerator</strong></p>
+      <p>Gamma measures the rate of change of an option's Delta for every $1.00 move in the underlying stock. Think of Delta as the speed of your car, and Gamma as the acceleration. Gamma is highest for at-the-money options and decreases as the option moves deeply in-the-money or deeply out-of-the-money. High Gamma means the option's Delta will change rapidly if the stock moves, creating explosive gains (or rapid losses). Understanding Gamma is vital for short-term traders looking to capture sudden, violent moves in the underlying equity.</p>
+
+      <h3>Strategic Applications: Expanding Your Arsenal</h3>
+      <p>Once you are comfortable modeling single-leg long positions, you can begin to explore how professional traders construct more sophisticated strategies to alter their risk profiles and probability of success. While our standard calculator focuses purely on long calls and puts, understanding the broader landscape is critical.</p>
+
+      <h4>The Problem with Buying Naked Options</h4>
+      <p>As we've established, buying a naked call or put offers a capped, defined risk. However, it requires you to be right about three things simultaneously: direction, magnitude, and timing. You must predict not just <em>where</em> the stock is going, but exactly <em>how far</em> it will go, and exactly <em>when</em> it will get there. This is an incredibly high hurdle, which is why the majority of long options purchased by retail traders expire completely worthless.</p>
+
+      <h4>Introduction to Vertical Spreads</h4>
+      <p>To combat the aggressive nature of Theta decay and the cost of high implied volatility, seasoned traders frequently utilize vertical spreads. A vertical spread involves simultaneously buying and selling options of the same underlying asset, same expiration date, but different strike prices. By selling an option against the one you purchase, you collect a premium that helps offset the cost of your long position. This dramatically reduces your initial capital outlay and, critically, lowers your breakeven point.</p>
+      <ul>
+        <li><strong>Bull Call Spread (Debit Spread):</strong> You buy a call at a lower strike price and simultaneously sell a call at a higher strike price. The premium collected from the sold call reduces the cost of the bought call. This lowers your maximum risk and your breakeven point. The tradeoff? Your maximum profit is strictly capped at the width of the strikes minus the net debit paid.</li>
+        <li><strong>Bear Put Spread (Debit Spread):</strong> You buy a put at a higher strike price and simultaneously sell a put at a lower strike price. Again, the sold put finances the bought put, improving your probability of profit while capping the absolute upside.</li>
+      </ul>
+      <p>While the profit calculator on this page is built for single-leg modeling, visualizing the breakeven points here is the first step toward understanding the mechanical advantages of spreads. If you input a long call trade into our calculator and realize the required target price represents a statistically improbable 20% jump in the stock, it's a clear signal that a Bull Call Spread might be the more mathematically sound strategy.</p>
+
+      <h3>Psychology and Discipline in Options Trading</h3>
+      <p>The mathematics of options are unforgiving, but the psychology of trading them is often the greater challenge. The leverage inherent in options can generate blinding euphoria during winning streaks and devastating panic during drawdowns. Utilizing a profit calculator is not just an arithmetic exercise; it is a vital psychological anchor.</p>
+
+      <p><strong>The Danger of the "Home Run" Mentality</strong></p>
+      <p>Because options can mathematically yield 500%, 1000%, or even 5000% returns, novice traders often fall into the trap of viewing them as lottery tickets rather than strategic financial instruments. They consistently buy deep out-of-the-money calls on meme stocks, hoping for a monumental squeeze. This strategy occasionally produces spectacular screenshots for social media, but over a long enough timeline, the math dictates severe capital erosion. Consistently profitable traders focus on high-probability setups, using calculators to ensure their risk-to-reward ratio is mathematically justifiable. They aim for consistent 30% to 50% returns on carefully sized positions, rather than swinging for the fences and suffering 100% losses on the majority of their trades.</p>
+
+      <p><strong>Position Sizing as the Ultimate Defense</strong></p>
+      <p>We touched on this earlier, but it bears repeating with extreme emphasis: your position size is your only true defense against the inherent volatility of options. If you buy a stock and it drops 20%, you still own the asset. It may recover over the next five years. If you buy an option and it drops 20% due to time decay, and expiration arrives before the stock recovers, you lose the entire investment permanently. Therefore, you must calibrate your position size using the "Maximum Risk" figure provided by our calculator. A standard institutional rule of thumb is to never risk more than 1% to 2% of total portfolio equity on a single directional options trade. If your account balance is $50,000, your absolute maximum risk per trade should be $500 to $1,000. If the premium for your desired option is $5.00 ($500 per contract), you can only afford to buy 1 or 2 contracts, regardless of how confident you are in the setup.</p>
+
+      <p><strong>Pre-Defining the Exit Strategy</strong></p>
+      <p>Before you execute a trade, the payoff matrix generated by our calculator must dictate your exit strategy. You should know exactly where you will take profits and exactly where you will cut losses <em>before</em> your money is at risk. Emotion has no place in execution. If the calculator shows that a $10 move in the stock generates a 50% return on your option premium, set a limit order to sell your contracts automatically when that target is reached. Greed frequently causes traders to hold winning positions too long, only to watch a sudden reversal and accelerated Theta decay turn a massive winner into a painful loss.</p>
+
+      <h3>Real-World Context: When Do Investors Use This Calculator?</h3>
+      <p>Professional traders and disciplined retail investors rely on profit calculators daily to validate trade setups. Consider the following scenarios:</p>
+
+      <p><strong>Scenario A: Earnings Season Speculation.</strong> A company is scheduled to report earnings, and an investor anticipates a massive beat. They want to capitalize on a surge but are unwilling to risk tying up thousands of dollars buying the underlying equity, knowing a bad report could gap the stock down 20%. By using the calculator, they can determine exactly how many far-out-of-the-money call options they can afford while strictly limiting their total risk to $1,000. They can instantly see what percentage gain the stock needs to achieve for the options to double in value.</p>
+
+      <p><strong>Scenario B: Portfolio Hedging.</strong> An investor holds a substantial position in a broad market index ETF but fears a looming macroeconomic recession. They decide to purchase protective long puts. They input the current index price, select a strike price slightly below current levels, and input the premium cost. The calculator’s payoff matrix immediately shows them the precise dollar amount of "insurance" the put option will pay out if the market drops by 10%, 15%, or 20%.</p>
+
+      <h3>Common Mistakes Novice Traders Make</h3>
+      <p>Failing to utilize a profit calculator often leads to critical, account-damaging miscalculations:</p>
+
+      <ol>
+        <li><strong>Ignoring the Breakeven Threshold:</strong> Many novices assume that if they buy a call option and the stock price goes up, they will automatically profit. They fail to calculate the breakeven point. If a stock trades at $100 and they buy a $110 strike call for $5.00, the stock must surge 15% (to $115) just to avoid a loss. A 10% gain in the stock to $110 results in a 100% loss of the option premium.</li>
+        <li><strong>Misunderstanding Intrinsic vs. Time Value:</strong> The calculator models the outcome <em>at expiration</em>, dealing solely with intrinsic value. Novices often buy options with massive amounts of time value (premium paid far above the intrinsic value) and watch their positions slowly bleed out due to theta decay, even if the stock slowly moves in their predicted direction.</li>
+        <li><strong>Overleveraging Based on Percentage Returns:</strong> Options can produce 500% returns in days, which tempts traders to deploy their entire account balance into out-of-the-money contracts. Because options expire worthless if the breakeven is not met, a single bad trade can wipe out years of disciplined equity returns.</li>
+      </ol>
+
+      <h3>Practical Rules of Thumb for Options Buyers</h3>
+      <p>To maximize the utility of the options profit calculator, integrate these professional heuristics into your strategy:</p>
+
+      <ul>
+        <li><strong>The Probability Check:</strong> After calculating your breakeven point, ask yourself: <em>"What is the realistic probability that the underlying stock achieves this precise price target before the expiration date?"</em> Look at the stock's historical volatility and Average True Range (ATR). If the breakeven requires a move that hasn't happened in five years, the trade is statistically doomed.</li>
+        <li><strong>Sizing the Risk:</strong> Never risk more than 1% to 2% of your total portfolio capital on a single directional option purchase. Because the maximum risk is the total premium paid, treat every option purchase as if it has a high probability of going to zero. Use the calculator's "Maximum Risk" output to dictate the number of contracts you buy, not the other way around.</li>
+        <li><strong>Taking Profits Early:</strong> The calculator models the outcome at expiration. However, professionals rarely hold long options through expiration. If the stock makes a violent move in your favor early in the contract's life, the option’s value will spike dramatically due to implied volatility and remaining time value. Secure the profits when the return meets your calculated targets rather than gambling on the expiration payoff matrix.</li>
+      </ul>
+
+      <p>Options trading offers unparalleled flexibility, allowing investors to generate asymmetric risk-to-reward scenarios. By continuously relying on tools like the options profit calculator, you transition from gambling on stock price movements to mathematically defining your edge. To further refine your understanding of underlying asset mechanics, explore our guides on <a href="/options-vs-stocks">comparing options versus stocks</a> or analyzing the <a href="/average-stock-market-return">historical average stock market returns</a>.</p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div itemscope itemtype="https://schema.org/FAQPage">
+        <details itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+          <summary itemprop="name">How is the options profit calculator different from a basic payoff chart?</summary>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+            <p itemprop="text">An options profit calculator instantly translates complex mathematical formulas into exact dollar figures for your maximum risk, maximum reward, and breakeven point. Unlike a static payoff chart, it provides a dynamic matrix showing exact profit or loss at specific target prices, eliminating the guesswork of estimating values from a graph.</p>
+          </div>
+        </details>
+
+        <details itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+          <summary itemprop="name">Why is my maximum loss capped when buying options?</summary>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+            <p itemprop="text">When you buy a long call or long put option, you are purchasing the right, but not the obligation, to exercise the contract. The absolute worst-case scenario is that the option expires completely worthless. Therefore, your maximum loss is strictly capped at the total premium you paid upfront to enter the trade.</p>
+          </div>
+        </details>
+
+        <details itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+          <summary itemprop="name">Does this options profit calculator account for time decay (theta)?</summary>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+            <p itemprop="text">This standard options profit calculator models the theoretical value of the option precisely at expiration. It assumes you hold the contract until the expiration date, which removes the complex variables of time decay (theta) and implied volatility (vega) from the equation, giving you a definitive "finish line" scenario.</p>
+          </div>
+        </details>
+
+        <details itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+          <summary itemprop="name">What happens if my option is exactly at the strike price at expiration?</summary>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+            <p itemprop="text">If an option expires precisely at the strike price, it is considered "at the money" and has zero intrinsic value. Because it offers no price advantage over simply buying or selling the stock in the open market, it will expire worthless, resulting in the loss of your entire initial premium.</p>
+          </div>
+        </details>
+
+        <details itemprop="mainEntity" itemscope itemtype="https://schema.org/Question">
+          <summary itemprop="name">Can I use this calculator for short selling options?</summary>
+          <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+            <p itemprop="text">This specific calculator is designed for single-leg long positions (buying calls and buying puts). Shorting options (selling naked calls or puts) carries an entirely different, theoretically infinite risk profile and requires a different mathematical approach to model effectively.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="related-tools">
+      <h2>Related Financial Calculators and Guides</h2>
+      <ul class="cross-links">
+        <li><a href="/options-calculator">Basic Options Calculator</a></li>
+        <li><a href="/stock-options-calculator">Employee Stock Options Calculator</a></li>
+        <li><a href="/options-vs-stocks">Options vs Stocks: Key Differences</a></li>
+        <li><a href="/options-trading-simulator">Options Trading Simulator</a></li>
+        <li><a href="/stock-split-calculator">Stock Split Calculator</a></li>
+        <li><a href="/average-stock-market-return">Average Stock Market Return Guide</a></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <script is:inline>
+    function formatCurrency(val) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    }
+
+    function formatPercent(val) {
+      return new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(val / 100);
+    }
+
+    function generateMatrixRow(price, intrinsic, profit, risk) {
+      const returnPct = risk > 0 ? (profit / risk) * 100 : 0;
+      let profitClass = '';
+      if (profit > 0) profitClass = 'positive';
+      else if (profit < 0) profitClass = 'negative';
+
+      return `
+        <tr>
+          <td>${formatCurrency(price)}</td>
+          <td>${formatCurrency(intrinsic)}</td>
+          <td class="${profitClass}"><strong>${formatCurrency(profit)}</strong></td>
+          <td class="${profitClass}">${formatPercent(returnPct)}</td>
+        </tr>
+      `;
+    }
+
+    function calculateProfit() {
+      const type = document.getElementById('optionType').value;
+      const strike = parseFloat(document.getElementById('strikePrice').value);
+      const premium = parseFloat(document.getElementById('premium').value);
+      const contracts = parseInt(document.getElementById('contracts').value, 10);
+      const currentPrice = parseFloat(document.getElementById('currentPrice').value);
+      const target = parseFloat(document.getElementById('targetPrice').value);
+
+      const errorMsg = document.getElementById('error-message');
+      const matrixContainer = document.getElementById('matrixContainer');
+
+      // Edge case handling: Validate inputs
+      if (isNaN(strike) || isNaN(premium) || isNaN(contracts) || isNaN(currentPrice) || isNaN(target) ||
+          strike <= 0 || premium <= 0 || contracts < 1 || currentPrice <= 0 || target < 0) {
+        errorMsg.style.display = 'block';
+        matrixContainer.style.display = 'none';
+
+        // Reset outputs
+        document.getElementById('resBreakeven').innerText = '$0.00';
+        document.getElementById('resMaxLoss').innerText = '-$0.00';
+        document.getElementById('resMaxProfit').innerText = '$0.00';
+        document.getElementById('resTargetPL').innerText = '$0.00';
+        return;
+      }
+
+      errorMsg.style.display = 'none';
+      matrixContainer.style.display = 'block';
+
+      // Core Calculations
+      // Fix floating point errors with integer cents
+      const premiumCents = Math.round(premium * 100);
+      const totalRisk = premiumCents * contracts * 100; // Total Max Loss in cents
+
+      let breakeven, maxProfit, targetPL;
+
+      if (type === 'call') {
+        breakeven = strike + premium;
+        maxProfit = Infinity;
+
+        // Target Profit calculation
+        const intrinsicCents = target > strike ? Math.round((target - strike) * 100) * 100 * contracts : 0;
+        targetPL = intrinsicCents - totalRisk;
+
+      } else { // Put
+        breakeven = strike - premium;
+        // Max profit is if stock goes to 0
+        const maxIntrinsicCents = Math.round(strike * 100) * 100 * contracts;
+        maxProfit = (maxIntrinsicCents - totalRisk) / 100; // Convert back to dollars
+
+        // Target Profit calculation
+        const intrinsicCents = target < strike ? Math.round((strike - target) * 100) * 100 * contracts : 0;
+        targetPL = intrinsicCents - totalRisk;
+      }
+
+      // Update UI Result Cards
+      document.getElementById('resBreakeven').innerText = formatCurrency(breakeven);
+      document.getElementById('resMaxLoss').innerText = '-' + formatCurrency(totalRisk / 100);
+
+      if (maxProfit === Infinity) {
+        document.getElementById('resMaxProfit').innerText = 'Infinite';
+      } else {
+        document.getElementById('resMaxProfit').innerText = formatCurrency(maxProfit);
+      }
+
+      const targetEl = document.getElementById('resTargetPL');
+      targetEl.innerText = formatCurrency(targetPL / 100);
+      targetEl.className = 'result-value ' + (targetPL > 0 ? 'positive' : (targetPL < 0 ? 'negative' : ''));
+
+      // Generate Payout Matrix Table
+      const tbody = document.querySelector('#payoutMatrix tbody');
+      let html = '';
+
+      // Determine steps based on current price for reasonable spread
+      const step = currentPrice * 0.05; // 5% increments
+
+      // Create price points: from -30% to +30% around current price
+      const pricePoints = [];
+      for (let i = -6; i <= 6; i++) {
+        let p = currentPrice + (i * step);
+        if (p < 0) p = 0; // Prevent negative prices
+        pricePoints.push(p);
+      }
+
+      // Add breakeven point and target point, then sort and deduplicate
+      pricePoints.push(breakeven);
+      if(target > 0) pricePoints.push(target);
+
+      // Unique and sorted
+      const uniquePrices = [...new Set(pricePoints.map(p => Math.round(p * 100) / 100))].sort((a, b) => a - b);
+
+      // Filter extreme outlier prices (e.g. if target was 1000 and current is 10)
+      const filteredPrices = uniquePrices.filter(p => p >= 0);
+
+      filteredPrices.forEach(price => {
+        let intrinsicValueCents = 0;
+        let netProfitCents = 0;
+
+        if (type === 'call') {
+          intrinsicValueCents = price > strike ? Math.round((price - strike) * 100) * 100 * contracts : 0;
+        } else {
+          intrinsicValueCents = price < strike ? Math.round((strike - price) * 100) * 100 * contracts : 0;
+        }
+
+        netProfitCents = intrinsicValueCents - totalRisk;
+
+        // Convert to dollars for display
+        const intrinsicValue = intrinsicValueCents / 100;
+        const netProfit = netProfitCents / 100;
+        const riskDollars = totalRisk / 100;
+
+        html += generateMatrixRow(price, intrinsicValue, netProfit, riskDollars);
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    // Attach Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = ['optionType', 'strikePrice', 'premium', 'contracts', 'currentPrice', 'targetPrice'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+          el.addEventListener('input', calculateProfit);
+        }
+      });
+
+      // Run initial calculation
+      calculateProfit();
+    });
+  </script>
+
+  <style is:inline>
+    .page-content {
+      --color-positive: #22c55e;
+      --color-negative: #ef4444;
+    }
+    /* Scope all styles to page-content */
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      font-family: inherit;
+    }
+
+    .page-content a {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .calculator-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    input, select {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      color-scheme: light dark;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    }
+
+    .helper-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.4rem;
+    }
+
+    .error-state {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--color-negative);
+      color: var(--color-negative);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+    }
+
+    .result-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .result-card.highlight {
+      background: color-mix(in srgb, var(--accent-color) 5%, transparent);
+      border-color: var(--accent-color);
+      grid-column: 1 / -1;
+    }
+
+    .result-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-subtext {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .result-value.positive { color: var(--color-positive); }
+    .result-value.negative { color: var(--color-negative); }
+
+    /* Matrix Table Styles */
+    .matrix-container {
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 2rem;
+    }
+
+    .matrix-container h3 {
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .matrix-container p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    .data-table th {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      padding: 1rem;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .data-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .data-table tbody tr:nth-child(even) {
+      background: var(--bg-color);
+    }
+
+    .data-table tbody tr:hover {
+      background: color-mix(in srgb, var(--accent-color) 5%, transparent);
+    }
+
+    td.positive { color: var(--color-positive); font-weight: 600; }
+    td.negative { color: var(--color-negative); font-weight: 600; }
+
+    /* Educational Content Styles */
+    .explainer { margin-top: 3rem; color: var(--text-primary); }
+    .explainer h2 { margin-top: 2.5rem; color: var(--text-primary); }
+    .explainer h3 { margin-top: 2rem; color: var(--text-primary); }
+    .explainer h4 { margin-top: 1.5rem; color: var(--text-primary); }
+    .explainer p { margin-bottom: 1.2rem; line-height: 1.7; }
+    .explainer ul, .explainer ol { margin-bottom: 1.5rem; padding-left: 1.5rem; line-height: 1.7; }
+    .explainer li { margin-bottom: 0.5rem; }
+
+    .formula-block {
+      background: var(--card-bg);
+      border-left: 4px solid var(--accent-color);
+      padding: 1rem 1.5rem;
+      font-family: monospace;
+      font-size: 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+      color: var(--text-primary);
+    }
+
+    .formula-block p {
+      margin: 0;
+      padding: 0.25rem 0;
+    }
+
+    /* FAQ Styles */
+    .faq-section { margin-top: 4rem; }
+    .faq-section h2 { color: var(--text-primary); margin-bottom: 1.5rem; }
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1.25rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+    .faq-section summary {
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+    .faq-section details p {
+      margin-top: 1rem;
+      margin-bottom: 0;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Related Tools */
+    .related-tools { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+    .related-tools h2 { color: var(--text-primary); margin-bottom: 1.5rem; }
+    .cross-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      list-style: none;
+      padding: 0 !important;
+    }
+    .cross-links li a {
+      display: block;
+      padding: 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-primary) !important;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .cross-links li a:hover {
+      border-color: var(--accent-color);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+      .input-grid { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.8rem; }
+    }
+  </style>
+</SiteLayout>

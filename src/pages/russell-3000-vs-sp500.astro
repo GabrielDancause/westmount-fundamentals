@@ -1,0 +1,282 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Russell 3000 vs S&P 500: Total Market vs Large Cap Comparison",
+    "description": "Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark. Uncover the key differences in breadth, diversification, and performance.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/russell-3000-vs-sp500"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the difference between the Russell 3000 and the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The S&P 500 tracks 500 of the largest U.S. publicly traded companies, chosen by a committee, representing about 80% of the market. The Russell 3000 tracks the 3,000 largest U.S. stocks, effectively representing 97% of the investable U.S. equity market, including large, mid, and small-cap companies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does the Russell 3000 include the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, almost entirely. Because the Russell 3000 consists of the largest 3,000 U.S. stocks, the 500 large-cap companies that make up the S&P 500 are inherently included within it and make up the vast majority of its weight."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which index performs better, the Russell 3000 or S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Historically, their performance is extremely highly correlated because both are market-cap weighted, meaning the massive companies in the S&P 500 drive most of the returns for both indices. However, the Russell 3000 can slightly outperform during periods when small-cap stocks are booming."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are there ETFs that track the Russell 3000?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. One of the most common ways to invest in the entire Russell 3000 index is through the iShares Russell 3000 ETF (ticker: IWV)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why would someone choose the Russell 3000 over the S&P 500?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An investor might choose the Russell 3000 if they want total domestic market exposure. It prevents them from missing out on the growth of rapidly expanding smaller companies before they become large enough to be added to the S&P 500."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Russell 3000 vs S&P 500: Total Market Comparison Tool",
+  description: "Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Russell 3000 vs S&P 500: Total Market Comparison Tool"
+  description="Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark."
+  canonical="https://westmountfundamentals.com/russell-3000-vs-sp500"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Russell 3000 vs S&P 500</h1>
+      <p class="subtitle">Comparing the Total Investable Market to the Large-Cap Standard</p>
+    </div>
+
+    <div class="comparison-grid">
+      <!-- Headers -->
+      <div class="grid-cell grid-header" style="background:transparent; border-bottom: none;">Metric</div>
+      <div class="grid-cell grid-header">Russell 3000</div>
+      <div class="grid-cell grid-header">S&P 500</div>
+
+      <div class="section-header">Index Composition</div>
+
+      <div class="grid-cell grid-label">Number of Companies</div>
+      <div class="grid-cell grid-value">~3,000</div>
+      <div class="grid-cell grid-value">500</div>
+
+      <div class="grid-cell grid-label">Market Coverage</div>
+      <div class="grid-cell grid-value">~97% of US Equity Market</div>
+      <div class="grid-cell grid-value">~80% of US Equity Market</div>
+
+      <div class="grid-cell grid-label">Market Capitalization focus</div>
+      <div class="grid-cell grid-value">Large, Mid, and Small-Cap</div>
+      <div class="grid-cell grid-value">Strictly Large-Cap</div>
+
+      <div class="grid-cell grid-label">Selection Criteria</div>
+      <div class="grid-cell grid-value">Objective, size-based</div>
+      <div class="grid-cell grid-value">Committee-selected, profitability requirements</div>
+
+      <div class="section-header">Weightings & Risk</div>
+
+      <div class="grid-cell grid-label">Weighting Methodology</div>
+      <div class="grid-cell grid-value">Market-Cap Weighted</div>
+      <div class="grid-cell grid-value">Market-Cap Weighted</div>
+
+      <div class="grid-cell grid-label">Concentration Risk</div>
+      <div class="grid-cell grid-value">High (Top heavy)</div>
+      <div class="grid-cell grid-value">High (Top heavy)</div>
+
+      <div class="grid-cell grid-label">Popular Tracking ETF</div>
+      <div class="grid-cell grid-value">IWV (iShares Russell 3000 ETF)</div>
+      <div class="grid-cell grid-value">VOO (Vanguard S&P 500 ETF)</div>
+    </div>
+
+    <section>
+      <h2>Understanding the Core Difference: Breadth vs Prestige</h2>
+      <p>
+        When you evaluate the foundation of your investment portfolio, choosing the right benchmark is essential. Both the Russell 3000 and the S&P 500 are stalwarts of the financial industry, yet they serve fundamentally distinct purposes.
+      </p>
+      <p>
+        The S&P 500 is essentially an exclusive club. It tracks the 500 leading large-cap U.S. equities and covers approximately 80% of available market capitalization. However, getting into the S&P 500 isn't just about size; companies must meet stringent profitability criteria and be approved by a selection committee.
+      </p>
+      <p>
+        Conversely, the Russell 3000 is all about comprehensive inclusion. It takes a purely objective, quantitative approach, tracking the 3,000 largest publicly traded domestic companies. By doing so, it captures roughly 97% of the total investable U.S. equity market, inherently bridging the gap between established giants and emerging small-cap innovators.
+      </p>
+
+      <div class="card">
+        <h3>The Hidden Overlap</h3>
+        <p>
+          It is a common misconception that holding both an S&P 500 fund and a Russell 3000 fund provides massive diversification benefits. Because both indices are market-capitalization weighted, the massive tech conglomerates that dominate the S&P 500 <em>also</em> dominate the Russell 3000. While you gain exposure to 2,500 additional <a href="/what-are-stocks">stocks</a> with the Russell index, those bottom 2,500 companies only make up about 15-20% of the fund's total weight.
+        </p>
+      </div>
+
+      <h2>Performance Dynamics: Small-Cap Alpha vs Large-Cap Stability</h2>
+      <p>
+        Because the two indices are heavily correlated, their long-term charts often look nearly identical. The key variance in performance occurs during specific market cycles.
+      </p>
+      <p>
+        During periods of rapid economic expansion or post-recession recovery, smaller, agile companies tend to outperform their mature counterparts. In these specific environments, the Russell 3000—buoyed by its inclusion of mid and small-cap equities—can generate slight alpha over the S&P 500.
+      </p>
+      <p>
+        Alternatively, during economic downturns, investors often flee to the perceived safety and reliable cash flows of mega-cap corporations. In these defensive environments, the strictly large-cap S&P 500 typically experiences slightly lower volatility and fewer deep drawdowns.
+      </p>
+
+      <div class="callout">
+        <strong>Strategic Consideration:</strong> If you already hold an S&P 500 index fund, you do not necessarily need a total market fund like the Russell 3000. If you wish to capture the remaining 20% of the market, purchasing a dedicated small-cap or extended-market fund can help you precisely tune your portfolio's allocation. Consider using our <a href="/etf-comparison-tool">ETF Comparison Tool</a> to analyze specific fund overlaps.
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the difference between the Russell 3000 and the S&P 500?</summary>
+        <p>The S&P 500 tracks 500 of the largest U.S. publicly traded companies, chosen by a committee, representing about 80% of the market. The Russell 3000 tracks the 3,000 largest U.S. stocks, effectively representing 97% of the investable U.S. equity market, including large, mid, and small-cap companies.</p>
+      </details>
+
+      <details>
+        <summary>Does the Russell 3000 include the S&P 500?</summary>
+        <p>Yes, almost entirely. Because the Russell 3000 consists of the largest 3,000 U.S. stocks, the 500 large-cap companies that make up the S&P 500 are inherently included within it and make up the vast majority of its weight.</p>
+      </details>
+
+      <details>
+        <summary>Which index performs better, the Russell 3000 or S&P 500?</summary>
+        <p>Historically, their performance is extremely highly correlated because both are market-cap weighted, meaning the massive companies in the S&P 500 drive most of the returns for both indices. However, the Russell 3000 can slightly outperform during periods when small-cap stocks are booming.</p>
+      </details>
+
+      <details>
+        <summary>Are there ETFs that track the Russell 3000?</summary>
+        <p>Yes. One of the most common ways to invest in the entire Russell 3000 index is through the iShares Russell 3000 ETF (ticker: IWV).</p>
+      </details>
+
+      <details>
+        <summary>Why would someone choose the Russell 3000 over the S&P 500?</summary>
+        <p>An investor might choose the Russell 3000 if they want total domestic market exposure. It prevents them from missing out on the growth of rapidly expanding smaller companies before they become large enough to be added to the S&P 500.</p>
+      </details>
+    </section>
+
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+
+    .comparison-grid {
+        display: grid;
+        grid-template-columns: 200px 1fr 1fr;
+        gap: 1px;
+        background-color: var(--border-color);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 2rem 0 3rem;
+    }
+
+    .grid-cell {
+        background-color: var(--card-bg);
+        padding: 1rem;
+    }
+
+    .grid-header {
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-align: center;
+        background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
+        color: var(--accent-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .grid-label {
+        font-weight: 600;
+        color: var(--text-secondary);
+        background-color: color-mix(in srgb, var(--card-bg) 95%, transparent);
+        display: flex;
+        align-items: center;
+    }
+
+    .grid-value {
+        font-family: 'Inter', sans-serif;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .section-header {
+        grid-column: 1 / -1;
+        background-color: color-mix(in srgb, var(--card-bg) 90%, transparent);
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .comparison-grid {
+            grid-template-columns: 100px 1fr 1fr;
+            font-size: 0.9rem;
+        }
+        .grid-header { font-size: 1rem; }
+        .grid-cell { padding: 0.75rem 0.5rem; }
+    }
+
+    .faq-section { margin-top: 3rem; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    .faq-section p { margin-top: 0.75rem; color: var(--text-secondary); }
+
+    p { line-height: 1.6; margin-bottom: 1rem; color: var(--text-primary); }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary); }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-primary); }
+    a { color: var(--accent-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</SiteLayout>

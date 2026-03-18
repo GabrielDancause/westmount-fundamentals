@@ -1,0 +1,367 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is a Mutual Fund? | The Complete Beginner's Guide",
+  description: "Everyone talks about them, but what are they really? We break down how mutual funds work, active vs. passive management, and how to choose the right one.",
+  category: "guide"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What exactly is a mutual fund?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A mutual fund is an investment vehicle that pools money from many different investors to purchase a large portfolio of stocks, bonds, or other securities. Instead of picking individual stocks, you buy a slice of the entire pie."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does a mutual fund make money?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Investors make money from mutual funds in three ways: dividend distributions from the underlying stocks, capital gains distributions if the fund manager sells holdings for a profit, and an increase in the fund's overall Net Asset Value (NAV)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between active and passive mutual funds?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Active funds are managed by professionals who try to beat the market by actively picking winning stocks. Passive funds (like index funds) simply aim to match the performance of a specific market index, like the S&P 500, resulting in lower fees."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are mutual funds a good investment for beginners?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. They offer instant diversification, which significantly lowers risk compared to buying single stocks. They are an excellent foundational block for a retirement portfolio."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are expense ratios?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An expense ratio is the annual fee that all mutual funds charge their shareholders to cover management, administrative, and operating costs. It is expressed as a percentage of your total investment."
+          }
+        }
+      ]
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-a-mutual-fund" schema={schema}>
+  <div class="page-content">
+    <header class="hero-section">
+      <h1>What is a Mutual Fund?</h1>
+      <p class="subtitle">The definitive guide to the investment vehicle that revolutionized how everyday people build wealth.</p>
+    </header>
+
+    <section class="content-section">
+      <h2>The Basket Analogy</h2>
+      <p>
+        Imagine walking into a massive supermarket to buy ingredients for an elaborate feast. You need a pinch of saffron, a single organic potato, two ounces of Wagyu beef, and exactly three grapes. Buying a full package of every single item would cost thousands of dollars and most of it would go to waste.
+      </p>
+      <p>
+        Instead, the supermarket offers a pre-packaged "Feast Basket." A professional chef has already gone through the store, selected a perfect balance of ingredients, and portioned them out. You just buy one basket, and you instantly own a tiny piece of everything in the store.
+      </p>
+      <p>
+        A <strong>mutual fund</strong> is the financial equivalent of that basket.
+      </p>
+      <p>
+        If you have $500 to invest, you cannot realistically buy shares of Apple, Microsoft, Johnson & Johnson, ExxonMobil, and a hundred other companies. Buying just one share of some of these companies costs more than $500. But if you pool your $500 with the money of thousands of other investors, the resulting "mutual" pool might be worth $100 million.
+      </p>
+      <p>
+        A professional money manager then uses that $100 million to buy millions of shares across hundreds of different companies. When you buy into the mutual fund, you are buying a tiny sliver of that massive, diversified portfolio.
+      </p>
+
+      <h2>How Mutual Funds Actually Work Mechanics</h2>
+      <p>
+        Unlike stocks, which trade continuously throughout the day with fluctuating prices based on supply and demand, mutual funds work differently.
+      </p>
+      <p>
+        When you buy a mutual fund, you aren't actually buying shares from another investor on a stock exchange. You are buying the shares directly from the fund company itself (like Vanguard, Fidelity, or Charles Schwab).
+      </p>
+      <p>
+        At the end of every trading day, exactly at 4:00 PM Eastern Time, the mutual fund calculates the total value of all the stocks, bonds, or other assets it holds. It then divides that massive number by the total number of shares the fund has issued.
+      </p>
+      <p>
+        This resulting number is called the <strong>Net Asset Value (NAV)</strong>.
+      </p>
+      <div class="formula-box">
+        <strong>NAV = (Total Value of Fund Assets - Fund Liabilities) / Total Number of Shares Outstanding</strong>
+      </div>
+      <p>
+        If the NAV is $50, and you invest $1,000, the fund issues you exactly 20 new shares. Unlike a regular stock trade, you always pay the NAV price, and the transaction only happens once per day after the market closes.
+      </p>
+
+      <h2>Active Management vs. Passive Indexing</h2>
+      <p>
+        This is arguably the most important distinction in all of investing. Once you understand this, you understand the core debate of modern finance.
+      </p>
+
+      <div class="card">
+        <h3>The Active Manager (The Stock Picker)</h3>
+        <p>An actively managed mutual fund is run by a team of highly paid financial analysts and portfolio managers. Their explicit goal is to "beat the market." They study corporate balance sheets, interview CEOs, analyze global supply chains, and use sophisticated models to guess which companies will perform best. </p>
+        <p>If they believe technology is the future, they buy heavily into tech stocks. If they believe oil prices will crash, they sell all their energy stocks. </p>
+        <p>Because you are paying for the expertise of Ivy League analysts, active funds are expensive. They charge high annual fees (often 0.5% to 1.5% of your total investment).</p>
+      </div>
+
+      <div class="card">
+        <h3>The Passive Manager (The Index Fund)</h3>
+        <p>A passively managed fund—commonly known as an index fund—does not try to beat the market. In fact, there is no manager trying to pick winners at all. </p>
+        <p>Instead, the fund relies on a computer algorithm to automatically buy every single stock in a specific financial index (like the S&P 500), in the exact proportions they exist in the real world. If Apple makes up 7% of the S&P 500 index, the fund ensures that 7% of its money is invested in Apple. </p>
+        <p>Because there are no highly paid analysts doing research, the costs are microscopic. These funds often charge annual fees of just 0.01% to 0.05%.</p>
+      </div>
+
+      <p>
+        So, which one is better? Overwhelmingly, decades of historical data show that passive index funds defeat active managers over the long term. According to the S&P Dow Jones Indices SPIVA scorecard, over a 15-year period, more than 90% of actively managed large-cap U.S. mutual funds fail to outperform the simple S&P 500 index. They charge higher fees for worse results.
+      </p>
+
+      <h2>The Costs: Expense Ratios Decoded</h2>
+      <p>
+        If you are an investor, understanding <a href="/guide-how-etf-expense-ratios-work">expense ratios</a> is mandatory. When you buy an actively managed fund, it doesn't bill you monthly like Netflix. Instead, the mutual fund management company subtracts a percentage of the total assets every single day before the daily NAV is calculated. It is completely invisible to you.
+      </p>
+
+      <p>
+        Let's look at the math.
+      </p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Initial Investment</th>
+              <th>Annual Return (Before Fees)</th>
+              <th>Fund Type</th>
+              <th>Expense Ratio</th>
+              <th>Value After 30 Years</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>$10,000</td>
+              <td>8%</td>
+              <td>Active Mutual Fund</td>
+              <td>1.00%</td>
+              <td>$76,122</td>
+            </tr>
+            <tr>
+              <td>$10,000</td>
+              <td>8%</td>
+              <td>Passive Index Fund</td>
+              <td>0.05%</td>
+              <td>$98,903</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Over 30 years, a seemingly tiny 0.95% difference in fees costs you $22,781 in lost wealth on a single $10,000 investment. You didn't pay $22,000 directly to the fund manager; you lost the compounding power of that money.
+      </p>
+
+      <h2>Real World Examples (Historical)</h2>
+      <p>
+        To make this concrete, let's examine two of the most famous mutual funds in American history. These are real funds managed by real companies, representing the two philosophical extremes of the mutual fund industry.
+      </p>
+
+      <h3>Vanguard 500 Index Fund (VFIAX) - The Passive Pioneer</h3>
+      <p>
+        In 1976, John Bogle created the first index mutual fund available to the general public. At the time, Wall Street laughed at him, calling it "Bogle's Folly," claiming that accepting average market returns was un-American.
+      </p>
+      <ul>
+        <li><strong>Strategy:</strong> It simply buys all 500 companies in the S&P 500 index in exact proportion to their market capitalization (size). It does zero analysis.</li>
+        <li><strong>Expense Ratio:</strong> Historically extremely low (currently around 0.04%).</li>
+        <li><strong>Result:</strong> Over the last 40 years, it has become one of the largest mutual funds on Earth, managing nearly a trillion dollars, and decisively proving that low-cost, broadly diversified, passive investing is the most reliable path to wealth.</li>
+      </ul>
+
+      <h3>Fidelity Contrafund (FCNTX) - The Active Giant</h3>
+      <p>
+        Fidelity Contrafund, managed by Will Danoff since 1990, is one of the rare actively managed funds that has successfully and consistently beaten the market over a multi-decade timeframe.
+      </p>
+      <ul>
+        <li><strong>Strategy:</strong> Danoff and his massive team of analysts interview thousands of executives a year. They actively hunt for companies whose "true value" is not recognized by the market, often making huge, concentrated bets on specific tech giants or healthcare companies.</li>
+        <li><strong>Expense Ratio:</strong> Higher than an index fund, typically around 0.50% to 0.80%.</li>
+        <li><strong>Result:</strong> It is one of the few actively managed mutual funds that has justified its higher fee by delivering superior returns. However, identifying the next Will Danoff <em>before</em> he generates a 30-year track record is nearly impossible.</li>
+      </ul>
+
+      <h2>Why Invest in Mutual Funds Over Stocks?</h2>
+      <p>
+        If you have the option to buy a stock on a zero-commission broker, why buy a mutual fund?
+      </p>
+
+      <div class="card">
+        <h4>1. Instant Diversification</h4>
+        <p>A $1,000 investment in a single stock is risky. If that company goes bankrupt (like Enron or Lehman Brothers), your $1,000 goes to zero. A $1,000 investment in a total market index mutual fund means you own tiny slices of 4,000 different companies. Even if 50 of them go bankrupt in the same year, the impact on your portfolio is barely noticeable.</p>
+      </div>
+
+      <div class="card">
+        <h4>2. Fractional Shares Built-In</h4>
+        <p>Before modern brokerage apps allowed you to buy $5 of Amazon stock, mutual funds were the only way to invest small dollar amounts into high-priced stocks. If a mutual fund has a $100 minimum investment, you can send them exactly $100 every paycheck, and they will calculate exactly how many shares (down to the third decimal place) you now own. </p>
+      </div>
+
+      <div class="card">
+        <h4>3. Behavioral Guardrails</h4>
+        <p>Because mutual funds only price and trade once per day, they actively discourage day trading and panic selling. You cannot watch a mutual fund's price tick down at 11:30 AM and frantically hit a sell button to lock in a price. You place an order, and whatever the NAV is at 4:00 PM is what you get. This structural delay forces investors to take a longer-term view.</p>
+      </div>
+
+      <h2>Mutual Funds vs. Exchange Traded Funds (ETFs)</h2>
+      <p>
+        This is where modern investing gets confusing. If an ETF is just a basket of stocks, what is the difference between an ETF and a mutual fund?
+      </p>
+      <p>
+        At their core, they hold exactly the same underlying assets. An S&P 500 mutual fund and an S&P 500 ETF hold the exact same 500 companies in the exact same proportions. The difference is the wrapper.
+      </p>
+      <p>
+        <strong>ETFs trade like stocks.</strong> You buy them on an exchange throughout the day at a fluctuating market price. They are incredibly tax-efficient because of a loophole in how they handle redemptions behind the scenes.
+      </p>
+      <p>
+        <strong>Mutual funds trade once a day directly with the fund company.</strong> They are notoriously tax-inefficient in regular, taxable brokerage accounts because when the fund manager sells a stock for a profit, the law requires them to distribute that taxable "capital gain" to all the mutual fund shareholders, forcing you to pay taxes even if you didn't sell any of your own shares.
+      </p>
+      <p>
+        For a deep dive into this, see our complete guide on <a href="/etf-vs-index-funds-guide">ETFs vs Mutual Funds</a>.
+      </p>
+
+      <h2>Actionable Takeaways for Your Portfolio</h2>
+      <p>
+        Understanding the concept is only half the battle. How do you actually use mutual funds to build wealth?
+      </p>
+      <ol>
+        <li><strong>Look for Index Funds:</strong> If the fund name includes the word "Index" (like S&P 500 Index, Total Stock Market Index), it is passively managed. This is almost always the correct choice for a long-term retirement portfolio. </li>
+        <li><strong>Check the Expense Ratio:</strong> This is non-negotiable. If the expense ratio is over 0.20%, you need a phenomenal reason to buy it. If it is over 0.75%, run away. The massive financial institutions all offer highly competitive index funds with expense ratios near zero (0.01% - 0.04%). </li>
+        <li><strong>Beware of Load Fees:</strong> A "load" is a brutal sales commission. A "front-end load" might charge you 5% of your money the instant you invest. If you invest $10,000, they take $500 as a fee and only invest $9,500. A "back-end load" charges you when you sell. You should <em>never</em> pay a load fee in the modern era. Look exclusively for "No-Load" mutual funds. </li>
+        <li><strong>Use Them in Retirement Accounts:</strong> Because mutual funds distribute capital gains internally and create tax liabilities, they are best held inside tax-advantaged accounts like a 401(k), an IRA, or a Roth IRA. In these accounts, you don't pay taxes on internal fund transactions, completely neutralizing their main disadvantage against ETFs. </li>
+      </ol>
+
+      <div class="interactive-prompt card">
+        <h3>Ready to build your portfolio?</h3>
+        <p>If you understand mutual funds and want to see how a portfolio of index funds might grow over decades of compounding returns, try our <a href="/investment-planner">investment planner</a> to run long-term wealth projections based on real historical data.</p>
+      </div>
+
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: var(--text-primary);
+  }
+
+  .hero-section {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .hero-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .content-section {
+    line-height: 1.7;
+    font-size: 1.1rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+
+  ul, ol {
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .formula-box {
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    text-align: center;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .interactive-prompt {
+    margin-top: 4rem;
+    text-align: center;
+  }
+
+  .page-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .page-content a:hover {
+    opacity: 0.8;
+  }
+</style>

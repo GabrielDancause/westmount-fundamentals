@@ -1,0 +1,294 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "SCHD vs QQQI: Dividend Growth vs High Options Income",
+    "description": "A comprehensive comparison between SCHD's traditional dividend growth strategy and QQQI's high-yield covered call options approach.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the main difference between SCHD and QQQI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SCHD focuses on traditional dividend growth by investing in 100 high-quality US companies with a decade-long history of paying dividends, offering a moderate yield around 3.5% with lower risk. QQQI utilizes a covered call options strategy on the Nasdaq-100 to generate a significantly higher yield (often 12%+), but carries higher risk and potential for NAV erosion during volatile markets."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How often do SCHD and QQQI pay dividends?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SCHD distributes its dividends on a quarterly basis, typical for traditional equity funds. In contrast, QQQI pays its options-generated income on a monthly basis, which is often preferred by investors seeking regular cash flow."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the expense ratios for SCHD and QQQI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SCHD is highly cost-effective with an exceptionally low expense ratio of just 0.06%. QQQI, due to the active management required for its complex options strategy, has a substantially higher expense ratio of approximately 0.68%."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is QQQI riskier than SCHD?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, QQQI is generally considered riskier. While its yield is higher, the underlying options strategy limits upside capital appreciation and exposes the fund to Net Asset Value (NAV) erosion over time, especially in down or flat markets. SCHD relies on fundamentally sound companies, offering steadier compounding and lower volatility."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which ETF is better for long-term compounding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For long-term compounding and total return, SCHD is typically the superior choice. Its focus on dividend growth and capital appreciation provides a robust engine for wealth accumulation over decades. QQQI is better suited for investors prioritizing immediate, high current income over long-term capital preservation."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "SCHD vs QQQI: Dividend Growth vs High Options Income",
+  description: "Comparing traditional dividend growth with high-yield covered calls. Which strategy fits your portfolio better? Analyze yield, risk, and expenses.",
+  category: "tool",
+  published: "2026-03-24"
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/schd-vs-qqqi" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>SCHD vs QQQI: Dividend Growth vs High Options Income</h1>
+      <p class="subtitle">Comparing fundamentally different strategies for generating portfolio cash flow.</p>
+    </div>
+
+    <section>
+      <h2>Fundamentally Different Approaches to Income</h2>
+      <p>When investors search for reliable ways to extract yield from the stock market, they often encounter two dramatically distinct philosophies. On one end of the spectrum is the Schwab U.S. Dividend Equity ETF (SCHD). This vehicle prioritizes stability, targeting companies with ironclad balance sheets and a multi-year track record of increasing their shareholder distributions. The goal here is simple: steady, compounding growth where the underlying businesses appreciate alongside the payouts. For an in-depth look at its performance, review our <a href="/schd-dividend">SCHD dividend history analysis</a>.</p>
+
+      <p>Conversely, the NEOS Nasdaq-100 High Income ETF (QQQI) represents a modern, aggressively engineered approach to generating cash flow. Instead of relying solely on corporate earnings to fund dividends, this fund actively writes covered call options on the Nasdaq-100 index. By selling the rights to potential upside gains, it captures lucrative option premiums which are then distributed to shareholders as monthly income. This strategy sacrifices long-term capital appreciation in exchange for immediate, double-digit yield.</p>
+    </section>
+
+    <section>
+      <div class="card comparison-card">
+        <h3>Side-by-Side Fund Metrics</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>SCHD (Dividend Growth)</th>
+              <th>QQQI (Options Income)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Target Yield</strong></td>
+              <td>~3.5%</td>
+              <td>12%+</td>
+            </tr>
+            <tr>
+              <td><strong>Distribution Frequency</strong></td>
+              <td>Quarterly</td>
+              <td>Monthly</td>
+            </tr>
+            <tr>
+              <td><strong>Expense Ratio</strong></td>
+              <td>0.06%</td>
+              <td>~0.68%</td>
+            </tr>
+            <tr>
+              <td><strong>Underlying Assets</strong></td>
+              <td>100 Blue-Chip US Value Stocks</td>
+              <td>Nasdaq-100 Tech/Growth Stocks</td>
+            </tr>
+            <tr>
+              <td><strong>Primary Risk</strong></td>
+              <td>Value trap underperformance</td>
+              <td>NAV erosion during market rallies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>The Trade-Off: Yield vs Capital Preservation</h2>
+      <p>The allure of a 12% yield is undeniable, especially for retirees seeking to maximize their current monthly budget. However, QQQI's mechanics demand close scrutiny. When the Nasdaq index surges upward, the covered calls written by the fund management get exercised, effectively capping the ETF's ability to participate in that rally. Over time, particularly in volatile or sideways markets, the continuous payout of high premiums without capturing equivalent upside can lead to a slow erosion of the Net Asset Value (NAV). You are essentially converting your principal into income.</p>
+
+      <p>SCHD operates under a radically different paradigm. With a modest expense ratio of just 0.06%, it efficiently tracks a stringent index requiring at least ten consecutive years of dividend payments. This fundamental screening acts as a quality filter, naturally selecting businesses with wide economic moats and robust cash flows. While the starting yield is lower, the distributions tend to grow organically year-over-year, protecting purchasing power against inflation without compromising the underlying capital base.</p>
+    </section>
+
+    <section>
+      <h2>Which Strategy Belongs in Your Portfolio?</h2>
+      <p>Deciding between these two ETFs is rarely an absolute choice; it depends entirely on your investment timeline and immediate financial needs. Investors who are decades away from retirement generally benefit far more from SCHD. The power of dividend reinvestment over twenty years heavily favors vehicles that appreciate in underlying value while growing their payout rates.</p>
+
+      <p>Conversely, QQQI serves a specific utility for those requiring immediate, high-volume cash generation. If an investor must extract maximum yield today to cover living expenses, and is willing to accept that their initial principal may gradually decline in exchange for that service, covered call strategies can fulfill that requirement. Some portfolio managers even utilize a barbell approach, holding a core position in a stable dividend grower like SCHD while dedicating a smaller, tactical allocation to QQQI to boost overall portfolio yield.</p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the main difference between SCHD and QQQI?</summary>
+        <p>SCHD focuses on traditional dividend growth by investing in 100 high-quality US companies with a decade-long history of paying dividends, offering a moderate yield around 3.5% with lower risk. QQQI utilizes a covered call options strategy on the Nasdaq-100 to generate a significantly higher yield (often 12%+), but carries higher risk and potential for NAV erosion during volatile markets.</p>
+      </details>
+
+      <details>
+        <summary>How often do SCHD and QQQI pay dividends?</summary>
+        <p>SCHD distributes its dividends on a quarterly basis, typical for traditional equity funds. In contrast, QQQI pays its options-generated income on a monthly basis, which is often preferred by investors seeking regular cash flow.</p>
+      </details>
+
+      <details>
+        <summary>What are the expense ratios for SCHD and QQQI?</summary>
+        <p>SCHD is highly cost-effective with an exceptionally low expense ratio of just 0.06%. QQQI, due to the active management required for its complex options strategy, has a substantially higher expense ratio of approximately 0.68%.</p>
+      </details>
+
+      <details>
+        <summary>Is QQQI riskier than SCHD?</summary>
+        <p>Yes, QQQI is generally considered riskier. While its yield is higher, the underlying options strategy limits upside capital appreciation and exposes the fund to Net Asset Value (NAV) erosion over time, especially in down or flat markets. SCHD relies on fundamentally sound companies, offering steadier compounding and lower volatility.</p>
+      </details>
+
+      <details>
+        <summary>Which ETF is better for long-term compounding?</summary>
+        <p>For long-term compounding and total return, SCHD is typically the superior choice. Its focus on dividend growth and capital appreciation provides a robust engine for wealth accumulation over decades. QQQI is better suited for investors prioritizing immediate, high current income over long-term capital preservation.</p>
+      </details>
+    </section>
+
+    <section>
+      <h2>Interactive Yield & Fee Comparison Calculator</h2>
+      <p>Use the tool below to visualize the real-world impact of the differing yields and expense ratios between SCHD and QQQI on your projected investment principal. Note that this calculator focuses on current yield and fee drag; it does not account for potential capital appreciation or NAV erosion over time.</p>
+
+      <div class="card" id="calculator-card">
+        <h3>Income & Fee Projection</h3>
+
+        <div style="margin-bottom: 1rem;">
+          <label for="principal" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Initial Investment Amount ($):</label>
+          <input type="number" id="principal" value="10000" min="100" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-color); color: var(--text-primary); font-size: 1rem;">
+        </div>
+
+        <button id="calcBtn" style="background: var(--accent-color); color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1rem;">Compare Outputs</button>
+
+        <div id="results" style="margin-top: 1.5rem; display: none; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color);">
+              <h4 style="margin-top: 0; color: var(--text-primary);">SCHD (Assuming 3.5% Yield)</h4>
+              <p style="margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">Expense Ratio: 0.06%</p>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Annual Gross Income:</span>
+                <strong id="schdGross">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Annual Fees:</span>
+                <strong id="schdFees" style="color: #ef4444;">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
+                <span>Net Annual Income:</span>
+                <strong id="schdNet" style="color: var(--accent-color); font-size: 1.1rem;">$0.00</strong>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-color); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color);">
+              <h4 style="margin-top: 0; color: var(--text-primary);">QQQI (Assuming 12.0% Yield)</h4>
+              <p style="margin: 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);">Expense Ratio: 0.68%</p>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Annual Gross Income:</span>
+                <strong id="qqqiGross">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span>Annual Fees:</span>
+                <strong id="qqqiFees" style="color: #ef4444;">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid var(--border-color);">
+                <span>Net Annual Income:</span>
+                <strong id="qqqiNet" style="color: var(--accent-color); font-size: 1.1rem;">$0.00</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      const calcBtn = document.getElementById('calcBtn');
+      const principalInput = document.getElementById('principal');
+      const resultsDiv = document.getElementById('results');
+
+      if(calcBtn && principalInput && resultsDiv) {
+        calcBtn.addEventListener('click', function() {
+          const principal = parseFloat(principalInput.value);
+
+          if (isNaN(principal) || principal <= 0) {
+            resultsDiv.style.display = 'none';
+            return;
+          }
+
+          // SCHD Constants
+          const schdYield = 0.035;
+          const schdExpense = 0.0006;
+
+          // QQQI Constants
+          const qqqiYield = 0.12;
+          const qqqiExpense = 0.0068;
+
+          // SCHD Calculations
+          const schdGross = principal * schdYield;
+          const schdFees = principal * schdExpense;
+          const schdNet = schdGross - schdFees;
+
+          // QQQI Calculations
+          const qqqiGross = principal * qqqiYield;
+          const qqqiFees = principal * qqqiExpense;
+          const qqqiNet = qqqiGross - qqqiFees;
+
+          // Format function
+          const formatCurrency = (val) => '$' + val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+          // Update DOM
+          document.getElementById('schdGross').textContent = formatCurrency(schdGross);
+          document.getElementById('schdFees').textContent = '-' + formatCurrency(schdFees);
+          document.getElementById('schdNet').textContent = formatCurrency(schdNet);
+
+          document.getElementById('qqqiGross').textContent = formatCurrency(qqqiGross);
+          document.getElementById('qqqiFees').textContent = '-' + formatCurrency(qqqiFees);
+          document.getElementById('qqqiNet').textContent = formatCurrency(qqqiNet);
+
+          resultsDiv.style.display = 'block';
+        });
+      }
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: var(--card-bg); }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+    th { font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; background: var(--bg-color); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-primary); }
+    .faq-section summary { font-weight: 600; cursor: pointer; color: var(--text-primary); }
+    .faq-section p { margin-top: 1rem; color: var(--text-secondary); }
+    a { color: var(--accent-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary); }
+    h3 { color: var(--text-primary); }
+    p { line-height: 1.6; margin-bottom: 1rem; color: var(--text-secondary); }
+  </style>
+</SiteLayout>

@@ -1,0 +1,249 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Stock Market Fundamentals: A Complete Guide",
+    "description": "Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/stock-market-fundamentals-guide"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the stock market?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The stock market is a vast network of exchanges and markets where individuals, institutions, and governments buy and sell shares of publicly held companies, representing fractional ownership in those businesses."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between a stock and a bond?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A stock represents an ownership stake in a company, offering the potential for capital appreciation and dividends, but carrying higher risk. A bond represents a loan made to an entity, offering fixed interest payments and the return of principal, generally carrying lower risk than stocks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a bull market?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A bull market refers to a period characterized by generally rising stock prices, high investor confidence, and a strong or expanding economy."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I start investing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To start investing, you need to define your goals and risk tolerance, choose an investment strategy (active vs. passive), open and fund a brokerage account, and then purchase your chosen investments, such as individual stocks, index funds, or ETFs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is diversification important?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Diversification is important because it spreads your investments across different asset classes, sectors, and geographic regions, which helps to mitigate risk and reduce the impact of any single investment's poor performance on your overall portfolio."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Stock Market Fundamentals: A Complete Guide",
+  description: "Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies.",
+  category: "guide",
+  published: "2026-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Stock Market Fundamentals: A Complete Guide"
+  description="Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies."
+  canonical="https://westmountfundamentals.com/stock-market-fundamentals-guide"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Stock Market Fundamentals: A Complete Guide</h1>
+      <p class="subtitle">Everything you need to know to start investing with confidence</p>
+    </div>
+
+    <section id="content">
+
+      <p>The stock market is often viewed as a complex and intimidating financial ecosystem, reserved only for Wall Street professionals and wealthy insiders. However, understanding the stock market is crucial for anyone looking to build long-term wealth, achieve financial independence, or secure a comfortable retirement. This comprehensive guide will demystify the stock market, explaining the fundamental concepts, the mechanics of how it operates, the different types of investments available, and the strategies you can use to start your investing journey with confidence.</p>
+
+      <h2>What is the Stock Market?</h2>
+      <p>At its core, the stock market is a vast network of exchanges and markets where individuals, institutions, and governments buy and sell shares of publicly held companies. When a company wants to raise capital to expand its operations, develop new products, or pay off debt, it can choose to issue shares of stock to the public. This process is known as an Initial Public Offering (IPO). Once these shares are issued, they are traded on secondary markets, which is what we typically refer to when we talk about the "stock market."</p>
+
+      <p>The stock market serves two primary functions. First, it provides companies with access to capital, allowing them to fund their growth and innovation. Second, it offers investors the opportunity to participate in the financial success of these companies. By purchasing shares of stock, you are buying a fractional ownership stake in the underlying business. If the company performs well and generates profits, the value of your shares may increase, and you may also receive a portion of those profits in the form of dividends.</p>
+
+      <div class="callout">
+        <strong>The Importance of the Stock Market:</strong> The stock market is a key indicator of economic health and plays a vital role in the global economy by facilitating the efficient allocation of capital and providing a mechanism for wealth creation.
+      </div>
+
+      <h2>Understanding Stocks and Shares</h2>
+      <p>A stock, also known as equity, represents ownership in a corporation. When you buy a share of stock, you become a shareholder, meaning you own a tiny piece of the company and have a claim on part of its assets and earnings. There are two main types of stock: common stock and preferred stock.</p>
+
+      <h3>Common Stock</h3>
+      <p>Common stock is the most prevalent type of equity investment. Holders of common stock typically have voting rights at shareholder meetings, allowing them to elect the board of directors and vote on significant corporate decisions. Common stockholders may also receive dividends, but these payments are not guaranteed and are distributed at the discretion of the company's board. In the event of bankruptcy, common stockholders are the last in line to claim the company's assets, making common stock riskier than preferred stock or bonds.</p>
+
+      <h3>Preferred Stock</h3>
+      <p>Preferred stock represents a higher claim on the company's assets and earnings compared to common stock. Preferred stockholders generally do not have voting rights, but they receive fixed dividend payments that must be paid before any dividends can be distributed to common stockholders. Additionally, in the event of bankruptcy, preferred stockholders have a higher priority claim on assets than common stockholders, although they still rank below bondholders.</p>
+
+      <h2>Key Stock Categories and Classifications</h2>
+      <p>Stocks can be categorized in various ways based on their characteristics, the size of the underlying company, and the industry in which they operate. Understanding these classifications is essential for building a diversified portfolio. Let's delve into some of the most important stock categories, which we explore in detail in our dedicated cluster pages.</p>
+
+      <h3>Growth vs. Value Stocks</h3>
+      <p>One of the fundamental distinctions in investing is between growth and value stocks. <a href="/what-are-growth-stocks">Growth stocks</a> are companies that are expected to grow their sales and earnings at a significantly faster rate than the broader market. These are often innovative companies in sectors like technology or biotechnology that reinvest their profits back into the business to fuel further expansion. As a result, they rarely pay dividends and their valuations (such as the Price-to-Earnings ratio) can be quite high. Investors buy growth stocks with the expectation of substantial capital appreciation over time.</p>
+
+      <p>Value stocks, on the other hand, are companies that appear to be trading for less than their intrinsic or book value. These are often mature, established businesses that may be temporarily out of favor with the market due to short-term challenges or broader economic concerns. Value investors seek to identify these undervalued gems, believing that the market will eventually recognize their true worth, leading to price appreciation. Value stocks are also more likely to pay consistent dividends.</p>
+
+      <h3>Market Capitalization: Large-Cap, Mid-Cap, and Small-Cap</h3>
+      <p>Market capitalization, or "market cap," is a measure of a company's total value, calculated by multiplying the current stock price by the total number of outstanding shares. Stocks are typically classified into three main categories based on market cap:</p>
+      <ul>
+        <li><strong>Large-Cap Stocks:</strong> These are massive, well-established companies with a market cap typically exceeding $10 billion. They are generally considered more stable and less volatile than smaller companies, making them a core component of many conservative portfolios. Examples include Apple, Microsoft, and Johnson & Johnson.</li>
+        <li><strong><a href="/what-are-mid-cap-stocks">Mid-Cap Stocks</a>:</strong> Mid-cap companies have a market cap generally ranging from $2 billion to $10 billion. They often offer a balance between the growth potential of small-caps and the stability of large-caps. They may be established companies that are still expanding their market share or entering new markets.</li>
+        <li><strong>Small-Cap Stocks:</strong> Small-cap companies typically have a market cap between $300 million and $2 billion. They tend to be more volatile and carry higher risk than larger companies, but they also offer the potential for significant growth as they scale their operations.</li>
+      </ul>
+
+      <h3>Cyclical vs. Defensive Stocks</h3>
+      <p>The performance of different stocks is often tied to the broader economic cycle. <a href="/what-are-cyclical-stocks">Cyclical stocks</a> are highly sensitive to economic conditions. When the economy is booming, consumers have more discretionary income to spend on things like travel, luxury goods, and new cars, causing these stocks to perform well. Conversely, during a recession, consumer spending contracts, and cyclical stocks tend to suffer. Industries like travel, hospitality, and automotive manufacturing are classic examples of cyclical sectors.</p>
+
+      <p>Defensive stocks, sometimes called non-cyclical stocks, are relatively immune to economic downturns because they provide essential goods and services that consumers need regardless of the economic climate. Examples include utility companies, consumer staples (like food and household products), and healthcare providers. These stocks tend to be more stable and offer consistent dividends, making them attractive during periods of economic uncertainty.</p>
+
+      <h3>Thematic and Specialized Investing</h3>
+      <p>In addition to traditional classifications, investors often focus on specific themes or specialized categories based on their values or market trends.</p>
+      <p>For example, <a href="/what-are-esg-stocks">ESG stocks</a> represent companies that are evaluated based on their Environmental, Social, and Governance practices. Investors interested in sustainable and responsible investing seek out companies that prioritize environmental stewardship, social responsibility, and strong corporate governance. This approach aligns financial goals with personal values and can also help mitigate long-term risks associated with climate change or poor governance.</p>
+
+      <p>Another area of focus is volatility. While some investors prefer stability, others may seek out <a href="/what-are-the-most-volatile-stocks">the most volatile stocks</a> for short-term trading opportunities. Volatility refers to the magnitude and frequency of price fluctuations. High-volatility stocks can experience dramatic price swings in a short period, offering the potential for significant gains but also carrying a high risk of substantial losses. Understanding volatility is crucial for risk management and aligning your investments with your risk tolerance.</p>
+
+      <h2>How the Stock Market Works: Exchanges and Indices</h2>
+      <p>The stock market is not a single, physical entity but a collection of interconnected exchanges where trading occurs. The two most prominent stock exchanges in the United States are the New York Stock Exchange (NYSE) and the Nasdaq.</p>
+
+      <p>The NYSE is the world's largest stock exchange by market capitalization and operates as a traditional auction market where buyers and sellers execute trades on a physical trading floor, although the vast majority of trading is now done electronically. The Nasdaq, on the other hand, is an entirely electronic exchange that operates as a dealer market, where market makers provide liquidity by buying and selling stocks from their own inventory.</p>
+
+      <h3>Stock Market Indices</h3>
+      <p>To gauge the overall performance of the stock market or specific sectors, investors rely on stock market indices. An index is a statistical measure that tracks the performance of a selected group of stocks representing a particular market or segment. The three most widely followed indices in the U.S. are:</p>
+      <ul>
+        <li><strong>The Dow Jones Industrial Average (DJIA):</strong> Often referred to simply as "the Dow," this index tracks the performance of 30 large, prominent U.S. companies across various industries. It is a price-weighted index, meaning companies with higher stock prices have a greater influence on the index's movement.</li>
+        <li><strong>The S&P 500:</strong> The Standard & Poor's 500 index tracks the performance of 500 of the largest publicly traded U.S. companies. It is a market-cap-weighted index, meaning larger companies have a more significant impact on the index. The S&P 500 is widely considered the best gauge of the overall U.S. stock market.</li>
+        <li><strong>The Nasdaq Composite:</strong> This index includes almost all the stocks listed on the Nasdaq exchange, heavily weighted toward technology and growth companies. It is also a market-cap-weighted index.</li>
+      </ul>
+
+      <div class="card">
+        <h3>Bull and Bear Markets</h3>
+        <p>Market sentiment is often described using the terms "bull" and "bear." A bull market occurs when stock prices are generally rising, investor confidence is high, and the economy is strong. Conversely, a bear market is characterized by falling stock prices, pessimism, and economic contraction. Officially, a bear market is typically defined as a 20% or more decline from recent market highs.</p>
+      </div>
+
+      <h2>Fundamental Concepts for Investors</h2>
+      <p>Before diving into stock selection, it's essential to understand several fundamental concepts that will guide your investment decisions and help you navigate the complexities of the market.</p>
+
+      <h3>Risk and Reward</h3>
+      <p>The core principle of investing is the relationship between risk and reward. Generally, investments with the potential for higher returns also carry a higher level of risk. Stocks are inherently riskier than cash or bonds because their prices can fluctuate significantly, and there is no guarantee of return. However, over the long term, stocks have historically provided higher returns than safer asset classes, making them a crucial component of wealth building. Understanding your personal risk tolerance—how much volatility and potential loss you can comfortably endure—is the first step in creating an investment strategy.</p>
+
+      <h3>Diversification and Asset Allocation</h3>
+      <p>Diversification is the practice of spreading your investments across different asset classes, sectors, and geographic regions to reduce risk. The adage "don't put all your eggs in one basket" perfectly encapsulates this concept. By holding a diversified portfolio, the poor performance of one investment can potentially be offset by the strong performance of another. Asset allocation, the process of determining the optimal mix of stocks, bonds, and cash based on your goals and risk tolerance, is a primary driver of long-term investment success.</p>
+
+      <h3>Stocks vs. Bonds</h3>
+      <p>A fundamental distinction in asset allocation is the difference between equities and fixed-income securities. The <a href="/difference-between-stocks-and-bonds">difference between stocks and bonds</a> is profound. When you buy a stock, you are buying an ownership stake in a company. When you buy a bond, you are lending money to an entity (such as a corporation or government) in exchange for regular interest payments and the return of the principal amount at maturity. Bonds are generally considered safer and less volatile than stocks, providing a steady stream of income and acting as a stabilizing force in a diversified portfolio.</p>
+
+      <h3>Key Valuation Metrics</h3>
+      <p>To evaluate whether a stock is fairly priced, overvalued, or undervalued, investors use various fundamental metrics. Some of the most common include:</p>
+      <ul>
+        <li><strong>Price-to-Earnings (P/E) Ratio:</strong> This is arguably the most widely used valuation metric. It compares a company's current stock price to its earnings per share (EPS). A high P/E ratio may indicate that a stock is overvalued or that investors expect high growth rates in the future. A low P/E ratio may suggest the stock is undervalued.</li>
+        <li><strong>Earnings Per Share (EPS):</strong> EPS is a company's net income divided by the number of outstanding shares. It indicates the profitability of the company on a per-share basis. Consistent EPS growth is a strong indicator of financial health.</li>
+        <li><strong>Dividend Yield:</strong> This is the annual dividend payment divided by the stock's current price, expressed as a percentage. It measures the income generated by an investment relative to its cost, making it a critical metric for income-focused investors.</li>
+        <li><strong><a href="/what-is-a-52-week-high">52-Week High</a> and Low:</strong> These metrics track the highest and lowest prices at which a stock has traded over the past year. They provide context for the stock's current price relative to its recent historical range and are often used in technical analysis to identify potential support and resistance levels.</li>
+      </ul>
+
+      <h2>How to Get Started in the Stock Market</h2>
+      <p>Now that you understand the fundamentals, the next logical question is <a href="/how-to-pick-stocks">how to pick stocks</a> and start investing. The process can seem daunting, but it can be broken down into manageable steps.</p>
+
+      <h3>1. Determine Your Investment Goals and Horizon</h3>
+      <p>Before you invest a single dollar, clearly define your financial goals. Are you saving for retirement, a down payment on a house, or your children's education? Your goals will dictate your investment horizon—the length of time you plan to hold your investments. A longer time horizon allows you to take on more risk and invest more heavily in growth-oriented stocks, as you have time to recover from market downturns. Short-term goals require a more conservative approach, focusing on capital preservation.</p>
+
+      <h3>2. Choose an Investment Strategy</h3>
+      <p>There are two primary approaches to investing in the stock market: active investing and passive investing.</p>
+      <p>Active investing involves hands-on management, where the investor or a professional fund manager researches and selects individual stocks in an attempt to outperform the market. This approach requires significant time, knowledge, and discipline, and it carries higher costs and risks.</p>
+      <p>Passive investing, on the other hand, involves buying and holding a broadly diversified portfolio designed to track the performance of a specific market index, such as the S&P 500. This is typically achieved through index funds or Exchange-Traded Funds (ETFs). Passive investing is generally lower-cost, more tax-efficient, and over the long term, often outperforms active management.</p>
+
+      <h3>3. Open a Brokerage Account</h3>
+      <p>To buy and sell stocks, you need a brokerage account. There are numerous online brokers available, offering varying levels of service, fees, and educational resources. Consider factors such as commission costs, platform usability, research tools, and customer support when choosing a broker. For beginners, many modern platforms offer commission-free trading and fractional shares, making it easier than ever to get started with a small amount of money.</p>
+
+      <h3>4. Fund Your Account and Make Your First Trade</h3>
+      <p>Once your account is open, you'll need to fund it by linking a bank account and transferring money. After the funds clear, you are ready to make your first trade. Start small and focus on building a diversified portfolio of low-cost index funds or ETFs before considering individual stock picking. As you gain knowledge and confidence, you can gradually expand your investments and refine your strategy.</p>
+
+      <h2>The Importance of Continuous Learning and Discipline</h2>
+      <p>Investing in the stock market is a lifelong journey that requires continuous learning, patience, and emotional discipline. The market will inevitably experience periods of volatility and downturns, but it's crucial to remain focused on your long-term goals and avoid making impulsive decisions driven by fear or greed. By understanding the fundamentals, developing a sound strategy, and maintaining a disciplined approach, you can harness the wealth-building potential of the stock market and secure your financial future.</p>
+
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is the stock market?</summary>
+        <p>The stock market is a vast network of exchanges and markets where individuals, institutions, and governments buy and sell shares of publicly held companies, representing fractional ownership in those businesses.</p>
+      </details>
+      <details>
+        <summary>What is the difference between a stock and a bond?</summary>
+        <p>A stock represents an ownership stake in a company, offering the potential for capital appreciation and dividends, but carrying higher risk. A bond represents a loan made to an entity, offering fixed interest payments and the return of principal, generally carrying lower risk than stocks.</p>
+      </details>
+      <details>
+        <summary>What is a bull market?</summary>
+        <p>A bull market refers to a period characterized by generally rising stock prices, high investor confidence, and a strong or expanding economy.</p>
+      </details>
+      <details>
+        <summary>How do I start investing?</summary>
+        <p>To start investing, you need to define your goals and risk tolerance, choose an investment strategy (active vs. passive), open and fund a brokerage account, and then purchase your chosen investments, such as individual stocks, index funds, or ETFs.</p>
+      </details>
+      <details>
+        <summary>Why is diversification important?</summary>
+        <p>Diversification is important because it spreads your investments across different asset classes, sectors, and geographic regions, which helps to mitigate risk and reduce the impact of any single investment's poor performance on your overall portfolio.</p>
+      </details>
+
+    </section>
+  </div>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    p { line-height: 1.6; margin-bottom: 1rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; }
+    h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    ol { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+    li { margin-bottom: 0.5rem; }
+    ul { margin-bottom: 1rem; padding-left: 1.5rem; line-height: 1.6; }
+  </style>
+</SiteLayout>

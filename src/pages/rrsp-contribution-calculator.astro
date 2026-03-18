@@ -1,0 +1,104 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP Contribution Calculator",
+    "description": "Calculate your room, optimal amount, and estimate your tax refund.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is the RRSP contribution limit calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your limit is generally 18% of your earned income from the previous year, up to a maximum limit set by the CRA, plus any unused room from previous years, minus any Pension Adjustments from an employer pension plan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When should I prioritize an RRSP over a TFSA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "RRSPs are generally better for high-income earners looking to minimize their current tax burden through deductions, while TFSAs are often more flexible and better suited for lower-income earners who expect to be in a higher tax bracket upon retirement."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does my employer pension affect my RRSP room?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, employer pension contributions reduce your future RRSP contribution room through a Pension Adjustment (PA). This is reported on your T4 slip."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP Contribution Calculator",
+  description: "Calculate your room, optimal amount, and estimate your tax refund.",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP Contribution Calculator" description="Calculate your room, optimal amount, and estimate your tax refund." canonical="https://westmountfundamentals.com/rrsp-contribution-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP Contribution Calculator</h1><p>Calculate your room, optimal amount, and estimate your tax refund.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-deadline-reminder">Rrsp Deadline Reminder</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>How is the RRSP contribution limit calculated?</h3>
+      <p>Your limit is generally 18% of your earned income from the previous year, up to a maximum limit set by the CRA, plus any unused room from previous years, minus any Pension Adjustments from an employer pension plan.</p>
+      <h3>When should I prioritize an RRSP over a TFSA?</h3>
+      <p>RRSPs are generally better for high-income earners looking to minimize their current tax burden through deductions, while TFSAs are often more flexible and better suited for lower-income earners who expect to be in a higher tax bracket upon retirement.</p>
+      <h3>Does my employer pension affect my RRSP room?</h3>
+      <p>Yes, employer pension contributions reduce your future RRSP contribution room through a Pension Adjustment (PA). This is reported on your T4 slip.</p>
+    </div>
+
+    <div class="card">
+      <h2>Understanding Your Contribution Room Calculation</h2>
+      <p>Calculating your exact RRSP contribution limit requires careful attention to your previous year's financial data. The baseline calculation is straightforward: you are entitled to contribute 18% of your earned income from the preceding tax year. "Earned income" primarily includes salary, wages, bonuses, and net business income if you are self-employed. It does not include investment income, such as capital gains or dividends, nor does it include pension income or severance pay.</p>
+
+      <p>However, this 18% is subject to an annual maximum cap established by the Canada Revenue Agency (CRA). This cap is indexed to inflation and increases slightly each year. If your earned income is exceptionally high, your new contribution room will be limited to this maximum cap, regardless of the 18% calculation. This cap ensures that high-income earners do not receive a disproportionate tax advantage compared to average earners.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Impact of Pension Adjustments (PA)</h2>
+      <p>A crucial factor in determining your RRSP room is the Pension Adjustment (PA). If you are a member of a Registered Pension Plan (RPP) or a Deferred Profit Sharing Plan (DPSP) through your employer, the value of the benefits you accrue in those plans reduces your RRSP contribution room. The PA is calculated by your employer and reported on your T4 slip. The CRA subtracts the PA from your 18% limit to determine your remaining available room.</p>
+
+      <p>This system exists to maintain equity between individuals who have workplace pensions and those who must rely entirely on personal savings for retirement. Without the PA, employees with generous pension plans would be able to double-dip into tax-sheltered savings, while those without pensions would be at a significant disadvantage. If you have a defined benefit pension plan, your PA can be substantial, drastically reducing your available RRSP room.</p>
+    </div>
+
+    <div class="card">
+      <h2>Carry-Forward Rules and Strategic Deductions</h2>
+      <p>One of the most powerful features of the RRSP is the ability to carry forward unused contribution room indefinitely. If you do not maximize your contributions in a given year, the unused room is added to your available room for the following year. Over many years, this can result in a significant amount of accumulated contribution room. This feature is particularly valuable for individuals who experience variable income or who are currently in a lower tax bracket but expect their earnings to increase significantly in the future.</p>
+
+      <p>Furthermore, you are not required to claim the tax deduction for your RRSP contribution in the same year you make the deposit. This is a common strategy known as "delaying the deduction." If you make a contribution while in a relatively low tax bracket, you can choose to carry the deduction forward and apply it to a future tax year when your income is higher, thereby maximizing the value of the tax refund. This requires careful tracking on your tax return (Schedule 7), but it can be highly lucrative.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

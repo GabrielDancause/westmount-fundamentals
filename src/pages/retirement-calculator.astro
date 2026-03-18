@@ -1,0 +1,336 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Retirement Calculator: Plan Your Financial Future",
+  description: "Calculate your retirement savings, required nest egg, and years until financial independence with our interactive retirement calculator.",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much money do I need to retire?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The amount you need to retire depends on your expected annual expenses and withdrawal rate. A common rule of thumb is the 4% rule, which suggests you need 25 times your annual expenses. For example, if you expect to spend $60,000 per year, you would need $1,500,000."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the 4% rule in retirement?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 4% rule is a guideline that states you can safely withdraw 4% of your initial retirement portfolio value each year, adjusted for inflation, without running out of money for at least 30 years. It is based on historical stock and bond market returns."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does inflation affect my retirement savings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Inflation reduces the purchasing power of your money over time. To maintain your standard of living, your retirement savings must grow faster than the inflation rate, and your withdrawal amount needs to be adjusted annually to account for rising costs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I include Social Security in my retirement calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, expected Social Security benefits should be factored into your retirement plan. These benefits can significantly reduce the amount you need to withdraw from your personal portfolio, lowering the total nest egg required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a safe withdrawal rate (SWR)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Safe Withdrawal Rate (SWR) is the percentage of your portfolio that you can withdraw annually without depleting your funds over your retirement lifetime. While 4% is a common benchmark, some retirees use 3% or 3.5% for added safety, depending on market conditions and life expectancy."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/retirement-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Retirement Calculator</h1>
+      <p>Plan your financial future by calculating how much you need to save to reach your retirement goals. Adjust the parameters below to see how different savings rates and investment returns impact your journey to financial independence.</p>
+
+      <div class="calculator-card">
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="currentAge">Current Age</label>
+            <div class="input-wrapper">
+              <input type="number" id="currentAge" value="30" min="18" max="100" step="1">
+              <span class="suffix">Years</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="retirementAge">Desired Retirement Age</label>
+            <div class="input-wrapper">
+              <input type="number" id="retirementAge" value="65" min="18" max="100" step="1">
+              <span class="suffix">Years</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="currentSavings">Current Savings</label>
+            <div class="input-wrapper">
+              <input type="number" id="currentSavings" value="50000" min="0" step="1000">
+              <span class="suffix">$</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="monthlyContribution">Monthly Contribution</label>
+            <div class="input-wrapper">
+              <input type="number" id="monthlyContribution" value="1000" min="0" step="50">
+              <span class="suffix">$/mo</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="annualReturn">Expected Annual Return</label>
+            <div class="input-wrapper">
+              <input type="number" id="annualReturn" value="7" min="0" max="20" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="inflationRate">Expected Inflation Rate</label>
+            <div class="input-wrapper">
+              <input type="number" id="inflationRate" value="2.5" min="0" max="10" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="annualExpenses">Desired Annual Retirement Income (Today's $)</label>
+            <div class="input-wrapper">
+              <input type="number" id="annualExpenses" value="60000" min="0" step="1000">
+              <span class="suffix">$/yr</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="withdrawalRate">Safe Withdrawal Rate</label>
+            <div class="input-wrapper">
+              <input type="number" id="withdrawalRate" value="4" min="1" max="10" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-grid">
+          <div class="result-box">
+            <span class="calc-result-label">Required Nest Egg (Inflation Adjusted)</span>
+            <span class="calc-result-value" id="requiredNestEgg">--</span>
+          </div>
+          <div class="result-box">
+            <span class="calc-result-label">Projected Savings at Retirement</span>
+            <span class="calc-result-value" id="projectedSavings">--</span>
+          </div>
+          <div class="result-box">
+            <span class="calc-result-label">Projected Annual Income</span>
+            <span class="calc-result-value" id="projectedIncome">--</span>
+          </div>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+      </div>
+
+      <h2>How This Calculator Works</h2>
+      <p>This retirement calculator uses compound interest formulas to project your future savings and compares them against your required retirement nest egg. It takes into account both investment growth and the eroding effect of inflation.</p>
+
+      <h3>Key Concepts</h3>
+      <ul>
+        <li><strong>Compound Growth:</strong> Your investments earn returns, and those returns earn returns over time. We use the formula: <code>FV = P(1 + r/n)^(nt) + PMT × &#123;[(1 + r/n)^(nt) - 1] / (r/n)&#125;</code> where P is principal, r is the real interest rate, n is compounding frequency, t is time, and PMT is the monthly contribution.</li>
+        <li><strong>Real Return:</strong> To simplify planning, the calculator internally adjusts your expected return by the inflation rate (Real Return ≈ Expected Return - Inflation). This allows you to think about your retirement income in "today's dollars".</li>
+        <li><strong>The 4% Rule:</strong> A common rule of thumb suggesting you can safely withdraw 4% of your portfolio in the first year of retirement, adjusting for inflation thereafter. The required nest egg is calculated as: <code>Annual Expenses / Withdrawal Rate</code>.</li>
+      </ul>
+
+      <h3>Why Inflation Matters</h3>
+      <p>If your annual expenses are $60,000 today, an average inflation rate of 2.5% means that in 20 years, you will need approximately $98,316 to maintain the same purchasing power. By using "real returns" (return minus inflation), the calculator's projected savings are shown in terms of today's purchasing power, making it easier to compare against your current lifestyle.</p>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h3>How much money do I need to retire?</h3>
+          <p>The amount you need depends on your expected annual expenses and withdrawal rate. A common rule of thumb is the 4% rule, which suggests you need 25 times your annual expenses. For example, if you expect to spend $60,000 per year, you would need $1,500,000.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is the 4% rule in retirement?</h3>
+          <p>The 4% rule is a guideline that states you can safely withdraw 4% of your initial retirement portfolio value each year, adjusted for inflation, without running out of money for at least 30 years. It is based on historical stock and bond market returns.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How does inflation affect my retirement savings?</h3>
+          <p>Inflation reduces the purchasing power of your money over time. To maintain your standard of living, your retirement savings must grow faster than the inflation rate, and your withdrawal amount needs to be adjusted annually to account for rising costs.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Should I include Social Security in my retirement calculations?</h3>
+          <p>Yes, expected Social Security benefits should be factored into your retirement plan. These benefits can significantly reduce the amount you need to withdraw from your personal portfolio, lowering the total nest egg required. You can subtract your expected annual Social Security benefit from your "Desired Annual Retirement Income" in the calculator above.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What is a safe withdrawal rate (SWR)?</h3>
+          <p>A Safe Withdrawal Rate (SWR) is the percentage of your portfolio that you can withdraw annually without depleting your funds over your retirement lifetime. While 4% is a common benchmark, some retirees use 3% or 3.5% for added safety, depending on market conditions and life expectancy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .result-box {
+    background-color: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .status-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .status-success {
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+  }
+
+  .status-warning {
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+  }
+
+  @media (max-width: 600px) {
+    .input-grid, .results-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = [
+      'currentAge', 'retirementAge', 'currentSavings', 'monthlyContribution',
+      'annualReturn', 'inflationRate', 'annualExpenses', 'withdrawalRate'
+    ];
+
+    const elements = {};
+    inputs.forEach(id => {
+      elements[id] = document.getElementById(id);
+      if (elements[id]) {
+        elements[id].addEventListener('input', calculateRetirement);
+      }
+    });
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(value);
+    };
+
+    function fixFloat(value) {
+      if (isNaN(value)) return 0;
+      let fixed = parseFloat(value.toPrecision(14));
+      if (Math.abs(fixed - Math.round(fixed)) < 1e-14) {
+        return Math.round(fixed);
+      }
+      return fixed;
+    }
+
+    function calculateRetirement() {
+      const currentAge = parseFloat(elements.currentAge.value) || 0;
+      const retirementAge = parseFloat(elements.retirementAge.value) || 0;
+      const currentSavings = parseFloat(elements.currentSavings.value) || 0;
+      const monthlyContribution = parseFloat(elements.monthlyContribution.value) || 0;
+      const nominalReturn = parseFloat(elements.annualReturn.value) || 0;
+      const inflationRate = parseFloat(elements.inflationRate.value) || 0;
+      const annualExpenses = parseFloat(elements.annualExpenses.value) || 0;
+      const withdrawalRate = parseFloat(elements.withdrawalRate.value) || 0;
+
+      if (retirementAge <= currentAge) {
+        document.getElementById('projectedSavings').textContent = '--';
+        document.getElementById('requiredNestEgg').textContent = '--';
+        document.getElementById('projectedIncome').textContent = '--';
+        document.getElementById('statusMessage').textContent = 'Retirement age must be greater than current age.';
+        document.getElementById('statusMessage').className = 'status-message status-warning';
+        return;
+      }
+
+      if (withdrawalRate <= 0) {
+        document.getElementById('statusMessage').textContent = 'Withdrawal rate must be greater than 0.';
+        document.getElementById('statusMessage').className = 'status-message status-warning';
+        return;
+      }
+
+      const yearsToRetirement = retirementAge - currentAge;
+      const monthsToRetirement = yearsToRetirement * 12;
+
+      const realReturn = ((1 + (nominalReturn / 100)) / (1 + (inflationRate / 100))) - 1;
+      const monthlyRealRate = realReturn / 12;
+
+      let fvSavings = currentSavings * Math.pow(1 + realReturn, yearsToRetirement);
+
+      let fvContributions = 0;
+      if (Math.abs(monthlyRealRate) < 1e-10) {
+        fvContributions = monthlyContribution * monthsToRetirement;
+      } else {
+        fvContributions = monthlyContribution * ((Math.pow(1 + monthlyRealRate, monthsToRetirement) - 1) / monthlyRealRate);
+      }
+
+      let totalProjectedSavings = fvSavings + fvContributions;
+      totalProjectedSavings = fixFloat(totalProjectedSavings);
+
+      let requiredNestEgg = annualExpenses / (withdrawalRate / 100);
+      requiredNestEgg = fixFloat(requiredNestEgg);
+
+      let projectedIncome = totalProjectedSavings * (withdrawalRate / 100);
+      projectedIncome = fixFloat(projectedIncome);
+
+      document.getElementById('projectedSavings').textContent = formatCurrency(totalProjectedSavings);
+      document.getElementById('requiredNestEgg').textContent = formatCurrency(requiredNestEgg);
+      document.getElementById('projectedIncome').textContent = formatCurrency(projectedIncome);
+
+      const statusElement = document.getElementById('statusMessage');
+      if (totalProjectedSavings >= requiredNestEgg) {
+        statusElement.textContent = `You are on track! Your projected savings exceed your required nest egg by ${formatCurrency(totalProjectedSavings - requiredNestEgg)}.`;
+        statusElement.className = 'status-message status-success';
+      } else {
+        statusElement.textContent = `You may fall short. You need an additional ${formatCurrency(requiredNestEgg - totalProjectedSavings)} to reach your goal.`;
+        statusElement.className = 'status-message status-warning';
+      }
+    }
+
+    calculateRetirement();
+  });
+</script>

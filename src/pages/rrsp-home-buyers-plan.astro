@@ -1,0 +1,105 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "RRSP Home Buyers' Plan (HBP)",
+    "description": "Complete guide to the RRSP Home Buyers' Plan (HBP): eligibility rules, $35,000 withdrawal limit, 15-year repayment schedule, and first-time buyer strategies.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the RRSP Home Buyers' Plan (HBP)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The HBP is a federal program that allows eligible first-time home buyers to withdraw funds tax-free from their RRSP to buy or build a qualifying home."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much can I withdraw under the HBP?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The current maximum withdrawal limit under the Home Buyers' Plan is $60,000 per person."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When do I have to repay the HBP withdrawal?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Repayments must begin the second calendar year after the year of the withdrawal. The total withdrawn amount must be repaid over a 15-year period."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "RRSP Home Buyers' Plan (HBP)",
+  description: "Complete guide to the RRSP Home Buyers' Plan (HBP): eligibility rules, withdrawal limit, 15-year repayment schedule, and first-time buyer strategies.",
+  category: "guide",
+  published: "2026-03-15",
+};
+---
+<SiteLayout site="westmount" title="RRSP Home Buyers' Plan (HBP)" description="HBP rules, repayment schedules, and first-time buyer tips." canonical="https://westmountfundamentals.com/rrsp-home-buyers-plan" schema={schema}>
+  <div class="page-content">
+    <div class="hero"><h1>RRSP Home Buyers' Plan (HBP)</h1><p>HBP rules, repayment schedules, and first-time buyer tips.</p></div>
+    <div class="card">
+      <h2>Related Guides</h2>
+      <ul>
+        <li><a href="/rrsp-season-checklist">Rrsp Season Checklist</a></li>
+        <li><a href="/rrsp-withdrawal-strategies">Rrsp Withdrawal Strategies</a></li>
+        <li><a href="/rrsp-investment-options">Rrsp Investment Options</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <h3>What is the RRSP Home Buyers' Plan (HBP)?</h3>
+      <p>The HBP is a federal program that allows eligible first-time home buyers to withdraw funds tax-free from their RRSP to buy or build a qualifying home.</p>
+      <h3>How much can I withdraw under the HBP?</h3>
+      <p>The current maximum withdrawal limit under the Home Buyers' Plan is $60,000 per person.</p>
+      <h3>When do I have to repay the HBP withdrawal?</h3>
+      <p>Repayments must begin the second calendar year after the year of the withdrawal. The total withdrawn amount must be repaid over a 15-year period.</p>
+    </div>
+
+    <div class="card">
+      <h2>Leveraging Your RRSP for a Down Payment</h2>
+      <p>The Home Buyers' Plan (HBP) is a federal program designed to assist Canadians in entering the real estate market. It allows eligible first-time homebuyers to withdraw up to $60,000 from their Registered Retirement Savings Plan (RRSP) to purchase or build a qualifying home. For couples purchasing a home together, each individual can withdraw up to the maximum amount from their respective RRSPs, meaning a combined total of $120,000 could be accessed tax-free to bolster a down payment.</p>
+
+      <p>The primary advantage of the HBP is that the withdrawal is entirely tax-free at the time it is made, provided all eligibility criteria are met. Normally, any withdrawal from an RRSP is immediately added to your taxable income and subject to withholding taxes. The HBP bypasses this, effectively acting as an interest-free loan from your retirement savings to yourself, providing critical liquidity at a time when purchasing a home demands significant capital.</p>
+    </div>
+
+    <div class="card">
+      <h2>Eligibility Criteria: The "First-Time" Definition</h2>
+      <p>To qualify for the HBP, you must meet the CRA's definition of a first-time homebuyer. Interestingly, this definition is somewhat flexible. You are considered a first-time buyer if you (and your spouse or common-law partner, if applicable) have not owned a home that you occupied as your principal place of residence in the four-year period preceding the withdrawal. This means that if you previously owned a home but sold it and rented for at least four full calendar years, you may regain your first-time buyer status for the purposes of the HBP.</p>
+
+      <p>Additionally, the funds you intend to withdraw must have been deposited into your RRSP for at least 90 days prior to the withdrawal date. If you make a contribution and then withdraw it under the HBP less than 90 days later, that specific contribution will not be tax-deductible. Therefore, planning ahead is essential if you intend to deposit a lump sum specifically to utilize the HBP.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Strict Repayment Schedule</h2>
+      <p>While the initial withdrawal is tax-free, the HBP is a loan, and the CRA enforces a strict repayment schedule to ensure the funds are eventually returned to your retirement account. You have a total of 15 years to repay the full amount withdrawn. The repayment period officially begins the second year after the year you made the withdrawal. For example, if you withdrew funds under the HBP in 2024, your first annual repayment would be due in 2026.</p>
+
+      <p>The minimum annual repayment is calculated by dividing your remaining HBP balance by the number of years left in your repayment period. If you fail to make the minimum required repayment in any given year, that specific amount is permanently added to your taxable income for that year, and you will pay taxes on it at your marginal rate. Furthermore, that RRSP contribution room is lost forever. You must specifically designate your RRSP contributions as HBP repayments on Schedule 7 of your tax return; otherwise, the CRA will assume they are regular contributions.</p>
+    </div>
+
+  </div>
+  <script is:inline>/* JS */</script>
+  <style is:inline>
+    /* NO :root block. Use: --bg-color, --card-bg, --border-color, --accent-color, --text-primary, --text-secondary */
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  </style>
+</SiteLayout>

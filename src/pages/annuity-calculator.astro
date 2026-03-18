@@ -1,0 +1,485 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Annuity Payout Calculator | Estimate Your Retirement Income",
+  description: "Calculate your estimated monthly or annual income from an annuity. Discover how principal, interest rates, and duration impact your guaranteed payouts.",
+  category: "tool",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is an annuity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An annuity is a financial contract between you and an insurance company. You make a lump-sum payment or series of payments, and in return, the insurer provides you with regular disbursements, either immediately or at some point in the future."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is an annuity payout calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Annuity payouts are calculated based on the principal amount invested, the expected rate of return (interest rate), the frequency of payouts, and the duration of the payout period. The formula determines the fixed periodic payment required to deplete the principal over the specified time frame, while factoring in the interest earned on the remaining balance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between a fixed and variable annuity?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A fixed annuity guarantees a specific rate of return and predictable payout amounts. A variable annuity's returns and payouts are tied to the performance of an underlying investment portfolio, meaning they can fluctuate based on market conditions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I outlive my annuity payouts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you choose a 'period certain' annuity, payouts stop after a specified number of years, regardless of whether you are still living. However, a 'lifetime' annuity guarantees payments for the rest of your life, protecting you from the risk of outliving your money."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are annuity payouts taxable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, but the tax treatment depends on how the annuity was funded. If funded with pre-tax money (like an IRA), the entire payout is taxable as ordinary income. If funded with after-tax money, only the earnings portion of the payout is taxed, while the return of your original principal is tax-free."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/annuity-calculator" schema={JSON.stringify(schema)}>
+  <div class="page-content">
+    <h1>Annuity Payout Calculator</h1>
+    <p>
+      Planning for retirement involves ensuring a steady stream of income that can support your lifestyle. An annuity is a popular financial product designed to do just that—convert a lump sum of savings into regular, predictable payments. Use our free annuity calculator below to estimate your potential payouts and understand how different factors influence your income.
+    </p>
+
+    <div class="calculator-card">
+      <form id="annuity-form">
+        <div class="input-group">
+          <label for="principal">Starting Principal Balance</label>
+          <div class="input-wrapper">
+            <span class="prefix">$</span>
+            <input type="number" id="principal" min="0" step="1000" value="500000" required>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="rate">Annual Expected Return (Interest Rate)</label>
+          <div class="input-wrapper">
+            <input type="number" id="rate" min="0" max="100" step="0.1" value="5.0" required>
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="years">Payout Duration (Years)</label>
+          <div class="input-wrapper">
+            <input type="number" id="years" min="1" max="100" step="1" value="20" required>
+            <span class="suffix">Yrs</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="frequency">Payout Frequency</label>
+          <select id="frequency" required>
+            <option value="12">Monthly</option>
+            <option value="4">Quarterly</option>
+            <option value="2">Semi-Annually</option>
+            <option value="1">Annually</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="calc-result">
+        <span class="calc-result-label" id="result-label">Estimated Monthly Payout</span>
+        <div class="calc-result-value" id="result-value">$0.00</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Payouts Over Time</div>
+          <div class="stat-value" id="total-payouts">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Interest Earned</div>
+          <div class="stat-value" id="total-interest">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function initAnnuityCalculator() {
+        const form = document.getElementById('annuity-form');
+        if (!form || form.dataset.initialized) return;
+        form.dataset.initialized = 'true';
+
+        const principalInput = document.getElementById('principal');
+        const rateInput = document.getElementById('rate');
+        const yearsInput = document.getElementById('years');
+        const frequencyInput = document.getElementById('frequency');
+
+        const resultLabel = document.getElementById('result-label');
+        const resultValue = document.getElementById('result-value');
+        const totalPayoutsEl = document.getElementById('total-payouts');
+        const totalInterestEl = document.getElementById('total-interest');
+
+        function formatCurrency(value) {
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 2
+          }).format(value);
+        }
+
+        function calculateAnnuity() {
+          const p = parseFloat(principalInput.value);
+          const annualRate = parseFloat(rateInput.value) / 100;
+          const t = parseFloat(yearsInput.value);
+          const n = parseInt(frequencyInput.value);
+
+          if (isNaN(p) || isNaN(annualRate) || isNaN(t) || isNaN(n) || p <= 0 || t <= 0) {
+            resultValue.textContent = '$0.00';
+            totalPayoutsEl.textContent = '$0.00';
+            totalInterestEl.textContent = '$0.00';
+            return;
+          }
+
+          const r = annualRate / n;
+          const totalPeriods = t * n;
+          let pmt = 0;
+
+          if (annualRate === 0) {
+            pmt = p / totalPeriods;
+          } else {
+            // PMT = P * [ r / (1 - (1 + r)^-n) ]
+            pmt = p * (r / (1 - Math.pow(1 + r, -totalPeriods)));
+          }
+
+          const totalPayout = pmt * totalPeriods;
+          const totalInterest = Math.max(0, totalPayout - p);
+
+          // Update Labels
+          const freqLabels = {
+            12: 'Monthly',
+            4: 'Quarterly',
+            2: 'Semi-Annual',
+            1: 'Annual'
+          };
+          resultLabel.textContent = `Estimated ${freqLabels[n]} Payout`;
+
+          // Update Values
+          resultValue.textContent = formatCurrency(pmt);
+          totalPayoutsEl.textContent = formatCurrency(totalPayout);
+          totalInterestEl.textContent = formatCurrency(totalInterest);
+        }
+
+        // Add real-time event listeners
+        [principalInput, rateInput, yearsInput, frequencyInput].forEach(input => {
+          input.addEventListener('input', calculateAnnuity);
+        });
+
+        // Initial calculation
+        calculateAnnuity();
+      }
+
+      // Handle standard load and Astro view transitions
+      document.addEventListener('DOMContentLoaded', initAnnuityCalculator);
+      document.addEventListener('astro:page-load', initAnnuityCalculator);
+    </script>
+
+<style>
+  /* Local Styles Using CSS Variables */
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--bg-color) 80%, transparent), 0 2px 4px -1px color-mix(in srgb, var(--bg-color) 80%, transparent);
+  }
+
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  /* Specific padding for prefix/suffix fields */
+  input[id="principal"] { padding-left: 2rem; }
+  input[id="rate"], input[id="years"] { padding-right: 3rem; }
+
+  input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  select {
+    cursor: pointer;
+    font-family: var(--font-sans);
+  }
+
+  .calc-result {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .calc-result-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 500;
+  }
+
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    line-height: 1.2;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .stat-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .content-section {
+    margin-top: 3rem;
+  }
+
+  .content-section h2 {
+    color: var(--text-primary);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-section h3 {
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .content-section p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .content-section ul {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .content-section li {
+    margin-bottom: 0.5rem;
+  }
+
+  .formula-box {
+    background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
+    border-left: 4px solid var(--accent-color);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+  }
+
+  .formula-box code {
+    color: var(--accent-color);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: transparent;
+  }
+
+  .faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .faq-details {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .faq-summary {
+    padding: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding-right: 3rem;
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-summary::after {
+    content: '+';
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    transition: transform 0.2s;
+  }
+
+  .faq-details[open] .faq-summary::after {
+    content: '−';
+  }
+
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+
+  .faq-answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 600px) {
+    .calculator-card {
+      padding: 1.5rem;
+    }
+    .calc-result-value {
+      font-size: 2.5rem;
+    }
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+    <div class="content-section">
+      <h2>Understanding Annuities</h2>
+      <p>
+        At its core, an annuity is a contract between you and an insurance company. You provide the insurer with capital—either as a single lump sum or through a series of premiums—and in exchange, they promise to make regular payments to you. These payments can begin immediately (an immediate annuity) or at a future date (a deferred annuity).
+      </p>
+      <p>
+        Annuities are primarily used to manage longevity risk: the risk of outliving your retirement savings. By transforming a portion of your nest egg into guaranteed income, you can create a financial foundation similar to a pension or Social Security.
+      </p>
+
+      <h3>How the Annuity Formula Works</h3>
+      <p>
+        Calculating a fixed payout for a period-certain annuity relies on the present value of an annuity formula. This mathematical equation determines the regular withdrawal amount needed to exactly deplete a starting principal over a specific number of periods, assuming a constant interest rate.
+      </p>
+      <p>
+        The core formula for calculating the payment (<strong>PMT</strong>) is:
+      </p>
+      <div class="formula-box">
+        <code>PMT = P * [ r / (1 - (1 + r)^-n) ]</code>
+      </div>
+      <p>Where:</p>
+      <ul>
+        <li><strong>P:</strong> The initial principal or starting balance.</li>
+        <li><strong>r:</strong> The periodic interest rate (annual rate divided by the number of payouts per year).</li>
+        <li><strong>n:</strong> The total number of payout periods (years multiplied by payouts per year).</li>
+      </ul>
+
+      <h3>Key Factors Influencing Your Payout</h3>
+      <ul>
+        <li><strong>Principal Amount:</strong> A larger initial investment naturally yields higher regular payments.</li>
+        <li><strong>Interest Rate:</strong> Higher guaranteed or expected growth rates allow the insurance company to pay out more over time.</li>
+        <li><strong>Payout Duration:</strong> Spreading payments over a shorter timeframe (e.g., 10 years) results in larger individual payments compared to stretching them over a longer duration (e.g., 30 years).</li>
+        <li><strong>Payout Frequency:</strong> Receiving payments annually versus monthly changes compounding dynamics and slightly alters the total amount received per year.</li>
+      </ul>
+
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        {schema.mainEntity.map((faq) => (
+          <details class="faq-details">
+            <summary class="faq-summary">{faq.name}</summary>
+            <div class="faq-answer">
+              <p>{faq.acceptedAnswer.text}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</SiteLayout>

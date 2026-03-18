@@ -1,0 +1,239 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Interactive Canadian Brokerage Fee Calculator (2026)",
+    "description": "Calculate your exact annual trading costs across Wealthsimple, Questrade, IBKR, and big banks. Enter your trading frequency and asset types to see which brokerage is cheapest.",
+    "url": "https://westmountfundamentals.com/brokerage-fee-calculator"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to trade stocks in Canada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends entirely on the brokerage and the currency of the stock. Wealthsimple and National Bank charge $0 for Canadian trades. Questrade charges $4.95 to $9.95 per stock trade (but ETF purchases are free). Big banks like TD and RBC generally charge a flat $9.95 per trade. Interactive Brokers uses a tiered model, often resulting in commissions well under $1 per trade."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are ECN fees in Canada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Electronic Communication Network (ECN) fees are tiny charges passed on by brokerages (like Questrade) when your order removes liquidity from the market (e.g., placing a market order instead of a limit order). They are usually fractions of a cent per share. Wealthsimple absorbs ECN fees, meaning their zero-commission trades are truly free."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why are my US stock trades so expensive?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you are trading US stocks with Canadian dollars, you are paying a hidden foreign exchange (FX) fee, typically around 1.5% of the total trade value. This fee dwarfs standard trading commissions. To avoid this, you must use a brokerage that allows you to hold USD natively and utilize strategies like Norbert's Gambit (e.g., Questrade) or use a broker that offers spot-rate conversions (e.g., Interactive Brokers)."
+        }
+      }
+    ]
+  }
+];
+
+export const meta = {
+  title: "Canadian Brokerage Fee Calculator (2026)",
+  description: "Calculate your exact annual trading costs across Wealthsimple, Questrade, IBKR, and big banks. Enter your trading frequency and asset types to see which...",
+  category: "tool",
+  published: "2026-03-15",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Canadian Brokerage Fee Calculator (2026)"
+  description="Calculate your exact annual trading costs across Wealthsimple, Questrade, IBKR, and big banks. Enter your trading frequency and asset types to see which."
+  canonical="https://westmountfundamentals.com/brokerage-fee-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Canadian Brokerage Fee Calculator</h1>
+      <p>Stop guessing. Calculate your exact annual trading costs across the major Canadian platforms.</p>
+    </div>
+
+    <div class="content-section">
+      <p>Choosing the right brokerage is one of the most mathematically consequential decisions an investor makes. The difference between paying $9.99 per trade at a big bank and $0 at a discount brokerage can amount to tens of thousands of dollars in lost compounded returns over a decade.</p>
+
+      <p>However, the calculation is rarely as simple as looking at the headline commission rate. You must factor in your trading frequency, whether you are buying stocks or ETFs, and crucially, whether you are trading US equities and incurring foreign exchange (FX) fees.</p>
+
+      <p>We built this interactive calculator to demystify the fee structures of Canada's top brokerages: Wealthsimple, Questrade, Interactive Brokers (IBKR), and the standard Big Bank pricing model (like TD Direct Investing). To understand the full context behind these numbers, read our master guide on the <a href="/canadian-brokerages-2026">Best Canadian Brokerages for 2026</a>.</p>
+
+      <div class="calculator-container card">
+        <h3>Estimate Your Annual Costs</h3>
+
+        <div class="input-group">
+          <label for="cad-stock-trades">Monthly CAD Stock Trades (Buy/Sell):</label>
+          <input type="number" id="cad-stock-trades" value="2" min="0" />
+        </div>
+
+        <div class="input-group">
+          <label for="cad-etf-buys">Monthly CAD ETF Purchases:</label>
+          <input type="number" id="cad-etf-buys" value="2" min="0" />
+          <small class="helper-text">Purchasing Canadian-listed ETFs (e.g., XEQT, VGRO).</small>
+        </div>
+
+        <div class="input-group">
+          <label for="usd-trades">Monthly USD Trades (Buy/Sell):</label>
+          <input type="number" id="usd-trades" value="1" min="0" />
+          <small class="helper-text">Assumes a $1,000 average trade size for FX calculation.</small>
+        </div>
+
+        <button id="calculate-btn" class="calc-btn">Calculate Annual Fees</button>
+
+        <div id="results" class="results-section" style="display: none;">
+          <h4>Estimated Annual Cost:</h4>
+
+          <div class="result-row">
+            <span class="broker-name">Wealthsimple Trade (Basic)</span>
+            <span class="broker-cost" id="ws-cost">$0</span>
+          </div>
+          <p class="result-note">Assumes 0 commissions. Includes 1.5% FX fee on every USD trade. (Note: Wealthsimple Plus is $120/yr but eliminates per-trade FX fees).</p>
+
+          <div class="result-row">
+            <span class="broker-name">Questrade</span>
+            <span class="broker-cost" id="qt-cost">$0</span>
+          </div>
+          <p class="result-note">Assumes $4.95 per stock trade, free ETF buys. Includes 1.5% FX fee on USD trades (assumes you do NOT use Norbert's Gambit).</p>
+
+          <div class="result-row">
+            <span class="broker-name">Interactive Brokers (IBKR)</span>
+            <span class="broker-cost" id="ibkr-cost">$0</span>
+          </div>
+          <p class="result-note">Assumes $1.00 per trade (Fixed tier). Assumes $2.00 flat FX conversion fee per USD trade.</p>
+
+          <div class="result-row">
+            <span class="broker-name">Big Banks (e.g., TD Direct)</span>
+            <span class="broker-cost" id="bank-cost">$0</span>
+          </div>
+          <p class="result-note">Assumes $9.99 flat commission per trade. Includes standard 1.5% FX markup on USD trades.</p>
+        </div>
+      </div>
+
+      <h2>How to Interpret the Results</h2>
+      <p>The results generated by the calculator will likely highlight several key themes about the Canadian brokerage landscape:</p>
+
+      <h3>The True Cost of US Trading</h3>
+      <p>If you entered even a single monthly USD trade, you likely saw the Wealthsimple (Basic) and Big Bank costs skyrocket. This is the devastating impact of the 1.5% foreign exchange markup. If you are converting CAD to USD frequently, you are paying a massive hidden fee.</p>
+
+      <p>This is why we highly recommend using <strong>Interactive Brokers (IBKR)</strong> if you actively trade US equities. They offer spot-rate currency conversions (a flat fee of roughly $2 USD) rather than a percentage markup. You can read our full <a href="/interactive-brokers-canada">Interactive Brokers Canada Review</a> to see why they are the <a href="/best-brokerage-for-usd">best brokerage for USD trading</a>.</p>
+
+      <p>Alternatively, many investors use <strong>Questrade</strong> and utilize a strategy called Norbert's Gambit to bypass the 1.5% fee. We assume the standard 1.5% fee in the calculator above for Questrade, but if you master Norbert's Gambit, Questrade's USD costs drop significantly. Compare them directly in our <a href="/questrade-vs-ibkr">Questrade vs IBKR</a> analysis.</p>
+
+      <h3>The Power of Free ETF Purchases</h3>
+      <p>If you entered zero stock trades and high numbers for CAD ETF purchases, Wealthsimple and Questrade will be the clear winners.</p>
+
+      <p><strong>Wealthsimple</strong> charges absolutely nothing to buy or sell Canadian ETFs, making it arguably the <a href="/best-brokerage-for-beginners">best brokerage for beginners</a> practicing dollar-cost averaging. <strong>Questrade</strong> offers free ETF purchases (though selling incurs a $4.95 commission). The big banks, conversely, will charge you $9.99 every single time you buy an ETF. For a bi-weekly contributor, this is mathematical suicide. Read our deep dive into <a href="/wealthsimple-vs-questrade">Wealthsimple vs Questrade</a> to see which low-cost model suits you.</p>
+
+      <h3>When Do the Big Banks Make Sense?</h3>
+      <p>If the math is so clearly against them, why do millions of Canadians still use platforms like TD Direct Investing or RBC Direct Investing?</p>
+
+      <p>The answer lies in scale and convenience. If you have a $500,000 portfolio and execute only four trades a year in $20,000 blocks, the $9.99 commission represents 0.05% of the trade—it is essentially rounding error. At that level, the seamless integration with your daily chequing account and access to premium institutional research (like Morningstar reports) becomes more valuable than saving forty dollars a year in commissions.</p>
+
+      <p>We break down this exact dynamic in our <a href="/td-direct-vs-discount">TD Direct Investing vs Discount Brokers</a> guide, exploring when paying the premium is actually justified.</p>
+
+      <p>Finally, if you want the security of a big bank without the commissions, National Bank Direct Brokerage is currently the only major bank offering zero-commission trading on stocks and ETFs, though they still charge standard FX markups unless you use Norbert's Gambit.</p>
+    </div>
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const calcBtn = document.getElementById('calculate-btn');
+      if (calcBtn) {
+        calcBtn.addEventListener('click', () => {
+          const cadStockTrades = parseInt(document.getElementById('cad-stock-trades').value) || 0;
+          const cadEtfBuys = parseInt(document.getElementById('cad-etf-buys').value) || 0;
+          const usdTrades = parseInt(document.getElementById('usd-trades').value) || 0;
+          const usdTradeValue = 1000; // Assume $1,000 avg trade for FX calculations
+
+          const totalTrades = cadStockTrades + cadEtfBuys + usdTrades;
+
+          if (totalTrades === 0) {
+            alert("Please enter at least one trade.");
+            return;
+          }
+
+          // Wealthsimple (Basic)
+          // 0 commission CAD. 1.5% FX on USD trades.
+          const wsFxCostPerTrade = usdTradeValue * 0.015;
+          const wsMonthly = (usdTrades * wsFxCostPerTrade);
+          const wsAnnual = wsMonthly * 12;
+
+          // Questrade
+          // $4.95 per stock trade. Free ETF buys. 1.5% FX on USD (assuming no NG).
+          const qtStockCost = cadStockTrades * 4.95;
+          const qtEtfCost = 0; // Free to buy
+          const qtUsdComm = usdTrades * 4.95;
+          const qtFxCost = usdTrades * (usdTradeValue * 0.015);
+          const qtMonthly = qtStockCost + qtEtfCost + qtUsdComm + qtFxCost;
+          const qtAnnual = qtMonthly * 12;
+
+          // IBKR (Fixed Tier)
+          // Assume $1.00 minimum per trade. Flat $2.00 FX fee per conversion.
+          const ibkrStockCost = cadStockTrades * 1.00;
+          const ibkrEtfCost = cadEtfBuys * 1.00;
+          const ibkrUsdComm = usdTrades * 1.00;
+          const ibkrFxCost = usdTrades * 2.00; // Flat conversion fee
+          const ibkrMonthly = ibkrStockCost + ibkrEtfCost + ibkrUsdComm + ibkrFxCost;
+          const ibkrAnnual = ibkrMonthly * 12;
+
+          // Big Banks (e.g. TD)
+          // $9.99 flat commission. 1.5% FX on USD.
+          const bankComm = (cadStockTrades + cadEtfBuys + usdTrades) * 9.99;
+          const bankFxCost = usdTrades * (usdTradeValue * 0.015);
+          const bankMonthly = bankComm + bankFxCost;
+          const bankAnnual = bankMonthly * 12;
+
+          // Update UI
+          const formatCurrency = (val) => new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(val);
+
+          document.getElementById('ws-cost').textContent = formatCurrency(wsAnnual);
+          document.getElementById('qt-cost').textContent = formatCurrency(qtAnnual);
+          document.getElementById('ibkr-cost').textContent = formatCurrency(ibkrAnnual);
+          document.getElementById('bank-cost').textContent = formatCurrency(bankAnnual);
+
+          document.getElementById('results').style.display = 'block';
+        });
+      }
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
+    .content-section { margin-top: 2rem; }
+    .content-section h2 { font-size: 1.8rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--text-primary); }
+    .content-section h3 { font-size: 1.4rem; font-weight: 700; margin: 1.5rem 0 1rem; color: var(--text-primary); }
+    .content-section p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 1.2rem; }
+    .content-section a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .content-section a:hover { text-decoration: underline; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+
+    .input-group { margin-bottom: 1.5rem; }
+    .input-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary); }
+    .input-group input { width: 100%; max-width: 200px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: color-mix(in srgb, var(--card-bg) 90%, #000); color: var(--text-primary); font-size: 1rem; }
+    .helper-text { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem; }
+
+    .calc-btn { background: var(--accent-color); color: #fff; border: none; padding: 0.8rem 1.5rem; font-size: 1.1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: opacity 0.2s; margin-top: 1rem; }
+    .calc-btn:hover { opacity: 0.9; }
+
+    .results-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent); }
+    .broker-name { font-weight: 600; color: var(--text-primary); font-size: 1.1rem; }
+    .broker-cost { font-weight: 800; color: var(--accent-color); font-size: 1.2rem; }
+    .result-note { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem; margin-bottom: 0.8rem; line-height: 1.4; }
+  </style>
+</SiteLayout>

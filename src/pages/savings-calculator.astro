@@ -1,0 +1,395 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Savings Calculator: Model Compound Interest & Growth",
+  description: "Use our free savings calculator to see how your money can grow over time. Factor in initial deposits, monthly contributions, and interest rates.",
+  category: "tool",
+  published: "2026-03-17"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does a savings calculator work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A savings calculator uses the compound interest formula to project the future value of your savings. It accounts for your initial balance, regular contributions, the interest rate, and the time period to estimate how much your money will grow."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compound interest is the interest you earn on both your original money and on the interest you've already accumulated. This means your wealth can grow exponentially over time, which is why starting to save early is so beneficial."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does interest compound?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The compounding frequency depends on your financial institution and the specific account. Common compounding frequencies include daily, monthly, quarterly, and annually. This calculator assumes monthly compounding, which is typical for most savings accounts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are regular contributions important for savings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Regular contributions significantly boost your final balance because you are consistently adding more capital that will earn interest. Even small monthly deposits can make a large difference over several years due to the power of compounding."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this calculator for investments like index funds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, while designed as a savings calculator, you can use it to estimate the growth of investments like index funds by entering the expected average annual return as the interest rate. Keep in mind that investment returns fluctuate, unlike guaranteed savings rates."
+      }
+    }
+  ]
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/savings-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Savings Calculator</h1>
+      <p>Estimate how your savings will grow over time with compound interest. Adjust your starting balance, monthly contributions, and interest rate to model different scenarios.</p>
+
+      <div class="calculator-card">
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="initial-balance">Initial Balance</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="initial-balance" value="1000" min="0" step="100" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="monthly-contribution">Monthly Contribution</label>
+            <div class="input-wrapper">
+              <span class="prefix">$</span>
+              <input type="number" id="monthly-contribution" value="100" min="0" step="50" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="interest-rate">Interest Rate (Annual)</label>
+            <div class="input-wrapper">
+              <input type="number" id="interest-rate" value="5" min="0" max="100" step="0.1" />
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="years">Time Period (Years)</label>
+            <div class="input-wrapper">
+              <input type="number" id="years" value="10" min="1" max="100" step="1" />
+              <span class="suffix">Yrs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-result">
+          <div class="result-grid">
+            <div class="result-box primary">
+              <span class="calc-result-label">Final Balance</span>
+              <span class="calc-result-value" id="final-balance-result">$0.00</span>
+            </div>
+            <div class="result-box secondary">
+              <span class="calc-result-label">Total Contributions</span>
+              <span class="calc-result-value-sm" id="total-contributions-result">$0.00</span>
+            </div>
+            <div class="result-box secondary">
+              <span class="calc-result-label">Total Interest Earned</span>
+              <span class="calc-result-value-sm" id="total-interest-result">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="content-section">
+        <h2>How Compound Interest Turbocharges Your Savings</h2>
+        <p>Compound interest is often referred to as the eighth wonder of the world. Unlike simple interest, where you only earn on your initial deposit, compound interest allows you to earn interest on both your initial deposit <strong>and</strong> the interest that deposit has already generated.</p>
+
+        <p>This snowball effect means that your wealth grows exponentially over time. The longer you leave your money invested, the steeper the growth curve becomes.</p>
+
+        <h3>The Math Behind the Magic</h3>
+        <p>Our savings calculator uses a combination of two standard financial formulas to project your future balance, assuming monthly compounding:</p>
+
+        <div class="highlight-box">
+          <p><strong>1. Growth of Initial Balance:</strong></p>
+          <code>A = P(1 + r/n)^(nt)</code>
+          <p>Where <em>P</em> is the principal (initial balance), <em>r</em> is the annual interest rate, <em>n</em> is the compounding frequency (12 for monthly), and <em>t</em> is the number of years.</p>
+        </div>
+
+        <div class="highlight-box">
+          <p><strong>2. Growth of Monthly Contributions:</strong></p>
+          <code>FV = PMT × [((1 + r/n)^(nt) - 1) / (r/n)]</code>
+          <p>Where <em>PMT</em> is your monthly contribution amount. This calculates the future value of a series of equal payments.</p>
+        </div>
+
+        <h2>Why Regular Contributions Matter</h2>
+        <p>While a large lump-sum deposit is great, consistent monthly contributions are the true engine of wealth building for most people. Adding fresh capital every month gives your interest rate more money to work with during every compounding cycle.</p>
+        <p>For example, starting with $0 and contributing $500 a month at a 7% return yields nearly <strong>$600,000</strong> over 30 years—despite only contributing $180,000 out of pocket. The rest is pure compound interest.</p>
+
+        <div class="faq-section">
+          <h2>Frequently Asked Questions</h2>
+          <div class="faq-item">
+            <h3>How does a savings calculator work?</h3>
+            <p>A savings calculator uses the compound interest formula to project the future value of your savings. It accounts for your initial balance, regular contributions, the interest rate, and the time period to estimate how much your money will grow.</p>
+          </div>
+          <div class="faq-item">
+            <h3>What is compound interest?</h3>
+            <p>Compound interest is the interest you earn on both your original money and on the interest you've already accumulated. This means your wealth can grow exponentially over time, which is why starting to save early is so beneficial.</p>
+          </div>
+          <div class="faq-item">
+            <h3>How often does interest compound?</h3>
+            <p>The compounding frequency depends on your financial institution and the specific account. Common compounding frequencies include daily, monthly, quarterly, and annually. This calculator assumes monthly compounding, which is typical for most savings accounts.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Why are regular contributions important for savings?</h3>
+            <p>Regular contributions significantly boost your final balance because you are consistently adding more capital that will earn interest. Even small monthly deposits can make a large difference over several years due to the power of compounding.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Can I use this calculator for investments like index funds?</h3>
+            <p>Yes, while designed as a savings calculator, you can use it to estimate the growth of investments like index funds by entering the expected average annual return as the interest rate. Keep in mind that investment returns fluctuate, unlike guaranteed savings rates.</p>
+          </div>
+        </div>
+      </div>
+
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+          const initialBalanceInput = document.getElementById('initial-balance');
+          const monthlyContributionInput = document.getElementById('monthly-contribution');
+          const interestRateInput = document.getElementById('interest-rate');
+          const yearsInput = document.getElementById('years');
+
+          const finalBalanceEl = document.getElementById('final-balance-result');
+          const totalContributionsEl = document.getElementById('total-contributions-result');
+          const totalInterestEl = document.getElementById('total-interest-result');
+
+          // Expose to window for Playwright tests
+          window.initialBalanceInput = initialBalanceInput;
+          window.monthlyContributionInput = monthlyContributionInput;
+          window.interestRateInput = interestRateInput;
+          window.yearsInput = yearsInput;
+          window.finalBalanceEl = finalBalanceEl;
+          window.totalContributionsEl = totalContributionsEl;
+          window.totalInterestEl = totalInterestEl;
+
+          const formatCurrency = (value) => {
+            return new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }).format(value);
+          };
+
+          const calculateSavings = () => {
+            const initial = parseFloat(initialBalanceInput.value) || 0;
+            const monthly = parseFloat(monthlyContributionInput.value) || 0;
+            const rate = parseFloat(interestRateInput.value) || 0;
+            const years = parseFloat(yearsInput.value) || 0;
+
+            const months = years * 12;
+            let finalBalance = 0;
+            let totalContributions = initial + (monthly * months);
+
+            if (Math.abs(rate) < 1e-10) {
+              // Handle 0% interest edge case
+              finalBalance = totalContributions;
+            } else {
+              const monthlyRate = rate / 100 / 12;
+
+              // Compound interest for initial balance
+              const initialGrowth = initial * Math.pow(1 + monthlyRate, months);
+
+              // Future value of a series (monthly contributions)
+              const contributionGrowth = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+              finalBalance = initialGrowth + contributionGrowth;
+            }
+
+            const totalInterest = finalBalance - totalContributions;
+
+            // Fix floating point errors
+            finalBalance = Math.round(finalBalance * 100) / 100;
+            totalContributions = Math.round(totalContributions * 100) / 100;
+            let interestFixed = Math.round(totalInterest * 100) / 100;
+
+            // Ensure no negative tiny interest due to float math
+            if (interestFixed < 0) interestFixed = 0;
+
+            finalBalanceEl.textContent = formatCurrency(finalBalance);
+            totalContributionsEl.textContent = formatCurrency(totalContributions);
+            totalInterestEl.textContent = formatCurrency(interestFixed);
+          };
+
+          // Attach event listeners for real-time calculation
+          [initialBalanceInput, monthlyContributionInput, interestRateInput, yearsInput].forEach(input => {
+            input.addEventListener('input', calculateSavings);
+          });
+
+          // Run initial calculation
+          calculateSavings();
+        });
+      </script>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .prefix {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .input-wrapper input {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  .input-wrapper:has(.prefix) input {
+    padding-left: 2rem;
+  }
+
+  .input-wrapper:has(.suffix) input {
+    padding-right: 2.5rem;
+  }
+
+  .suffix {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .result-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .result-box {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .result-box.primary {
+    background-color: var(--card-bg);
+    border-color: var(--accent-color);
+  }
+
+  .calc-result-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-color);
+  }
+
+  .calc-result-value-sm {
+    font-family: var(--font-mono);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  @media (min-width: 600px) {
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "primary primary"
+        "secondary1 secondary2";
+    }
+    .result-box.primary {
+      grid-area: primary;
+    }
+  }
+</style>

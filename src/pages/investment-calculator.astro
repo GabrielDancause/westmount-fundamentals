@@ -1,0 +1,580 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Investment Calculator: See How Your Money Grows",
+  description: "Find out exactly how much your money could grow with this interactive investment calculator. What happens if you invest $500 a month? See the math.",
+  category: "tool",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/investment-calculator"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is investment growth calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Investment growth is calculated using the compound interest formula: A = P(1 + r/n)^(nt). This takes into account your initial investment (P), the annual interest rate (r), how often it compounds (n), and the time it stays invested (t)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a realistic annual return for an investment calculator?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, the stock market (like the S&P 500) has returned an average of 7% to 10% per year before inflation. For conservative estimates, investors often use 6% to 8%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much should I invest each month?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A common rule of thumb is to invest 15% to 20% of your gross income for retirement. However, any amount helps due to the power of compound interest. Even $50 or $100 a month can grow significantly over decades."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this investment calculator account for inflation?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most basic calculators do not account for inflation by default. To adjust for inflation, you can subtract the expected inflation rate (historically around 2% to 3%) from your expected return rate to find your 'real' return."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is time so important in investing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Time allows compound interest to work. When your returns generate their own returns, the growth becomes exponential. An investor who starts early with less money can often outperform someone who starts later with more money."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/investment-calculator"
+  schema={schema}
+>
+  <div class="page-content">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h1>Investment Calculator</h1>
+      <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">See exactly how your money can grow over time with compound interest.</p>
+    </div>
+
+    <div class="calculator-card">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+        <div class="input-group">
+          <label for="initial">Initial Investment</label>
+          <div class="input-wrapper">
+            <span style="position: absolute; left: 1rem; color: var(--text-secondary); pointer-events: none;">$</span>
+            <input type="number" id="initial" value="10000" min="0" step="100" style="padding-left: 2rem;">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="monthly">Monthly Contribution</label>
+          <div class="input-wrapper">
+            <span style="position: absolute; left: 1rem; color: var(--text-secondary); pointer-events: none;">$</span>
+            <input type="number" id="monthly" value="500" min="0" step="50" style="padding-left: 2rem;">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="years">Years to Grow</label>
+          <div class="input-wrapper">
+            <input type="number" id="years" value="20" min="1" max="100" step="1">
+            <span class="suffix">years</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="rate">Expected Annual Return</label>
+          <div class="input-wrapper">
+            <input type="number" id="rate" value="8" min="-100" max="100" step="0.1">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <span class="calc-result-label">Future Value</span>
+        <div class="calc-result-value" id="finalBalance">$0.00</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="calc-result-label">Total Contributions</span>
+        <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);" id="totalPrincipal">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <span class="calc-result-label">Total Earnings</span>
+        <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-color);" id="totalInterest">$0.00</div>
+      </div>
+    </div>
+
+    <div class="chart-container" style="margin-top: 2rem;">
+      <h3 style="margin-top: 0; margin-bottom: 1rem;">Growth Schedule</h3>
+      <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+        <table id="scheduleTable">
+          <thead style="position: sticky; top: 0; z-index: 1;">
+            <tr>
+              <th>Year</th>
+              <th>Contributions</th>
+              <th>Total Earnings</th>
+              <th>End Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script is:inline>
+      const formatCurrency = (num) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(num);
+      };
+
+      const calculateInvestment = () => {
+        const initial = Math.max(0, parseFloat(document.getElementById('initial').value) || 0);
+        const monthly = Math.max(0, parseFloat(document.getElementById('monthly').value) || 0);
+        let years = parseFloat(document.getElementById('years').value) || 0;
+        let rate = parseFloat(document.getElementById('rate').value) || 0;
+
+        // Cap years at 100 to prevent performance issues
+        if (years > 100) {
+            years = 100;
+            document.getElementById('years').value = 100;
+        }
+        if (years < 0) years = 0;
+
+        const r = rate / 100;
+        const n = 12; // Compounded monthly
+
+        let balance = initial;
+        let totalContributions = initial;
+
+        const tbody = document.querySelector('#scheduleTable tbody');
+        tbody.innerHTML = '';
+
+        let html = '';
+
+        for (let year = 1; year <= years; year++) {
+          let yearStartBalance = balance;
+          let yearContributions = 0;
+
+          for (let month = 1; month <= 12; month++) {
+            balance += monthly;
+            yearContributions += monthly;
+            balance = balance * (1 + (r / n));
+          }
+
+          totalContributions += yearContributions;
+          const yearInterest = balance - totalContributions;
+
+          // Handle negative balance edge case
+          if (balance < 0) balance = 0;
+          if (totalContributions < 0) totalContributions = 0;
+
+          html += `
+            <tr>
+              <td>${year}</td>
+              <td>${formatCurrency(totalContributions)}</td>
+              <td>${formatCurrency(yearInterest)}</td>
+              <td style="color: var(--accent-color); font-weight: 600;">${formatCurrency(balance)}</td>
+            </tr>
+          `;
+        }
+
+        tbody.innerHTML = html;
+
+        // Final updates
+        document.getElementById('totalPrincipal').textContent = formatCurrency(totalContributions);
+
+        const totalEarnings = balance - totalContributions;
+        document.getElementById('totalInterest').textContent = formatCurrency(Math.max(0, totalEarnings));
+
+        document.getElementById('finalBalance').textContent = formatCurrency(Math.max(0, balance));
+      };
+
+      // Add event listeners
+      const inputs = ['initial', 'monthly', 'years', 'rate'];
+      inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', calculateInvestment);
+      });
+
+      // Initial calculation
+      calculateInvestment();
+    </script>
+
+    <style>
+      .calculator-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+      }
+      @media (min-width: 768px) {
+        .calculator-container {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .prefix, .suffix {
+        position: absolute;
+        color: var(--text-secondary);
+        padding: 0 0.75rem;
+        font-size: 1rem;
+      }
+      .suffix {
+        right: 0;
+      }
+      .input-group input, .input-group select {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 1rem;
+      }
+      .input-group input.has-prefix {
+        padding-left: 2rem;
+      }
+      .input-group input.has-suffix {
+        padding-right: 2rem;
+      }
+      .input-group input:focus, .input-group select:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
+      }
+
+      .results-panel {
+        background: var(--bg-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+      }
+      .stat-card {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .stat-card:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--accent-color);
+      }
+      .stat-sub {
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .breakdown-table {
+        margin-top: 2rem;
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: right;
+        font-size: 0.9rem;
+      }
+      th, td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      th {
+        text-align: right;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+      th:first-child, td:first-child {
+        text-align: left;
+      }
+
+      .content-section {
+        margin-top: 3rem;
+      }
+      .content-section h2 {
+        color: var(--accent-color);
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+      }
+      .content-section h3 {
+        color: var(--text-primary);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+      }
+      .content-section h4 {
+        color: var(--text-primary);
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .content-section p {
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+      }
+      .content-section ul {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+        color: var(--text-secondary);
+      }
+      .content-section li {
+        margin-bottom: 0.5rem;
+      }
+
+      .faq-section {
+        margin-top: 4rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 2rem;
+      }
+      .faq-item {
+        margin-bottom: 2rem;
+      }
+      .faq-item h3 {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+      .faq-item p {
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--accent-color);
+        text-decoration: underline;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+    </style>
+
+
+
+
+
+    <section class="educational-content" style="margin-top: 3rem;">
+      <h2>Understanding the Mathematics of Wealth Building</h2>
+      <p>Whether you’re planning for early retirement, saving for a down payment, or simply looking to outpace inflation, understanding how your money grows is the foundation of financial independence. An <strong>investment calculator</strong> isn't just a tool for generating hypothetical numbers; it's a window into the future of your financial decisions today.</p>
+
+      <p>Many investors, particularly those new to the markets, underestimate the profound impact of time and consistent contributions. The human brain is naturally wired to understand linear growth—if you add $100 today, you have $100 more tomorrow. However, financial markets operate on exponential growth. This is the concept of compound interest, famously (though perhaps apocryphally) dubbed the "eighth wonder of the world" by Albert Einstein.</p>
+
+      <p>If you're looking for a slightly different approach to projecting your returns, you might also find our general <a href="/investment-calculator">investing calculator</a> or our specific <a href="/roi-calculator">return on investment calculator</a> useful depending on your exact scenario.</p>
+
+      <h3>The Compound Interest Formula: Showing the Math</h3>
+      <p>To truly grasp how an investment calculator works behind the scenes, you need to look at the math. The standard formula for compound interest is:</p>
+
+      <div class="highlight-box">
+        <p><strong>A = P(1 + r/n)<sup>nt</sup></strong></p>
+        <ul>
+          <li><strong>A</strong> = the future value of the investment/loan, including interest</li>
+          <li><strong>P</strong> = the principal investment amount (the initial deposit or loan amount)</li>
+          <li><strong>r</strong> = the annual interest rate (decimal)</li>
+          <li><strong>n</strong> = the number of times that interest is compounded per unit t</li>
+          <li><strong>t</strong> = the time the money is invested or borrowed for, in years</li>
+        </ul>
+      </div>
+
+      <p>Let’s walk through a practical example. Suppose you start with an initial investment of <strong>$10,000</strong>. You don’t make any additional contributions, but you leave it invested for <strong>20 years</strong> in an index fund that returns an average of <strong>8% annually</strong>, compounded annually.</p>
+      <ul>
+        <li>P = 10,000</li>
+        <li>r = 0.08</li>
+        <li>n = 1</li>
+        <li>t = 20</li>
+      </ul>
+      <p>A = 10,000(1 + 0.08/1)<sup>(1 * 20)</sup></p>
+      <p>A = 10,000(1.08)<sup>20</sup></p>
+      <p>A = 10,000(4.660957)</p>
+      <p>A = <strong>$46,609.57</strong></p>
+
+      <p>Without adding a single extra dollar, your initial $10,000 more than quadrupled simply by remaining invested. The total interest earned is $36,609.57. This illustrates why patience is often considered an investor’s greatest asset. For a more structured approach to building your initial portfolio, consider utilizing an <a href="/investment-planner">investment planner</a>.</p>
+
+      <h3>Adding Regular Contributions: The Real Wealth Builder</h3>
+      <p>While the example above demonstrates the power of a lump sum, most investors build wealth through regular, periodic contributions—often from their monthly paycheck. This is where the math becomes slightly more complex, requiring the formula for the future value of a series.</p>
+
+      <p>The formula for the future value of a series of regular contributions (assuming contributions are made at the end of each period) is:</p>
+
+      <div class="highlight-box">
+        <p><strong>FV = PMT × [ ((1 + r/n)<sup>nt</sup> - 1) / (r/n) ]</strong></p>
+        <ul>
+          <li><strong>FV</strong> = Future Value of the series</li>
+          <li><strong>PMT</strong> = Payment amount per period</li>
+          <li><strong>r</strong> = annual interest rate (decimal)</li>
+          <li><strong>n</strong> = number of compounding periods per year</li>
+          <li><strong>t</strong> = time in years</li>
+        </ul>
+      </div>
+
+      <p>Let’s add a realistic monthly contribution to our previous example. You start with <strong>$10,000</strong>, but you also commit to investing <strong>$500 every month</strong> for those <strong>20 years</strong>, still assuming an <strong>8% annual return</strong> (compounded monthly for the contributions).</p>
+
+      <p>First, calculate the growth of the initial $10,000 (compounded monthly):<br>
+      A = 10,000(1 + 0.08/12)<sup>(12 * 20)</sup><br>
+      A = $49,268.03</p>
+
+      <p>Next, calculate the future value of the $500 monthly contributions:<br>
+      FV = 500 × [ ((1 + 0.08/12)<sup>(12 * 20)</sup> - 1) / (0.08/12) ]<br>
+      FV = 500 × [ (4.9268 - 1) / 0.006666... ]<br>
+      FV = 500 × [ 589.020 ]<br>
+      FV = $294,510.21</p>
+
+      <p>Add them together:<br>
+      Total Future Value = $49,268.03 + $294,510.21 = <strong>$343,778.24</strong></p>
+
+      <p>Notice the massive difference. Your total out-of-pocket contributions were $130,000 (the initial $10k plus $120k in monthly deposits). The remaining $213,778.24 is pure compound growth. This staggering difference is exactly why financial advisors emphasize starting early and contributing consistently. Followers of specific financial methodologies might also want to compare these results using a <a href="/ramsey-investment-calculator">ramsey investment calculator</a> to align with those principles.</p>
+
+      <h3>Real-World Context: When Do Investors Use This?</h3>
+      <p>Investment calculators aren't just academic exercises; they are practical tools used at nearly every stage of the financial journey.</p>
+
+      <h4>1. Retirement Planning</h4>
+      <p>The most common use case is calculating the trajectory for retirement. By inputting current savings, expected monthly contributions, and an estimated timeframe until retirement, individuals can see if they are on track to meet their goals. If the projected final balance is lower than required, the investor immediately knows they need to adjust a variable: increase contributions, delay retirement, or seek higher returns (which usually entails taking on more risk).</p>
+
+      <h4>2. The "Cost of Delay"</h4>
+      <p>Calculators vividly illustrate the cost of procrastination. Running two scenarios—one where you start investing today, and one where you wait five years—often reveals a difference of hundreds of thousands of dollars in the final balance, even if the total out-of-pocket contributions end up being identical. This "cost of delay" is a powerful psychological motivator.</p>
+
+      <h4>3. Evaluating Fee Impact</h4>
+      <p>Savvy investors use these calculators to understand the devastating impact of high fees. A 1% management fee might sound negligible, but reducing your annual return from 8% to 7% over 30 years can easily consume 20% to 30% of your potential final wealth. Running these side-by-side scenarios is crucial for evaluating whether a financial advisor or a specific mutual fund is worth the cost compared to low-fee index funds.</p>
+
+      <h3>Common Mistakes People Make with Investment Projections</h3>
+      <p>While the math is objective, the inputs are subjective and prone to human error and psychological biases. Here are the most common pitfalls when projecting investment growth:</p>
+
+      <h4>1. Unrealistic Return Expectations</h4>
+      <p>In the middle of a prolonged bull market, it’s easy to assume that 15% or 20% annual returns are the norm. They are not. The <a href="/average-stock-market-return">average stock market return</a> (specifically the S&P 500) over the long term is roughly 10% before inflation, or about 7% to 8% after inflation. Inputting overly optimistic return rates leads to massive shortfalls when reality eventually reverts to the mean.</p>
+
+      <h4>2. Ignoring Inflation</h4>
+      <p>A million dollars in 30 years will not have the purchasing power of a million dollars today. Inflation steadily erodes the real value of money. To get an accurate picture of your future purchasing power, you should either adjust your final goal upward to account for inflation, or use an "inflation-adjusted" or "real" rate of return (e.g., using 6% instead of 9%) in your calculations.</p>
+
+      <h4>3. Forgetting About Taxes</h4>
+      <p>Unless your money is growing in a tax-advantaged account like a Roth IRA or TFSA, taxes will take a bite out of your returns. Capital gains taxes and taxes on dividends can significantly reduce your net growth. Calculators generally assume tax-free, uninterrupted compounding, which represents a best-case scenario rather than a guaranteed outcome.</p>
+
+      <h4>4. Assuming Linear Consistency</h4>
+      <p>The stock market does not return a smooth 8% every year. It might return 20% one year, lose 15% the next, and gain 5% the year after that. While an average return is useful for long-term multi-decade projections, it masks the volatility you will experience along the way. Sequence of returns risk—experiencing negative returns right as you begin to withdraw money—is a critical factor that simple calculators cannot model.</p>
+
+      <h3>Practical Tips and Rules of Thumb Professionals Use</h3>
+      <p>Financial professionals use various rules of thumb to quickly estimate growth without needing a complex calculator. Understanding these can help you intuitively grasp the math of wealth building.</p>
+
+      <h4>The Rule of 72</h4>
+      <p>This is the most famous mental math trick in finance. To find out roughly how long it will take your investment to double, simply divide 72 by your expected annual interest rate.</p>
+      <ul>
+        <li>At a <strong>6%</strong> return: 72 ÷ 6 = <strong>12 years</strong> to double.</li>
+        <li>At an <strong>8%</strong> return: 72 ÷ 8 = <strong>9 years</strong> to double.</li>
+        <li>At a <strong>10%</strong> return: 72 ÷ 10 = <strong>7.2 years</strong> to double.</li>
+      </ul>
+
+      <h4>The 4% Rule</h4>
+      <p>While not strictly about accumulation, the 4% rule dictates how much you need to accumulate. It suggests you can safely withdraw 4% of your portfolio's value in your first year of retirement, adjusting for inflation subsequently, without running out of money over a 30-year period. Therefore, if you need $40,000 a year to live on, you need a portfolio of roughly $1,000,000 ($40,000 ÷ 0.04).</p>
+
+      <h4>The "Rule of 15" for Retirement</h4>
+      <p>A common guideline is to invest 15% of your gross income toward retirement starting in your twenties. If you start later, that percentage needs to increase significantly to catch up for lost compounding time.</p>
+
+      <h4>Stock Splits and Growth</h4>
+      <p>It's worth noting that while stock splits change the number of shares you own, they do not inherently change the total value of your investment, much like slicing a pizza into more pieces doesn't give you more pizza. You can verify this math using a <a href="/stock-split-calculator">stock split calculator</a>. True growth comes from the underlying company increasing its earnings and value over time, not from the arbitrary division of shares.</p>
+
+      <h3>Conclusion: The Best Time to Start was Yesterday</h3>
+      <p>The mathematical realities of compounding make one thing abundantly clear: time is the most critical variable in the equation. You can compensate for lower returns by saving more, and you can compensate for lower savings by achieving higher returns, but you cannot buy back lost time. The interactive calculator above is designed to help you visualize different scenarios, but the most important step is moving from calculation to execution. Determine a reasonable monthly contribution, automate your investments, choose low-cost diversified funds, and let the mathematics of time do the heavy lifting.</p>
+    </section>
+
+    <!-- FAQ Schema injected naturally into the page for SEO -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How is investment growth calculated?</h3>
+        <p>Investment growth is calculated using the compound interest formula: A = P(1 + r/n)^(nt). This takes into account your initial investment (P), the annual interest rate (r), how often it compounds (n), and the time it stays invested (t).</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is a realistic annual return for an investment calculator?</h3>
+        <p>Historically, the stock market (like the S&P 500) has returned an average of 7% to 10% per year before inflation. For conservative estimates, investors often use 6% to 8%.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How much should I invest each month?</h3>
+        <p>A common rule of thumb is to invest 15% to 20% of your gross income for retirement. However, any amount helps due to the power of compound interest. Even $50 or $100 a month can grow significantly over decades.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Does this investment calculator account for inflation?</h3>
+        <p>Most basic calculators do not account for inflation by default. To adjust for inflation, you can subtract the expected inflation rate (historically around 2% to 3%) from your expected return rate to find your 'real' return.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is time so important in investing?</h3>
+        <p>Time allows compound interest to work. When your returns generate their own returns, the growth becomes exponential. An investor who starts early with less money can often outperform someone who starts later with more money.</p>
+      </div>
+    </section>
+
+  </div>
+</SiteLayout>

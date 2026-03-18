@@ -1,0 +1,611 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Free Stock Trading Simulator: Practice Paper Trading",
+  description: "Practice investing with our free stock trading simulator. Learn market dynamics, build strategies, and track portfolio performance with zero financial risk.",
+  category: "tool"
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a stock trading simulator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A stock trading simulator is a virtual platform that allows you to buy and sell stocks using fake money, mirroring real-time market data to practice trading strategies."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is paper trading good for beginners?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, paper trading is highly beneficial for beginners as it allows them to learn market mechanics and test strategies without risking actual capital."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much virtual money should I start with?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It is best to start your simulator with an amount close to what you actually plan to invest in the real world to build realistic habits and risk management."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do simulators account for trading fees?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our simulator allows you to input custom commission fees per trade so you can accurately understand how trading costs impact your overall profitability."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can a stock simulator predict future success?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "While simulators are great for practice, real trading involves emotional factors like fear and greed that paper trading cannot fully replicate. Success in a simulator does not guarantee future real-world profits."
+      }
+    }
+  ]
+};
+
+const schema = JSON.stringify(faqSchema);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stock-trading-simulator" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <h1>Stock Trading Simulator</h1>
+      <p>Welcome to our interactive stock trading simulator. Use this paper trading tool to buy and sell stocks in a virtual environment. Track your portfolio balance, practice your trading strategies, and see how commissions affect your returns without risking real money.</p>
+
+      <div class="calculator-card">
+        <h3>Live Market Simulator</h3>
+        <p class="text-sm" style="text-align: center; margin-bottom: 1.5rem;">Enter a stock ticker (e.g., AAPL, MSFT) to get its current price and execute a trade. Requires an active internet connection to fetch live data.</p>
+
+        <div class="stats-grid" id="portfolio-stats">
+          <div class="stat-card">
+            <span class="calc-result-label">Available Cash</span>
+            <div class="calc-result-value" id="avail-cash">$100,000.00</div>
+          </div>
+          <div class="stat-card">
+            <span class="calc-result-label">Portfolio Value</span>
+            <div class="calc-result-value" id="port-value">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <span class="calc-result-label">Total Account Value</span>
+            <div class="calc-result-value" id="total-value">$100,000.00</div>
+          </div>
+        </div>
+
+        <div class="trade-panel">
+          <div class="input-group">
+            <label for="ticker-input">Stock Symbol</label>
+            <div class="input-wrapper search-wrapper">
+              <input type="text" id="ticker-input" placeholder="e.g. AAPL" style="text-transform: uppercase;">
+              <button id="search-btn" class="btn">Get Quote</button>
+            </div>
+          </div>
+
+          <div id="quote-result" class="quote-result hidden">
+            <div class="quote-header">
+              <h4 id="quote-symbol">---</h4>
+              <div class="quote-price" id="quote-price">$0.00</div>
+            </div>
+
+            <div class="input-group">
+              <label for="trade-action">Action</label>
+              <select id="trade-action" class="trade-select">
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="trade-shares">Shares</label>
+              <input type="number" id="trade-shares" min="1" step="1" value="1">
+            </div>
+
+            <div class="input-group">
+              <label for="trade-commission">Commission Fee ($)</label>
+              <div class="input-wrapper">
+                <span class="prefix" style="position: absolute; left: 1rem; color: var(--text-secondary); pointer-events: none;">$</span>
+                <input type="number" id="trade-commission" min="0" step="0.01" value="0.00" style="padding-left: 2.5rem; padding-right: 1rem;">
+              </div>
+            </div>
+
+            <div class="trade-summary">
+              <div class="summary-row">
+                <span>Estimated Cost/Proceeds</span>
+                <span id="trade-cost">$0.00</span>
+              </div>
+              <button id="execute-btn" class="btn primary-btn" style="width: 100%; margin-top: 1rem;">Execute Trade</button>
+            </div>
+          </div>
+
+          <div id="error-msg" class="error-msg hidden"></div>
+        </div>
+
+        <div class="positions-panel">
+          <h3>Open Positions</h3>
+          <div class="table-container">
+            <table id="positions-table">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Shares</th>
+                  <th>Avg Price</th>
+                  <th>Current Value</th>
+                  <th>P/L</th>
+                </tr>
+              </thead>
+              <tbody id="positions-body">
+                <tr><td colspan="5" style="text-align: center;">No open positions</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <script>
+        document.addEventListener('astro:page-load', () => {
+          const UI = {
+            availCash: document.getElementById('avail-cash'),
+            portValue: document.getElementById('port-value'),
+            totalValue: document.getElementById('total-value'),
+            tickerInput: document.getElementById('ticker-input'),
+            searchBtn: document.getElementById('search-btn'),
+            quoteResult: document.getElementById('quote-result'),
+            quoteSymbol: document.getElementById('quote-symbol'),
+            quotePrice: document.getElementById('quote-price'),
+            tradeAction: document.getElementById('trade-action'),
+            tradeShares: document.getElementById('trade-shares'),
+            tradeCommission: document.getElementById('trade-commission'),
+            tradeCost: document.getElementById('trade-cost'),
+            executeBtn: document.getElementById('execute-btn'),
+            errorMsg: document.getElementById('error-msg'),
+            positionsBody: document.getElementById('positions-body')
+          };
+
+          if (!UI.tickerInput) return; // Guard clause if script runs on other pages
+
+          let cash = 100000;
+          let portfolio = {}; // { AAPL: { shares: 10, avgPrice: 150.00 } }
+          let currentQuote = null;
+
+          const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+
+          const updatePositionsAndStats = async () => {
+            let totalPortfolioValue = 0;
+            const positionsHtml = [];
+
+            if (Object.keys(portfolio).length === 0) {
+              UI.positionsBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No open positions</td></tr>';
+            } else {
+              for (const [symbol, data] of Object.entries(portfolio)) {
+                let currentPrice = data.avgPrice;
+                try {
+                  const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`)}`);
+                  const proxyData = await res.json();
+                  const priceData = JSON.parse(proxyData.contents);
+                  currentPrice = priceData.chart.result[0].meta.regularMarketPrice;
+                } catch (e) {
+                  console.error("Failed to fetch price for " + symbol, e);
+                }
+                const currentValue = currentPrice * data.shares;
+                totalPortfolioValue += currentValue;
+
+                const pl = currentValue - (data.avgPrice * data.shares);
+                const plClass = pl >= 0 ? 'positive' : 'negative';
+                const plFormatted = formatCurrency(Math.abs(pl));
+
+                positionsHtml.push(`
+                  <tr>
+                    <td><strong>${symbol}</strong></td>
+                    <td>${data.shares}</td>
+                    <td>${formatCurrency(data.avgPrice)}</td>
+                    <td>${formatCurrency(currentValue)}</td>
+                    <td style="color: ${pl >= 0 ? '#22c55e' : '#ef4444'}">${pl >= 0 ? '+' : '-'}${plFormatted}</td>
+                  </tr>
+                `);
+              }
+              UI.positionsBody.innerHTML = positionsHtml.join('');
+            }
+
+            UI.availCash.textContent = formatCurrency(cash);
+            UI.portValue.textContent = formatCurrency(totalPortfolioValue);
+            UI.totalValue.textContent = formatCurrency(cash + totalPortfolioValue);
+          };
+
+          const updateTradeSummary = () => {
+            if (!currentQuote) return;
+            const shares = parseInt(UI.tradeShares.value) || 0;
+            const commission = parseFloat(UI.tradeCommission.value) || 0;
+            const isBuy = UI.tradeAction.value === 'buy';
+
+            const baseCost = currentQuote.price * shares;
+            let total = 0;
+
+            if (isBuy) {
+              total = baseCost + commission;
+              UI.tradeCost.parentElement.firstElementChild.textContent = 'Estimated Cost';
+            } else {
+              total = baseCost - commission;
+              UI.tradeCost.parentElement.firstElementChild.textContent = 'Estimated Proceeds';
+            }
+
+            UI.tradeCost.textContent = formatCurrency(total);
+          };
+
+          const fetchQuote = async () => {
+            const symbol = UI.tickerInput.value.trim().toUpperCase();
+            if (!symbol) return;
+
+            UI.searchBtn.disabled = true;
+            UI.searchBtn.textContent = 'Searching...';
+            UI.errorMsg.classList.add('hidden');
+
+            try {
+              // Direct fetch from Yahoo Finance Chart API
+              // Note: requires CORS proxy in some browser environments, but Cloudflare workers / modern browsers often allow it for simple GETs
+              const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`)}`);
+              if (!res.ok) throw new Error('Symbol not found');
+
+              const proxyData = await res.json();
+              const data = JSON.parse(proxyData.contents);
+              if (!data.chart || !data.chart.result || !data.chart.result[0].meta) throw new Error('Symbol not found');
+
+              const price = data.chart.result[0].meta.regularMarketPrice;
+
+              currentQuote = { symbol, price };
+
+              UI.quoteSymbol.textContent = symbol;
+              UI.quotePrice.textContent = formatCurrency(price);
+              UI.quoteResult.classList.remove('hidden');
+              updateTradeSummary();
+
+            } catch (err) {
+              UI.errorMsg.textContent = 'Could not fetch data for that symbol. Try popular tickers like AAPL, MSFT, or TSLA.';
+              UI.errorMsg.classList.remove('hidden');
+              UI.quoteResult.classList.add('hidden');
+              currentQuote = null;
+            } finally {
+              UI.searchBtn.disabled = false;
+              UI.searchBtn.textContent = 'Get Quote';
+            }
+          };
+
+          const executeTrade = () => {
+            if (!currentQuote) return;
+
+            const shares = parseInt(UI.tradeShares.value);
+            if (isNaN(shares) || shares <= 0) {
+              alert('Please enter a valid positive number of shares.');
+              return;
+            }
+
+            const commission = parseFloat(UI.tradeCommission.value) || 0;
+            const isBuy = UI.tradeAction.value === 'buy';
+            const baseCost = currentQuote.price * shares;
+
+            if (isBuy) {
+              const totalCost = baseCost + commission;
+              if (cash < totalCost) {
+                alert('Insufficient cash for this transaction.');
+                return;
+              }
+
+              cash -= totalCost;
+
+              if (!portfolio[currentQuote.symbol]) {
+                portfolio[currentQuote.symbol] = { shares: 0, avgPrice: 0 };
+              }
+
+              const existingShares = portfolio[currentQuote.symbol].shares;
+              const existingValue = existingShares * portfolio[currentQuote.symbol].avgPrice;
+              const newTotalValue = existingValue + baseCost; // Commission is sunk cost, doesn't affect cost basis in this simple sim
+
+              portfolio[currentQuote.symbol].shares += shares;
+              portfolio[currentQuote.symbol].avgPrice = newTotalValue / portfolio[currentQuote.symbol].shares;
+
+              alert(`Successfully bought ${shares} shares of ${currentQuote.symbol}.`);
+
+            } else { // Sell
+              if (!portfolio[currentQuote.symbol] || portfolio[currentQuote.symbol].shares < shares) {
+                alert(`Insufficient shares to sell. You own ${portfolio[currentQuote.symbol] ? portfolio[currentQuote.symbol].shares : 0} shares.`);
+                return;
+              }
+
+              const totalProceeds = baseCost - commission;
+              cash += totalProceeds;
+              portfolio[currentQuote.symbol].shares -= shares;
+
+              if (portfolio[currentQuote.symbol].shares === 0) {
+                delete portfolio[currentQuote.symbol];
+              }
+
+              alert(`Successfully sold ${shares} shares of ${currentQuote.symbol}.`);
+            }
+
+            UI.tradeShares.value = 1;
+            updatePositionsAndStats();
+            updateTradeSummary();
+          };
+
+          UI.searchBtn.addEventListener('click', fetchQuote);
+          UI.tickerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') fetchQuote();
+          });
+
+          UI.tradeAction.addEventListener('change', updateTradeSummary);
+          UI.tradeShares.addEventListener('input', updateTradeSummary);
+          UI.tradeCommission.addEventListener('input', updateTradeSummary);
+          UI.executeBtn.addEventListener('click', executeTrade);
+
+          // Initial stats update
+          updatePositionsAndStats();
+        });
+      </script>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h3>What is a stock trading simulator?</h3>
+          <p>A stock trading simulator is a virtual platform that allows you to buy and sell stocks using fake money, mirroring real-time market data to practice trading strategies.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is paper trading good for beginners?</h3>
+          <p>Yes, paper trading is highly beneficial for beginners as it allows them to learn market mechanics and test strategies without risking actual capital.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How much virtual money should I start with?</h3>
+          <p>It is best to start your simulator with an amount close to what you actually plan to invest in the real world to build realistic habits and risk management.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do simulators account for trading fees?</h3>
+          <p>Our simulator allows you to input custom commission fees per trade so you can accurately understand how trading costs impact your overall profitability.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can a stock simulator predict future success?</h3>
+          <p>While simulators are great for practice, real trading involves emotional factors like fear and greed that paper trading cannot fully replicate. Success in a simulator does not guarantee future real-world profits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+
+  .calculator-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  .calculator-card h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .stat-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .calc-result-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-color);
+  }
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  th {
+    background-color: rgba(212, 160, 23, 0.05);
+    color: var(--accent-color);
+    font-weight: 600;
+  }
+  td {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  .faq-section {
+    margin-top: 3rem;
+  }
+  .faq-item {
+    margin-bottom: 1.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .faq-item h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+  }
+  .faq-item p {
+    margin-bottom: 0;
+    font-size: 1rem;
+  }
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+  }
+  @media (max-width: 600px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    .search-wrapper {
+      flex-direction: column;
+    }
+  }
+
+  .search-wrapper {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .search-wrapper input {
+    flex: 1;
+  }
+  .btn {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+  .primary-btn {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+  }
+  .primary-btn:hover {
+    background-color: color-mix(in srgb, var(--accent-color) 80%, white);
+    color: #000;
+  }
+  .quote-result {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+  .quote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .quote-header h4 {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  .quote-price {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+  }
+  .trade-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    appearance: none;
+  }
+  .trade-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+  .trade-summary {
+    background-color: color-mix(in srgb, var(--bg-color) 50%, var(--card-bg));
+    padding: 1.25rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    border: 1px solid var(--border-color);
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .hidden {
+    display: none !important;
+  }
+  .error-msg {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .positions-panel {
+    margin-top: 3rem;
+  }
+</style>

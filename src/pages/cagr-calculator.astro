@@ -1,0 +1,362 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Compound Annual Growth Rate (CAGR) Calculator",
+  description: "Calculate your exact annual growth rate. Discover what it really takes to double your money...",
+  category: "tool",
+  published: "2026-03-24",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Compound Annual Growth Rate (CAGR) Calculator",
+    "description": "Calculate your exact annual growth rate with this free CAGR tool.",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Compound Annual Growth Rate (CAGR)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Compound Annual Growth Rate (CAGR) is the precise rate of return that would be required for an investment to grow from its beginning balance to its ending balance, assuming the profits were reinvested at the end of each year of the investment's lifespan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is CAGR calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The formula for CAGR is: (Ending Value / Beginning Value)^(1 / Number of Years) - 1. You divide the final amount by the initial amount, raise that to the power of one divided by the number of years, and subtract one."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is considered a good CAGR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A 'good' CAGR depends heavily on the context and asset class. Historically, the stock market (S&P 500) has returned an average CAGR of around 7-10% adjusting for inflation. For venture capital or high-growth tech startups, a good CAGR might be 30% or more."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can CAGR be negative?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. If the ending value of your investment or revenue is less than the beginning value, the CAGR will be negative, indicating a loss of value over the measured period."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the limitations of CAGR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The main limitation of CAGR is that it smooths out volatility. It implies a steady, constant growth rate over the time period, ignoring any massive swings, losses, or uneven gains that happened between the start and end dates."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/cagr-calculator" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Compound Annual Growth Rate (CAGR) Calculator</h1>
+      <p class="subtitle">Calculate smooth annualized returns and project future investment values.</p>
+    </div>
+
+    <!-- UI & Logic -->
+    <div class="calculator-grid">
+      <div class="calculator-container card">
+        <div class="calc-header">
+          <h2>Find CAGR (%)</h2>
+          <p>Calculate growth rate from known values.</p>
+        </div>
+
+        <div class="input-group">
+          <label for="cagr-beginning">Beginning Value ($)</label>
+          <input type="number" id="cagr-beginning" value="10000" min="0" step="100" />
+        </div>
+
+        <div class="input-group">
+          <label for="cagr-ending">Ending Value ($)</label>
+          <input type="number" id="cagr-ending" value="25000" min="0" step="100" />
+        </div>
+
+        <div class="input-group">
+          <label for="cagr-years">Number of Years</label>
+          <input type="number" id="cagr-years" value="5" min="0.1" step="0.5" />
+        </div>
+
+        <div class="result-card">
+          <h3>Compound Annual Growth Rate</h3>
+          <div class="result-value" id="cagr-result">0.00%</div>
+        </div>
+        <div id="cagr-error" class="error-text" style="display: none;">Please enter valid numbers. Years must be > 0.</div>
+
+        <div class="visual-container">
+          <div class="visual-bar-wrap">
+            <span class="bar-label">Year 0</span>
+            <div class="bar bar-start" id="cagr-bar-start"></div>
+          </div>
+          <div class="visual-bar-wrap">
+            <span class="bar-label" id="cagr-year-label">Year 5</span>
+            <div class="bar bar-end" id="cagr-bar-end"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculator-container card">
+        <div class="calc-header">
+          <h2>Project Future Value ($)</h2>
+          <p>Calculate ending amount from a known rate.</p>
+        </div>
+
+        <div class="input-group">
+          <label for="proj-beginning">Beginning Value ($)</label>
+          <input type="number" id="proj-beginning" value="10000" min="0" step="100" />
+        </div>
+
+        <div class="input-group">
+          <label for="proj-rate">CAGR (%)</label>
+          <input type="number" id="proj-rate" value="10" step="0.5" />
+        </div>
+
+        <div class="input-group">
+          <label for="proj-years">Number of Years</label>
+          <input type="number" id="proj-years" value="10" min="0.1" step="0.5" />
+        </div>
+
+        <div class="result-card secondary">
+          <h3>Ending Value</h3>
+          <div class="result-value" id="proj-result">$0.00</div>
+        </div>
+        <div id="proj-error" class="error-text" style="display: none;">Please enter valid numbers.</div>
+      </div>
+    </div>
+
+    <script is:inline>
+      function formatCurrency(value) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(value);
+      }
+
+      function calculateCAGR() {
+        const beginInput = document.getElementById('cagr-beginning');
+        const endInput = document.getElementById('cagr-ending');
+        const yearsInput = document.getElementById('cagr-years');
+        const errorMsg = document.getElementById('cagr-error');
+        const resultEl = document.getElementById('cagr-result');
+        const barStart = document.getElementById('cagr-bar-start');
+        const barEnd = document.getElementById('cagr-bar-end');
+        const yearLabel = document.getElementById('cagr-year-label');
+
+        if (!beginInput || !endInput || !yearsInput) return;
+
+        const begin = parseFloat(beginInput.value);
+        const end = parseFloat(endInput.value);
+        const years = parseFloat(yearsInput.value);
+
+        if (isNaN(begin) || isNaN(end) || isNaN(years) || years <= 0 || begin < 0 || end < 0) {
+          errorMsg.style.display = 'block';
+          resultEl.textContent = '0.00%';
+          barStart.style.width = '0%';
+          barEnd.style.width = '0%';
+          return;
+        }
+
+        errorMsg.style.display = 'none';
+
+        let cagr = 0;
+        if (begin > 0) {
+          cagr = (Math.pow(end / begin, 1 / years) - 1) * 100;
+        }
+
+        resultEl.textContent = `${cagr.toFixed(2)}%`;
+        yearLabel.textContent = `Year ${years}`;
+
+        // Visual bars
+        if (begin === 0 && end === 0) {
+            barStart.style.width = '0%';
+            barEnd.style.width = '0%';
+        } else {
+            const maxVal = Math.max(begin, end);
+            barStart.style.width = `${(begin / maxVal) * 100}%`;
+            barEnd.style.width = `${(end / maxVal) * 100}%`;
+
+            // Adjust colors based on growth or loss
+            if (end < begin) {
+              barEnd.style.background = '#ef4444'; // Red for loss
+            } else {
+              barEnd.style.background = 'var(--accent-color)'; // Default accent
+            }
+        }
+      }
+
+      function calculateProjection() {
+        const beginInput = document.getElementById('proj-beginning');
+        const rateInput = document.getElementById('proj-rate');
+        const yearsInput = document.getElementById('proj-years');
+        const errorMsg = document.getElementById('proj-error');
+        const resultEl = document.getElementById('proj-result');
+
+        if (!beginInput || !rateInput || !yearsInput) return;
+
+        const begin = parseFloat(beginInput.value);
+        const rate = parseFloat(rateInput.value);
+        const years = parseFloat(yearsInput.value);
+
+        if (isNaN(begin) || isNaN(rate) || isNaN(years) || years < 0 || begin < 0) {
+          errorMsg.style.display = 'block';
+          resultEl.textContent = '$0';
+          return;
+        }
+
+        errorMsg.style.display = 'none';
+
+        const futureValue = begin * Math.pow(1 + (rate / 100), years);
+        resultEl.textContent = formatCurrency(futureValue);
+      }
+
+      ['cagr-beginning', 'cagr-ending', 'cagr-years'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('input', calculateCAGR);
+      });
+
+      ['proj-beginning', 'proj-rate', 'proj-years'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('input', calculateProjection);
+      });
+
+      // Init
+      calculateCAGR();
+      calculateProjection();
+    </script>
+
+    <!-- Content & FAQs -->
+    <div class="explainer">
+      <h2>Why Compound Annual Growth Rate Matters</h2>
+      <p>
+        The Compound Annual Growth Rate is an essential metric for investors and business owners because it accurately measures the smoothed-out, annualized yield of an asset over time. Unlike absolute percentage growth, which simply looks at the difference between the starting and ending numbers, this metric accounts for the compounding effect—meaning it calculates the rate as if profits were reinvested at the end of each period.
+      </p>
+
+      <h3>Real-World Applications</h3>
+      <p>
+        You will frequently encounter this measurement in financial reports, prospectus documents, and business projections. Here are the most common scenarios where this metric is applied:
+      </p>
+      <ul>
+        <li><strong>Investment Returns:</strong> Comparing the historical performance of two different mutual funds or ETFs (like comparing <a href="/spy-etf-review-2026">SPY</a> against an international fund) over a 5 or 10-year period.</li>
+        <li><strong>Business Revenue:</strong> Tracking a company's sales growth over multiple fiscal years to present to investors or stakeholders.</li>
+        <li><strong>Market Sizing:</strong> Estimating how fast an entire industry or sector is expanding, often seen in pitch decks to justify market opportunity.</li>
+      </ul>
+
+      <h3>The Rule of 72</h3>
+      <p>
+        If you are trying to do quick mental math to determine how long it takes to double your money based on a specific growth rate, use the Rule of 72. Divide the number 72 by your expected annual growth rate. For instance, if you project a 9% return, it will take approximately 8 years (72 ÷ 9) to double your initial capital.
+      </p>
+
+      <h3>Limitations to Consider</h3>
+      <p>
+        While highly useful for comparative analysis, be aware that this is a smoothed metric. It assumes a steady, identical growth rate every single year. In reality, the stock market is highly volatile. You might experience a 20% gain one year, a 10% loss the next, and a 5% gain after that. This calculation completely ignores that turbulent journey and only measures the direct line between the starting value and the ending value. For more complex, ongoing contribution modeling, use our <a href="/compound-interest-calculator">Compound Interest Growth Calculator</a> instead.
+      </p>
+    </div>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What is Compound Annual Growth Rate (CAGR)?</summary>
+        <p>Compound Annual Growth Rate (CAGR) is the precise rate of return that would be required for an investment to grow from its beginning balance to its ending balance, assuming the profits were reinvested at the end of each year of the investment's lifespan.</p>
+      </details>
+
+      <details>
+        <summary>How is CAGR calculated?</summary>
+        <p>The formula for CAGR is: (Ending Value / Beginning Value)^(1 / Number of Years) - 1. You divide the final amount by the initial amount, raise that to the power of one divided by the number of years, and subtract one.</p>
+      </details>
+
+      <details>
+        <summary>What is considered a good CAGR?</summary>
+        <p>A 'good' CAGR depends heavily on the context and asset class. Historically, the stock market (S&P 500) has returned an average CAGR of around 7-10% adjusting for inflation. For venture capital or high-growth tech startups, a good CAGR might be 30% or more.</p>
+      </details>
+
+      <details>
+        <summary>Can CAGR be negative?</summary>
+        <p>Yes. If the ending value of your investment or revenue is less than the beginning value, the CAGR will be negative, indicating a loss of value over the measured period.</p>
+      </details>
+
+      <details>
+        <summary>What are the limitations of CAGR?</summary>
+        <p>The main limitation of CAGR is that it smooths out volatility. It implies a steady, constant growth rate over the time period, ignoring any massive swings, losses, or uneven gains that happened between the start and end dates.</p>
+      </details>
+    </section>
+
+    <!-- Styles -->
+    <style is:inline>
+      .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+      .hero { text-align: center; padding: 3rem 0 2rem; }
+      .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+      .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+
+      .calculator-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; margin: 2rem 0; }
+      @media (min-width: 768px) {
+        .calculator-grid { grid-template-columns: 1fr 1fr; }
+      }
+
+      .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; }
+      .calc-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+      .calc-header h2 { font-size: 1.4rem; margin: 0 0 0.25rem 0; }
+      .calc-header p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
+
+      .input-group { margin-bottom: 1.25rem; }
+      .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; }
+
+      input { background: var(--bg-color); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 1rem; }
+      input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+
+      .result-card { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid var(--accent-color); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; text-align: center; }
+      .result-card.secondary { background: color-mix(in srgb, #10b981 10%, transparent); border-color: #10b981; }
+      .result-card h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--text-secondary); }
+      .result-value { font-size: 2.5rem; font-weight: 800; color: var(--accent-color); }
+      .secondary .result-value { color: #10b981; }
+
+      .error-text { color: #ef4444; margin-top: 1rem; font-weight: 600; text-align: center; font-size: 0.9rem; }
+
+      .visual-container { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); }
+      .visual-bar-wrap { display: flex; align-items: center; margin-bottom: 0.75rem; gap: 1rem; }
+      .bar-label { min-width: 60px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+      .bar { height: 24px; border-radius: 4px; transition: width 0.3s ease, background-color 0.3s ease; }
+      .bar-start { background: var(--border-color); }
+      .bar-end { background: var(--accent-color); }
+
+      .explainer { margin: 3rem 0; line-height: 1.6; }
+      .explainer h2 { font-size: 1.8rem; margin: 2rem 0 1rem; }
+      .explainer h3 { font-size: 1.4rem; margin: 1.5rem 0 0.75rem; }
+      .explainer p { margin-bottom: 1rem; color: var(--text-secondary); }
+      .explainer ul { margin-bottom: 1rem; color: var(--text-secondary); padding-left: 1.5rem; }
+      .explainer li { margin-bottom: 0.5rem; }
+      .explainer a { color: var(--accent-color); text-decoration: none; }
+      .explainer a:hover { text-decoration: underline; }
+
+      .faq-section { margin-top: 3rem; }
+      .faq-section h2 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+      .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+      .faq-section summary { font-weight: 600; cursor: pointer; }
+      .faq-section details p { margin: 1rem 0 0 0; color: var(--text-secondary); line-height: 1.5; }
+    </style>
+
+  </div>
+</SiteLayout>

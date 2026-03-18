@@ -1,0 +1,562 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "How to Trade Stocks: The Definitive Beginner's Guide",
+  description: "Are you making this critical mistake before placing your first trade? Discover the mechanics of stock trading that the top 10% of market participants...",
+  category: "guide",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": "https://westmountfundamentals.com/how-to-trade-stocks"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much money do I need to start trading stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many modern brokerages allow you to start with as little as $1 through fractional shares. However, pattern day trading rules in the U.S. require a minimum equity of $25,000 if you execute four or more day trades within five business days."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between a market order and a limit order?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A market order executes immediately at the current best available price, prioritizing speed. A limit order only executes at a specific price you set (or better), prioritizing price control over execution speed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I trade stocks on weekends?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Standard U.S. stock market hours are 9:30 AM to 4:00 PM Eastern Time on weekdays. While you can place orders over the weekend, they generally will not execute until the market opens on Monday, though some brokers offer limited 24/5 trading on specific securities."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do stock prices change?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Stock prices change due to supply and demand in the auction market. If more buyers want the stock than sellers, the price rises. If more sellers want to exit than buyers want to enter, the price falls. This is driven by company earnings, economic data, and investor sentiment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Pattern Day Trader (PDT) rule?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The PDT rule is a FINRA regulation that designates any margin account customer who executes four or more day trades within five business days as a pattern day trader. Such accounts must maintain a minimum equity of $25,000."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/how-to-trade-stocks"
+  schema={schema}
+>
+  <div class="page-content">
+    <header class="hero">
+      <h1>{meta.title}</h1>
+      <p class="subtitle">Master the mechanics of the market, understand order types, and learn how to manage risk before putting capital on the line.</p>
+    </header>
+
+    <main class="content-body">
+      <!-- Section 1: Introduction & The Basics -->
+      <section>
+        <h2>What Does It Actually Mean to "Trade" Stocks?</h2>
+        <p>
+          Trading stocks is the process of buying and selling shares of publicly traded companies in an open marketplace. When you <a href="/how-to-buy-stocks">buy a stock</a>, you are acquiring a fractional ownership stake in that business. The goal of trading, as opposed to long-term investing, is generally to capitalize on short-to-medium-term price fluctuations.
+        </p>
+        <p>
+          At its core, the stock market is simply a massive, continuous auction. It is a place where buyers and sellers meet to exchange ownership. Every single transaction requires two parties: for every buyer, there must be a seller, and for every seller, there must be a buyer. When you click "Buy," you are buying shares from someone who has decided it is time to sell.
+        </p>
+        <p>
+          Unlike retail stores where prices are fixed by the merchant, stock prices are dynamic and determined entirely by supply and demand. Buyers submit "bids" (the maximum price they are willing to pay), and sellers submit "asks" or "offers" (the minimum price they are willing to accept). A trade occurs only when a buyer and a seller agree on a price. This continuous matching of bids and asks creates the current market price of the stock.
+        </p>
+        <p>
+          Consider the current market dynamics for Apple Inc. (AAPL). At any given moment, the price you see quoted, such as $252.82, is just the price of the <em>last executed trade</em>. What truly matters for your next trade is the order book—the list of active bids and asks.
+        </p>
+
+        <div class="insight-box">
+          <h3>The Bid-Ask Spread: Your First Hidden Cost</h3>
+          <p>
+            The difference between the highest bid and the lowest ask is the <strong>spread</strong>. For highly liquid companies like Apple (AAPL), the bid might be $252.50 and the ask might be $252.96, creating a spread of $0.46.
+          </p>
+          <p>
+            This spread is the implicit cost of trading. If you buy at the ask ($252.96) and instantly sell at the bid ($252.50) without the stock price moving, you immediately lose $0.46 per share. Market makers (the institutional entities facilitating these trades) profit from capturing this spread millions of times per day. For smaller, less liquid companies (like penny stocks), the spread can be massive, heavily eating into your potential profits. Professional traders closely monitor the spread because entering a position inherently costs you the width of that spread.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2: Types of Orders -->
+      <section>
+        <h2>The Mechanics: Order Types Explained</h2>
+        <p>
+          Your brokerage account (whether it's Fidelity, Schwab, or Robinhood) is merely a conduit to the exchange. How you communicate your intent to the exchange determines your fill price and execution probability. Understanding order types is critical; an incorrect order type can result in severe financial losses, especially in fast-moving markets. Beginners often use the wrong order type and get burned by "slippage."
+        </p>
+
+        <h3>1. Market Orders: Prioritizing Speed Over Price</h3>
+        <p>
+          A market order instructs your broker to execute the trade immediately at the best available current price. You are guaranteed execution (assuming the market is open and there are shares available), but you are <em>not</em> guaranteed a specific price.
+        </p>
+        <ul>
+          <li><strong>How it works:</strong> If you place a market order to buy, you will buy from the lowest available asks until your order is filled. If your order is large, you might "sweep the book," paying increasingly higher prices for each batch of shares.</li>
+          <li><strong>Pros:</strong> Immediate execution. It is the fastest way to enter or exit a position.</li>
+          <li><strong>Cons:</strong> In volatile markets or illiquid stocks, the price you get might be significantly worse than the price you saw when you clicked "Buy." This difference between expected price and actual fill price is known as <em>slippage</em>.</li>
+          <li><strong>Use Case:</strong> When exiting a position in an emergency (e.g., terrible news breaks) or when trading highly liquid, stable mega-cap stocks where the spread is just a penny.</li>
+        </ul>
+
+        <h3>2. Limit Orders: Prioritizing Price Over Speed</h3>
+        <p>
+          A limit order specifies the maximum price you are willing to pay (if buying) or the minimum price you will accept (if <a href="/how-to-sell-stocks">selling stocks</a>). Your order will only execute if the market reaches your specified limit price or better.
+        </p>
+        <ul>
+          <li><strong>How it works:</strong> If AAPL is trading at $252.82, but you only want to buy it if it dips, you can place a limit order at $250.00. Your order sits on the order book as a "bid." If the price drops to $250.00, your order executes. If it never drops to $250.00, your order goes unfilled.</li>
+          <li><strong>Pros:</strong> Absolute control over the execution price. It entirely eliminates slippage. You know exactly the worst-case price you will pay.</li>
+          <li><strong>Cons:</strong> No guarantee of execution. If the stock never reaches your limit price, your order will remain unfilled, and you might miss out on a massive move.</li>
+          <li><strong>Use Case:</strong> Entering new positions. This should be your default order type for almost all trading.</li>
+        </ul>
+
+        <h3>3. Stop Orders (Stop-Loss): The Emergency Brake</h3>
+        <p>
+          A stop order remains dormant until the stock reaches a specified trigger price (the "stop price"). Once triggered, it instantly converts into a regular market order. It is primarily used to limit losses on an existing position.
+        </p>
+        <ul>
+          <li><strong>Example:</strong> You buy 100 shares of SPY (the S&P 500 ETF) at $594.13. You decide you don't want to lose more than about $10 per share. You place a sell stop order at $584.13. If SPY drops to $584.13, your stop order triggers, becomes a market order, and sells your shares at the next available price.</li>
+          <li><strong>Pros:</strong> Automates risk management. Protects capital when you aren't physically watching the screen. It takes the emotion out of cutting a loss.</li>
+          <li><strong>Cons:</strong> Because it becomes a market order, it is susceptible to slippage. If the stock gaps down overnight (e.g., closes at $594.13 but opens the next morning at $574.13 due to bad news), your stop order will trigger and sell at $574.13, not your requested $584.13. It is also susceptible to stop runs or "whipsaws" where the stock briefly dips, triggers your stop, and then immediately rebounds.</li>
+        </ul>
+
+        <h3>4. Stop-Limit Orders: The Controlled Exit</h3>
+        <p>
+          A hybrid order type. Once the stop price is reached, the order becomes a <em>limit</em> order instead of a market order.
+        </p>
+        <p>
+          While it prevents slippage on your exit, it carries a massive risk: if the stock price is plummeting rapidly, it might blow right past your limit price, leaving you holding a heavily losing position as the price continues to crash. For this reason, many traders prefer standard stop orders for cutting losses, accepting the slippage to guarantee they get out.
+        </p>
+      </section>
+
+      <!-- Section 3: Risk Management & Position Sizing -->
+      <section>
+        <h2>The Professional's Secret: Position Sizing and Risk Management</h2>
+        <p>
+          Amateur traders obsess over <a href="/how-to-pick-stocks">how to pick stocks</a>. They spend hours analyzing charts, reading news, and looking for the "perfect" setup. Professionals obsess over risk management.
+        </p>
+        <p>
+          The harsh reality of trading is that you will be wrong. Often. The best traders in the world might only have a win rate of 50% to 60%. The reason they are profitable while amateurs blow up their accounts is entirely due to how they manage their losers versus their winners. The single most important concept in trading is surviving to trade another day.
+        </p>
+        <p>
+          Consider the mathematics of loss recovery. If you lose 10% of your account, you need an 11% gain to get back to breakeven. If you lose 20%, you need a 25% gain. If you lose 50%, you need a 100% gain just to get back to where you started. Protecting your principal capital is paramount.
+        </p>
+
+        <h3>The 1% Rule of Risk</h3>
+        <p>
+          A standard institutional rule of thumb is to never risk more than 1% to 2% of your total account equity on any single trade.
+        </p>
+        <p>
+          <strong>Crucial Distinction:</strong> "Risk" does <em>not</em> mean position size. It means the total amount of money you will lose if your stop-loss is hit.
+        </p>
+        <p>
+          For example, if you have a $10,000 account and use the 1% rule, your maximum allowed risk per trade is $100. This doesn't mean you only buy $100 worth of stock. It means you size your position so that the distance between your entry price and your stop-loss price, multiplied by the number of shares, equals exactly $100.
+        </p>
+
+        <div class="calculator-container" id="position-calculator">
+          <h3>Interactive Position Size Calculator</h3>
+          <p>Determine exactly how many shares to buy based on your account size and risk tolerance. This calculator uses standard fixed fractional position sizing to ensure your risk remains constant regardless of the stock's price.</p>
+
+          <div class="form-group">
+            <label for="account-size">Total Account Size ($)</label>
+            <input type="number" id="account-size" min="100" step="100" value="10000" />
+          </div>
+
+          <div class="form-group">
+            <label for="risk-percent">Max Risk per Trade (%)</label>
+            <input type="number" id="risk-percent" min="0.1" max="10" step="0.1" value="1.0" />
+          </div>
+
+          <div class="form-group">
+            <label for="entry-price">Entry Price ($)</label>
+            <input type="number" id="entry-price" min="0.01" step="0.01" value="252.82" />
+          </div>
+
+          <div class="form-group">
+            <label for="stop-price">Stop-Loss Price ($)</label>
+            <input type="number" id="stop-price" min="0.01" step="0.01" value="240.18" />
+          </div>
+
+          <button id="calc-position-btn">Calculate Position</button>
+
+          <div class="calc-results" id="calc-results" style="display: none;">
+            <div class="result-row">
+              <span>Capital at Risk (If stop is hit):</span>
+              <strong id="res-risk-capital">$0.00</strong>
+            </div>
+            <div class="result-row">
+              <span>Risk Per Share:</span>
+              <strong id="res-risk-per-share">$0.00</strong>
+            </div>
+            <div class="result-row highlight">
+              <span>Maximum Shares to Buy:</span>
+              <strong id="res-shares">0</strong>
+            </div>
+            <div class="result-row">
+              <span>Total Position Cost:</span>
+              <strong id="res-total-capital">$0.00</strong>
+            </div>
+          </div>
+        </div>
+
+        <script is:inline>
+          document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('calc-position-btn');
+            if (btn) {
+              btn.addEventListener('click', () => {
+                const accountSize = parseFloat(document.getElementById('account-size').value);
+                const riskPercent = parseFloat(document.getElementById('risk-percent').value);
+                const entryPrice = parseFloat(document.getElementById('entry-price').value);
+                const stopPrice = parseFloat(document.getElementById('stop-price').value);
+
+                if (isNaN(accountSize) || isNaN(riskPercent) || isNaN(entryPrice) || isNaN(stopPrice)) return;
+
+                if (stopPrice >= entryPrice) {
+                  alert("Stop-loss price must be lower than the entry price for a long position.");
+                  return;
+                }
+
+                // Calculate risk capital using cents to avoid floating point errors
+                const riskCapitalCents = Math.round(accountSize * 100) * (riskPercent / 100);
+                const riskCapital = riskCapitalCents / 100;
+
+                const riskPerShareCents = Math.round(entryPrice * 100) - Math.round(stopPrice * 100);
+                const riskPerShare = riskPerShareCents / 100;
+
+                if (riskPerShare <= 0) return;
+
+                // Floor the shares to never exceed risk
+                const sharesToBuy = Math.floor(riskCapital / riskPerShare);
+
+                // Total capital required
+                const totalCapitalCents = sharesToBuy * Math.round(entryPrice * 100);
+                const totalCapital = totalCapitalCents / 100;
+
+                document.getElementById('res-risk-capital').textContent = '$' + riskCapital.toFixed(2);
+                document.getElementById('res-risk-per-share').textContent = '$' + riskPerShare.toFixed(2);
+                document.getElementById('res-shares').textContent = sharesToBuy.toString();
+                document.getElementById('res-total-capital').textContent = '$' + totalCapital.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                document.getElementById('calc-results').style.display = 'block';
+              });
+            }
+          });
+        </script>
+
+        <p>
+          Notice how the calculator works: if you tighten your stop-loss (moving it closer to your entry price), your risk per share decreases. This allows you to buy <em>more</em> shares while still strictly maintaining your $100 total risk limit. However, a tighter stop is more easily triggered by normal market noise. Finding the balance between a logical stop placement and optimal position size is the art of trading.
+        </p>
+      </section>
+
+      <!-- Section 4: Trading Styles -->
+      <section>
+        <h2>Trading Styles: Finding Your Timeframe</h2>
+        <p>
+          "Trading" is a broad umbrella term that encompasses several distinct strategies. These strategies are primarily defined by the holding period of the position. You must choose a style that aligns with your personality, your available screen time, your capital, and your risk tolerance. Trying to day trade while working a demanding 9-to-5 job is a recipe for disaster.
+        </p>
+
+        <h3>Day Trading</h3>
+        <p>
+          Day traders buy and sell securities within the exact same trading day. A true day trader holds absolutely zero positions overnight. All trades are closed before the 4:00 PM Eastern closing bell.
+        </p>
+        <ul>
+          <li><strong>The Goal:</strong> Capture small, intraday price movements driven by momentum, breaking news, or temporary supply/demand imbalances.</li>
+          <li><strong>Requirements:</strong> Intensive, uninterrupted screen time during market hours. You need split-second decision-making capabilities, a fast internet connection, direct-access broker software, and typically a minimum $25,000 account balance due to U.S. Pattern Day Trader (PDT) regulations.</li>
+          <li><strong>The Reality:</strong> It is highly stressful and computationally demanding. You are competing directly against high-frequency trading (HFT) algorithms. The failure rate for new day traders is notoriously high.</li>
+        </ul>
+
+        <h3>Swing Trading</h3>
+        <p>
+          Swing traders hold positions for days, weeks, or occasionally a few months. They aim to capture the "swing" or short-to-medium-term momentum shifts in a stock's price.
+        </p>
+        <ul>
+          <li><strong>The Goal:</strong> Identify technical patterns, breakouts, or fundamental catalysts that will drive a stock higher over a multi-day or multi-week period.</li>
+          <li><strong>Requirements:</strong> This is often the most accessible active trading style for those with full-time jobs. It requires end-of-day chart analysis and planning rather than staring at tick-by-tick intraday charts. You place your orders (entry, target, stop-loss) before the market opens or after it closes.</li>
+          <li><strong>The Reality:</strong> You are exposed to "overnight risk." If a company releases terrible earnings after the market closes, the stock may gap down significantly the next morning, blowing right past your stop-loss and resulting in larger-than-expected losses.</li>
+        </ul>
+
+        <h3>Position Trading</h3>
+        <p>
+          Position traders hold for months or even years. They ignore short-term intraday or daily noise and focus almost entirely on overarching macroeconomic trends, sector rotation, or major fundamental shifts within a specific company.
+        </p>
+        <ul>
+          <li><strong>The Goal:</strong> Ride a massive structural trend for maximum profit. This style blurs the line between trading and long-term investing. If you are comparing this to the <a href="/average-stock-market-return">average stock market return</a> (historically around 10% annualized for the S&P 500), position trading aims to significantly outperform that benchmark by concentrating capital in cyclical, high-growth winners.</li>
+          <li><strong>Requirements:</strong> Deep fundamental analysis, patience, and the psychological fortitude to hold through significant drawdowns and volatility without panicking.</li>
+        </ul>
+      </section>
+
+      <!-- Section 5: The Mental Game -->
+      <section>
+        <h2>The Psychology of Trading: Your Own Worst Enemy</h2>
+        <p>
+          The mathematics of trading are actually quite simple. Addition, subtraction, percentages, and basic probability. The execution of the strategy is phenomenally difficult because of human psychology. You are competing in an arena designed to exploit human emotion.
+        </p>
+        <p>
+          When you place a trade, you are fighting two dominant emotions: Fear and Greed. If you enter the market driven by FOMO (Fear Of Missing Out) on a rallying stock, or if you refuse to sell a losing position because you are afraid to admit you were wrong, the market will systematically and efficiently transfer your capital to those who remain disciplined.
+        </p>
+        <p>
+          Common psychological pitfalls that destroy accounts include:
+        </p>
+        <ul>
+          <li><strong>Revenge Trading:</strong> Taking immediate, oversized risks to win back money lost on a previous trade. This is purely emotional and almost always leads to a cascading series of larger losses.</li>
+          <li><strong>Moving Stop Losses:</strong> You set a hard stop loss when you are thinking clearly. The stock approaches it, and you move the stop down, telling yourself, "It will bounce back." You refuse to accept a small, calculated loss, and watch it mutate into a catastrophic, account-blowing event.</li>
+          <li><strong>Over-leveraging:</strong> Using margin (money borrowed from your broker) to amplify your position size before you have mastered consistent profitability with cash. Leverage amplifies gains, but it equally amplifies losses. It is a tool for the experienced, a trap for the novice.</li>
+          <li><strong>Confirmation Bias:</strong> Only seeking out news articles, forum posts, or analysts that agree with your existing trade thesis, while ignoring glaring warning signs that you are wrong.</li>
+        </ul>
+        <p>
+          Successful trading is boring. It is a business. It requires executing a statistically proven edge over and over again, without emotion, mechanically taking small losses when wrong, and letting winners run when right.
+        </p>
+      </section>
+
+      <!-- Section 6: Fundamental vs Technical Analysis -->
+      <section>
+        <h2>How Traders Analyze the Market: Fundamentals vs. Technicals</h2>
+        <p>
+          How do you know what to buy? Traders generally rely on two primary schools of thought, often blending them to formulate a complete strategy.
+        </p>
+
+        <h3>Fundamental Analysis: The "What"</h3>
+        <p>
+          Fundamental analysis focuses on the underlying business. It involves dissecting financial statements (income statements, balance sheets, cash flow statements), evaluating the management team, understanding the competitive landscape, and analyzing macroeconomic factors like interest rates and inflation.
+        </p>
+        <p>
+          Fundamental traders look for stocks that are mispriced relative to their intrinsic value. They care about earnings growth, profit margins, and revenue projections. If a company is consistently growing earnings at 20% year-over-year but the stock price has dropped due to temporary market panic, a fundamental trader sees a buying opportunity. This is crucial when considering <a href="/how-to-pick-stocks">how to pick stocks</a> for longer timeframes.
+        </p>
+
+        <h3>Technical Analysis: The "When"</h3>
+        <p>
+          Technical analysis ignores the underlying business entirely. It focuses solely on price action and trading volume. Technical analysts (often called chartists) believe that all known fundamental information, human emotion, and market psychology are instantly reflected in the price.
+        </p>
+        <p>
+          They use charts to identify trends, support and resistance levels, and mathematical indicators (like Moving Averages or the Relative Strength Index). A technical trader doesn't care if the company sells software or shoes; they only care if the price chart indicates buyers are overwhelming sellers, signaling upward momentum. Technical analysis is used heavily for pinpointing precise entry and exit timing.
+        </p>
+      </section>
+
+      <!-- Section 7: Next Steps -->
+      <section>
+        <h2>Next Steps: Building Your Foundation Without Losing Your Shirt</h2>
+        <p>
+          Trading is a profession. You would not attempt to perform surgery without years of medical school. Do not attempt to day trade with your life savings after watching a few videos online.
+        </p>
+        <p>
+          Before committing a single dollar of real capital to active trading, follow this progression:
+        </p>
+        <ol>
+          <li><strong>Education:</strong> Understand market mechanics, order types, and risk management thoroughly.</li>
+          <li><strong>Develop a Strategy:</strong> Define your edge. What exactly are you looking for? What is your entry criteria? Where is your stop loss? Where is your profit target? Write it down. A plan in your head is just a wish.</li>
+          <li><strong>Paper Trading:</strong> Open a simulator account. Most major brokerages offer free paper trading environments that mimic live markets with fake money. Trade your written strategy here. Treat the fake money as real money. Execute your strategy, record your trades in a journal, and ruthlessly review your performance.</li>
+          <li><strong>Review and Refine:</strong> Are you profitable in the simulator over a sequence of 50 to 100 trades? If you cannot make consistent returns in a stress-free simulated environment, you will absolutely be destroyed in the live market where emotional pressure is exponentially higher.</li>
+          <li><strong>Start Small:</strong> When transitioning to live capital, start with a fraction of your intended account size. Trade one share if necessary. Focus on executing the process flawlessly, not on making money. The money is a byproduct of perfect execution.</li>
+        </ol>
+        <p>
+          As your portfolio grows and your trading evolves, you will encounter various corporate actions that affect your holdings. For instance, a company might execute a stock split to lower its share price and increase liquidity. Understanding how these mechanics alter your share count without changing your total equity value is crucial. Use tools like a <a href="/stock-split-calculator">stock split calculator</a> to quickly model these scenarios and adjust your position tracking accordingly.
+        </p>
+        <p>
+          Remember, the market will always be there tomorrow. There is no rush to trade. Protect your capital, study the mechanics, and approach the market with the respect it demands.
+        </p>
+      </section>
+
+    </main>
+  </div>
+</SiteLayout>
+
+<style>
+  .hero {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .hero .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .content-body section {
+    margin-bottom: 3rem;
+  }
+
+  .content-body h2 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .content-body h3 {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .content-body p {
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .content-body ul, .content-body ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .content-body li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  /* Links */
+  .page-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .page-content a:hover {
+    opacity: 0.8;
+  }
+
+  /* Callout Boxes */
+  .insight-box {
+    background: var(--card-bg);
+    border-left: 4px solid var(--accent-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .insight-box h3 {
+    margin-top: 0;
+    color: var(--accent-color);
+  }
+
+  .insight-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Calculator Styles */
+  .calculator-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .form-group input {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
+  }
+
+  button {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.2s;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  .calc-results {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+  }
+
+  .result-row.highlight {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    padding: 0.5rem 0;
+  }
+</style>

@@ -1,0 +1,301 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "SCHD Dividend Calculator & Yield Analysis",
+  description: "Want to know how much passive income SCHD can generate? Use our interactive dividend calculator to estimate your annual and monthly returns based on shares...",
+  category: "tool",
+  published: "2026-03-20",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "SCHD Dividend Calculator & Yield Analysis",
+      "description": "Want to know how much passive income SCHD can generate? Use our interactive dividend calculator to estimate your annual and monthly returns based on shares or investment amount.",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What index does SCHD track?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "SCHD tracks the Dow Jones U.S. Dividend 100 Index. This index focuses on high-quality companies with a history of consistently paying dividends, ensuring a portfolio built on financial strength rather than just high current yield."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often does SCHD pay dividends?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "SCHD follows a quarterly payout schedule. Distributions are typically made in March, June, September, and December, allowing investors to receive steady, reliable income throughout the year."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the expense ratio for SCHD?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The expense ratio for SCHD is exceptionally low at just 0.06%. This cost-efficiency allows investors to keep more of their returns and compounding dividend income over the long term."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is the SCHD dividend yield calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The current dividend yield, which hovers around 3.5%, is calculated by dividing the total annual dividend payments by the current share price. Because share prices fluctuate daily, the actual yield you lock in depends on your purchase price."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is SCHD popular among dividend investors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "SCHD is highly favored because it successfully balances a competitive starting yield (around 3.5%) with a strong track record of dividend growth. Its strict screening criteria ensure it holds fundamentally sound companies, making it a cornerstone for many passive income portfolios."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+---
+
+<SiteLayout site="westmount" title="SCHD Dividend Calculator" description="Estimate your annual and monthly dividend income with our interactive SCHD dividend calculator. Input your shares or investment amount to instantly project." canonical="https://westmountfundamentals.com/schd-dividend-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="hero">
+      <h1>SCHD Dividend Calculator & Yield Analysis</h1>
+      <p class="subtitle">Estimate your annual and monthly income from the Schwab U.S. Dividend Equity ETF.</p>
+    </div>
+
+    <section class="content-section">
+      <p>Dividend investors are frequently drawn to exchange-traded funds that balance high starting yields with robust long-term dividend growth. The Schwab U.S. Dividend Equity ETF is widely recognized as a premier choice in this space. By analyzing its underlying strategy and historical performance, you can better understand how it fits into your broader portfolio construction.</p>
+
+      <div class="card">
+        <h3>SCHD Key Highlights</h3>
+        <ul>
+          <li><strong>Current Target Yield:</strong> ~3.5%</li>
+          <li><strong>Payout Frequency:</strong> Quarterly</li>
+          <li><strong>Expense Ratio:</strong> 0.06%</li>
+          <li><strong>Underlying Index:</strong> Dow Jones U.S. Dividend 100 Index</li>
+        </ul>
+      </div>
+
+      <h2>The Strategy Behind the Returns</h2>
+      <p>What sets this particular fund apart from generic dividend ETFs is its strict screening methodology. It tracks the <strong>Dow Jones U.S. Dividend 100 Index</strong>, which filters a broad universe of U.S. stocks down to just 100 high-quality companies. To be eligible for inclusion, a company must have a minimum of 10 consecutive years of dividend payments. This foundational rule immediately eliminates speculative, highly volatile stocks that might cut their dividends during the next economic downturn.</p>
+
+      <p>Beyond the ten-year requirement, the methodology evaluates stocks based on four fundamental metrics: cash flow to total debt, return on equity (ROE), indicated dividend yield, and five-year dividend growth rate. This multi-factor approach ensures that the fund doesn't just chase the highest nominal yield, which can often be a "yield trap." Instead, it targets financially resilient companies capable of sustaining and growing their payouts over time.</p>
+
+      <h2>Interactive Dividend Calculator</h2>
+      <p>Use the calculator below to dynamically project your potential income based on real-time inputs. Whether you are planning to invest a lump sum or you want to calculate the yield from your current share count, this tool provides instant feedback. <em>Note: Our calculator assumes a baseline 3.5% yield for estimation purposes. Real-world results will vary slightly as share prices and declared dividends fluctuate.</em></p>
+
+      <div class="card" id="calculator-container">
+        <h3>Income Projections</h3>
+
+        <div class="input-group">
+          <label for="calc-mode" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Calculate Based On:</label>
+          <select id="calc-mode" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 1rem; background-color: var(--card-bg); color: var(--text-primary); margin-bottom: 1rem;">
+            <option value="shares">Number of Shares</option>
+            <option value="amount">Investment Amount ($)</option>
+          </select>
+        </div>
+
+        <div id="shares-input-container" style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label for="shares-input" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Number of Shares:</label>
+                <input type="number" id="shares-input" value="100" min="1" step="1" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 1rem; background-color: var(--card-bg); color: var(--text-primary);" />
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <label for="share-price-input" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Current Share Price ($):</label>
+                <input type="number" id="share-price-input" value="78.50" min="0.01" step="0.01" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 1rem; background-color: var(--card-bg); color: var(--text-primary);" />
+            </div>
+        </div>
+
+        <div id="amount-input-container" style="display: none; margin-bottom: 1rem;">
+            <label for="amount-input" style="display:block; margin-bottom: 0.5rem; font-weight: 600;">Total Investment Amount ($):</label>
+            <input type="number" id="amount-input" value="10000" min="1" step="100" style="width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 1rem; background-color: var(--card-bg); color: var(--text-primary);" />
+        </div>
+
+        <div id="results-container" style="background: var(--bg-color); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); margin-top: 1rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+              <p style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary);">Total Investment Value</p>
+              <strong id="total-value-result" style="color: var(--text-primary); font-size: 1.25rem;">$0.00</strong>
+            </div>
+            <div>
+              <p style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary);">Estimated Annual Income</p>
+              <strong id="annual-income-result" style="color: var(--accent-color); font-size: 1.5rem;">$0.00</strong>
+            </div>
+            <div>
+              <p style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary);">Estimated Monthly Income</p>
+              <strong id="monthly-income-result" style="color: var(--text-primary); font-size: 1.25rem;">$0.00</strong>
+            </div>
+            <div>
+              <p style="margin: 0 0 0.25rem 0; font-size: 0.9rem; color: var(--text-secondary);">Yield on Cost</p>
+              <strong id="yield-on-cost-result" style="color: var(--text-primary); font-size: 1.25rem;">3.50%</strong>
+            </div>
+          </div>
+        </div>
+        <div id="error-container" style="display: none; color: #ef4444; margin-top: 1rem; padding: 1rem; background-color: rgba(239, 68, 68, 0.1); border-radius: 6px; border: 1px solid #ef4444;">
+          Please enter valid positive numbers to calculate results.
+        </div>
+      </div>
+
+      <h2>Cost Efficiency and Compounding</h2>
+      <p>One of the most attractive features for long-term investors is the exceptionally low <strong>0.06% expense ratio</strong>. When holding a core portfolio position for decades, management fees can severely erode total returns. At just six basis points, this ETF allows you to keep almost all of the generated dividend income and capital appreciation, maximizing the powerful effects of compound interest.</p>
+
+      <p>Furthermore, because the fund distributes dividends on a predictable <strong>quarterly payout schedule</strong> (typically in March, June, September, and December), it is an excellent vehicle for income investors who rely on steady cash flow to cover living expenses or to reinvest via a DRIP (Dividend Reinvestment Plan).</p>
+
+      <h2>Portfolio Positioning and Comparisons</h2>
+      <p>While the ~3.5% yield is highly competitive among large-cap value funds, it is important to diversify your income sources. Investors seeking higher immediate yields might explore covered call strategies, though these often sacrifice capital appreciation. Conversely, those focused strictly on the broader market's total return might compare this strategy against core holdings. You can explore our <a href="/voo-dividend" style="color: var(--accent-color); text-decoration: none;">VOO Dividend Analysis</a> to see how a standard S&P 500 fund compares in terms of starting yield versus historical growth.</p>
+
+      <p>Ultimately, the decision to allocate capital depends on your personal financial goals. For those prioritizing a blend of safety, quality, and a growing income stream, the Dow Jones U.S. Dividend 100 Index provides a robust framework that has stood the test of various market cycles.</p>
+
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What index does SCHD track?</summary>
+        <p>SCHD tracks the Dow Jones U.S. Dividend 100 Index. This index focuses on high-quality companies with a history of consistently paying dividends, ensuring a portfolio built on financial strength rather than just high current yield.</p>
+      </details>
+      <details>
+        <summary>How often does SCHD pay dividends?</summary>
+        <p>SCHD follows a quarterly payout schedule. Distributions are typically made in March, June, September, and December, allowing investors to receive steady, reliable income throughout the year.</p>
+      </details>
+      <details>
+        <summary>What is the expense ratio for SCHD?</summary>
+        <p>The expense ratio for SCHD is exceptionally low at just 0.06%. This cost-efficiency allows investors to keep more of their returns and compounding dividend income over the long term.</p>
+      </details>
+      <details>
+        <summary>How is the SCHD dividend yield calculated?</summary>
+        <p>The current dividend yield, which hovers around 3.5%, is calculated by dividing the total annual dividend payments by the current share price. Because share prices fluctuate daily, the actual yield you lock in depends on your purchase price.</p>
+      </details>
+      <details>
+        <summary>Why is SCHD popular among dividend investors?</summary>
+        <p>SCHD is highly favored because it successfully balances a competitive starting yield (around 3.5%) with a strong track record of dividend growth. Its strict screening criteria ensure it holds fundamentally sound companies, making it a cornerstone for many passive income portfolios.</p>
+      </details>
+    </section>
+
+  </div>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      const modeSelect = document.getElementById('calc-mode');
+      const sharesContainer = document.getElementById('shares-input-container');
+      const amountContainer = document.getElementById('amount-input-container');
+
+      const sharesInput = document.getElementById('shares-input');
+      const priceInput = document.getElementById('share-price-input');
+      const amountInput = document.getElementById('amount-input');
+
+      const resultsContainer = document.getElementById('results-container');
+      const errorContainer = document.getElementById('error-container');
+
+      const totalValueSpan = document.getElementById('total-value-result');
+      const annualIncomeSpan = document.getElementById('annual-income-result');
+      const monthlyIncomeSpan = document.getElementById('monthly-income-result');
+      const yieldSpan = document.getElementById('yield-on-cost-result');
+
+      const CURRENT_YIELD_PERCENT = 3.5;
+      const CURRENT_YIELD_DECIMAL = CURRENT_YIELD_PERCENT / 100;
+
+      function formatCurrency(amount) {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+      }
+
+      function updateUI() {
+        if (modeSelect.value === 'shares') {
+          sharesContainer.style.display = 'flex';
+          amountContainer.style.display = 'none';
+        } else {
+          sharesContainer.style.display = 'none';
+          amountContainer.style.display = 'block';
+        }
+        calculate();
+      }
+
+      function calculate() {
+        let totalValue = 0;
+        let isValid = false;
+
+        if (modeSelect.value === 'shares') {
+          const shares = parseFloat(sharesInput.value);
+          const price = parseFloat(priceInput.value);
+
+          if (sharesInput.value === '' || priceInput.value === '') {
+            isValid = false;
+          } else if (!isNaN(shares) && shares > 0 && !isNaN(price) && price > 0) {
+            totalValue = shares * price;
+            isValid = true;
+          }
+        } else {
+          const amount = parseFloat(amountInput.value);
+          if (amountInput.value === '') {
+             isValid = false;
+          } else if (!isNaN(amount) && amount > 0) {
+            totalValue = amount;
+            isValid = true;
+          }
+        }
+
+        if (isValid) {
+          resultsContainer.style.display = 'block';
+          errorContainer.style.display = 'none';
+
+          const annualIncome = totalValue * CURRENT_YIELD_DECIMAL;
+          const monthlyIncome = annualIncome / 12;
+
+          totalValueSpan.textContent = formatCurrency(totalValue);
+          annualIncomeSpan.textContent = formatCurrency(annualIncome);
+          monthlyIncomeSpan.textContent = formatCurrency(monthlyIncome);
+          yieldSpan.textContent = CURRENT_YIELD_PERCENT.toFixed(2) + '%';
+        } else {
+          resultsContainer.style.display = 'none';
+          errorContainer.style.display = 'block';
+        }
+      }
+
+      if(modeSelect && sharesInput && priceInput && amountInput) {
+        modeSelect.addEventListener('change', updateUI);
+        sharesInput.addEventListener('input', calculate);
+        priceInput.addEventListener('input', calculate);
+        amountInput.addEventListener('input', calculate);
+        updateUI(); // Initial calculate
+      }
+    });
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; line-height: 1.6; color: var(--text-primary); }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    ul { list-style-type: none; padding: 0; }
+    ul li { padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); }
+    ul li:last-child { border-bottom: none; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; margin-bottom: 0.5rem; }
+    h2 { margin-top: 2rem; margin-bottom: 1rem; color: var(--text-primary); }
+    h3 { margin-top: 0; color: var(--text-primary); }
+    p { margin-bottom: 1rem; }
+  </style>
+
+</SiteLayout>

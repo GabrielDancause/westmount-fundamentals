@@ -1,0 +1,594 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "What is Dividend Income? A Complete Guide with Real Examples",
+  description: "Discover the truth about dividend income, how it actually works, and the surprising math behind top-paying companies. The answer might change how you invest.",
+  category: "guide",
+  published: "2026-03-17"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What exactly is dividend income?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dividend income is a portion of a company's profit that is distributed directly to its shareholders. It is usually paid as cash directly into your brokerage account on a regular basis (like quarterly or monthly)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often are dividends paid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most companies pay dividends quarterly (four times a year). However, some real estate investment trusts (REITs) and special dividend ETFs pay monthly, and a few international companies pay semi-annually or annually."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do all stocks pay dividends?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Many companies, especially young, fast-growing tech companies, choose to reinvest all their profits back into the business to fund expansion. Mature, stable companies with predictable cash flows are more likely to pay dividends."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good dividend yield?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 'good' dividend yield typically ranges between 2% and 6%. Yields higher than this can sometimes be a 'yield trap,' indicating that the market expects the company to cut its dividend due to financial stress."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are dividends guaranteed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Dividends are declared at the discretion of a company's board of directors. If a company faces financial difficulties, they can cut or completely suspend their dividend payments to conserve cash."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/what-is-dividend-income"
+  schema={schema}
+>
+
+  <div class="page-content container">
+    <h1>What is Dividend Income? The Definitive Guide</h1>
+
+    <div class="highlight-box">
+      <strong>Key Takeaways:</strong>
+      <ul>
+        <li>Dividend income is hard cash paid directly to shareholders out of a company's profits.</li>
+        <li>Not all companies pay dividends. Fast-growing companies often reinvest profits, while mature companies tend to pay them out.</li>
+        <li>Dividend yields change constantly as stock prices fluctuate. When a stock price drops, its dividend yield rises.</li>
+        <li>Dividend income can grow over time. The best dividend stocks increase their payouts year after year.</li>
+        <li>You can reinvest dividends to buy more shares, creating a snowball effect of compound interest.</li>
+      </ul>
+    </div>
+
+    <h2>The Jargon-Free Definition of Dividend Income</h2>
+    <p>
+      Imagine you own a small local bakery with a friend. At the end of the year, after paying rent, ingredients, and employees, the bakery has $10,000 in pure profit sitting in the bank account. As owners, you have two choices:
+    </p>
+    <ol>
+      <li>Use the $10,000 to buy a new oven and expand the business.</li>
+      <li>Split the $10,000 and each take $5,000 home as cash.</li>
+    </ol>
+    <p>
+      If you choose the second option and take the cash home, that is exactly <a href="/what-is-a-dividend">what a dividend is</a>.
+    </p>
+    <p>
+      When you buy shares of a publicly traded company on the stock market, you become a part-owner of that business. If that business generates excess profit, its Board of Directors may choose to distribute a portion of that profit back to the owners (the shareholders). This distribution is called <strong>dividend income</strong>.
+    </p>
+    <p>
+      Unlike stock price appreciation (where you only make money if you sell your shares to someone else for a higher price), dividend income is <em>real cash</em> deposited directly into your brokerage account. You don't have to sell a single share to receive it.
+    </p>
+
+    <h2>How Dividend Income Actually Works in Practice</h2>
+    <p>
+      Let's look at exactly how this happens in the real world using one of the most famous dividend-paying companies on earth: <strong>Johnson & Johnson (JNJ)</strong>.
+    </p>
+    <p>
+      As of our latest data, Johnson & Johnson pays an annual dividend of <strong>$5.20</strong> per share.
+    </p>
+    <p>
+      But they don't hand you a $5.20 check once a year. Like most U.S. companies, JNJ pays its dividends <em>quarterly</em> (four times a year). So, if you own one share of JNJ, you will receive approximately <strong>$1.30</strong> in cash every three months.
+    </p>
+    <p>
+      If you own 100 shares of JNJ, you will receive roughly <strong>$130.00</strong> every quarter. That's <strong>$520.00</strong> of pure, passive dividend income every year, just for holding the stock. You can spend that cash on groceries, pay your electricity bill, or use it to buy more stock. The choice is yours.
+    </p>
+
+    <div class="calculator-card">
+      <h3>The Dividend Snowball Calculator</h3>
+      <p style="text-align: center; margin-bottom: 2rem;">See how quickly dividend income grows when you reinvest it (DRIP).</p>
+
+      <div class="input-group">
+        <label for="initial-investment">Initial Investment ($)</label>
+        <div class="input-wrapper">
+          <input type="number" id="initial-investment" value="10000" min="0" step="100">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="monthly-contribution">Monthly Contribution ($)</label>
+        <div class="input-wrapper">
+          <input type="number" id="monthly-contribution" value="500" min="0" step="10">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="dividend-yield">Annual Dividend Yield (%)</label>
+        <div class="input-wrapper">
+          <input type="number" id="dividend-yield" value="3.5" min="0" max="20" step="0.1">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="years-invested">Years Invested</label>
+        <div class="input-wrapper">
+          <input type="number" id="years-invested" value="10" min="1" max="50" step="1">
+        </div>
+      </div>
+
+      <div class="calc-result">
+        <span class="calc-result-label" id="calc-result-label">Annual Dividend Income in Year 10</span>
+        <span class="calc-result-value" id="calc-output">$0.00</span>
+      </div>
+    </div>
+
+    <script is:inline>
+      function calculateSnowball() {
+        const initial = parseFloat(document.getElementById('initial-investment').value) || 0;
+        const monthly = parseFloat(document.getElementById('monthly-contribution').value) || 0;
+        const yieldPercent = parseFloat(document.getElementById('dividend-yield').value) || 0;
+        const years = parseInt(document.getElementById('years-invested').value) || 0;
+
+        const rate = yieldPercent / 100;
+        const monthlyRate = rate / 12;
+        const months = years * 12;
+
+        let balance = initial;
+
+        for (let i = 0; i < months; i++) {
+          balance += monthly;
+          // Compound monthly
+          if (rate > 0) {
+            balance *= (1 + monthlyRate);
+          }
+        }
+
+        const annualIncome = balance * rate;
+
+        document.getElementById('calc-output').textContent = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(annualIncome);
+      }
+
+      document.getElementById('initial-investment').addEventListener('input', calculateSnowball);
+      document.getElementById('monthly-contribution').addEventListener('input', calculateSnowball);
+      document.getElementById('dividend-yield').addEventListener('input', calculateSnowball);
+      document.getElementById('years-invested').addEventListener('input', calculateSnowball);
+
+      // Initial calculation
+      calculateSnowball();
+    </script>
+
+    <h2>The Math of Dividend Yields: A Real Example</h2>
+    <p>
+      When discussing dividend income, the most important metric you will hear is the <strong>Dividend Yield</strong>.
+    </p>
+    <p>
+      The dividend yield is simply the annual dividend payout divided by the current stock price, expressed as a percentage. It tells you exactly how much cash you will earn per year for every dollar you invest. Let's look at the <a href="/dividend-meaning">dividend meaning</a> and yield calculations for two real, famous companies as of today:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Stock Price</th>
+            <th>Annual Dividend</th>
+            <th>Dividend Yield</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Apple (AAPL)</strong></td>
+            <td>$252.82</td>
+            <td>$1.04</td>
+            <td>0.41%</td>
+          </tr>
+          <tr>
+            <td><strong>Coca-Cola (KO)</strong></td>
+            <td>$77.82</td>
+            <td>$2.06</td>
+            <td>2.65%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Look closely at those numbers. Even though Apple is one of the most profitable companies in human history, its dividend yield is only 0.41%. If you invest $10,000 into Apple today, you will receive roughly $41.00 in dividend income over the next year.
+    </p>
+    <p>
+      Meanwhile, Coca-Cola has a dividend yield of 2.65%. If you invest that same $10,000 into Coca-Cola today, you will receive roughly $265.00 in dividend income over the next year.
+    </p>
+    <p>
+      Why the massive difference? Because Apple and Coca-Cola are in entirely different phases of their business lifecycles, and they use their profits differently.
+    </p>
+
+    <h2>Why Do Some Companies Pay High Dividends While Others Pay None?</h2>
+    <p>
+      Understanding the <a href="/dividend-definition">dividend definition</a> is only half the battle. You also need to understand <em>why</em> companies pay them. The decision to pay a dividend comes down to capital allocation—how a company chooses to spend its cash.
+    </p>
+
+    <h3>1. The Growth Phase (Low or No Dividends)</h3>
+    <p>
+      When a company is young or operating in a rapidly changing industry (like technology), it needs every dollar it earns to survive and grow. It must hire top engineers, build new data centers, and acquire competitors.
+    </p>
+    <p>
+      If a high-growth company took its profits and paid them out as dividends, it would be starving itself of the fuel it needs to grow. Shareholders of these companies don't <em>want</em> dividends. They want the company to reinvest the cash to create a higher stock price. This is why companies like Amazon, Tesla, and Netflix traditionally paid zero dividends for decades.
+    </p>
+
+    <h3>2. The Mature Phase (High Dividends)</h3>
+    <p>
+      Now look at a company like Coca-Cola. Coca-Cola already operates in nearly every country on Earth. It already has massive bottling plants, established supply chains, and universal brand recognition.
+    </p>
+    <p>
+      When Coca-Cola generates billions of dollars in profit, what should it do with the money? It can't reasonably build 10,000 more factories—there isn't enough global demand to justify it. Because Coca-Cola has run out of high-return ways to reinvest all of its cash back into the business, the most logical and responsible thing to do is give that excess cash back to the owners. This is the core philosophy of <a href="/dividend-investing-guide">what is dividend investing</a>.
+    </p>
+
+    <h2>The Real Power of Dividend Income: Dividend Growth</h2>
+    <p>
+      Here is the secret that experienced dividend investors understand but beginners often miss: <strong>The best dividend stocks don't just pay dividends; they increase them every single year.</strong>
+    </p>
+    <p>
+      Consider <strong>Realty Income (O)</strong>, a famous Real Estate Investment Trust (REIT) that pays its dividends monthly. Currently, Realty Income trades at around $64.92 and pays an annual dividend of $3.23, giving it a yield of 4.98%.
+    </p>
+    <p>
+      If you buy a share today, your yield is 4.98%. But what if you bought a share of Realty Income 10 years ago when the stock price was much lower?
+    </p>
+    <p>
+      Because Realty Income has aggressively increased its dividend payout every year, your <em>Yield on Cost</em> (the dividend you receive today divided by the price you paid a decade ago) would be massively higher. This is how long-term investors build enormous passive income streams. They buy companies that consistently raise their dividends, and they hold them for decades.
+    </p>
+
+    <h2>Pros, Cons, and Common Misconceptions</h2>
+    <p>
+      Like everything in finance, dividend income has trade-offs. It is not free money, and it is not a perfect strategy for everyone.
+    </p>
+
+    <h3>The Pros of Dividend Income</h3>
+    <ul>
+      <li><strong>Passive Cash Flow:</strong> It provides a reliable stream of cash without requiring you to sell your assets. This is highly appealing to retirees who need money to live on.</li>
+      <li><strong>Psychological Comfort:</strong> During stock market crashes, watching your portfolio value drop is terrifying. But if you own strong dividend stocks, they will likely continue paying you cash even while the stock price is down, making it easier to hold through the panic.</li>
+      <li><strong>The Snowball Effect:</strong> By automatically reinvesting your dividends (a process known as DRIP—Dividend Reinvestment Plan), you use your dividends to buy more shares, which then pay their own dividends, accelerating your wealth creation.</li>
+    </ul>
+
+    <h3>The Cons of Dividend Income</h3>
+    <ul>
+      <li><strong>Taxes:</strong> Unless you hold your dividend stocks in a tax-advantaged account (like an IRA or Roth IRA), you will have to pay taxes on your dividend income every year, even if you reinvest it. This creates a "tax drag" on your portfolio.</li>
+      <li><strong>Lower Total Return Potential:</strong> Because dividend-paying companies are mature and returning cash to shareholders rather than reinvesting it for massive growth, they rarely experience the explosive 1,000% stock price gains seen in early-stage tech companies.</li>
+      <li><strong>Dividend Cuts:</strong> Dividends are not legally guaranteed. If a company hits hard times, the board of directors can slash the dividend to zero. When this happens, the stock price usually plummets simultaneously, hitting investors with a devastating double-loss.</li>
+    </ul>
+
+    <h3>The Biggest Misconception: The Free Money Fallacy</h3>
+    <p>
+      The most dangerous misconception about dividend income is that it is "free money." It is mathematically impossible for a dividend to be free money.
+    </p>
+    <p>
+      When a company pays a dividend, cash literally leaves the company's bank account. Because the company now has less cash, the company is objectively worth less. Consequently, on the exact day a stock begins trading without the value of its next dividend payment (the ex-dividend date), the stock exchange automatically adjusts the stock price downward by the exact amount of the dividend.
+    </p>
+    <p>
+      If a $100 stock pays a $2 dividend, you do not suddenly have $102 of value. You have a $98 stock and $2 in cash. The total value is exactly the same. The benefit of <a href="/what-is-a-dividend-stock">what is a dividend stock</a> comes from the underlying business continuing to generate <em>new</em> profits over time to replenish that cash.
+    </p>
+
+    <h2>How to Analyze a Dividend Stock</h2>
+    <p>
+      If you are considering building a portfolio for dividend income, you cannot simply sort stocks by their yield and buy the highest ones. That is a recipe for disaster. High yields are often a warning sign (a "yield trap") that the market expects the dividend to be cut.
+    </p>
+    <p>
+      Instead, experienced investors look at three critical metrics:
+    </p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Payout Ratio</h3>
+        <p>The percentage of profits paid out as dividends. A safe payout ratio is usually under 60%, leaving room for error.</p>
+        <span class="badge positive">Lower is Safer</span>
+      </div>
+      <div class="stat-card">
+        <h3>Dividend Growth Rate</h3>
+        <p>How fast the company is increasing its dividend each year. This helps your income outpace inflation.</p>
+        <span class="badge positive">Higher is Better</span>
+      </div>
+      <div class="stat-card">
+        <h3>Free Cash Flow</h3>
+        <p>Dividends are paid in cash, not accounting profits. The company must generate real cash flow to sustain the payout.</p>
+        <span class="badge positive">Must be Growing</span>
+      </div>
+    </div>
+
+
+
+    <h2>How Dividend Reinvestment Plans (DRIPs) Work</h2>
+    <p>
+      One of the most powerful tools available to dividend investors is the Dividend Reinvestment Plan, commonly referred to as a DRIP. When you enroll in a DRIP, instead of receiving your dividend payments as cash in your brokerage account, the company or your broker automatically uses that cash to purchase more shares (or fractional shares) of the same stock.
+    </p>
+    <p>
+      This process is fully automated and entirely passive. Because you are constantly acquiring more shares, your next dividend payment will be larger, which will then buy even more shares, creating an exponential compounding effect. Over long periods—such as 10, 20, or 30 years—DRIP investing is responsible for a massive percentage of the total return generated by the stock market.
+    </p>
+    <p>
+      Furthermore, many traditional DRIP programs offered directly by companies allow you to reinvest dividends without paying any trading commissions or fees, making it one of the most cost-effective ways to steadily accumulate wealth over time.
+    </p>
+
+    <h2>The Impact of Taxes on Dividend Income</h2>
+    <p>
+      As we touched on earlier in the "Cons" section, taxes are a significant consideration for any dividend investor. In the United States, how your dividends are taxed depends heavily on two factors: the type of account holding the stocks and the classification of the dividends themselves.
+    </p>
+    <h3>Qualified vs. Ordinary Dividends</h3>
+    <p>
+      The IRS categorizes dividends into two main buckets: <strong>Qualified</strong> and <strong>Ordinary</strong> (also known as non-qualified).
+    </p>
+    <ul>
+      <li><strong>Qualified Dividends:</strong> These are taxed at the much lower long-term capital gains tax rates, which typically range from 0% to 20%, depending on your overall taxable income. To be considered "qualified," the dividend must be paid by a U.S. corporation or a qualifying foreign corporation, and you must hold the stock for a specific minimum period (usually more than 60 days during the 121-day period that begins 60 days before the ex-dividend date).</li>
+      <li><strong>Ordinary Dividends:</strong> If a dividend does not meet the holding period requirements, or if it is paid by certain types of entities like Real Estate Investment Trusts (REITs) or Master Limited Partnerships (MLPs), it is treated as ordinary income. This means it is taxed at your standard federal income tax bracket rate, which can be significantly higher than the qualified dividend rate.</li>
+    </ul>
+
+    <h3>Asset Location Strategy</h3>
+    <p>
+      Experienced investors use a concept called "asset location" to minimize their tax burden. Asset location involves deliberately choosing which types of investments to place in taxable accounts versus tax-advantaged accounts (like an IRA or 401(k)).
+    </p>
+    <p>
+      Because REITs (like Realty Income) pay non-qualified dividends that are taxed at higher ordinary income rates, smart investors often hold these specific stocks inside tax-advantaged retirement accounts where the dividends can grow tax-deferred or tax-free. Conversely, they might hold companies that pay qualified dividends (like Apple or Johnson & Johnson) in their regular taxable brokerage accounts, taking advantage of the lower capital gains tax rates.
+    </p>
+
+    <h2>Dividend Aristocrats and Kings</h2>
+    <p>
+      When building a dividend portfolio, investors often look for companies with a proven track record of reliability. Two of the most prestigious classifications in the dividend investing world are "Dividend Aristocrats" and "Dividend Kings."
+    </p>
+    <ul>
+      <li><strong>Dividend Aristocrats:</strong> These are companies in the S&P 500 index that have not only paid dividends but have actually increased their baseline dividend payout for at least 25 consecutive years. Examples include companies like Coca-Cola, Johnson & Johnson, and Target.</li>
+      <li><strong>Dividend Kings:</strong> This is an even more exclusive group. To become a Dividend King, a company must have increased its dividend payout for at least 50 consecutive years. Achieving this status requires a company to successfully navigate multiple economic recessions, wars, and shifts in consumer behavior while still generating enough cash to reward shareholders.</li>
+    </ul>
+    <p>
+      Focusing on these highly reliable companies helps mitigate the risk of dividend cuts and provides a more predictable, growing income stream for retirees and long-term investors.
+    </p>
+
+    <h2>Final Thoughts: Is Dividend Income Right For You?</h2>
+    <p>
+      Dividend income is a powerful tool for building wealth and achieving financial independence. It transforms the abstract concept of stock ownership into tangible, spendable cash.
+    </p>
+    <p>
+      Whether you are looking to supplement your current paycheck, build a massive compounding snowball for the future, or fund your retirement without selling off your assets, understanding how dividend income works is essential. It is the cornerstone of traditional value investing, providing a tangible return on investment regardless of whether the stock market is up or down on any given day.
+    </p>
+    <p>
+      However, it's crucial to remember that dividends are a byproduct of a healthy, profitable business. Do not chase yield. Instead, focus on buying high-quality businesses with strong cash flows, competitive advantages, and a history of treating shareholders well.
+    </p>
+    <p>
+      If you are interested in exploring more about how stocks behave over the long term, you might want to look into the <a href="/average-stock-market-return">average stock market return</a>, or understand how corporate actions affect your shares by using a <a href="/stock-split-calculator">stock split calculator</a>. The more you understand the underlying mechanics of the market, the better equipped you will be to build a durable, income-producing portfolio.
+    </p>
+  </div>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 1.125rem;
+  }
+
+  .page-content h2 {
+    color: var(--text-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+  }
+
+  .page-content p {
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+  }
+
+  .page-content a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .page-content ul, .page-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+  }
+
+  .page-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-content strong {
+    color: var(--text-primary);
+  }
+
+  .data-table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-bg);
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .data-table th, .data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .data-table th {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    font-weight: bold;
+  }
+
+  .data-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Calculator Styles */
+  .calculator-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .calculator-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .input-group label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-prefix, .input-suffix {
+    position: absolute;
+    color: var(--text-secondary);
+    padding: 0 1rem;
+  }
+
+  .input-suffix {
+    right: 0;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  .input-group input.has-prefix {
+    padding-left: 2rem;
+  }
+
+  .input-group input.has-suffix {
+    padding-right: 2rem;
+  }
+
+  .input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .results-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .stat-card {
+    background: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .stat-card h4 {
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .stat-value.highlight {
+    color: var(--accent-color);
+  }
+</style>
+
+</SiteLayout>

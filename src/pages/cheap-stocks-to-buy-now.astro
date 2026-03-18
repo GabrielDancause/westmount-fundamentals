@@ -1,0 +1,1169 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Cheap Stocks to Buy Now: Undervalued Picks 2026",
+  description: "Are these deeply discounted companies a bargain or a value trap? We dig into the data to find the best cheap stocks on the market today.",
+  category: "list",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": ["Article", "FAQPage"],
+  "headline": "Cheap Stocks to Buy Now: Undervalued Picks 2026",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What makes a stock cheap?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A stock is considered cheap not just by its share price, but by its valuation metrics, such as a low Price-to-Earnings (P/E) ratio or Price-to-Book (P/B) ratio relative to its peers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are cheap stocks to buy now safe investments?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not inherently. Stocks can be cheap for good reason (value traps). It requires careful analysis of their balance sheet, debt, and future earnings potential."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a low P/E ratio always good?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A low P/E ratio indicates a stock is cheap relative to earnings, but if earnings are expected to decline sharply, the stock may actually be expensive."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What sectors currently have the cheapest stocks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cyclical sectors like financials, energy, and legacy consumer discretionary often trade at lower multiples than high-growth technology sectors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many cheap stocks should I own?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Diversification is key when investing in undervalued stocks. Holding 15-20 across different sectors helps mitigate the risk of individual value traps."
+      }
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/cheap-stocks-to-buy-now" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Cheap Stocks to Buy Now: Undervalued Picks 2026</h1>
+      <p class="subtitle">Finding genuine value in a market of high valuations.</p>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+      <p>Finding <strong>cheap stocks to buy now</strong> requires looking past the raw share price. A $5 stock isn't necessarily cheaper than a $500 stock—it all comes down to valuation. In this deep dive, we identify companies trading at significant discounts to their intrinsic value, earnings potential, and historical multiples.</p>
+    </div>
+
+    <section class="methodology-section" style="background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+      <h2>Methodology</h2>
+      <p>Our ranking of cheap stocks focuses on established companies trading at deeply discounted Price-to-Earnings (P/E) ratios relative to the broader market. We screened out micro-caps to avoid extreme volatility, focusing on mid-to-large cap companies where market pessimism may have created a margin of safety for value investors.</p>
+    </section>
+
+    <div class="controls-section" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <label style="font-weight: bold;">Filter by Sector:</label>
+      <select id="sector-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="all">All Sectors</option>
+        <option value="Financial Services">Financial Services</option>
+        <option value="Consumer Cyclical">Consumer Cyclical</option>
+        <option value="Industrials">Industrials</option>
+        <option value="Technology">Technology</option>
+      </select>
+
+      <label style="font-weight: bold; margin-left: 1rem;">Max P/E:</label>
+      <select id="pe-filter" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary);">
+        <option value="999">Any</option>
+        <option value="15">Under 15</option>
+        <option value="10">Under 10</option>
+        <option value="8">Under 8</option>
+      </select>
+    </div>
+
+    <section>
+      <h2>Summary Comparison</h2>
+      <div style="overflow-x: auto;">
+        <table id="summary-table">
+          <thead>
+            <tr>
+              <th style="cursor: pointer;" onclick="sortTable(0)">Ticker ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(1)">Name ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(2)">Price ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(3)">Market Cap ↕</th>
+              <th style="cursor: pointer;" onclick="sortTable(4)">P/E Ratio ↕</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+<td><strong>HPQ</strong></td>
+<td>HP Inc.</td>
+<td>$18.93</td>
+<td>$17.38B</td>
+<td>7.17</td>
+</tr>
+<tr>
+<td><strong>DAL</strong></td>
+<td>Delta Air Lines, Inc.</td>
+<td>$58.78</td>
+<td>$38.39B</td>
+<td>7.67</td>
+</tr>
+<tr>
+<td><strong>PYPL</strong></td>
+<td>PayPal Holdings, Inc.</td>
+<td>$44.90</td>
+<td>$42.01B</td>
+<td>8.30</td>
+</tr>
+<tr>
+<td><strong>UAL</strong></td>
+<td>United Airlines Holdings, Inc.</td>
+<td>$86.60</td>
+<td>$28.04B</td>
+<td>8.49</td>
+</tr>
+<tr>
+<td><strong>T</strong></td>
+<td>AT&T Inc.</td>
+<td>$27.72</td>
+<td>$196.52B</td>
+<td>9.12</td>
+</tr>
+<tr>
+<td><strong>WFC</strong></td>
+<td>Wells Fargo & Company</td>
+<td>$74.10</td>
+<td>$232.61B</td>
+<td>11.84</td>
+</tr>
+<tr>
+<td><strong>BAC</strong></td>
+<td>Bank of America Corporation</td>
+<td>$46.72</td>
+<td>$341.17B</td>
+<td>12.26</td>
+</tr>
+<tr>
+<td><strong>BBY</strong></td>
+<td>Best Buy Co., Inc.</td>
+<td>$62.59</td>
+<td>$13.15B</td>
+<td>12.42</td>
+</tr>
+<tr>
+<td><strong>VZ</strong></td>
+<td>Verizon Communications Inc.</td>
+<td>$51.38</td>
+<td>$216.70B</td>
+<td>12.66</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td>Citigroup, Inc.</td>
+<td>$105.69</td>
+<td>$184.89B</td>
+<td>15.12</td>
+</tr>
+<tr>
+<td><strong>GM</strong></td>
+<td>General Motors Company</td>
+<td>$72.39</td>
+<td>$67.53B</td>
+<td>22.14</td>
+</tr>
+<tr>
+<td><strong>VLO</strong></td>
+<td>Valero Energy Corporation</td>
+<td>$230.59</td>
+<td>$70.33B</td>
+<td>30.50</td>
+</tr>
+<tr>
+<td><strong>AAL</strong></td>
+<td>American Airlines Group, Inc.</td>
+<td>$10.30</td>
+<td>$6.80B</td>
+<td>60.59</td>
+</tr>
+<tr>
+<td><strong>WBD</strong></td>
+<td>Warner Bros. Discovery, Inc. - </td>
+<td>$27.14</td>
+<td>$67.33B</td>
+<td>93.59</td>
+</tr>
+<tr>
+<td><strong>F</strong></td>
+<td>Ford Motor Company</td>
+<td>$11.67</td>
+<td>$46.56B</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>DOW</strong></td>
+<td>Dow Inc.</td>
+<td>$36.62</td>
+<td>$26.35B</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>INTC</strong></td>
+<td>Intel Corporation</td>
+<td>$45.77</td>
+<td>$228.63B</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>KHC</strong></td>
+<td>The Kraft Heinz Company</td>
+<td>$22.58</td>
+<td>$26.73B</td>
+<td>N/A</td>
+</tr>
+
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section style="margin-top: 3rem;">
+      <h2>The Top Ranked Cheap Stocks</h2>
+      <div id="cards-container">
+
+    <div class="card item-card" data-sector="Technology" data-mcap="17377447936" data-yield="6.34">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">1</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">HP Inc. (HPQ)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$18.93</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">7.17</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$17.38B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> HP Inc. ranks #1 for lowest valuation due to its p/e ratio of 7.17 combined with its position in the Computer Hardware industry.</p>
+      <p>HP Inc. provides personal computing, printing, 3D printing, hybrid work, gaming, and other related technologies in the United States and internationally. The company operates through three segments:...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Computer Hardware</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Industrials" data-mcap="38391021568" data-yield="1.28">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">2</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Delta Air Lines, Inc. (DAL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$58.78</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">7.67</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$38.39B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Industrials</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Delta Air Lines, Inc. ranks #2 for lowest valuation due to its p/e ratio of 7.67 combined with its position in the Airlines industry.</p>
+      <p>Delta Air Lines, Inc. provides scheduled air transportation for passengers and cargo in the United States and internationally. The company operates through two segments, Airline and Refinery. Its...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Airlines</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Industrials sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="42010775552" data-yield="1.25">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">3</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">PayPal Holdings, Inc. (PYPL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$44.90</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">8.30</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$42.01B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> PayPal Holdings, Inc. ranks #3 for lowest valuation due to its p/e ratio of 8.30 combined with its position in the Credit Services industry.</p>
+      <p>PayPal Holdings, Inc. operates a technology platform that enables digital payments for merchants and consumers worldwide. The company operates a two-sided network at scale that connects merchants and ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Credit Services</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Industrials" data-mcap="28035708928" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">4</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">United Airlines Holdings, Inc. (UAL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$86.60</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">8.49</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$28.04B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Industrials</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> United Airlines Holdings, Inc. ranks #4 for lowest valuation due to its p/e ratio of 8.49 combined with its position in the Airlines industry.</p>
+      <p>United Airlines Holdings, Inc., through its subsidiaries, provides air transportation services in the United States, Canada, Atlantic, the Pacific, and Latin America. It transports people and cargo...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Airlines</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Industrials sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="196519526400" data-yield="4.0">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">5</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">AT&T Inc. (T)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$27.72</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">9.12</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$196.52B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> AT&T Inc. ranks #5 for lowest valuation due to its p/e ratio of 9.12 combined with its position in the Telecom Services industry.</p>
+      <p>AT&T Inc. provides telecommunications and technology services worldwide. It operates through two segments, Communications and Latin America. The Communications segment offers wireless voice and data...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Telecom Services</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="232606154752" data-yield="2.43">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">6</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Wells Fargo & Company (WFC)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$74.10</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">11.84</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$232.61B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Wells Fargo & Company ranks #6 for lowest valuation due to its p/e ratio of 11.84 combined with its position in the Banks - Diversified industry.</p>
+      <p>Wells Fargo & Company, a financial services company, provides diversified banking, investment, mortgage, and consumer and commercial finance products and services in the United States and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="341172617216" data-yield="2.4">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">7</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Bank of America Corporation (BAC)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$46.72</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">12.26</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$341.17B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Bank of America Corporation ranks #7 for lowest valuation due to its p/e ratio of 12.26 combined with its position in the Banks - Diversified industry.</p>
+      <p>Bank of America Corporation, through its subsidiaries, provides various financial products and services for individual consumers, small and middle-market businesses, institutional investors, large...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Cyclical" data-mcap="13150237696" data-yield="6.14">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">8</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Best Buy Co., Inc. (BBY)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$62.59</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">12.42</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$13.15B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Cyclical</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Best Buy Co., Inc. ranks #8 for lowest valuation due to its p/e ratio of 12.42 combined with its position in the Specialty Retail industry.</p>
+      <p>Best Buy Co., Inc. offers technology products and solutions in the United States, Canada, and internationally. It provides computing and mobile phone products, such as desktops, notebooks, and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Specialty Retail</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Cyclical sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="216704614400" data-yield="5.51">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">9</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Verizon Communications Inc. (VZ)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$51.38</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">12.66</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$216.70B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Verizon Communications Inc. ranks #9 for lowest valuation due to its p/e ratio of 12.66 combined with its position in the Telecom Services industry.</p>
+      <p>Verizon Communications Inc., through its subsidiaries, engages in the provision of communications, technology, information, and streaming products and services to consumers, businesses, and...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Telecom Services</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Financial Services" data-mcap="184885526528" data-yield="2.27">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">10</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Citigroup, Inc. (C)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$105.69</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">15.12</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$184.89B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Financial Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Citigroup, Inc. ranks #10 for lowest valuation due to its p/e ratio of 15.12 combined with its position in the Banks - Diversified industry.</p>
+      <p>Citigroup Inc., a diversified financial service holding company, provides various financial products and services to consumers, corporations, governments, and institutions. It operates through five...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Banks - Diversified</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Financial Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Cyclical" data-mcap="67529830400" data-yield="0.99">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">11</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">General Motors Company (GM)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$72.39</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">22.14</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$67.53B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Cyclical</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> General Motors Company ranks #11 for lowest valuation due to its p/e ratio of 22.14 combined with its position in the Auto Manufacturers industry.</p>
+      <p>General Motors Company designs, builds, and sells trucks, crossovers, cars, and automobile parts worldwide. It operates through GM North America, GM International, and GM Financial segments. The...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Auto Manufacturers</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Cyclical sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Energy" data-mcap="70332145664" data-yield="2.08">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">12</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Valero Energy Corporation (VLO)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$230.59</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">30.50</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$70.33B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Energy</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Valero Energy Corporation ranks #12 for lowest valuation due to its p/e ratio of 30.50 combined with its position in the Oil & Gas Refining & Marketing industry.</p>
+      <p>Valero Energy Corporation manufactures, markets, and sells petroleum-based and low-carbon liquid transportation fuels and petrochemical products in the United States, Canada, the United Kingdom,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Oil & Gas Refining & Marketing</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Energy sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Industrials" data-mcap="6801137152" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">13</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">American Airlines Group, Inc. (AAL)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$10.30</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">60.59</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$6.80B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Industrials</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> American Airlines Group, Inc. ranks #13 for lowest valuation due to its p/e ratio of 60.59 combined with its position in the Airlines industry.</p>
+      <p>American Airlines Group Inc., through its subsidiaries, operates as a network air carrier in the United States, Latin America, Atlantic, and Pacific. The company provides scheduled air transportation ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Airlines</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Industrials sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Communication Services" data-mcap="67334733824" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">14</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Warner Bros. Discovery, Inc. -  (WBD)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$27.14</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">93.59</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$67.33B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Communication Services</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Warner Bros. Discovery, Inc. -  ranks #14 for lowest valuation due to its p/e ratio of 93.59 combined with its position in the Entertainment industry.</p>
+      <p>Warner Bros. Discovery, Inc. operates as a media and entertainment company worldwide. It operates through three segments: Streaming, Studios, and Global Linear Networks. The Streaming segment offers...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Entertainment</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Communication Services sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Cyclical" data-mcap="46557175808" data-yield="5.14">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">15</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Ford Motor Company (F)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$11.67</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$46.56B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Cyclical</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Ford Motor Company ranks #15 for lowest valuation due to its p/e ratio of N/A combined with its position in the Auto Manufacturers industry.</p>
+      <p>Ford Motor Company develops, delivers, and services Ford trucks, sport utility vehicles, commercial vans and cars, and Lincoln luxury vehicles in the United States, Canada, the United Kingdom, Mexico,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Auto Manufacturers</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Cyclical sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Basic Materials" data-mcap="26352461824" data-yield="4.78">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">16</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Dow Inc. (DOW)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$36.62</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$26.35B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Basic Materials</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Dow Inc. ranks #16 for lowest valuation due to its p/e ratio of N/A combined with its position in the Chemicals industry.</p>
+      <p>Dow Inc., through its subsidiaries, provides various materials science solutions for packaging, infrastructure, mobility, and consumer applications in the United States, Canada, Europe, the Middle...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Chemicals</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Basic Materials sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Technology" data-mcap="228629315584" data-yield="N/A">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">17</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">Intel Corporation (INTC)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$45.77</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$228.63B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Technology</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> Intel Corporation ranks #17 for lowest valuation due to its p/e ratio of N/A combined with its position in the Semiconductors industry.</p>
+      <p>Intel Corporation designs, develops, manufactures, markets, sells, and services computing and related end products and services in the United States, Ireland, Israel, and internationally. It operates ...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Semiconductors</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Technology sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card item-card" data-sector="Consumer Defensive" data-mcap="26728955904" data-yield="7.09">
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <div class="rank-badge">18</div>
+        <h2 style="margin: 0; font-size: 1.5rem;">The Kraft Heinz Company (KHC)</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: var(--bg-color); padding: 1rem; border-radius: 8px;">
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Current Price</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$22.58</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">P/E Ratio</div>
+          <div style="font-weight: bold; font-size: 1.1rem; color: var(--accent-color);">N/A</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Market Cap</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">$26.73B</div>
+        </div>
+        <div>
+          <div style="color: var(--text-secondary); font-size: 0.9rem;">Sector</div>
+          <div style="font-weight: bold; font-size: 1.1rem;">Consumer Defensive</div>
+        </div>
+      </div>
+      <p><strong>Why it's ranked here:</strong> The Kraft Heinz Company ranks #18 for lowest valuation due to its p/e ratio of N/A combined with its position in the Packaged Foods industry.</p>
+      <p>The Kraft Heinz Company, together with its subsidiaries, manufactures and markets food and beverage products in North America and internationally. Its products include condiments, sauces, dressings,...</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(46, 204, 113, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #2ecc71;">
+          <h4 style="margin-top: 0; color: #27ae60;">Pros</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Strong position in Packaged Foods</li>
+            <li>Attractive p/e ratio</li>
+          </ul>
+        </div>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #e74c3c;">
+          <h4 style="margin-top: 0; color: #c0392b;">Cons</h4>
+          <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+            <li>Subject to Consumer Defensive sector headwinds</li>
+            <li>Market volatility risks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+      </div>
+    </section>
+
+
+
+    <section class="deep-dive-section" style="margin-top: 3rem; background: var(--card-bg); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>Comprehensive Guide to Investing Strategy</h2>
+
+      <h3>1. Understanding Core Fundamentals</h3>
+      <p>Before committing capital to any individual equity, a thorough understanding of underlying financial metrics is essential. Valuation ratios such as the Price-to-Earnings (P/E) multiple, Price-to-Book (P/B), and Enterprise Value-to-EBITDA provide a starting point for determining whether a stock is trading at a discount or premium relative to its historical averages and industry peers. However, static ratios are insufficient without context. Investors must analyze the trajectory of revenue growth, operating margins, and free cash flow generation. A company may appear cheap based on trailing earnings, but if forward guidance indicates secular decline, the seemingly attractive valuation may represent a value trap rather than a genuine opportunity.</p>
+
+      <h3>2. The Role of Economic Moats</h3>
+      <p>Sustainable competitive advantages, often referred to as "economic moats," are the primary drivers of long-term outperformance. These moats can take several forms: intangible assets like patents and strong brand identity, network effects where the service becomes more valuable as more people use it, switching costs that make it difficult for customers to leave, and cost advantages achieved through economies of scale. When analyzing stocks, identifying the presence and durability of these moats is critical. A company with a wide moat is better equipped to protect its market share from competitors, maintain pricing power during inflationary periods, and generate consistent returns on invested capital over decades.</p>
+
+      <h3>3. Macroeconomic Factors and Sector Rotation</h3>
+      <p>Individual stock performance is inextricably linked to broader macroeconomic conditions. Interest rates, inflation expectations, and GDP growth influence different sectors in varying ways. For instance, rising interest rates generally negatively impact growth stocks, as their future cash flows are discounted at higher rates, while potentially benefiting financials due to widening net interest margins. Conversely, during economic expansions, cyclical sectors like industrials and consumer discretionary tend to outperform defensive sectors like utilities and consumer staples. Understanding these macro dynamics allows investors to implement sector rotation strategies, adjusting portfolio weightings to align with the current phase of the business cycle.</p>
+
+      <h3>4. Risk Management and Portfolio Diversification</h3>
+      <p>Capital preservation is just as important as capital appreciation. Effective risk management begins with diversification across asset classes, sectors, and geographies to mitigate idiosyncratic risk. However, true diversification requires understanding the correlation between different investments; adding numerous highly correlated tech stocks does not meaningfully reduce portfolio volatility. Position sizing is another crucial element. Allocating a predetermined percentage of capital to each position based on its risk profile prevents any single failure from catastrophic impact. Additionally, utilizing stop-loss orders or hedging strategies through options can provide downside protection during periods of extreme market stress.</p>
+
+      <h3>5. Psychological Discipline in Investing</h3>
+      <p>Perhaps the most challenging aspect of investing is managing behavioral biases. The market is prone to periods of irrational exuberance and unwarranted panic. Investors frequently fall victim to recency bias, assuming current trends will persist indefinitely, or confirmation bias, actively seeking information that supports their existing beliefs while ignoring contradictory evidence. Maintaining a long-term perspective requires the discipline to stick to a well-defined investment thesis, the patience to allow compound interest to work, and the emotional fortitude to resist the herd mentality. Successful investing is often less about superior intellect and more about superior temperament.</p>
+
+      <h3>6. The Importance of Free Cash Flow</h3>
+      <p>While earnings per share (EPS) is a widely reported metric, it can be subject to accounting manipulation. Free cash flow (FCF) provides a more transparent view of a company's financial health. FCF represents the cash a company generates after accounting for cash outflows to support operations and maintain its capital assets. Unlike earnings, cash cannot be easily manipulated. A company with robust and growing free cash flow has the flexibility to reinvest in its business, pursue strategic acquisitions, reduce debt, buy back shares, or pay out dividends to shareholders. Tracking FCF yield is a powerful tool for identifying undervalued companies with genuine financial strength.</p>
+
+      <h3>7. Analyzing Management and Capital Allocation</h3>
+      <p>The quality of a company's leadership team is a significant determinant of long-term success. Effective management not only executes operational strategies efficiently but also excels at capital allocation. How a CEO and board of directors choose to deploy retained earnings—whether through organic growth initiatives, M&A, debt reduction, or shareholder returns—directly impacts the compounding of shareholder value. Analyzing a management team's track record of generating a high return on invested capital (ROIC) and their alignment with shareholders, often demonstrated through insider ownership, is a qualitative but vital step in the equity research process.</p>
+    </section>
+
+    <section class="related-articles" style="margin-top: 3rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h2>More Investing Guides</h2>
+      <ul style="list-style-type: none; padding-left: 0;">
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/highest-dividend-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Highest Dividend Stocks 2026: Top Yields Ranked</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/cheap-stocks-to-buy-now" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Cheap Stocks to Buy Now: Undervalued Picks 2026</a></li>
+        <li style="margin-bottom: 0.5rem;">👉 <a href="/best-ai-stocks" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">Best AI Stocks 2026: Top Artificial Intelligence Companies</a></li>
+      </ul>
+    </section>
+
+    <section class="faq-section" style="margin-top: 3rem;">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What makes a stock cheap?</summary>
+        <p>A stock is considered cheap not just by its share price, but by its valuation metrics, such as a low Price-to-Earnings (P/E) ratio or Price-to-Book (P/B) ratio relative to its peers.</p>
+      </details>
+      <details>
+        <summary>Are cheap stocks to buy now safe investments?</summary>
+        <p>Not inherently. Stocks can be cheap for good reason (value traps). It requires careful analysis of their balance sheet, debt, and future earnings potential.</p>
+      </details>
+      <details>
+        <summary>Is a low P/E ratio always good?</summary>
+        <p>A low P/E ratio indicates a stock is cheap relative to earnings, but if earnings are expected to decline sharply, the stock may actually be expensive.</p>
+      </details>
+      <details>
+        <summary>What sectors currently have the cheapest stocks?</summary>
+        <p>Cyclical sectors like financials, energy, and legacy consumer discretionary often trade at lower multiples than high-growth technology sectors.</p>
+      </details>
+      <details>
+        <summary>How many cheap stocks should I own?</summary>
+        <p>Diversification is key when investing in undervalued stocks. Holding 15-20 across different sectors helps mitigate the risk of individual value traps.</p>
+      </details>
+    </section>
+  </div>
+
+  <script is:inline>
+    // Sortable table
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("summary-table");
+      switching = true;
+      dir = "asc";
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          let valX = x.innerHTML.replace(/[\$,%]/g, '').trim();
+          let valY = y.innerHTML.replace(/[\$,%]/g, '').trim();
+
+          if (valX === 'N/A') valX = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valX.includes('B')) valX = parseFloat(valX) * 1e9;
+          else if (valX.includes('T')) valX = parseFloat(valX) * 1e12;
+          else if (valX.includes('M')) valX = parseFloat(valX) * 1e6;
+          else if (!isNaN(valX)) valX = parseFloat(valX);
+
+          if (valY === 'N/A') valY = dir === 'asc' ? 999999999999999 : -999999999999999;
+          else if (valY.includes('B')) valY = parseFloat(valY) * 1e9;
+          else if (valY.includes('T')) valY = parseFloat(valY) * 1e12;
+          else if (valY.includes('M')) valY = parseFloat(valY) * 1e6;
+          else if (!isNaN(valY)) valY = parseFloat(valY);
+
+          if (dir == "asc") {
+            if (valX > valY) { shouldSwitch = true; break; }
+          } else if (dir == "desc") {
+            if (valX < valY) { shouldSwitch = true; break; }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;
+        } else {
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    // Filtering
+    document.getElementById('sector-filter').addEventListener('change', filterCards);
+    document.getElementById('pe-filter').addEventListener('change', filterCards);
+
+    function filterCards() {
+      const sector = document.getElementById('sector-filter').value;
+      const maxPe = parseFloat(document.getElementById('pe-filter').value);
+      const cards = document.querySelectorAll('.item-card');
+
+      cards.forEach(card => {
+        const cardSector = card.getAttribute('data-sector');
+        // Extract P/E from the card content structure
+        const peText = card.querySelector('div > div:nth-child(2) > div:nth-child(2)').innerText;
+        const cardPe = peText === 'N/A' ? 9999 : parseFloat(peText);
+
+        let show = true;
+        if (sector !== 'all' && cardSector !== sector) show = false;
+        if (cardPe > maxPe) show = false;
+
+        card.style.display = show ? 'block' : 'none';
+      });
+    }
+  </script>
+
+  <style is:inline>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .rank-badge { background: var(--accent-color); color: white; width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(0,0,0,0.05); white-space: nowrap; }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+  </style>
+</SiteLayout>

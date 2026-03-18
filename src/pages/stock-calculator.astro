@@ -1,0 +1,286 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Stock Calculator: Project Your Investment Growth",
+  description: "Calculate the future value of your investments with our stock calculator. See how initial deposits and monthly contributions grow over time with compound...",
+  category: "tool",
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is the future value of a stock investment calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The future value is calculated using the compound interest formula: A = P(1+r/n)^(nt) for the initial investment, plus the future value of an annuity formula: PMT * [((1+r/n)^(nt) - 1) / (r/n)] for the periodic contributions. In this calculator, we assume the interest is compounded annually (n=1) and contributions are made at the end of each year for simplicity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a realistic expected annual return for stocks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Historically, the S&P 500 has returned an average of about 10% annually before inflation. After adjusting for inflation, the average real return is closer to 7%. However, returns vary widely year by year, and past performance does not guarantee future results. It is generally safer to estimate using a 6% to 8% long-term return rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this stock calculator account for inflation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This specific calculator provides nominal (unadjusted) returns based on your inputted expected annual return. To estimate inflation-adjusted (real) returns, you can subtract the expected inflation rate from your expected return. For example, if you expect an 8% return and 3% inflation, enter 5% as your expected annual return."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I contribute to my stock portfolio monthly or annually?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Contributing monthly (a strategy known as dollar-cost averaging) allows your money to be invested sooner and spread out over market fluctuations. Most investors prefer monthly contributions as it aligns with their income schedule. The calculator converts monthly contributions into an annualized figure for straightforward compounding."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are taxes considered in this stock calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No, this calculator does not account for capital gains taxes or dividend taxes. The actual final balance available for withdrawal will depend on your local tax laws and the type of account you are using (e.g., standard brokerage vs. a tax-advantaged account like an IRA or 401(k))."
+      }
+    }
+  ]
+});
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stock-calculator" schema={schema}>
+  <div class="page-content">
+
+    <div class="container">
+      <h1>Stock Calculator</h1>
+      <p style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">Project the potential future growth of your investments using compound interest and consistent contributions.</p>
+
+      <div class="calculator-card">
+        <h3>Investment Details</h3>
+
+        <div class="calc-inputs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+
+          <div class="input-group">
+            <label for="initial-investment">Initial Investment</label>
+            <div class="input-wrapper">
+              <span class="prefix" style="position: absolute; left: 1rem; color: var(--text-secondary); font-family: var(--font-mono); pointer-events: none;">$</span>
+              <input type="number" id="initial-investment" value="10000" min="0" step="100" style="padding-left: 2rem;">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="monthly-contribution">Monthly Contribution</label>
+            <div class="input-wrapper">
+              <span class="prefix" style="position: absolute; left: 1rem; color: var(--text-secondary); font-family: var(--font-mono); pointer-events: none;">$</span>
+              <input type="number" id="monthly-contribution" value="500" min="0" step="50" style="padding-left: 2rem;">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="years">Years to Grow</label>
+            <div class="input-wrapper">
+              <input type="number" id="years" value="20" min="1" max="100" step="1">
+              <span class="suffix">Yrs</span>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="annual-return">Expected Annual Return</label>
+            <div class="input-wrapper">
+              <input type="number" id="annual-return" value="7" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="calc-result">
+          <span class="calc-result-label">Estimated Future Balance</span>
+          <div class="calc-result-value" id="final-balance">$0.00</div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 1.5rem; margin-bottom: 0;">
+          <div class="stat-card" style="padding: 1rem;">
+            <span style="display: block; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Total Contributions</span>
+            <strong id="total-contributions" style="font-family: var(--font-mono); font-size: 1.25rem;">$0.00</strong>
+          </div>
+          <div class="stat-card" style="padding: 1rem;">
+            <span style="display: block; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.25rem;">Total Return (Interest)</span>
+            <strong id="total-interest" style="font-family: var(--font-mono); font-size: 1.25rem; color: var(--accent-color);">+$0.00</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section" style="margin-top: 4rem;">
+        <h2>Understanding the Stock Calculator</h2>
+        <p>This stock calculator is designed to help you project how an investment might grow over time using the principles of <strong>compound interest</strong>. By combining an initial lump-sum investment with consistent monthly contributions, you can estimate the potential future value of your portfolio.</p>
+
+        <h3>The Power of Compounding</h3>
+        <p>Compound interest is often referred to as the "eighth wonder of the world." It occurs when you earn interest not only on your initial principal amount but also on the accumulated interest from previous periods. Over long time horizons—such as 10, 20, or 30 years—compounding can exponentially increase your wealth.</p>
+        <div class="highlight-box">
+          <p style="margin:0;"><strong>Key Takeaway:</strong> The earlier you start investing, the more time your money has to compound. Time in the market is often more important than timing the market.</p>
+        </div>
+
+        <h3>How the Math Works</h3>
+        <p>Our calculator uses standard financial formulas to compute the future value of your investments. We break the calculation into two parts and sum them together:</p>
+        <ol>
+          <li><strong>Future Value of Initial Investment:</strong> <code>A = P(1 + r/n)^(nt)</code></li>
+          <li><strong>Future Value of Contributions:</strong> <code>FV = PMT * [((1 + r/n)^(nt) - 1) / (r/n)]</code></li>
+        </ol>
+        <p>Where:</p>
+        <ul>
+          <li><strong>P:</strong> Principal (Initial Investment)</li>
+          <li><strong>PMT:</strong> Periodic Payment (Monthly Contribution)</li>
+          <li><strong>r:</strong> Annual Interest Rate (Expected Return)</li>
+          <li><strong>n:</strong> Number of times interest is compounded per year (For simplicity, we use 12 for monthly compounding on contributions)</li>
+          <li><strong>t:</strong> Number of years</li>
+        </ul>
+
+        <h3>Choosing an Expected Return Rate</h3>
+        <p>Selecting a realistic expected annual return is crucial for accurate projections. Historically, the S&P 500 has averaged an annualized return of roughly 10% before inflation. However, after adjusting for inflation (which historically averages 2-3%), the <em>real</em> return is closer to 7%.</p>
+        <p>If you prefer a conservative estimate, inputting 5% or 6% will yield a more modest projection, providing a margin of safety for market downturns.</p>
+
+        <div class="faq-section">
+          <h2>Frequently Asked Questions</h2>
+          <div class="faq-item">
+            <h3>How is the future value of a stock investment calculated?</h3>
+            <p>The future value is calculated using the compound interest formula: A = P(1+r/n)^(nt) for the initial investment, plus the future value of an annuity formula: PMT * [((1+r/n)^(nt) - 1) / (r/n)] for the periodic contributions. In this calculator, we assume the interest is compounded annually (n=1) and contributions are made at the end of each year for simplicity.</p>
+          </div>
+          <div class="faq-item">
+            <h3>What is a realistic expected annual return for stocks?</h3>
+            <p>Historically, the S&P 500 has returned an average of about 10% annually before inflation. After adjusting for inflation, the average real return is closer to 7%. However, returns vary widely year by year, and past performance does not guarantee future results. It is generally safer to estimate using a 6% to 8% long-term return rate.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Does this stock calculator account for inflation?</h3>
+            <p>This specific calculator provides nominal (unadjusted) returns based on your inputted expected annual return. To estimate inflation-adjusted (real) returns, you can subtract the expected inflation rate from your expected return. For example, if you expect an 8% return and 3% inflation, enter 5% as your expected annual return.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Should I contribute to my stock portfolio monthly or annually?</h3>
+            <p>Contributing monthly (a strategy known as dollar-cost averaging) allows your money to be invested sooner and spread out over market fluctuations. Most investors prefer monthly contributions as it aligns with their income schedule. The calculator converts monthly contributions into an annualized figure for straightforward compounding.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Are taxes considered in this stock calculator?</h3>
+            <p>No, this calculator does not account for capital gains taxes or dividend taxes. The actual final balance available for withdrawal will depend on your local tax laws and the type of account you are using (e.g., standard brokerage vs. a tax-advantaged account like an IRA or 401(k)).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Use CSS variables only: var(--accent-color), var(--card-bg), var(--border-color), var(--text-primary), var(--text-secondary), var(--bg-color) */
+  /* NO :root declarations */
+
+  .calc-inputs-grid .input-group {
+    margin-bottom: 0;
+  }
+
+  .input-wrapper input {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+
+  .input-wrapper input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+  }
+
+  .calc-result {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-color);
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const principalInput = document.getElementById("initial-investment");
+    const contributionInput = document.getElementById("monthly-contribution");
+    const yearsInput = document.getElementById("years");
+    const rateInput = document.getElementById("annual-return");
+
+    const balanceDisplay = document.getElementById("final-balance");
+    const totalContribDisplay = document.getElementById("total-contributions");
+    const totalInterestDisplay = document.getElementById("total-interest");
+
+    // Expose elements globally for testing (Playwright evaluation)
+    window.principalInput = principalInput;
+    window.contributionInput = contributionInput;
+    window.yearsInput = yearsInput;
+    window.rateInput = rateInput;
+
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function calculate() {
+      const p = parseFloat(principalInput.value) || 0;
+      const c = parseFloat(contributionInput.value) || 0;
+      const t = parseFloat(yearsInput.value) || 0;
+      const r = (parseFloat(rateInput.value) || 0) / 100;
+
+      const n = 12; // monthly compounding for contributions
+      const months = t * n;
+      const ratePerMonth = r / n;
+
+      let finalBalance = 0;
+
+      // Edge Case: 0% Interest
+      if (Math.abs(r) < 1e-10) {
+        finalBalance = p + (c * months);
+      } else {
+        // Compound Initial Investment (Compound Interest Formula: A = P(1+r/n)^(nt))
+        // Here we compound initial investment monthly to align with monthly contributions
+        const compoundPrincipal = p * Math.pow(1 + ratePerMonth, months);
+
+        // Future Value of Contributions (Annuity Formula: FV = PMT * [((1+r/n)^(nt) - 1) / (r/n)])
+        const compoundContributions = c * ((Math.pow(1 + ratePerMonth, months) - 1) / ratePerMonth);
+
+        finalBalance = compoundPrincipal + compoundContributions;
+      }
+
+      // Calculate derived metrics
+      const totalContributions = p + (c * months);
+      const totalInterest = finalBalance - totalContributions;
+
+      // Update DOM
+      balanceDisplay.textContent = formatter.format(finalBalance);
+      totalContribDisplay.textContent = formatter.format(totalContributions);
+      totalInterestDisplay.textContent = formatter.format(Math.max(0, totalInterest));
+    }
+
+    // Attach Event Listeners to inputs
+    const inputs = [principalInput, contributionInput, yearsInput, rateInput];
+    inputs.forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    // Run initial calculation
+    calculate();
+  });
+</script>

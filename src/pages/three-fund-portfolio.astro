@@ -1,0 +1,239 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "The Three-Fund Portfolio: The Ultimate Lazy Strategy",
+  description: "Why spend hours researching stocks when you can beat most professionals with just three funds? Discover the simplest, most effective way to build wealth.",
+  category: "guide",
+  published: "2026-03-15",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "datePublished": meta.published,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/three-fund-portfolio"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What exactly is a three-fund portfolio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A three-fund portfolio is an investment strategy that uses just three broad-market index funds (or ETFs) to build a fully diversified portfolio. The three components are typically a Total U.S. Stock Market fund, a Total International Stock Market fund, and a Total Bond Market fund."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the three-fund portfolio too simple to be effective?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Despite its simplicity, a three-fund portfolio gives you exposure to thousands of companies worldwide. Historically, this simple, low-cost strategy has outperformed the vast majority of actively managed portfolios and complex strategies over long time horizons."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How should I divide my money between the three funds?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Your asset allocation depends entirely on your age, risk tolerance, and time horizon. A young investor might choose 60% U.S. Stocks, 30% International Stocks, and 10% Bonds. An investor nearing retirement might shift to a more conservative 40% U.S. Stocks, 20% International Stocks, and 40% Bonds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to use Vanguard funds for a three-fund portfolio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. While Vanguard popularized the strategy (often called the 'Bogleheads' approach), you can build a three-fund portfolio using equivalent low-cost index funds from Fidelity, Charles Schwab, iShares, or any other major brokerage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often do I need to rebalance a three-fund portfolio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most experts recommend rebalancing your three-fund portfolio once a year. This involves selling the assets that have grown beyond your target allocation and buying the assets that have fallen below it, ensuring your risk profile stays consistent."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/three-fund-portfolio" schema={JSON.stringify(schema)}>
+  <div class="container page-content">
+    <div class="hero">
+      <h1>The Three-Fund Portfolio</h1>
+      <p class="subtitle">Why spend hours researching stocks when you can beat most professionals with just three funds? Discover the simplest, most effective way to build wealth.</p>
+    </div>
+
+    <section>
+      <p>
+        The finance industry makes billions of dollars every year by convincing everyday investors that building wealth is complex, time-consuming, and best left to "experts" charging hefty fees. They pitch intricate portfolios packed with twenty different mutual funds, thematic ETFs, and actively managed strategies.
+      </p>
+
+      <p>
+        But what if the most effective way to grow your money was also the simplest? Enter the <strong>Three-Fund Portfolio</strong>, a strategy championed by John Bogle, the legendary founder of Vanguard, and fiercely advocated by the "Bogleheads" investing community.
+      </p>
+
+      <h2>What is the Three-Fund Portfolio?</h2>
+
+      <p>
+        A three-fund portfolio is exactly what it sounds like: an entire investment strategy built using only three broad-market index funds or ETFs. By purchasing these three specific funds, you instantly achieve global diversification across thousands of companies and bonds, minimizing risk while capturing the historical long-term growth of the world economy.
+      </p>
+
+      <div class="callout">
+        <h3>The Core Components</h3>
+        <p>A classic three-fund portfolio consists of three asset classes: a <strong>Total U.S. Stock Market</strong> fund, a <strong>Total International Stock Market</strong> fund, and a <strong>Total Bond Market</strong> fund.</p>
+      </div>
+
+      <p>
+        Let's break down exactly what each of these components does and why it is essential to the strategy.
+      </p>
+
+      <h3>Fund #1: Total U.S. Stock Market</h3>
+      <p>
+        This fund represents the core growth engine of your portfolio. Instead of trying to guess whether tech stocks, healthcare companies, or banks will perform best next year, a Total U.S. Stock Market index fund buys a tiny piece of practically every publicly traded company in the United States.
+      </p>
+      <p>
+        This includes the massive mega-cap giants like Apple and Microsoft (often found in the S&P 500), but it also includes mid-cap and small-cap companies that might be the industry leaders of tomorrow. By owning the entire U.S. market, you guarantee that you will capture the growth of American capitalism over time.
+      </p>
+
+      <h3>Fund #2: Total International Stock Market</h3>
+      <p>
+        While the U.S. economy is a powerhouse, it only represents roughly 60% of the total global stock market value. By adding a Total International fund, you buy a slice of companies located in developed markets (like Europe, Japan, and Australia) and emerging markets (like India and Brazil).
+      </p>
+      <p>
+        International stocks provide crucial diversification. Historically, there are extended periods where U.S. stocks dramatically outperform international stocks, but there are also long stretches where international stocks take the lead. Owning both smooths out the ride and protects you if the U.S. economy experiences a prolonged downturn.
+      </p>
+
+      <h3>Fund #3: Total Bond Market</h3>
+      <p>
+        Bonds act as the shock absorbers for your portfolio. When you buy a bond fund, you are essentially lending money to governments (like U.S. Treasuries) and high-quality corporations in exchange for regular interest payments.
+      </p>
+      <p>
+        Bonds generally do not grow as fast as stocks over long periods, but they are significantly less volatile. When the stock market crashes, bonds often hold their value or even go up as investors flee to safety. Having bonds in your portfolio prevents you from panicking during a bear market and gives you a stable asset to sell if you need cash or want to rebalance.
+      </p>
+
+      <h2>How to Build It: Fund Examples</h2>
+
+      <p>
+        You can build a three-fund portfolio using either mutual funds or ETFs from almost any major low-cost brokerage. The key is to look for the words "Total Market," "Index," and an extremely low <a href="/expense-ratio">expense ratio</a>. Here is how you might construct it at three popular brokerages:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Vanguard ETFs:</strong> VTI (Total U.S. Stock), VXUS (Total International Stock), BND (Total Bond)
+        </li>
+        <li>
+          <strong>Fidelity Mutual Funds:</strong> FSKAX (Total U.S. Stock), FTIHX (Total International Stock), FXNAX (Total Bond)
+        </li>
+        <li>
+          <strong>Schwab ETFs:</strong> SCHB (Broad U.S. Stock), SCHF (International Equity), SCHZ (U.S. Aggregate Bond)
+        </li>
+      </ul>
+
+      <h2>Determining Your Asset Allocation</h2>
+
+      <p>
+        The beauty of the three-fund portfolio is that while the ingredients are the same for everyone, the recipe changes based on your personal situation. The percentage of your money allocated to each fund depends on your age, risk tolerance, and time horizon.
+      </p>
+
+      <p>
+        <strong>The Aggressive Young Investor (Example: Age 25)</strong><br>
+        A young investor with decades until retirement can afford to take on more risk for higher potential growth. They might allocate 60% to U.S. Stocks, 30% to International Stocks, and 10% to Bonds.
+      </p>
+
+      <p>
+        <strong>The Balanced Mid-Career Investor (Example: Age 45)</strong><br>
+        As retirement gets closer, capital preservation becomes more important. They might shift to 50% U.S. Stocks, 20% International Stocks, and 30% Bonds to reduce volatility.
+      </p>
+
+      <p>
+        <strong>The Conservative Retiree (Example: Age 65)</strong><br>
+        A retiree needs stability to ensure their portfolio lasts their lifetime. Their allocation might flip entirely, holding 30% U.S. Stocks, 10% International Stocks, and 60% Bonds to prioritize capital preservation and reliable income.
+      </p>
+
+      <h2>Why It Matters: The Power of Simplicity</h2>
+
+      <p>
+        The biggest advantage of a three-fund portfolio isn't just low fees or global diversification—it's behavioral.
+      </p>
+
+      <p>
+        When your portfolio consists of dozens of individual stocks or actively managed funds, every market event requires an exhausting decision. You constantly wonder if you should sell your underperforming tech stock, buy more of that hot new EV company, or fire the manager of your expensive mutual fund who missed the latest rally.
+      </p>
+
+      <p>
+        This complexity leads to stress, constant tinkering, and emotional mistakes that destroy long-term returns. The three-fund portfolio eliminates the need for stock picking and market timing. By owning the entire haystack rather than endlessly searching for the needle, you free up your mental energy to focus on what actually drives wealth: consistently saving more money and letting compounding do the heavy lifting over decades.
+      </p>
+
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <details>
+        <summary>What exactly is a three-fund portfolio?</summary>
+        <p>A three-fund portfolio is an investment strategy that uses just three broad-market index funds (or ETFs) to build a fully diversified portfolio. The three components are typically a Total U.S. Stock Market fund, a Total International Stock Market fund, and a Total Bond Market fund.</p>
+      </details>
+
+      <details>
+        <summary>Is the three-fund portfolio too simple to be effective?</summary>
+        <p>No. Despite its simplicity, a three-fund portfolio gives you exposure to thousands of companies worldwide. Historically, this simple, low-cost strategy has outperformed the vast majority of actively managed portfolios and complex strategies over long time horizons.</p>
+      </details>
+
+      <details>
+        <summary>How should I divide my money between the three funds?</summary>
+        <p>Your asset allocation depends entirely on your age, risk tolerance, and time horizon. A young investor might choose 60% U.S. Stocks, 30% International Stocks, and 10% Bonds. An investor nearing retirement might shift to a more conservative 40% U.S. Stocks, 20% International Stocks, and 40% Bonds.</p>
+      </details>
+
+      <details>
+        <summary>Do I have to use Vanguard funds for a three-fund portfolio?</summary>
+        <p>No. While Vanguard popularized the strategy (often called the 'Bogleheads' approach), you can build a three-fund portfolio using equivalent low-cost index funds from Fidelity, Charles Schwab, iShares, or any other major brokerage.</p>
+      </details>
+
+      <details>
+        <summary>How often do I need to rebalance a three-fund portfolio?</summary>
+        <p>Most experts recommend rebalancing your three-fund portfolio once a year. This involves selling the assets that have grown beyond your target allocation and buying the assets that have fallen below it, ensuring your risk profile stays consistent.</p>
+      </details>
+    </section>
+  </div>  <style>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .hero { text-align: center; padding: 3rem 0 2rem; }
+    .hero h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+    .callout { background: color-mix(in srgb, var(--accent-color) 10%, transparent); border-left: 4px solid var(--accent-color); padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .callout h3 { margin-top: 0; color: var(--accent-color); }
+    .faq-section details { margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+    .faq-section summary { font-weight: 600; cursor: pointer; }
+    h2 { margin-top: 2.5rem; }
+    h3 { margin-top: 2rem; }
+    p { margin-bottom: 1.2rem; line-height: 1.6; }
+    ul { margin-bottom: 1.2rem; line-height: 1.6; padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</SiteLayout>
