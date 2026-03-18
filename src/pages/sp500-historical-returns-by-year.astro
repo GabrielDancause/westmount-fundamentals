@@ -204,7 +204,8 @@ export const meta = {
   </main>
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script is:inline>
-// App Logic will go here.
+window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "realReturn": -4.3}, {"year": 2025, "totalReturn": 17.88, "inflation": 2.9, "realReturn": 14.56}, {"year": 2024, "totalReturn": 25.02, "inflation": 2.9, "realReturn": 21.5}, {"year": 2023, "totalReturn": 26.29, "inflation": 4.1, "realReturn": 21.32}, {"year": 2022, "totalReturn": -18.11, "inflation": 8.0, "realReturn": -24.18}, {"year": 2021, "totalReturn": 28.71, "inflation": 4.7, "realReturn": 22.93}, {"year": 2020, "totalReturn": 18.4, "inflation": 1.2, "realReturn": 17.0}, {"year": 2019, "totalReturn": 31.49, "inflation": 1.8, "realReturn": 29.17}, {"year": 2018, "totalReturn": -4.38, "inflation": 2.4, "realReturn": -6.62}, {"year": 2017, "totalReturn": 21.83, "inflation": 2.1, "realReturn": 19.32}, {"year": 2016, "totalReturn": 11.96, "inflation": 1.3, "realReturn": 10.52}, {"year": 2015, "totalReturn": 1.38, "inflation": 0.1, "realReturn": 1.28}, {"year": 2014, "totalReturn": 13.69, "inflation": 1.6, "realReturn": 11.9}, {"year": 2013, "totalReturn": 32.39, "inflation": 1.5, "realReturn": 30.43}, {"year": 2012, "totalReturn": 16.0, "inflation": 2.1, "realReturn": 13.61}, {"year": 2011, "totalReturn": 2.11, "inflation": 3.2, "realReturn": -1.06}, {"year": 2010, "totalReturn": 15.06, "inflation": 1.6, "realReturn": 13.25}, {"year": 2009, "totalReturn": 26.46, "inflation": -0.4, "realReturn": 26.97}, {"year": 2008, "totalReturn": -37.0, "inflation": 3.8, "realReturn": -39.31}, {"year": 2007, "totalReturn": 5.49, "inflation": 2.8, "realReturn": 2.62}, {"year": 2006, "totalReturn": 15.79, "inflation": 3.2, "realReturn": 12.2}, {"year": 2005, "totalReturn": 4.91, "inflation": 3.4, "realReturn": 1.46}, {"year": 2004, "totalReturn": 10.88, "inflation": 2.7, "realReturn": 7.96}, {"year": 2003, "totalReturn": 28.68, "inflation": 2.3, "realReturn": 25.79}, {"year": 2002, "totalReturn": -22.1, "inflation": 1.6, "realReturn": -23.33}, {"year": 2001, "totalReturn": -11.89, "inflation": 2.8, "realReturn": -14.29}, {"year": 2000, "totalReturn": -9.1, "inflation": 3.4, "realReturn": -12.09}, {"year": 1999, "totalReturn": 21.04, "inflation": 2.2, "realReturn": 18.43}, {"year": 1998, "totalReturn": 28.58, "inflation": 1.6, "realReturn": 26.56}, {"year": 1997, "totalReturn": 33.36, "inflation": 2.3, "realReturn": 30.36}, {"year": 1996, "totalReturn": 22.96, "inflation": 3.0, "realReturn": 19.38}, {"year": 1995, "totalReturn": 37.58, "inflation": 2.8, "realReturn": 33.83}, {"year": 1994, "totalReturn": 1.32, "inflation": 2.6, "realReturn": -1.25}, {"year": 1993, "totalReturn": 10.08, "inflation": 3.0, "realReturn": 6.87}, {"year": 1992, "totalReturn": 7.62, "inflation": 3.0, "realReturn": 4.49}, {"year": 1991, "totalReturn": 30.47, "inflation": 4.2, "realReturn": 25.21}, {"year": 1990, "totalReturn": -3.1, "inflation": 5.4, "realReturn": -8.06}, {"year": 1989, "totalReturn": 31.69, "inflation": 4.8, "realReturn": 25.66}, {"year": 1988, "totalReturn": 16.61, "inflation": 4.1, "realReturn": 12.02}, {"year": 1987, "totalReturn": 5.25, "inflation": 3.6, "realReturn": 1.59}, {"year": 1986, "totalReturn": 18.67, "inflation": 1.9, "realReturn": 16.46}, {"year": 1985, "totalReturn": 31.73, "inflation": 3.6, "realReturn": 27.15}, {"year": 1984, "totalReturn": 6.27, "inflation": 4.3, "realReturn": 1.89}, {"year": 1983, "totalReturn": 22.56, "inflation": 3.2, "realReturn": 18.76}, {"year": 1982, "totalReturn": 21.55, "inflation": 6.2, "realReturn": 14.45}, {"year": 1981, "totalReturn": -4.91, "inflation": 10.3, "realReturn": -13.79}, {"year": 1980, "totalReturn": 32.42, "inflation": 13.5, "realReturn": 16.67}, {"year": 1979, "totalReturn": 18.44, "inflation": 11.3, "realReturn": 6.42}, {"year": 1978, "totalReturn": 6.56, "inflation": 7.6, "realReturn": -0.97}, {"year": 1977, "totalReturn": -7.18, "inflation": 6.5, "realReturn": -12.85}, {"year": 1976, "totalReturn": 23.84, "inflation": 5.8, "realReturn": 17.05}, {"year": 1975, "totalReturn": 37.2, "inflation": 9.1, "realReturn": 25.76}, {"year": 1974, "totalReturn": -26.47, "inflation": 11.0, "realReturn": -33.76}, {"year": 1973, "totalReturn": -14.66, "inflation": 6.2, "realReturn": -19.64}, {"year": 1972, "totalReturn": 18.98, "inflation": 3.2, "realReturn": 15.29}, {"year": 1971, "totalReturn": 14.31, "inflation": 4.4, "realReturn": 9.49}, {"year": 1970, "totalReturn": 4.01, "inflation": 5.7, "realReturn": -1.6}, {"year": 1969, "totalReturn": -8.5, "inflation": 5.5, "realReturn": -13.27}, {"year": 1968, "totalReturn": 11.06, "inflation": 4.2, "realReturn": 6.58}, {"year": 1967, "totalReturn": 23.98, "inflation": 3.1, "realReturn": 20.25}, {"year": 1966, "totalReturn": -10.06, "inflation": 2.9, "realReturn": -12.59}, {"year": 1965, "totalReturn": 12.45, "inflation": 1.6, "realReturn": 10.68}, {"year": 1964, "totalReturn": 16.48, "inflation": 1.3, "realReturn": 14.99}, {"year": 1963, "totalReturn": 22.8, "inflation": 1.3, "realReturn": 21.22}, {"year": 1962, "totalReturn": -8.73, "inflation": 1.0, "realReturn": -9.63}, {"year": 1961, "totalReturn": 26.89, "inflation": 1.0, "realReturn": 25.63}, {"year": 1960, "totalReturn": 0.47, "inflation": 1.7, "realReturn": -1.21}, {"year": 1959, "totalReturn": 11.96, "inflation": 0.7, "realReturn": 11.18}, {"year": 1958, "totalReturn": 43.36, "inflation": 2.8, "realReturn": 39.46}, {"year": 1957, "totalReturn": -10.78, "inflation": 3.3, "realReturn": -13.63}, {"year": 1956, "totalReturn": 6.56, "inflation": 1.5, "realReturn": 4.99}, {"year": 1955, "totalReturn": 31.56, "inflation": -0.4, "realReturn": 32.09}, {"year": 1954, "totalReturn": 52.62, "inflation": 0.7, "realReturn": 51.56}, {"year": 1953, "totalReturn": -0.99, "inflation": 0.8, "realReturn": -1.78}, {"year": 1952, "totalReturn": 18.37, "inflation": 1.9, "realReturn": 16.16}, {"year": 1951, "totalReturn": 24.02, "inflation": 7.9, "realReturn": 14.94}, {"year": 1950, "totalReturn": 31.71, "inflation": 1.3, "realReturn": 30.02}, {"year": 1949, "totalReturn": 18.79, "inflation": -1.2, "realReturn": 20.23}, {"year": 1948, "totalReturn": 5.5, "inflation": 8.1, "realReturn": -2.41}, {"year": 1947, "totalReturn": 5.71, "inflation": 14.4, "realReturn": -7.6}, {"year": 1946, "totalReturn": -8.07, "inflation": 8.3, "realReturn": -15.12}, {"year": 1945, "totalReturn": 36.44, "inflation": 2.3, "realReturn": 33.37}, {"year": 1944, "totalReturn": 19.75, "inflation": 1.7, "realReturn": 17.75}, {"year": 1943, "totalReturn": 25.9, "inflation": 6.1, "realReturn": 18.66}, {"year": 1942, "totalReturn": 20.34, "inflation": 10.9, "realReturn": 8.51}, {"year": 1941, "totalReturn": -11.59, "inflation": 5.0, "realReturn": -15.8}, {"year": 1940, "totalReturn": -9.78, "inflation": 0.7, "realReturn": -10.41}, {"year": 1939, "totalReturn": -0.41, "inflation": -1.4, "realReturn": 1.0}, {"year": 1938, "totalReturn": 31.12, "inflation": -2.1, "realReturn": 33.93}, {"year": 1937, "totalReturn": -35.03, "inflation": 3.6, "realReturn": -37.29}, {"year": 1936, "totalReturn": 33.92, "inflation": 1.5, "realReturn": 31.94}, {"year": 1935, "totalReturn": 47.67, "inflation": 2.2, "realReturn": 44.49}, {"year": 1934, "totalReturn": -1.44, "inflation": 3.1, "realReturn": -4.4}, {"year": 1933, "totalReturn": 53.99, "inflation": -5.1, "realReturn": 62.27}, {"year": 1932, "totalReturn": -8.19, "inflation": -9.9, "realReturn": 1.9}, {"year": 1931, "totalReturn": -43.34, "inflation": -9.0, "realReturn": -37.74}, {"year": 1930, "totalReturn": -24.9, "inflation": -2.3, "realReturn": -23.13}, {"year": 1929, "totalReturn": -8.42, "inflation": 0.0, "realReturn": -8.42}, {"year": 1928, "totalReturn": 43.61, "inflation": -1.7, "realReturn": 46.09}];
+// App Logic populated with real data.
     function formatPct(val) {
       if (val === null || val === undefined) return '--';
       return val.toFixed(2) + '%';
@@ -229,12 +230,12 @@ export const meta = {
       let validReturnsCount = 0;
 
       data.forEach(d => {
-        if (d.sp500Total !== null) {
-          sumReturns += d.sp500Total;
+        if (d.totalReturn !== null) {
+          sumReturns += d.totalReturn;
           validReturnsCount++;
-          if (d.sp500Total > 0) posYears++;
-          if (d.sp500Total > bestYear.sp500Total) bestYear = d;
-          if (d.sp500Total < worstYear.sp500Total) worstYear = d;
+          if (d.totalReturn > 0) posYears++;
+          if (d.totalReturn > bestYear.totalReturn) bestYear = d;
+          if (d.totalReturn < worstYear.totalReturn) worstYear = d;
         }
       });
 
@@ -245,11 +246,11 @@ export const meta = {
       document.getElementById('stat-positive').textContent = posPct.toFixed(0) + '%';
 
       const bestEl = document.getElementById('stat-best');
-      bestEl.textContent = formatPct(bestYear.sp500Total);
+      bestEl.textContent = formatPct(bestYear.totalReturn);
       document.getElementById('stat-best-desc').textContent = `Occurred in ${bestYear.year}`;
 
       const worstEl = document.getElementById('stat-worst');
-      worstEl.textContent = formatPct(worstYear.sp500Total);
+      worstEl.textContent = formatPct(worstYear.totalReturn);
       document.getElementById('stat-worst-desc').textContent = `Occurred in ${worstYear.year}`;
 
       // Table Rendering
@@ -276,8 +277,8 @@ export const meta = {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${d.year}</td>
-            <td class="${getColorClass(d.sp500Total)}">${formatPct(d.sp500Total)}</td>
-            <td class="${getColorClass(d.sp500Price)}">${formatPct(d.sp500Price)}</td>
+            <td class="${getColorClass(d.totalReturn)}">${formatPct(d.totalReturn)}</td>
+            <td class="${getColorClass(d.priceReturn)}">${formatPct(d.priceReturn)}</td>
             <td class="${getColorClass(d.inflation)}">${formatPct(d.inflation)}</td>
             <td class="${getColorClass(d.realReturn)}">${formatPct(d.realReturn)}</td>
           `;
@@ -307,7 +308,7 @@ export const meta = {
       // We'll chart from oldest to newest
       const chartData = [...data].sort((a,b) => a.year - b.year);
       const labels = chartData.map(d => d.year);
-      const totalReturns = chartData.map(d => d.sp500Total);
+      const totalReturns = chartData.map(d => d.totalReturn);
 
       const bgColors = totalReturns.map(v => v >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)');
 
