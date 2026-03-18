@@ -2,7 +2,6 @@
 import SiteLayout from "../layouts/SiteLayout.astro";
 import { sites } from "../config/sites";
 
-// SITE_ID is replaced per-site by the deploy script
 const SITE_ID = 'westmount';
 const siteConfig = sites[SITE_ID];
 
@@ -11,13 +10,11 @@ const schema = {
   "@type": "WebSite",
   "name": siteConfig.name,
   "url": `https://${siteConfig.domain}/`,
-  "description": `${siteConfig.name} — free financial calculators, investing guides, equity research, and market analysis tools for investors.`
+  "description": "Free equity research tools, market data, and investing guides. No sign-ups, no paywalls."
 };
 
-// Dynamically import all sibling .astro pages
 const allPages = import.meta.glob('./*.astro', { eager: true });
 
-// Extract meta from each page
 interface PageMeta {
   title: string;
   description: string;
@@ -26,7 +23,6 @@ interface PageMeta {
   stat?: string;
   statLabel?: string;
   priority?: number;
-  emoji?: string;
 }
 
 interface PageEntry {
@@ -46,30 +42,45 @@ const pages: PageEntry[] = Object.entries(allPages)
   }))
   .sort((a, b) => (b.meta.priority || 0) - (a.meta.priority || 0));
 
-// Group by category
 const tools = pages.filter(p => p.meta.category === 'tool');
 const studies = pages.filter(p => p.meta.category === 'study');
 const guides = pages.filter(p => p.meta.category === 'guide');
 const lists = pages.filter(p => p.meta.category === 'list');
 
-// Emoji assignment
-function getEmoji(slug: string, category: string): string {
-  if (slug.includes('calculator') || slug.includes('planner')) return '🧮';
-  if (slug.includes('checker') || slug.includes('analyzer')) return '🔍';
-  if (slug.includes('comparison') || slug.includes('vs')) return '⚖️';
-  if (slug.includes('guide')) return '📖';
-  if (slug.includes('glossary') || slug.includes('dictionary')) return '📚';
-  if (slug.includes('checklist')) return '✅';
-  if (slug.includes('dividend') || slug.includes('yield')) return '💰';
-  if (slug.includes('etf') || slug.includes('stock')) return '📈';
-  if (category === 'tool') return '🛠️';
-  if (category === 'study') return '🔬';
-  if (category === 'guide') return '📖';
-  if (category === 'list') return '📋';
-  return '📄';
-}
+// Featured pages (top GA performers + best content)
+const featured = [
+  'short-interest',
+  'what-is-a-dividend',
+  'buyback-leaders',
+  'dividend-aristocrats',
+  'etf-expense-ratios',
+  'insider-buying-tracker-2026',
+  'how-to-buy-stocks',
+  'stock-split-calculator',
+  'average-stock-market-return',
+  'gold-vs-stocks-historical',
+  'sp500-historical-returns-by-year',
+  'stock-comparison-tool',
+].map(slug => pages.find(p => p.slug === slug)).filter(Boolean) as PageEntry[];
 
-// Truncate description
+// Popular tools (calculators and interactive)
+const popularTools = pages.filter(p => 
+  p.meta.category === 'tool' && 
+  (p.slug.includes('calculator') || p.slug.includes('comparison') || p.slug.includes('tracker'))
+).slice(0, 8);
+
+// Beginner guides
+const beginnerGuides = pages.filter(p => 
+  p.slug.startsWith('what-is') || p.slug.startsWith('what-are') || p.slug.startsWith('how-to')
+).slice(0, 8);
+
+// Data & research
+const dataPages = pages.filter(p =>
+  p.slug.includes('sp500') || p.slug.includes('dividend-aristocrat') || 
+  p.slug.includes('short-interest') || p.slug.includes('buyback') ||
+  p.slug.includes('sector') || p.slug.includes('etf-expense')
+).slice(0, 8);
+
 function truncate(text: string, max: number): string {
   if (!text || text.length <= max) return text || '';
   return text.slice(0, max).replace(/\s+\S*$/, '') + '…';
@@ -78,132 +89,215 @@ function truncate(text: string, max: number): string {
 
 <SiteLayout
   site={SITE_ID}
-  title={`${siteConfig.name}`}
-  description={`${siteConfig.name} — free financial calculators, investing guides, equity research, and market analysis tools for investors.`}
+  title="Westmount Fundamentals — Free Equity Research & Investing Tools"
+  description="Free equity research tools, market data, and investing guides. Short interest rankings, dividend data, ETF comparisons, and 340+ financial tools. No sign-ups."
   canonical={`https://${siteConfig.domain}/`}
   schema={schema}
 >
   <!-- Hero -->
   <div class="hero">
     <div class="hero-content">
-      <h1>{siteConfig.name}</h1>
-      <p>{pages.length} free tools, guides, and resources. No sign-ups required.</p>
+      <p class="hero-tag">Free. No sign-ups. No paywalls.</p>
+      <h1>Equity Research<br><span class="accent">For Everyone</span></h1>
+      <p class="hero-sub">{pages.length} tools, guides, and data sets — from short interest rankings to compound interest calculators.</p>
+      <div class="hero-cta">
+        <a href="#popular" class="btn-primary">Explore Tools</a>
+        <a href="#data" class="btn-secondary">Market Data</a>
+      </div>
     </div>
   </div>
 
-  {tools.length > 0 && (
-    <div class="section-container" id="tools">
-      <div class="section-header">
-        <span class="section-tag">🛠️ TOOLS</span>
-        <h2 class="section-title">Calculators & Tools</h2>
-        <p class="section-sub">Free, instant calculators — no sign-ups required.</p>
-      </div>
-      <div class="tools-grid">
-        {tools.map(page => (
-          <a class="tool-card" href={`/${page.slug}`}>
-            <span class="tool-emoji">{getEmoji(page.slug, 'tool')}</span>
-            <h3 class="tool-name">{page.meta.title}</h3>
-            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
-          </a>
-        ))}
-      </div>
+  <!-- Featured (top traffic pages) -->
+  <div class="section" id="featured">
+    <div class="section-header">
+      <span class="tag">🔥 TRENDING</span>
+      <h2>Most Popular</h2>
     </div>
-  )}
+    <div class="featured-grid">
+      {featured.slice(0, 6).map(page => (
+        <a class="featured-card" href={`/${page.slug}/`}>
+          <h3>{page.meta.title.split('|')[0].split('—')[0].trim()}</h3>
+          <p>{truncate(page.meta.description, 100)}</p>
+          <span class="card-cat">{page.meta.category}</span>
+        </a>
+      ))}
+    </div>
+  </div>
 
-  {studies.length > 0 && (
-    <div class="section-container" id="studies">
-      <div class="section-header">
-        <span class="section-tag">🔬 STUDIES</span>
-        <h2 class="section-title">Research & Analysis</h2>
-        <p class="section-sub">Data-driven research with real numbers.</p>
-      </div>
-      <div class="studies-grid">
-        {studies.map(page => (
-          <a class="study-card" href={`/${page.slug}`}>
-            <div class="study-content">
-              {page.meta.stat && (
-                <div class="study-stat">
-                  <span class="stat-value">{page.meta.stat}</span>
-                  {page.meta.statLabel && <span class="stat-label">{page.meta.statLabel}</span>}
-                </div>
-              )}
-              <h3 class="study-name">{page.meta.title}</h3>
-              <p class="study-desc">{truncate(page.meta.description, 150)}</p>
-            </div>
-          </a>
-        ))}
-      </div>
+  <!-- Market Data -->
+  <div class="section" id="data">
+    <div class="section-header">
+      <span class="tag">📊 DATA</span>
+      <h2>Market Data & Research</h2>
+      <p class="sub">Live rankings, historical data, and original research.</p>
     </div>
-  )}
+    <div class="data-grid">
+      {dataPages.map(page => (
+        <a class="data-card" href={`/${page.slug}/`}>
+          <h3>{page.meta.title.split('|')[0].split('—')[0].trim()}</h3>
+          <p>{truncate(page.meta.description, 90)}</p>
+        </a>
+      ))}
+    </div>
+    <div class="see-all">
+      <a href="/tools/">See all {tools.length} tools →</a>
+      <a href="/lists/">See all {lists.length} lists →</a>
+    </div>
+  </div>
 
-  {guides.length > 0 && (
-    <div class="section-container" id="guides">
-      <div class="section-header">
-        <span class="section-tag">📖 GUIDES</span>
-        <h2 class="section-title">Guides & Explainers</h2>
-        <p class="section-sub">Clear, jargon-free explanations.</p>
-      </div>
-      <div class="tools-grid">
-        {guides.map(page => (
-          <a class="tool-card" href={`/${page.slug}`}>
-            <span class="tool-emoji">{getEmoji(page.slug, 'guide')}</span>
-            <h3 class="tool-name">{page.meta.title}</h3>
-            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
-          </a>
-        ))}
-      </div>
+  <!-- Popular Tools -->
+  <div class="section" id="popular">
+    <div class="section-header">
+      <span class="tag">🧮 TOOLS</span>
+      <h2>Calculators & Interactive Tools</h2>
+      <p class="sub">Instant results, no sign-up required.</p>
     </div>
-  )}
+    <div class="tools-grid">
+      {popularTools.map(page => (
+        <a class="tool-card" href={`/${page.slug}/`}>
+          <h3>{page.meta.title.split('|')[0].split('—')[0].trim()}</h3>
+          <p>{truncate(page.meta.description, 80)}</p>
+        </a>
+      ))}
+    </div>
+    <div class="see-all">
+      <a href="/tools/">See all {tools.length} tools →</a>
+    </div>
+  </div>
 
-  {lists.length > 0 && (
-    <div class="section-container" id="lists">
-      <div class="section-header">
-        <span class="section-tag">📋 LISTS</span>
-        <h2 class="section-title">Lists & Rankings</h2>
-        <p class="section-sub">Curated, ranked, and compared.</p>
-      </div>
-      <div class="tools-grid">
-        {lists.map(page => (
-          <a class="tool-card" href={`/${page.slug}`}>
-            <span class="tool-emoji">{getEmoji(page.slug, 'list')}</span>
-            <h3 class="tool-name">{page.meta.title}</h3>
-            <p class="tool-desc">{truncate(page.meta.description, 120)}</p>
-          </a>
-        ))}
-      </div>
+  <!-- Beginner Guides -->
+  <div class="section" id="learn">
+    <div class="section-header">
+      <span class="tag">📖 LEARN</span>
+      <h2>Start Here</h2>
+      <p class="sub">New to investing? These guides explain everything in plain English.</p>
     </div>
-  )}
+    <div class="guides-grid">
+      {beginnerGuides.map(page => (
+        <a class="guide-card" href={`/${page.slug}/`}>
+          <h3>{page.meta.title.split('|')[0].split('—')[0].trim()}</h3>
+        </a>
+      ))}
+    </div>
+    <div class="see-all">
+      <a href="/guides/">See all {guides.length} guides →</a>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-num">{pages.length}</span>
+      <span class="stat-lbl">Free Pages</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">{tools.length}</span>
+      <span class="stat-lbl">Interactive Tools</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">{guides.length}</span>
+      <span class="stat-lbl">Guides</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">{lists.length + studies.length}</span>
+      <span class="stat-lbl">Lists & Studies</span>
+    </div>
+  </div>
+
+  <!-- All categories -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Browse Everything</h2>
+    </div>
+    <div class="browse-grid">
+      <a href="/tools/" class="browse-card">
+        <span class="browse-icon">🛠️</span>
+        <h3>Tools ({tools.length})</h3>
+        <p>Calculators, trackers, comparison tools</p>
+      </a>
+      <a href="/guides/" class="browse-card">
+        <span class="browse-icon">📖</span>
+        <h3>Guides ({guides.length})</h3>
+        <p>How-to guides and explainers</p>
+      </a>
+      <a href="/lists/" class="browse-card">
+        <span class="browse-icon">📋</span>
+        <h3>Lists ({lists.length})</h3>
+        <p>Rankings, comparisons, curated picks</p>
+      </a>
+      {studies.length > 0 && (
+        <a href="/studies/" class="browse-card">
+          <span class="browse-icon">🔬</span>
+          <h3>Studies ({studies.length})</h3>
+          <p>Original research with data</p>
+        </a>
+      )}
+    </div>
+  </div>
 
   <style is:inline>
-    .hero { text-align: center; padding: 4rem 1.5rem 3rem; }
-    .hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
-    .hero p { color: var(--text-secondary); font-size: 1.1rem; }
-    
-    .section-container { max-width: 1100px; margin: 0 auto 3rem; padding: 0 1.5rem; }
-    .section-header { text-align: center; margin-bottom: 2rem; }
-    .section-tag { display: inline-block; background: color-mix(in srgb, var(--accent-color) 10%, transparent); color: var(--accent-color); font-size: .7rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px; margin-bottom: 12px; }
-    .section-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
-    .section-sub { color: var(--text-secondary); font-size: 0.95rem; }
-    
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .tool-card { display: block; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
-    .tool-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
-    .tool-emoji { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
-    .tool-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; line-height: 1.3; }
-    .tool-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4; margin: 0; }
-    
-    .studies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
-    .study-card { display: block; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
-    .study-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
-    .study-stat { margin-bottom: 0.75rem; }
-    .stat-value { font-size: 2rem; font-weight: 800; color: var(--accent-color); display: block; }
-    .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-    .study-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .study-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0; }
-    
-    @media (max-width: 640px) {
-      .hero h1 { font-size: 1.8rem; }
-      .tools-grid, .studies-grid { grid-template-columns: 1fr; }
+    .hero { text-align:center; padding:5rem 1.5rem 3.5rem; background:linear-gradient(180deg, rgba(74,143,231,0.06) 0%, transparent 100%); }
+    .hero-tag { font-size:0.8rem; font-weight:600; color:var(--accent-color); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:1rem; }
+    .hero h1 { font-size:clamp(2.2rem,5vw,3.5rem); font-weight:900; line-height:1.1; margin-bottom:1rem; letter-spacing:-1px; }
+    .hero .accent { color:var(--accent-color); }
+    .hero-sub { color:var(--text-secondary); font-size:1.1rem; max-width:540px; margin:0 auto 2rem; line-height:1.5; }
+    .hero-cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .btn-primary { background:var(--accent-color); color:#fff; padding:12px 28px; border-radius:8px; font-weight:600; font-size:0.95rem; text-decoration:none; transition:opacity 0.2s; }
+    .btn-primary:hover { opacity:0.9; text-decoration:none; }
+    .btn-secondary { background:transparent; color:var(--accent-color); padding:12px 28px; border-radius:8px; font-weight:600; font-size:0.95rem; border:1px solid var(--accent-color); text-decoration:none; transition:background 0.2s; }
+    .btn-secondary:hover { background:rgba(74,143,231,0.1); text-decoration:none; }
+
+    .section { max-width:1100px; margin:0 auto 4rem; padding:0 1.5rem; }
+    .section-header { text-align:center; margin-bottom:2rem; }
+    .tag { display:inline-block; background:rgba(74,143,231,0.1); color:var(--accent-color); font-size:0.7rem; font-weight:800; padding:5px 14px; border-radius:20px; letter-spacing:1px; margin-bottom:10px; }
+    .section-header h2 { font-size:1.6rem; font-weight:800; margin-bottom:0.4rem; }
+    .sub { color:var(--text-secondary); font-size:0.95rem; }
+
+    .featured-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; }
+    .featured-card { display:block; background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem; text-decoration:none; color:inherit; transition:border-color 0.2s, transform 0.2s; position:relative; overflow:hidden; }
+    .featured-card:hover { border-color:var(--accent-color); transform:translateY(-3px); text-decoration:none; }
+    .featured-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; line-height:1.3; }
+    .featured-card p { font-size:0.83rem; color:var(--text-secondary); line-height:1.4; margin:0 0 0.75rem; }
+    .card-cat { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--accent-color); font-weight:700; }
+
+    .data-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:1rem; }
+    .data-card { display:block; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:1.25rem; text-decoration:none; color:inherit; transition:border-color 0.2s; }
+    .data-card:hover { border-color:var(--accent-color); text-decoration:none; }
+    .data-card h3 { font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+    .data-card p { font-size:0.8rem; color:var(--text-secondary); margin:0; line-height:1.4; }
+
+    .tools-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:1rem; }
+    .tool-card { display:block; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:1.25rem; text-decoration:none; color:inherit; transition:border-color 0.2s; }
+    .tool-card:hover { border-color:var(--accent-color); text-decoration:none; }
+    .tool-card h3 { font-size:0.9rem; font-weight:700; margin-bottom:0.3rem; }
+    .tool-card p { font-size:0.8rem; color:var(--text-secondary); margin:0; line-height:1.4; }
+
+    .guides-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:0.75rem; }
+    .guide-card { display:block; background:var(--card-bg); border:1px solid var(--border-color); border-radius:10px; padding:1rem 1.25rem; text-decoration:none; color:inherit; transition:border-color 0.2s; }
+    .guide-card:hover { border-color:var(--accent-color); text-decoration:none; }
+    .guide-card h3 { font-size:0.9rem; font-weight:600; margin:0; }
+
+    .see-all { text-align:center; margin-top:1.5rem; }
+    .see-all a { color:var(--accent-color); font-size:0.9rem; font-weight:600; text-decoration:none; margin:0 1rem; }
+    .see-all a:hover { text-decoration:underline; }
+
+    .stats-bar { display:flex; justify-content:center; gap:3rem; padding:3rem 1.5rem; border-top:1px solid var(--border-color); border-bottom:1px solid var(--border-color); margin:0 auto 4rem; max-width:800px; flex-wrap:wrap; }
+    .stat-item { text-align:center; }
+    .stat-num { display:block; font-size:2rem; font-weight:900; color:var(--accent-color); font-family:'JetBrains Mono', monospace; }
+    .stat-lbl { font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; }
+
+    .browse-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:1rem; }
+    .browse-card { display:block; background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; padding:1.5rem; text-align:center; text-decoration:none; color:inherit; transition:border-color 0.2s, transform 0.2s; }
+    .browse-card:hover { border-color:var(--accent-color); transform:translateY(-2px); text-decoration:none; }
+    .browse-icon { font-size:2rem; display:block; margin-bottom:0.5rem; }
+    .browse-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.3rem; }
+    .browse-card p { font-size:0.8rem; color:var(--text-secondary); margin:0; }
+
+    @media (max-width:768px) {
+      .featured-grid { grid-template-columns:1fr; }
+      .stats-bar { gap:1.5rem; }
+      .stat-num { font-size:1.5rem; }
+      .hero { padding:3rem 1.5rem 2.5rem; }
     }
   </style>
 </SiteLayout>
