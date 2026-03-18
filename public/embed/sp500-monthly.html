@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a1020;color:#c8d0de}
+.widget{max-width:600px;border:1px solid #152040;border-radius:12px;overflow:hidden}
+.widget-header{padding:16px 20px;background:#0d1528;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #152040}
+.widget-title{font-size:14px;font-weight:700;color:#fff}
+.widget-badge{font-size:10px;color:#4a8fe7;text-decoration:none;font-weight:600}
+.bar-chart{padding:20px}
+.bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:13px}
+.bar-label{width:40px;color:#94a3b8;font-weight:600;font-size:12px}
+.bar-track{flex:1;height:24px;background:#0d1528;border-radius:4px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;color:#fff;min-width:40px}
+.bar-fill.pos{background:rgba(16,185,129,0.6)}
+.bar-fill.neg{background:rgba(239,68,68,0.6);justify-content:flex-end}
+.widget-footer{padding:12px 20px;background:#0d1528;border-top:1px solid #152040;text-align:center}
+.widget-footer a{color:#4a8fe7;font-size:11px;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="widget">
+  <div class="widget-header">
+    <span class="widget-title">📅 S&P 500 Average Return by Month</span>
+    <a href="https://westmountfundamentals.com/sp500-returns-by-month/" target="_blank" class="widget-badge">Westmount Fundamentals</a>
+  </div>
+  <div class="bar-chart" id="bars"></div>
+  <div class="widget-footer">
+    <a href="https://westmountfundamentals.com/sp500-returns-by-month/" target="_blank">See full monthly analysis →</a>
+  </div>
+</div>
+<script>
+const months = [{m:'Jan',r:0.90},{m:'Feb',r:0.35},{m:'Mar',r:0.90},{m:'Apr',r:1.39},{m:'May',r:1.37},{m:'Jun',r:0.39},{m:'Jul',r:1.45},{m:'Aug',r:-0.26},{m:'Sep',r:-0.90},{m:'Oct',r:-0.09},{m:'Nov',r:1.91},{m:'Dec',r:1.39}];
+const maxAbs = Math.max(...months.map(m=>Math.abs(m.r)));
+const container = document.getElementById('bars');
+months.forEach(({m,r}) => {
+  const pct = Math.abs(r)/maxAbs*100;
+  const cls = r>=0?'pos':'neg';
+  container.innerHTML += '<div class="bar-row"><span class="bar-label">'+m+'</span><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%">'+(r>=0?'+':'')+r.toFixed(2)+'%</div></div></div>';
+});
+</script>
+</body>
+</html>

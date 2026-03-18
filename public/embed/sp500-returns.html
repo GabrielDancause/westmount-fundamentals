@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a1020;color:#c8d0de}
+.widget{max-width:600px;border:1px solid #152040;border-radius:12px;overflow:hidden}
+.widget-header{padding:16px 20px;background:#0d1528;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #152040}
+.widget-title{font-size:14px;font-weight:700;color:#fff}
+.widget-badge{font-size:10px;color:#4a8fe7;text-decoration:none;font-weight:600}
+.stats{display:flex;gap:0;border-bottom:1px solid #152040}
+.stat-box{flex:1;padding:16px;text-align:center;border-right:1px solid #152040}
+.stat-box:last-child{border-right:none}
+.stat-val{font-size:1.4rem;font-weight:800;color:#10b981;display:block}
+.stat-val.neg{color:#ef4444}
+.stat-lbl{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
+.chart-area{padding:16px 20px;height:200px;position:relative}
+canvas{width:100%!important;height:100%!important}
+.widget-footer{padding:12px 20px;background:#0d1528;border-top:1px solid #152040;text-align:center}
+.widget-footer a{color:#4a8fe7;font-size:11px;text-decoration:none;font-weight:600}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="widget">
+  <div class="widget-header">
+    <span class="widget-title">📈 S&P 500 Annual Returns</span>
+    <a href="https://westmountfundamentals.com/sp500-historical-returns-by-year/" target="_blank" class="widget-badge">Westmount Fundamentals</a>
+  </div>
+  <div class="stats">
+    <div class="stat-box"><span class="stat-val">10.3%</span><span class="stat-lbl">Avg Return</span></div>
+    <div class="stat-box"><span class="stat-val">73%</span><span class="stat-lbl">Positive Years</span></div>
+    <div class="stat-box"><span class="stat-val">+54.0%</span><span class="stat-lbl">Best (1933)</span></div>
+    <div class="stat-box"><span class="stat-val neg">-43.3%</span><span class="stat-lbl">Worst (1931)</span></div>
+  </div>
+  <div class="chart-area"><canvas id="chart"></canvas></div>
+  <div class="widget-footer">
+    <a href="https://westmountfundamentals.com/sp500-historical-returns-by-year/" target="_blank">See full 98-year history →</a>
+  </div>
+</div>
+<script>
+const data = [17.88,25.02,26.29,-18.11,28.71,18.4,31.49,-4.38,21.83,11.96,1.38,13.69,32.39,16,2.11,15.06,26.46,-37,5.49,15.79,4.91,10.88,28.68,-22.1,-11.89,-9.1,21.04,28.58,33.36,22.96,37.58,1.32,10.08,7.62,30.47,-3.1,31.69,16.61,5.25,18.67,31.73,6.27,22.56,21.55,-4.91,32.42,18.44,6.56,-7.18,23.84,37.2,-26.47,-14.66,18.98,14.31,4.01,-8.5,11.06,23.98,-10.06,12.45,16.48,22.8,-8.73,26.89,0.47,11.96,43.36,-10.78,6.56,31.56,52.62,-0.99,18.37,24.02,31.71,18.79,5.5,5.71,-8.07,36.44,19.75,25.9,20.34,-11.59,-9.78,-0.41,31.12,-35.03,33.92,47.67,-1.44,53.99,-8.19,-43.34,-24.9,-8.42,43.61];
+const years = Array.from({length:data.length}, (_,i) => 2025-i);
+const ctx = document.getElementById('chart').getContext('2d');
+new Chart(ctx, {
+  type:'bar',
+  data:{labels:years.reverse(),datasets:[{data:data.reverse(),backgroundColor:data.map(v=>v>=0?'rgba(16,185,129,0.7)':'rgba(239,68,68,0.7)'),borderWidth:0,borderRadius:1}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+'%'}}},scales:{y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#94a3b8',callback:v=>v+'%',font:{size:10}}},x:{display:false}}}
+});
+</script>
+</body>
+</html>
