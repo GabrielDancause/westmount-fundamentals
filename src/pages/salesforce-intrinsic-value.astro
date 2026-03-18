@@ -1,0 +1,622 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Salesforce, Inc. (CRM) Intrinsic Value",
+  description: "A comprehensive two-stage DCF valuation of Salesforce (CRM), estimating its intrinsic value based on forward cash flow projections, cost of capital, and terminal growth.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// Financial Data (Most Recent Fiscal Year)
+const ticker = "CRM";
+const currentPrice = 193.99;
+const sharesOutstanding = 923000000;
+const totalDebt = 17710999552;
+const totalCash = 9564999680;
+const freeCashflowTTM = 16366999552;
+
+// DCF Assumptions
+const fcfGrowthRate = 0.12; // 12% growth for Years 1-5
+const discountRate = 0.095; // 9.5% WACC
+const terminalGrowthRate = 0.025; // 2.5% perpetual growth
+
+// Projections (Years 1-5)
+const projections = [];
+let previousFCF = freeCashflowTTM;
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = previousFCF * (1 + fcfGrowthRate);
+  const presentValue = projectedFCF / Math.pow(1 + discountRate, i);
+  projections.push({ year: i, fcf: projectedFCF, pv: presentValue });
+  previousFCF = projectedFCF;
+}
+
+// Terminal Value Calculation
+const finalYearFCF = projections[4].fcf;
+const terminalValue = (finalYearFCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const presentValueOfTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// Enterprise Value to Equity Value
+const sumOfPVs = projections.reduce((sum, p) => sum + p.pv, 0);
+const enterpriseValue = sumOfPVs + presentValueOfTerminalValue;
+const equityValue = enterpriseValue + totalCash - totalDebt;
+
+// Final Intrinsic Value Per Share
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / intrinsicValuePerShare) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// Sensitivity Matrix Calculation
+const sensitivityMatrix = [];
+const growthRates = [0.08, 0.10, 0.12, 0.14, 0.16];
+const discountRates = [0.075, 0.085, 0.095, 0.105, 0.115];
+
+for (let r = 0; r < discountRates.length; r++) {
+  const row = [];
+  const dRate = discountRates[r];
+  for (let c = 0; c < growthRates.length; c++) {
+    const gRate = growthRates[c];
+    let tempPreviousFCF = freeCashflowTTM;
+    let tempSumPV = 0;
+    for (let i = 1; i <= 5; i++) {
+      tempPreviousFCF = tempPreviousFCF * (1 + gRate);
+      tempSumPV += tempPreviousFCF / Math.pow(1 + dRate, i);
+    }
+    const tempTerminal = (tempPreviousFCF * (1 + terminalGrowthRate)) / (dRate - terminalGrowthRate);
+    const tempPVTerminal = tempTerminal / Math.pow(1 + dRate, 5);
+    const tempEnterprise = tempSumPV + tempPVTerminal;
+    const tempEquity = tempEnterprise + totalCash - totalDebt;
+    const tempIntrinsic = tempEquity / sharesOutstanding;
+    row.push(tempIntrinsic);
+  }
+  sensitivityMatrix.push({ discountRate: dRate, values: row });
+}
+
+// Formatting helpers
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+const formatBillions = (val) => `$${(val / 1000000000).toFixed(2)}B`;
+const formatPercent = (val) => `${(val * 100).toFixed(1)}%`;
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "datePublished": meta.published
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Salesforce (CRM) stock overvalued or undervalued?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Based on our DCF model, Salesforce is estimated to have an intrinsic value of ${formatCurrency(intrinsicValuePerShare)}. Compared to its current price of ${formatCurrency(currentPrice)}, the stock appears ${isUndervalued ? 'undervalued' : 'overvalued'}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a two-stage DCF model?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A two-stage Discounted Cash Flow (DCF) model estimates a company's value by forecasting free cash flows over an initial high-growth period (e.g., 5 years), and then applying a slower, perpetual terminal growth rate for all remaining years. These future cash flows are then discounted back to their present value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why use a 9.5% discount rate for Salesforce?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A 9.5% Weighted Average Cost of Capital (WACC) reflects the risks associated with investing in a mature tech giant. It accounts for a risk-free rate of 4.18%, an equity risk premium, and a beta of 1.307, balanced by the company's cost of debt."
+        }
+      }
+    ]
+  }
+];
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/salesforce-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="hero">
+      <div class="gemini-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>Salesforce, Inc. (CRM) Intrinsic Value</h1>
+      <p class="subtitle">A Deep-Dive Two-Stage Discounted Cash Flow (DCF) Analysis</p>
+    </div>
+
+    <div class="verdict-card">
+      <div class="verdict-header">Valuation Verdict</div>
+      <div class="verdict-body">
+        <div class="verdict-col">
+          <span class="verdict-label">Current Price</span>
+          <span class="verdict-value current">{formatCurrency(currentPrice)}</span>
+        </div>
+        <div class="verdict-col">
+          <span class="verdict-label">Estimated Intrinsic Value</span>
+          <span class="verdict-value intrinsic">{formatCurrency(intrinsicValuePerShare)}</span>
+        </div>
+      </div>
+      <div class={`verdict-footer ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+        Result: CRM is currently {isUndervalued ? 'Undervalued' : 'Overvalued'} by {Math.abs(marginOfSafety).toFixed(2)}%
+      </div>
+    </div>
+
+    <section class="content-section">
+      <p>Salesforce (CRM) pioneered the cloud software industry and remains the dominant force in Customer Relationship Management. As the company transitions from a hyper-growth "growth-at-all-costs" mindset toward a mature focus on profitability, margin expansion, and capital return, establishing its true intrinsic value requires a rigorous approach. This analysis uses a two-stage Discounted Cash Flow (DCF) model to estimate the present value of Salesforce's future cash flows.</p>
+
+      <h2>The Methodology & Core Assumptions</h2>
+      <p>A DCF model is only as good as the inputs driving it. By estimating the free cash flows the business will generate over its lifetime and discounting them back to today's dollars, we arrive at the company's enterprise value. Here is the rationale behind my chosen inputs for Salesforce.</p>
+
+      <div class="assumption-grid">
+        <div class="card">
+          <h3>1. Initial Growth Rate (Years 1-5): {formatPercent(fcfGrowthRate)}</h3>
+          <p>Salesforce's revenue growth has naturally decelerated given its massive scale, dropping from the 20%+ levels of the past decade down to the low double-digits. However, aggressive restructuring and a renewed focus on operating leverage have supercharged Free Cash Flow. A 12% FCF growth rate assumes continued margin expansion, steady subscription retention, and incremental monetization of AI features (Einstein Copilot) offsetting macroeconomic headwinds.</p>
+        </div>
+        <div class="card">
+          <h3>2. Discount Rate (WACC): {formatPercent(discountRate)}</h3>
+          <p>The discount rate represents the required rate of return to justify the risk. With the 10-Year US Treasury Yield at 4.18% (March 2026) and a beta of 1.307 indicating slightly higher volatility than the broader market, I have calculated a Cost of Equity near 11%. Factoring in CRM's relatively low-cost debt, I established a Weighted Average Cost of Capital (WACC) of 9.5%.</p>
+        </div>
+        <div class="card">
+          <h3>3. Terminal Growth Rate: {formatPercent(terminalGrowthRate)}</h3>
+          <p>After year 5, we assume the company enters a mature, steady state. A terminal growth rate of 2.5% is applied. This aligns with long-term global GDP growth and inflation expectations, ensuring we don't assume the company outgrows the global economy indefinitely.</p>
+        </div>
+      </div>
+
+      <h2>Stage 1: Free Cash Flow Projections (Years 1-5)</h2>
+      <p>Starting with the TTM Free Cash Flow of {formatBillions(freeCashflowTTM)}, we project the next five years at our {formatPercent(fcfGrowthRate)} growth rate, and discount each year back to the present value using our {formatPercent(discountRate)} discount rate.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF</th>
+              <th>Present Value (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projections.map((p) => (
+              <tr>
+                <td>Year {p.year}</td>
+                <td class="numeric">{formatBillions(p.fcf)}</td>
+                <td class="numeric">{formatBillions(p.pv)}</td>
+              </tr>
+            ))}
+            <tr class="sum-row">
+              <td colspan="2">Sum of Present Values (Years 1-5)</td>
+              <td class="numeric">{formatBillions(sumOfPVs)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Stage 2: Terminal Value Calculation</h2>
+      <p>The terminal value accounts for all cash flows generated from Year 6 to perpetuity. Using the Gordon Growth Model, we take the Year 5 cash flow, grow it by the terminal rate ({formatPercent(terminalGrowthRate)}), and divide by the difference between the discount rate and the terminal rate.</p>
+
+      <ul class="calculation-list">
+        <li><strong>Terminal Value:</strong> {formatBillions(terminalValue)}</li>
+        <li><strong>Present Value of Terminal Value:</strong> {formatBillions(presentValueOfTerminalValue)}</li>
+      </ul>
+
+      <h2>Final Valuation: Enterprise Value to Equity Value</h2>
+      <p>To find the intrinsic value per share, we add the present value of the short-term cash flows to the present value of the terminal value to get the Enterprise Value. We then add the company's cash and subtract its debt to arrive at the total Equity Value, which is divided by the shares outstanding.</p>
+
+      <div class="table-container">
+        <table>
+          <tbody>
+            <tr>
+              <td>PV of Stage 1 Cash Flows</td>
+              <td class="numeric">{formatBillions(sumOfPVs)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td class="numeric">{formatBillions(presentValueOfTerminalValue)}</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Enterprise Value</strong></td>
+              <td class="numeric"><strong>{formatBillions(enterpriseValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Plus: Total Cash</td>
+              <td class="numeric">{formatBillions(totalCash)}</td>
+            </tr>
+            <tr>
+              <td>Less: Total Debt</td>
+              <td class="numeric">({formatBillions(totalDebt)})</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Implied Equity Value</strong></td>
+              <td class="numeric"><strong>{formatBillions(equityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="numeric">{(sharesOutstanding / 1000000).toFixed(1)} Million</td>
+            </tr>
+            <tr class="final-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="numeric"><strong>{formatCurrency(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Sensitivity Analysis Matrix</h2>
+      <p>Valuation is not an exact science; it is a range of probabilities. The matrix below demonstrates how the intrinsic value per share changes if we adjust our two most critical assumptions: the growth rate and the discount rate.</p>
+
+      <div class="table-container">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th>Discount Rate ↓ / Growth Rate →</th>
+              {growthRates.map(g => <th class="numeric">{formatPercent(g)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityMatrix.map(row => (
+              <tr>
+                <td><strong>{formatPercent(row.discountRate)}</strong></td>
+                {row.values.map(val => (
+                  <td class={`numeric ${val > currentPrice ? 'matrix-undervalued' : 'matrix-overvalued'}`}>
+                    {formatCurrency(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="matrix-legend">
+        <span class="legend-item"><span class="color-box matrix-undervalued"></span> Undervalued vs Current Price ({formatCurrency(currentPrice)})</span>
+        <span class="legend-item"><span class="color-box matrix-overvalued"></span> Overvalued vs Current Price</span>
+      </p>
+
+      <h2>Key Risks to This Valuation</h2>
+      <ul>
+        <li><strong>AI Disruption vs. Adoption:</strong> While Salesforce is integrating AI (Einstein), there is a risk that smaller, more agile AI-native startups could disrupt CRM's moat, leading to higher churn and depressed growth rates.</li>
+        <li><strong>Macroeconomic Sensitivity:</strong> As enterprise software budgets tighten during economic downturns, seat expansions stall, which could result in FCF growth severely underperforming the 12% baseline.</li>
+        <li><strong>Capital Allocation:</strong> CRM has a history of aggressive M&A (Slack, Tableau). If management pivots away from capital return (buybacks) back toward expensive acquisitions, FCF yields could suffer.</li>
+      </ul>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>Is Salesforce (CRM) stock overvalued or undervalued?</summary>
+        <p>Based on our DCF model, Salesforce is estimated to have an intrinsic value of {formatCurrency(intrinsicValuePerShare)}. Compared to its current price of {formatCurrency(currentPrice)}, the stock appears {isUndervalued ? 'undervalued' : 'overvalued'}.</p>
+      </details>
+      <details>
+        <summary>What is a two-stage DCF model?</summary>
+        <p>A two-stage Discounted Cash Flow (DCF) model estimates a company's value by forecasting free cash flows over an initial high-growth period (e.g., 5 years), and then applying a slower, perpetual terminal growth rate for all remaining years. These future cash flows are then discounted back to their present value.</p>
+      </details>
+      <details>
+        <summary>Why use a 9.5% discount rate for Salesforce?</summary>
+        <p>A 9.5% Weighted Average Cost of Capital (WACC) reflects the risks associated with investing in a mature tech giant. It accounts for a risk-free rate of 4.18%, an equity risk premium, and a beta of 1.307, balanced by the company's cost of debt.</p>
+      </details>
+      <details>
+        <summary>Why is Free Cash Flow used instead of Net Income?</summary>
+        <p>Free Cash Flow represents the actual cash a company generates after accounting for capital expenditures required to maintain or expand its asset base. It is a purer measure of profitability than Net Income, which includes non-cash accounting expenses like depreciation.</p>
+      </details>
+    </section>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This DCF analysis is for educational and informational purposes only. It does not constitute financial advice, investment recommendations, or an endorsement of Salesforce, Inc. (CRM). Stock valuation is inherently subjective and relies on estimates of an unknowable future. Always conduct your own due diligence or consult a certified financial advisor before making investment decisions.
+    </div>
+
+  </div>
+
+  <style>
+    .page-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      color: #c8d0de;
+      background-color: #060a12;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .gemini-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #1e3a8a, #4a8fe7);
+      color: #ffffff;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px rgba(74, 143, 231, 0.2);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      color: #8a9bb3;
+      font-size: 1.1rem;
+    }
+
+    .verdict-card {
+      background-color: #0f1624;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 2rem 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .verdict-header {
+      background-color: #1a2235;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #1f2937;
+      color: #ffffff;
+    }
+
+    .verdict-body {
+      display: flex;
+      justify-content: space-around;
+      padding: 2rem;
+    }
+
+    .verdict-col {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .verdict-label {
+      font-size: 0.9rem;
+      color: #8a9bb3;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .verdict-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 800;
+    }
+
+    .verdict-value.current {
+      color: #c8d0de;
+    }
+
+    .verdict-value.intrinsic {
+      color: #4a8fe7;
+    }
+
+    .verdict-footer {
+      padding: 1rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ffffff;
+    }
+
+    .verdict-footer.undervalued {
+      background-color: rgba(16, 185, 129, 0.2);
+      border-top: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .verdict-footer.overvalued {
+      background-color: rgba(239, 68, 68, 0.2);
+      border-top: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .content-section h2 {
+      font-size: 1.8rem;
+      color: #ffffff;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #1a2235;
+      padding-bottom: 0.5rem;
+    }
+
+    .assumption-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .card {
+      background-color: #0f1624;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      color: #4a8fe7;
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #8a9bb3;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin: 2rem 0;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #0f1624;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    th {
+      background-color: #1a2235;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .numeric {
+      font-family: 'JetBrains Mono', monospace;
+      text-align: right;
+    }
+
+    .sum-row td {
+      background-color: #1a2235;
+      font-weight: 700;
+    }
+
+    .highlight-row td {
+      background-color: rgba(74, 143, 231, 0.1);
+      font-weight: 700;
+    }
+
+    .final-row td {
+      background-color: rgba(74, 143, 231, 0.2);
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    .calculation-list {
+      background-color: #0f1624;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1.5rem;
+      list-style-type: none;
+    }
+
+    .calculation-list li {
+      margin-bottom: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .calculation-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .sensitivity-table th {
+      font-size: 0.9rem;
+    }
+
+    .matrix-undervalued {
+      color: #34d399;
+      background-color: rgba(16, 185, 129, 0.05);
+    }
+
+    .matrix-overvalued {
+      color: #f87171;
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+
+    .matrix-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #8a9bb3;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .color-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+
+    .color-box.matrix-undervalued {
+      background-color: rgba(16, 185, 129, 0.2);
+      border: 1px solid #34d399;
+    }
+
+    .color-box.matrix-overvalued {
+      background-color: rgba(239, 68, 68, 0.2);
+      border: 1px solid #f87171;
+    }
+
+    .faq-section details {
+      margin: 1rem 0;
+      padding: 1rem;
+      background-color: #0f1624;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+    }
+
+    .faq-section summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: #ffffff;
+      outline: none;
+    }
+
+    .faq-section p {
+      margin-top: 1rem;
+      margin-bottom: 0;
+      color: #8a9bb3;
+    }
+
+    .disclaimer {
+      margin-top: 4rem;
+      padding: 1.5rem;
+      background-color: rgba(239, 68, 68, 0.05);
+      border-left: 4px solid #ef4444;
+      font-size: 0.85rem;
+      color: #8a9bb3;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .disclaimer strong {
+      color: #ef4444;
+    }
+
+    a {
+      color: #4a8fe7;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</SiteLayout>
