@@ -1,0 +1,770 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from "cheerio";
+
+export const meta = {
+  title: "Uber Technologies, Inc. (UBER) Intrinsic Value",
+  description: "A comprehensive two-stage discounted cash flow (DCF) analysis of Uber Technologies, Inc. (UBER) compiled by Gemini 2.5 Pro. Explore our proprietary free cash flow projections, WACC, terminal growth rate, and final intrinsic value estimate.",
+  category: "study",
+  published: "2026-03-18"
+};
+
+const ticker = "UBER";
+
+// Helper function to fetch data and parse with Cheerio
+async function scrapeStockAnalysis(url: string, rowLabel: string) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html"
+      }
+    });
+    if (!response.ok) return null;
+    const html = await response.text();
+    const $ = cheerio.load(html);
+
+    let result = null;
+    $("tr").each((_, row) => {
+      const firstCol = $(row).find("th, td").first().text().trim();
+      if (firstCol.includes(rowLabel)) {
+        const valStr = $(row).find("td").eq(0).text().replace(/,/g, "").trim();
+        const val = parseFloat(valStr);
+        if (!isNaN(val)) {
+          result = val;
+        }
+      }
+    });
+    return result;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Scrape required financial metrics
+let fcfData = await scrapeStockAnalysis(`https://stockanalysis.com/stocks/${ticker.toLowerCase()}/financials/cash-flow-statement/`, "Free Cash Flow");
+let sharesData = await scrapeStockAnalysis(`https://stockanalysis.com/stocks/${ticker.toLowerCase()}/financials/`, "Shares Outstanding (Basic)");
+let cashData = await scrapeStockAnalysis(`https://stockanalysis.com/stocks/${ticker.toLowerCase()}/financials/balance-sheet/`, "Cash & Equivalents");
+let debtData = await scrapeStockAnalysis(`https://stockanalysis.com/stocks/${ticker.toLowerCase()}/financials/balance-sheet/`, "Total Debt");
+
+// Fetch current price (using Yahoo Finance API route on SA or similar, but scraping main profile page is easier)
+async function getPrice() {
+  try {
+    const res = await fetch(`https://stockanalysis.com/stocks/${ticker.toLowerCase()}/`);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    const priceText = $(".text-4xl.font-bold").first().text().replace(/,/g, "").trim();
+    const price = parseFloat(priceText);
+    return isNaN(price) ? null : price;
+  } catch (e) {
+    return null;
+  }
+}
+
+let currentPriceData = await getPrice();
+
+// If fetch fails, fallback to hardcoded data from the python script (March 2026 actuals)
+const FCF = (fcfData !== null ? fcfData : 9763) * 1000000; // in Millions -> absolute
+const SHARES_OUTSTANDING = (sharesData !== null ? sharesData : 2085) * 1000000;
+const CASH = (cashData !== null ? cashData : 7105) * 1000000;
+const TOTAL_DEBT = (debtData !== null ? debtData : 12080) * 1000000;
+const CURRENT_PRICE = currentPriceData !== null ? currentPriceData : 76.82;
+
+// Assumptions (Gemini 2.5 Pro Conviction)
+const WACC = 0.095; // 9.5%
+const FCF_GROWTH_RATE = 0.18; // 18% Years 1-5
+const TERMINAL_GROWTH_RATE = 0.025; // 2.5%
+
+// DCF Calculations
+const projections = [];
+let currentFCF = FCF;
+let presentValueSum = 0;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = currentFCF * (1 + FCF_GROWTH_RATE);
+  const discountFactor = Math.pow(1 + WACC, i);
+  const pvFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: i,
+    fcf: projectedFCF,
+    pv: pvFCF
+  });
+
+  presentValueSum += pvFCF;
+  currentFCF = projectedFCF;
+}
+
+// Terminal Value Calculation (Gordon Growth Model)
+const terminalYearFCF = currentFCF;
+const terminalValue = (terminalYearFCF * (1 + TERMINAL_GROWTH_RATE)) / (WACC - TERMINAL_GROWTH_RATE);
+const pvTerminalValue = terminalValue / Math.pow(1 + WACC, 5);
+
+// Final Valuation
+const impliedEnterpriseValue = presentValueSum + pvTerminalValue;
+const impliedEquityValue = impliedEnterpriseValue + CASH - TOTAL_DEBT;
+const intrinsicValuePerShare = impliedEquityValue / SHARES_OUTSTANDING;
+
+const upsideDownside = ((intrinsicValuePerShare - CURRENT_PRICE) / CURRENT_PRICE) * 100;
+const isUndervalued = intrinsicValuePerShare > CURRENT_PRICE;
+
+// Formatting Utilities
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatBillions = (val) => `$${(val / 1000000000).toFixed(2)}B`;
+const formatPercent = (val) => `${(val * 100).toFixed(1)}%`;
+
+// Sensitivity Matrix (5x5)
+const waccSteps = [WACC - 0.02, WACC - 0.01, WACC, WACC + 0.01, WACC + 0.02];
+const tgrSteps = [TERMINAL_GROWTH_RATE - 0.01, TERMINAL_GROWTH_RATE - 0.005, TERMINAL_GROWTH_RATE, TERMINAL_GROWTH_RATE + 0.005, TERMINAL_GROWTH_RATE + 0.01];
+
+const sensitivityMatrix = waccSteps.map(wacc => {
+  return tgrSteps.map(tgr => {
+    // Recalculate PV sum
+    let pvSum = 0;
+    let currFcf = FCF;
+    for (let i = 1; i <= 5; i++) {
+      currFcf *= (1 + FCF_GROWTH_RATE);
+      pvSum += currFcf / Math.pow(1 + wacc, i);
+    }
+    const tv = (currFcf * (1 + tgr)) / (wacc - tgr);
+    const pvTv = tv / Math.pow(1 + wacc, 5);
+    const ev = pvSum + pvTv;
+    const eqVal = ev + CASH - TOTAL_DEBT;
+    return eqVal / SHARES_OUTSTANDING;
+  });
+});
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 2.5 Pro"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/uber-intrinsic-value"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Uber's current free cash flow?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `Uber's most recent fiscal year Free Cash Flow is ${formatBillions(FCF)}.`
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is a WACC of 9.5% used for Uber?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A WACC of 9.5% reflects the current 10-Year US Treasury yield (Risk-Free Rate) of 4.18%, an Equity Risk Premium of approximately 5%, and a levered Beta of around 1.2. Factoring in Uber's modest debt load and cost of debt slightly below equity costs brings the blended capital cost to 9.5%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How fast is Uber expected to grow its cash flow?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `This model projects an ${formatPercent(FCF_GROWTH_RATE)} annual growth rate in Free Cash Flow for the next 5 years, driven by sustained dominance in mobility, margin expansion in food delivery, and scaling high-margin advertising revenue.`
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Uber undervalued or overvalued?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `According to this two-stage DCF model compiled by Gemini 2.5 Pro, Uber's intrinsic value is ${formatCurrency(intrinsicValuePerShare)} per share. At a current price of ${formatCurrency(CURRENT_PRICE)}, the stock appears ${isUndervalued ? 'undervalued' : 'overvalued'} by approximately ${Math.abs(upsideDownside).toFixed(1)}%.`
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/uber-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+      <div class="gemini-header">
+        <span class="gemini-badge">Compiled by Gemini 2.5 Pro</span>
+      </div>
+
+      <h1>Uber Technologies, Inc. (UBER) Intrinsic Value</h1>
+      <p class="subtitle">A Two-Stage Discounted Cash Flow (DCF) Analysis estimating the true worth of the global mobility and delivery platform.</p>
+
+      <div class="verdict-card" class:list={[{ 'undervalued': isUndervalued, 'overvalued': !isUndervalued }]}>
+        <div class="verdict-header">
+          <h2>Final Verdict: {isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'}</h2>
+          <span class="variance">{upsideDownside > 0 ? '+' : ''}{upsideDownside.toFixed(1)}% {isUndervalued ? 'Upside' : 'Downside'}</span>
+        </div>
+
+        <div class="verdict-metrics">
+          <div class="metric">
+            <span class="label">Intrinsic Value</span>
+            <span class="value">{formatCurrency(intrinsicValuePerShare)}</span>
+          </div>
+          <div class="metric">
+            <span class="label">Current Price</span>
+            <span class="value">{formatCurrency(CURRENT_PRICE)}</span>
+          </div>
+        </div>
+        <p class="verdict-reasoning">
+          Based on our proprietary 2-stage DCF model, UBER's intrinsic value is estimated at {formatCurrency(intrinsicValuePerShare)} per share.
+          At its current price of {formatCurrency(CURRENT_PRICE)}, the market is {isUndervalued ? 'underpricing' : 'overpricing'}
+          Uber's sustained free cash flow generation and margin expansion profile.
+        </p>
+      </div>
+
+      <h2>Methodology: The Two-Stage DCF Approach</h2>
+      <p>
+        The Discounted Cash Flow (DCF) model is the purest form of valuation. It strips away market sentiment and P/E multiples,
+        valuing a company strictly on the cash it generates for its owners.
+      </p>
+      <p>
+        Our analysis utilizes a two-stage approach:
+      </p>
+      <ol>
+        <li><strong>Stage 1: Explicit Forecast (Years 1-5).</strong> We project Uber's Free Cash Flow (FCF) out 5 years based on its core operating leverage and margin expansion.</li>
+        <li><strong>Stage 2: Terminal Value.</strong> We estimate the value of all cash flows beyond Year 5, assuming a stable, mature growth rate indefinitely into the future.</li>
+        <li><strong>Discounting.</strong> Both the 5-year projections and the Terminal Value are discounted back to Present Value (PV) using Uber's Weighted Average Cost of Capital (WACC).</li>
+      </ol>
+
+      <h2>Core Assumptions (Gemini 2.5 Pro Conviction)</h2>
+
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <h3>Growth Rate (Years 1-5)</h3>
+          <div class="assumption-value">{formatPercent(FCF_GROWTH_RATE)}</div>
+          <p class="assumption-rationale">
+            <strong>Rationale:</strong> Uber has transitioned from cash-burn to cash-machine. An 18% FCF CAGR over the next five years is aggressive but highly achievable. Mobility and Delivery Gross Bookings continue double-digit growth, but the real lever is margin expansion. The rapidly scaling, high-margin Advertising business will drop directly to the bottom line, driving disproportionate FCF growth.
+          </p>
+        </div>
+
+        <div class="assumption-card">
+          <h3>Discount Rate (WACC)</h3>
+          <div class="assumption-value">{formatPercent(WACC)}</div>
+          <p class="assumption-rationale">
+            <strong>Rationale:</strong> We anchor this on a 10-Year US Treasury Rate of 4.18%. Uber's beta remains above 1.0, reflecting its historical volatility, demanding a ~5% Equity Risk Premium. Incorporating its debt profile (roughly $12B), the blended cost of capital settles firmly at 9.5%. This appropriately penalizes risk without ignoring Uber's newly established moat.
+          </p>
+        </div>
+
+        <div class="assumption-card">
+          <h3>Terminal Growth Rate</h3>
+          <div class="assumption-value">{formatPercent(TERMINAL_GROWTH_RATE)}</div>
+          <p class="assumption-rationale">
+            <strong>Rationale:</strong> 2.5% is chosen to align roughly with long-term global GDP inflation. While Uber operates in high-growth digital markets, no company can outgrow the global economy forever. This conservative rate ensures we don't over-inflate the terminal value, forcing the bulk of the valuation to be justified by the explicit 5-year forecast.
+          </p>
+        </div>
+      </div>
+
+      <h2>Stage 1: Free Cash Flow Projections</h2>
+      <p>Starting with Uber's most recent fiscal year Free Cash Flow of {formatBillions(FCF)}.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF</th>
+              <th>Discount Factor (WACC = {formatPercent(WACC)})</th>
+              <th>Present Value (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projections.map((proj) => (
+              <tr>
+                <td>Year {proj.year}</td>
+                <td>{formatBillions(proj.fcf)}</td>
+                <td>{Math.pow(1 + WACC, proj.year).toFixed(3)}x</td>
+                <td>{formatBillions(proj.pv)}</td>
+              </tr>
+            ))}
+            <tr class="total-row">
+              <td colspan="3"><strong>Total Present Value of 5-Year Cash Flows</strong></td>
+              <td><strong>{formatBillions(presentValueSum)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Stage 2: Terminal Value</h2>
+      <p>To value Uber beyond Year 5, we use the Gordon Growth Model.</p>
+
+      <div class="calc-box">
+        <div class="calc-row">
+          <span>Terminal Year FCF (Year 5)</span>
+          <span>{formatBillions(currentFCF)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Growth Rate / WACC Spread</span>
+          <span>{formatPercent(TERMINAL_GROWTH_RATE)} / {formatPercent(WACC)}</span>
+        </div>
+        <div class="calc-row total">
+          <span>Calculated Terminal Value</span>
+          <span>{formatBillions(terminalValue)}</span>
+        </div>
+        <div class="calc-row pv">
+          <span>Present Value of Terminal Value (Discounted 5 Years)</span>
+          <span>{formatBillions(pvTerminalValue)}</span>
+        </div>
+      </div>
+
+      <h2>Final Valuation</h2>
+      <p>Combining the Present Value of the 5-year cash flows, the Present Value of the Terminal Value, and adjusting for Uber's current net debt position gives us our final intrinsic value per share.</p>
+
+      <div class="table-container">
+        <table>
+          <tbody>
+            <tr>
+              <td>PV of 5-Year FCF</td>
+              <td>{formatBillions(presentValueSum)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td>{formatBillions(pvTerminalValue)}</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Implied Enterprise Value</strong></td>
+              <td><strong>{formatBillions(impliedEnterpriseValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Plus: Cash & Equivalents</td>
+              <td>{formatBillions(CASH)}</td>
+            </tr>
+            <tr>
+              <td>Less: Total Debt</td>
+              <td>({formatBillions(TOTAL_DEBT)})</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Implied Equity Value</strong></td>
+              <td><strong>{formatBillions(impliedEquityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td>{(SHARES_OUTSTANDING / 1000000).toFixed(0)} Million</td>
+            </tr>
+            <tr class="final-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td><strong>{formatCurrency(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Sensitivity Analysis</h2>
+      <p>Valuation is as much art as science. A DCF is highly sensitive to the chosen WACC and Terminal Growth Rate. The matrix below shows how Uber's intrinsic value changes if we adjust our core assumptions.</p>
+
+      <div class="table-container sensitivity-table">
+        <table>
+          <thead>
+            <tr>
+              <th colspan="2" rowspan="2" style="background: transparent; border: none;"></th>
+              <th colspan="5" class="header-span">Terminal Growth Rate</th>
+            </tr>
+            <tr>
+              {tgrSteps.map(t => <th>{formatPercent(t)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {waccSteps.map((wacc, i) => (
+              <tr>
+                {i === 0 && <th rowspan="5" class="vertical-header">WACC</th>}
+                <th>{formatPercent(wacc)}</th>
+                {sensitivityMatrix[i].map(val => (
+                  <td class:list={[{ 'current-value': Math.abs(val - intrinsicValuePerShare) < 0.01 }]}>
+                    {formatCurrency(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Key Risks to This Valuation</h2>
+      <ul>
+        <li><strong>Regulatory Threats:</strong> Uber faces constant pressure regarding driver classification (contractors vs. employees). A sudden shift in major markets could drastically inflate labor costs, compressing the margins required to hit the 18% FCF growth target.</li>
+        <li><strong>Autonomous Vehicle (AV) Disruption:</strong> While Uber partners with AV companies (like Waymo), the long-term economics of a robotaxi network remain uncertain. If competitors bypass Uber's network effects, terminal growth could plummet.</li>
+        <li><strong>Macroeconomic Sensitivity:</strong> Ride-hailing and food delivery are discretionary consumer expenses. A severe recession could choke volume growth, threatening the Year 1-3 FCF projections.</li>
+      </ul>
+
+      <div class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>What is Uber's current free cash flow?</h3>
+          <p>Uber's most recent fiscal year Free Cash Flow is {formatBillions(FCF)}.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Why is a WACC of 9.5% used for Uber?</h3>
+          <p>A WACC of 9.5% reflects the current 10-Year US Treasury yield (Risk-Free Rate) of 4.18%, an Equity Risk Premium of approximately 5%, and a levered Beta of around 1.2. Factoring in Uber's modest debt load and cost of debt slightly below equity costs brings the blended capital cost to 9.5%.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>How fast is Uber expected to grow its cash flow?</h3>
+          <p>This model projects an {formatPercent(FCF_GROWTH_RATE)} annual growth rate in Free Cash Flow for the next 5 years, driven by sustained dominance in mobility, margin expansion in food delivery, and scaling high-margin advertising revenue.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Is Uber undervalued or overvalued?</h3>
+          <p>According to this two-stage DCF model compiled by Gemini 2.5 Pro, Uber's intrinsic value is {formatCurrency(intrinsicValuePerShare)} per share. At a current price of {formatCurrency(CURRENT_PRICE)}, the stock appears {isUndervalued ? 'undervalued' : 'overvalued'} by approximately {Math.abs(upsideDownside).toFixed(1)}%.</p>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> This DCF analysis was generated by an AI model (Gemini 2.5 Pro) for educational and informational purposes only. It relies on automated data fetching and explicit assumptions that may prove incorrect. This is not financial advice, and you should not buy or sell securities based on this report. Always conduct your own due diligence.
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: #c8d0de;
+  }
+
+  h1 {
+    color: #4a8fe7;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #8fa0ba;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    color: #4a8fe7;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    border-bottom: 1px solid #1a2538;
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    color: #c8d0de;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+  }
+
+  p {
+    color: #c8d0de;
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+  }
+
+  strong {
+    color: #ffffff;
+  }
+
+  ul, ol {
+    color: #c8d0de;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+    line-height: 1.6;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
+  }
+
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .gemini-badge {
+    background: linear-gradient(90deg, #4a8fe7, #2c6bc2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .verdict-card {
+    background-color: #0b1221;
+    border: 2px solid #1a2538;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  }
+
+  .verdict-card.undervalued {
+    border-color: #22c55e;
+  }
+
+  .verdict-card.overvalued {
+    border-color: #ef4444;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    border: none;
+    font-size: 2rem;
+  }
+
+  .verdict-card.undervalued h2 {
+    color: #22c55e;
+  }
+
+  .verdict-card.overvalued h2 {
+    color: #ef4444;
+  }
+
+  .variance {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    color: #c8d0de;
+  }
+
+  .verdict-metrics {
+    display: flex;
+    justify-content: space-around;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: rgba(6, 10, 18, 0.5);
+    border-radius: 8px;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .metric .label {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #8fa0ba;
+    letter-spacing: 1px;
+  }
+
+  .metric .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .verdict-reasoning {
+    font-style: italic;
+    color: #8fa0ba;
+    margin: 0;
+  }
+
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .assumption-card {
+    background-color: #0b1221;
+    border: 1px solid #1a2538;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .assumption-card h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #8fa0ba;
+  }
+
+  .assumption-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a8fe7;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .assumption-rationale {
+    font-size: 0.95rem;
+    color: #c8d0de;
+    margin: 0;
+  }
+
+  .table-container {
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0b1221;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #1a2538;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #1a2538;
+  }
+
+  th {
+    background-color: #111a2d;
+    color: #4a8fe7;
+    font-weight: 600;
+  }
+
+  td {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .total-row td, .highlight-row td {
+    background-color: #111a2d;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .final-row td {
+    background-color: #1a2538;
+    color: #4a8fe7;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .calc-box {
+    background-color: #0b1221;
+    border: 1px solid #1a2538;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #1a2538;
+  }
+
+  .calc-row:last-child {
+    border-bottom: none;
+  }
+
+  .calc-row.total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1a2538;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .calc-row.pv {
+    color: #4a8fe7;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .sensitivity-table .header-span {
+    background: transparent;
+    color: #c8d0de;
+    border-bottom: 2px solid #1a2538;
+  }
+
+  .sensitivity-table .current-value {
+    background-color: rgba(74, 143, 231, 0.2);
+    border: 1px solid #4a8fe7;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .faq-section {
+    margin-top: 4rem;
+  }
+
+  .faq-item {
+    background-color: #0b1221;
+    border: 1px solid #1a2538;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    color: #4a8fe7;
+  }
+
+  .faq-item p {
+    margin-bottom: 0;
+  }
+
+  .disclaimer {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background-color: #111a2d;
+    border-left: 4px solid #ef4444;
+    font-size: 0.9rem;
+    color: #8fa0ba;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .disclaimer strong {
+    color: #ef4444;
+  }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    .verdict-metrics { flex-direction: column; gap: 1.5rem; }
+    .assumptions-grid { grid-template-columns: 1fr; }
+    .calc-row { flex-direction: column; gap: 0.5rem; }
+  }
+</style>

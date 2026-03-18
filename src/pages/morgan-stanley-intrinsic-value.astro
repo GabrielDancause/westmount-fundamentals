@@ -1,0 +1,711 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Morgan Stanley (MS) Intrinsic Value - Gemini's DCF Analysis",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Morgan Stanley (MS) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": meta.published,
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Morgan Stanley currently undervalued?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Based on Gemini 2.5 Pro's DCF analysis, the verdict on Morgan Stanley's valuation is displayed clearly at the top of the intrinsic value report."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why use Net Income instead of FCF for a bank?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For financial institutions, genuine free cash flow is often skewed by massive swings in trading assets and liabilities. Thus, it's standard practice to value banks using an equity DCF approach (like a Dividend Discount Model or by using Net Income to Common as a proxy for normalized owner earnings)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What growth rate was used for Morgan Stanley?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 6.5% growth rate was used for the first five years, driven by its high-margin wealth management division."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// Note: As a financial institution, genuine FCF is negative due to operating swings in trading assets/liabilities.
+// I am using Net Income to Common ($16,249M) as a proxy for Normalized FCF / Owner Earnings to value the equity directly.
+// For Equity DCF of a bank, we assume Net Debt/Cash is 0 as debt is a raw material of the business.
+
+const baseFCF = 16249; // in Millions (Net Income proxy)
+const sharesOut = 1592; // in Millions (Diluted)
+const currentPrice = 159.47;
+const netCash = 0; // Set to 0 for financial institutions in Equity DCF
+
+// The prompt requires me to make bold assumptions as Gemini.
+// FCF Growth (Y1-Y5): 6.5%. MS's massive pivot to Wealth and Investment Management provides steady, compounding fee income that offsets cyclical IB revenues.
+// Discount Rate (Cost of Equity): 10.2%. Derived using CAPM: 4.18% Risk-Free Rate + 1.21 Beta * 5.0% Equity Risk Premium.
+// Terminal Growth: 2.5%. Standard long-term nominal GDP growth expectation.
+
+const fcfGrowthRate = 0.065;
+const discountRate = 0.102;
+const terminalGrowthRate = 0.025;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+// Since we used an Equity DCF approach, Enterprise Value here IS the Equity Value
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.082, 0.092, 0.102, 0.112, 0.122];
+const sensitivityGrowthRates = [0.045, 0.055, 0.065, 0.075, 0.085];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate PV of FCFs with new Y1-Y5 growth rate (g) and discount rate (d)
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + g);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      // Re-calculate TV and PV with new Year 5 FCF and standard terminal growth
+      const currentTerminalValue = (tempFcf * (1 + terminalGrowthRate)) / (d - terminalGrowthRate);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/morgan-stanley-intrinsic-value" schema={schema}>
+
+  <article class="dcf-container">
+    <header class="dcf-header">
+      <div class="gemini-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>Morgan Stanley (MS) Intrinsic Value</h1>
+      <p class="subtitle">An independent two-stage discounted cash flow (DCF) model.</p>
+    </header>
+
+    <section class="verdict-section">
+      <div class={`verdict-card ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+        <div class="verdict-header">
+          <h2>Intrinsic Value</h2>
+          <span class="ticker">MS</span>
+        </div>
+        <div class="verdict-price">{formatMoney(intrinsicValuePerShare)}</div>
+
+        <div class="verdict-comparison">
+          <div class="comp-item">
+            <span class="label">Current Price</span>
+            <span class="value">{formatMoney(currentPrice)}</span>
+          </div>
+          <div class="comp-item">
+            <span class="label">Margin of Safety</span>
+            <span class={`value ${isUndervalued ? 'positive' : 'negative'}`}>
+              {marginOfSafety > 0 ? '+' : ''}{marginOfSafety.toFixed(2)}%
+            </span>
+          </div>
+        </div>
+
+        <div class="verdict-conclusion">
+          Verdict: {isUndervalued ? 'Undervalued' : 'Overvalued'}
+        </div>
+      </div>
+    </section>
+
+    <section class="methodology-section">
+      <h2>Methodology: Equity DCF for a Bank</h2>
+      <p>
+        Standard DCF models use Free Cash Flow (FCF). However, for financial institutions like Morgan Stanley, genuine FCF is heavily skewed by massive operational swings in trading assets, securities borrowed, and customer deposits.
+      </p>
+      <p>
+        Therefore, this model uses an <strong>Equity DCF approach</strong>. I have proxied Normalized FCF / Owner Earnings using Net Income to Common Shareholders ($16.25B). Net cash is effectively set to zero because, for a bank, debt is the raw material used to generate revenue, not just a capital structure choice. The discount rate used is the Cost of Equity, not WACC.
+      </p>
+    </section>
+
+    <section class="assumptions-section">
+      <h2>Core Assumptions</h2>
+      <div class="assumption-cards">
+        <div class="card">
+          <div class="card-title">Normalized Earnings Growth (Y1-Y5)</div>
+          <div class="card-value">{formatPercent(fcfGrowthRate)}</div>
+          <div class="card-rationale">Morgan Stanley's aggressive and successful pivot toward Wealth and Investment Management provides recurring, fee-based compounding that smooths out the cyclical volatility of Investment Banking and Trading revenues.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Discount Rate (Cost of Equity)</div>
+          <div class="card-value">{formatPercent(discountRate)}</div>
+          <div class="card-rationale">Derived using the Capital Asset Pricing Model (CAPM). A Risk-Free Rate of 4.18% (10-Year Treasury), a beta of 1.21 reflecting sensitivity to financial markets, and a standard 5.0% Equity Risk Premium.</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Terminal Growth Rate</div>
+          <div class="card-value">{formatPercent(terminalGrowthRate)}</div>
+          <div class="card-rationale">Set slightly above inflation at 2.5%, assuming Morgan Stanley will grow its assets under management and advisory operations in line with long-term macroeconomic and equity market growth.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="projections-section">
+      <h2>1-to-5 Year Projections</h2>
+      <div class="table-wrapper">
+        <table class="dcf-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Projected Normalized FCF</th>
+              <th>Present Value (Discounted at {formatPercent(discountRate)})</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base Year (FY25 Proxy)</td>
+              <td class="num">{formatMillions(baseFCF)}</td>
+              <td class="num">-</td>
+            </tr>
+            {projections.map((p) => (
+              <tr>
+                <td>{p.year}</td>
+                <td class="num">{formatMillions(p.fcf)}</td>
+                <td class="num pv">{formatMillions(p.pv)}</td>
+              </tr>
+            ))}
+            <tr class="total-row">
+              <td colspan="2">Sum of Present Values (Y1-Y5)</td>
+              <td class="num highlight">{formatMillions(sumPvFcf)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="terminal-section">
+      <h2>Terminal Value</h2>
+      <p>The terminal value captures the ongoing value of Morgan Stanley assuming a perpetual growth rate of {formatPercent(terminalGrowthRate)} after Year 5.</p>
+
+      <div class="calc-box">
+        <div class="calc-row">
+          <span>Year 5 FCF</span>
+          <span class="num">{formatMillions(year5FCF)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Multiplier (1 + TV Growth) / (Discount - TV Growth)</span>
+          <span class="num">{((1 + terminalGrowthRate) / (discountRate - terminalGrowthRate)).toFixed(2)}x</span>
+        </div>
+        <div class="calc-row total">
+          <span>Terminal Value</span>
+          <span class="num">{formatMillions(terminalValue)}</span>
+        </div>
+        <div class="calc-row pv-total">
+          <span>Present Value of Terminal Value</span>
+          <span class="num highlight">{formatMillions(pvTerminalValue)}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-valuation-section">
+      <h2>Final Equity Valuation</h2>
+      <div class="table-wrapper">
+        <table class="valuation-table">
+          <tbody>
+            <tr>
+              <td>PV of Cash Flows (Y1-Y5)</td>
+              <td class="num">{formatMillions(sumPvFcf)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td class="num">{formatMillions(pvTerminalValue)}</td>
+            </tr>
+            <tr class="subtotal-row">
+              <td>Total Equity Value</td>
+              <td class="num highlight">{formatMillions(totalEquityValue)}</td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="num">{sharesOut} Million</td>
+            </tr>
+            <tr class="final-row">
+              <td>Intrinsic Value Per Share</td>
+              <td class="num massive">{formatMoney(intrinsicValuePerShare)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sensitivity-section">
+      <h2>Sensitivity Matrix</h2>
+      <p>How intrinsic value changes based on varying Cost of Equity and Growth rates.</p>
+
+      <div class="table-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Growth \ Cost of Eq</th>
+              {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityMatrix.map(row => (
+              <tr>
+                <th>{formatPercent(row.growthRate)}</th>
+                {row.values.map(val => (
+                  <td class={`num ${val > currentPrice ? 'green' : 'red'}`}>
+                    {formatMoney(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="matrix-legend">
+        <span class="green-dot"></span> Undervalued vs Current Price ({formatMoney(currentPrice)})
+        <span class="red-dot"></span> Overvalued
+      </div>
+    </section>
+
+    <section class="risks-section">
+      <h2>Key Risks to Thesis</h2>
+      <ul class="risk-list">
+        <li><strong>Capital Markets Cyclicality:</strong> Despite the shift to Wealth Management, a severe bear market or economic downturn would contract AUM, dry up M&A advisory, and crush trading revenues simultaneously.</li>
+        <li><strong>Interest Rate Compression:</strong> Morgan Stanley's Net Interest Income (NII) relies on interest rate spreads. Rapid rate cuts or inverted yield curves compress margins on uninvested cash.</li>
+        <li><strong>Regulatory Scrutiny:</strong> As a Global Systemically Important Bank (GSIB), heightened capital requirements (Basel III endgame) could force MS to hold more capital, lowering Return on Equity (ROE) and hindering buybacks.</li>
+      </ul>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>Is Morgan Stanley currently undervalued?</summary>
+        <p>Based on Gemini 2.5 Pro's DCF analysis, the verdict on Morgan Stanley's valuation is displayed clearly at the top of the intrinsic value report.</p>
+      </details>
+      <details>
+        <summary>Why use Net Income instead of FCF for a bank?</summary>
+        <p>For financial institutions, genuine free cash flow is often skewed by massive swings in trading assets and liabilities. Thus, it's standard practice to value banks using an equity DCF approach (like a Dividend Discount Model or by using Net Income to Common as a proxy for normalized owner earnings).</p>
+      </details>
+      <details>
+        <summary>What growth rate was used for Morgan Stanley?</summary>
+        <p>A 6.5% growth rate was used for the first five years, driven by its high-margin wealth management division.</p>
+      </details>
+    </section>
+
+    <section class="disclaimer">
+      <p><strong>Disclaimer:</strong> This intrinsic value calculation was entirely generated by the Gemini 2.5 Pro AI model using a programmatic discounted cash flow algorithm. It relies on automated data extraction and AI-driven assumptions regarding discount rates and future growth. This is an educational and experimental project. It is NOT financial advice, a recommendation to buy or sell securities, or an endorsement of Morgan Stanley. Always perform your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+    </section>
+  </article>
+
+</SiteLayout>
+<style>
+  .dcf-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #c8d0de;
+    background-color: #060a12;
+    line-height: 1.6;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    border-bottom: 1px solid #1a2233;
+    padding-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+    color: #a0adc0;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    color: #a0adc0;
+    margin-bottom: 2rem;
+  }
+
+  .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Gemini Badge */
+  .gemini-badge {
+    display: inline-block;
+    background-color: #1a2233;
+    color: #4a8fe7;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(74, 143, 231, 0.3);
+  }
+
+  /* Verdict Card */
+  .verdict-card {
+    background: #0f1524;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: 1px solid #1a2233;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  .verdict-card.undervalued {
+    border-top: 4px solid #10b981;
+  }
+
+  .verdict-card.overvalued {
+    border-top: 4px solid #ef4444;
+  }
+
+  .verdict-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    border: none;
+    font-size: 1.25rem;
+  }
+
+  .ticker {
+    background: #1a2233;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: bold;
+    color: #4a8fe7;
+  }
+
+  .verdict-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    line-height: 1;
+  }
+
+  .verdict-comparison {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #1a2233;
+  }
+
+  .comp-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .comp-item .label {
+    font-size: 0.875rem;
+    color: #a0adc0;
+    margin-bottom: 0.25rem;
+  }
+
+  .comp-item .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .comp-item .value.positive { color: #10b981; }
+  .comp-item .value.negative { color: #ef4444; }
+
+  .verdict-conclusion {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: #ffffff;
+  }
+
+  /* Assumption Cards */
+  .assumption-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: #0f1524;
+    border: 1px solid #1a2233;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a0adc0;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .card-rationale {
+    font-size: 0.875rem;
+    color: #8b99ae;
+    line-height: 1.5;
+  }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0f1524;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #1a2233;
+  }
+
+  th {
+    background: #151c2c;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #a0adc0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  td.num {
+    text-align: right;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .highlight {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .total-row td {
+    background: #151c2c;
+    font-weight: 600;
+    border-top: 2px solid #2d3748;
+  }
+
+  .subtotal-row td {
+    border-top: 1px dashed #2d3748;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .final-row td {
+    background: #151c2c;
+    border-top: 2px solid #4a8fe7;
+    font-weight: 700;
+  }
+
+  .massive {
+    font-size: 1.5rem;
+    color: #4a8fe7;
+  }
+
+  /* Calculation Box */
+  .calc-box {
+    background: #0f1524;
+    border: 1px solid #1a2233;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #1a2233;
+  }
+
+  .calc-row:last-child {
+    border-bottom: none;
+  }
+
+  .calc-row.total {
+    border-top: 2px solid #2d3748;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-weight: 600;
+  }
+
+  .calc-row.pv-total {
+    background: #151c2c;
+    margin: 1rem -1.5rem -1.5rem -1.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+
+  /* Matrix specific styles */
+  .matrix-table th.num { text-align: right; }
+  .matrix-table td.num {
+    text-align: right;
+    font-size: 0.875rem;
+  }
+  .matrix-table .green { color: #10b981; }
+  .matrix-table .red { color: #ef4444; }
+
+  .matrix-legend {
+    font-size: 0.875rem;
+    color: #a0adc0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+  }
+
+  .green-dot, .red-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .green-dot { background: #10b981; }
+  .red-dot { background: #ef4444; }
+
+  /* Lists & Details */
+  .risk-list {
+    padding-left: 1.5rem;
+  }
+
+  .risk-list li {
+    margin-bottom: 1rem;
+  }
+
+  .risk-list strong {
+    color: #ffffff;
+  }
+
+  details {
+    background: #0f1524;
+    border: 1px solid #1a2233;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  summary {
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    outline: none;
+  }
+
+  details p {
+    margin-top: 1rem;
+    margin-bottom: 0;
+  }
+
+  .disclaimer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #1a2233;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+</style>

@@ -1,0 +1,818 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Eli Lilly and Company (LLY) Intrinsic Value - Gemini's DCF Analysis",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Eli Lilly and Company (LLY) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS ---
+// The prompt requires me to make bold assumptions as Gemini.
+// FCF Growth (Y1-Y5): 25%. Eli Lilly's GLP-1 drugs (Mounjaro, Zepbound) are experiencing unprecedented demand. While current FCF is compressed by massive manufacturing capex, the cash conversion will accelerate dramatically over the next 5 years.
+// Discount Rate (WACC): 8.5%. With the 10Y Treasury at 4.18% and an extremely low beta of ~0.43, Lilly's risk profile is relatively low, though a slight premium acknowledges its concentration in the weight-loss and diabetes market.
+// Terminal Growth: 4.0%. Justified by the permanent, global secular tailwinds in treating obesity, diabetes, and related metabolic conditions, establishing Lilly as a perpetual dominant force in healthcare.
+
+const baseFCF = 8972; // in Millions
+const sharesOut = 897; // in Millions
+const currentPrice = 915.59;
+const netCash = 7268 - 42503; // Cash & Equivalents - Total Debt = -35235
+
+const fcfGrowthRate = 0.25;
+const discountRate = 0.085;
+const terminalGrowthRate = 0.040;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.075, 0.080, 0.085, 0.090, 0.095];
+const sensitivityGrowthRates = [0.030, 0.035, 0.040, 0.045, 0.050];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 2.5 Pro"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/eli-lilly-intrinsic-value"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did Gemini pick a 25% FCF growth rate for Eli Lilly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gemini projects that unprecedented global demand for GLP-1 medications (Mounjaro, Zepbound) will drive massive revenue scaling. Current cash flows are heavily constrained by aggressive manufacturing capacity expansions; as these stabilize, cash conversion will accelerate dramatically over the next 5 years."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What discount rate was used for Lilly's DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An 8.5% discount rate was selected. This reflects the 4.18% 10-Year Treasury risk-free rate, Lilly's remarkably low beta, and factors in a moderate premium to account for its high valuation dependency on a specific therapeutic category."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is the terminal growth rate set at 4.0%?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 4.0% terminal growth rate, higher than average GDP growth, is justified by the permanent, secular demographic tailwinds of treating global obesity, diabetes, and related metabolic conditions over the decades ahead."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/eli-lilly-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+
+      <div class="gemini-header">
+        <div class="gemini-badge">COMPILED BY GEMINI 2.5 PRO</div>
+        <h1>Eli Lilly and Company (LLY) Intrinsic Value</h1>
+        <p class="subtitle">An independent two-stage discounted cash flow analysis generated by AI.</p>
+      </div>
+
+      <div class="verdict-card">
+        <h2>The Verdict</h2>
+        <div class="verdict-stats">
+          <div class="stat-box">
+            <span class="stat-label">Calculated Intrinsic Value</span>
+            <span class="iv-value">{formatMoney(intrinsicValuePerShare)}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Current Market Price</span>
+            <span class="price-value">{formatMoney(currentPrice)}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Margin of Safety</span>
+            <span class={`mos-value ${marginOfSafety > 0 ? 'positive' : 'negative'}`}>
+              {marginOfSafety > 0 ? '+' : ''}{marginOfSafety.toFixed(2)}%
+            </span>
+          </div>
+        </div>
+        <div class={`verdict-banner ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+          <strong>Conclusion:</strong> Based on Gemini's assumptions, LLY is currently
+          {isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'} by the market.
+        </div>
+      </div>
+
+      <section class="methodology-section">
+        <h2>Methodology & Base Metrics</h2>
+        <p>This analysis uses a standard <strong>Two-Stage Free Cash Flow to Equity (FCFE)</strong> model. The first stage projects accelerated growth due to GLP-1 expansion, while the second stage assigns a terminal value based on long-term stabilized growth.</p>
+
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-title">TTM Free Cash Flow</span>
+            <span class="metric-data">{formatMillions(baseFCF)}</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-title">Shares Outstanding</span>
+            <span class="metric-data">{sharesOut}M</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-title">Total Cash & Equiv.</span>
+            <span class="metric-data">{formatMillions(7268)}</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-title">Total Debt</span>
+            <span class="metric-data">{formatMillions(42503)}</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="assumptions-section">
+        <h2>Gemini's Bold Assumptions</h2>
+        <div class="assumption-cards">
+          <div class="card">
+            <div class="card-header">
+              <h3>FCF Growth (Y1-Y5)</h3>
+              <span class="highlight">{formatPercent(fcfGrowthRate)}</span>
+            </div>
+            <p>Eli Lilly's GLP-1 drugs (Mounjaro, Zepbound) are experiencing unprecedented demand. Current FCF is compressed by massive manufacturing capex, but cash conversion will accelerate dramatically over the next 5 years as capacities scale.</p>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Discount Rate (WACC)</h3>
+              <span class="highlight">{formatPercent(discountRate)}</span>
+            </div>
+            <p>With the 10Y Treasury at 4.18% and a low beta of ~0.43, Lilly's systemic risk profile is low. However, a slight premium acknowledges its valuation concentration in the weight-loss and diabetes market.</p>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3>Terminal Growth</h3>
+              <span class="highlight">{formatPercent(terminalGrowthRate)}</span>
+            </div>
+            <p>A premium 4.0% rate is justified by permanent, global secular demographic tailwinds in treating obesity and metabolic conditions, establishing Lilly as a perpetual dominant force in healthcare.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="projections-section">
+        <h2>5-Year Free Cash Flow Projections</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Projected FCF</th>
+                <th>Discount Factor</th>
+                <th>Present Value (PV)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projections.map(p => (
+                <tr>
+                  <td>{p.year}</td>
+                  <td>{formatMillions(p.fcf)}</td>
+                  <td>{formatPercent(discountRate)}</td>
+                  <td>{formatMillions(p.pv)}</td>
+                </tr>
+              ))}
+              <tr class="total-row">
+                <td colspan="3">Sum of PV of Free Cash Flows</td>
+                <td>{formatMillions(sumPvFcf)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="valuation-section">
+        <h2>Final Valuation Calculation</h2>
+        <div class="calc-box">
+          <div class="math-row">
+            <span>Terminal Value (Year 5 FCF * (1 + TG) / (WACC - TG))</span>
+            <span>{formatMillions(terminalValue)}</span>
+          </div>
+          <div class="math-row">
+            <span>Present Value of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+          <div class="math-divider"></div>
+          <div class="math-row">
+            <span>Enterprise Value (PV of FCFs + PV of TV)</span>
+            <span>{formatMillions(enterpriseValue)}</span>
+          </div>
+          <div class="math-row">
+            <span>Plus: Net Cash (Cash - Debt)</span>
+            <span>{formatMillions(netCash)}</span>
+          </div>
+          <div class="math-divider"></div>
+          <div class="math-row strong">
+            <span>Total Equity Value</span>
+            <span>{formatMillions(totalEquityValue)}</span>
+          </div>
+          <div class="math-row">
+            <span>Divided by Shares Outstanding ({sharesOut}M)</span>
+            <span>{formatMoney(intrinsicValuePerShare)} / share</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="sensitivity-section">
+        <h2>Sensitivity Analysis</h2>
+        <p>How changes to Terminal Growth and Discount Rate impact the Intrinsic Value.</p>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th class="matrix-corner">WACC →<br/>Growth ↓</th>
+                {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sensitivityMatrix.map(row => (
+                <tr>
+                  <th>{formatPercent(row.growthRate)}</th>
+                  {row.values.map(val => (
+                    <td class={val > currentPrice ? 'matrix-green' : 'matrix-red'}>
+                      {formatMoney(val)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="matrix-legend">
+          <span class="legend-item"><span class="box green-box"></span> Undervalued</span>
+          <span class="legend-item"><span class="box red-box"></span> Overvalued</span>
+        </div>
+      </section>
+
+      <section class="risks-section">
+        <h2>Key Risks to This Valuation</h2>
+        <ul>
+          <li><strong>Pricing Pressures & Competition:</strong> Competitors (like Novo Nordisk) expanding their pipelines, or regulatory actions forcing price caps on GLP-1 medications.</li>
+          <li><strong>Manufacturing Bottlenecks:</strong> Inability to scale production facilities fast enough to meet projected revenue/FCF growth.</li>
+          <li><strong>Patent Cliffs:</strong> Long-term risks associated with patent expirations on core metabolic and oncological drugs.</li>
+          <li><strong>Execution Risk:</strong> Sustaining a 25% FCF growth over 5 years is statistically rare and requires flawless operational execution and sustained demand.</li>
+        </ul>
+      </section>
+
+      <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+          {schema["@graph"][1].mainEntity.map(faq => (
+            <div class="faq-item">
+              <h3>{faq.name}</h3>
+              <p>{faq.acceptedAnswer.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div class="disclaimer-box">
+        <p><strong>DISCLAIMER:</strong> This analysis was generated entirely by an Artificial Intelligence (Gemini 2.5 Pro) based on publicly available financial data and explicit algorithmic assumptions. It is for educational and entertainment purposes only. This is <strong>not financial advice</strong>. Always conduct your own due diligence or consult a licensed financial advisor before making investment decisions.</p>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+<style>
+  /* --- GLOBAL THEME --- */
+  .page-content {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #0b111a;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid #1a2332;
+  }
+
+  h1, h2, h3 {
+    color: #ffffff;
+    margin-top: 0;
+  }
+
+  a {
+    color: #4a8fe7;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* Typography */
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #1a2332;
+    padding-bottom: 0.5rem;
+    color: #4a8fe7;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+
+  ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Gemini Header */
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .gemini-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #4a8fe7, #8e44ad);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: #8899b6;
+  }
+
+  /* Verdict Card */
+  .verdict-card {
+    background: linear-gradient(135deg, #0f1722 0%, #060a12 100%);
+    border: 1px solid #1a2332;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  .verdict-card h2 {
+    border-bottom: none;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #0b111a;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #1a2332;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #8899b6;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  .iv-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #4a8fe7;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .price-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .mos-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .mos-value.positive { color: #2ecc71; }
+  .mos-value.negative { color: #e74c3c; }
+
+  .verdict-banner {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-banner.undervalued {
+    background-color: rgba(46, 204, 113, 0.1);
+    border: 1px solid #2ecc71;
+    color: #2ecc71;
+  }
+
+  .verdict-banner.overvalued {
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid #e74c3c;
+    color: #e74c3c;
+  }
+
+  /* Metrics Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .metric-item {
+    background-color: #0f1722;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #1a2332;
+  }
+
+  .metric-title {
+    color: #8899b6;
+    font-weight: 600;
+  }
+
+  .metric-data {
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  /* Assumptions Section */
+  .assumption-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .card {
+    background-color: #0f1722;
+    border: 1px solid #1a2332;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .highlight {
+    background-color: rgba(74, 143, 231, 0.2);
+    color: #4a8fe7;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+    margin: 0;
+    color: #a0aec0;
+  }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 3rem;
+    border: 1px solid #1a2332;
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0f1722;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #1a2332;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  th {
+    background-color: #0b111a;
+    color: #4a8fe7;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+
+  td:first-child, th:first-child {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .total-row {
+    background-color: #0b111a;
+    font-weight: 700;
+  }
+
+  .total-row td {
+    color: #ffffff;
+  }
+
+  /* Valuation Math Box */
+  .calc-box {
+    background-color: #0f1722;
+    border: 1px solid #1a2332;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    color: #a0aec0;
+  }
+
+  .math-row span:last-child {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .math-divider {
+    height: 1px;
+    background-color: #1a2332;
+    margin: 1rem 0;
+  }
+
+  .math-row.strong {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .math-row.strong span:last-child {
+    color: #4a8fe7;
+  }
+
+  /* Sensitivity Matrix */
+  .matrix-table th {
+    text-align: center;
+    border: 1px solid #1a2332;
+  }
+
+  .matrix-table td {
+    text-align: center;
+    border: 1px solid #1a2332;
+    font-weight: 600;
+  }
+
+  .matrix-table .matrix-corner {
+    background-color: #060a12;
+    color: #8899b6;
+  }
+
+  .matrix-green {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71 !important;
+  }
+
+  .matrix-red {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c !important;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: -1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #8899b6;
+  }
+
+  .box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .green-box { background-color: rgba(46, 204, 113, 0.3); border: 1px solid #2ecc71; }
+  .red-box { background-color: rgba(231, 76, 60, 0.3); border: 1px solid #e74c3c; }
+
+  /* Sections */
+  section {
+    margin-bottom: 4rem;
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .faq-item {
+    background-color: #0f1722;
+    border: 1px solid #1a2332;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .faq-item h3 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Disclaimer */
+  .disclaimer-box {
+    background-color: #0a1018;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .disclaimer-box strong {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 2.5rem;
+    }
+    .gemini-header h1 {
+      font-size: 2rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: right;
+    }
+    .matrix-legend {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .assumption-cards {
+      grid-template-columns: 1fr;
+    }
+    .metrics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

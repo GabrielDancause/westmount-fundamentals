@@ -1,0 +1,745 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "The Procter & Gamble Company (PG) Intrinsic Value",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of The Procter & Gamble Company (PG) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Gemini 2.5 Pro"
+  }
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// I am Gemini 2.5 Pro, acting as an independent equity analyst.
+// FCF Growth (Y1-Y5): 5.5%. PG is a defensive consumer staple giant with incredible pricing power. Steady, reliable, low single-digit volume growth plus pricing and margin expansion.
+// Discount Rate (WACC): 6.8%. PG has exceptionally stable cash flows and a very low beta (~0.4). Given the 4.18% 10-year Treasury, a 6.8% WACC reflects the low equity risk premium required for such a fortress stock.
+// Terminal Growth: 2.5%. Matching long-term global inflation targets. PG will grow with the world's population.
+
+const baseFCF = 14044; // in Millions
+const sharesOut = 2336.73; // in Millions
+const currentPrice = 147.63;
+const netCash = 10825 - 36639; // Cash - Total Debt (Millions). Negative means net debt.
+
+const fcfGrowthRate = 0.055;
+const discountRate = 0.068;
+const terminalGrowthRate = 0.025;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- FINAL INTRINSIC VALUE ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const equityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = equityValue / sharesOut;
+
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const waccOptions = [discountRate - 0.01, discountRate - 0.005, discountRate, discountRate + 0.005, discountRate + 0.01];
+const terminalOptions = [terminalGrowthRate - 0.005, terminalGrowthRate - 0.0025, terminalGrowthRate, terminalGrowthRate + 0.0025, terminalGrowthRate + 0.005];
+
+const sensitivityMatrix = terminalOptions.map(tRate => {
+  return waccOptions.map(wRate => {
+    let tempPrevFcf = baseFCF;
+    let tempSumPv = 0;
+
+    for (let i = 1; i <= 5; i++) {
+      const tempProjected = tempPrevFcf * (1 + fcfGrowthRate);
+      tempSumPv += tempProjected / Math.pow(1 + wRate, i);
+      tempPrevFcf = tempProjected;
+    }
+
+    const tempTv = (tempPrevFcf * (1 + tRate)) / (wRate - tRate);
+    const tempPvTv = tempTv / Math.pow(1 + wRate, 5);
+
+    const tempEv = tempSumPv + tempPvTv;
+    const tempEq = tempEv + netCash;
+    return tempEq / sharesOut;
+  });
+});
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/procter-gamble-intrinsic-value" schema={schema}>
+  <main class="page-container">
+    <header class="gemini-header">
+      <div class="badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>The Procter & Gamble Company (PG) Intrinsic Value Estimate</h1>
+      <p>An independent two-stage DCF valuation by Gemini 2.5 Pro based on FY25 financials.</p>
+    </header>
+
+    <section class="verdict-section">
+      <div class="verdict-card">
+        <div class="verdict-status" style={`color: ${isUndervalued ? '#2ecc71' : '#e74c3c'}`}>
+          {isUndervalued ? "UNDERVALUED" : "OVERVALUED"}
+        </div>
+        <div class="verdict-stats">
+          <div class="stat-box">
+            <span class="stat-label">Intrinsic Value</span>
+            <span class="iv-value">${intrinsicValuePerShare.toFixed(2)}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Current Price</span>
+            <span class="current-price">${currentPrice.toFixed(2)}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Margin of Safety</span>
+            <span class="mos-value" style={`color: ${isUndervalued ? '#2ecc71' : '#e74c3c'}`}>
+              {marginOfSafety > 0 ? '+' : ''}{marginOfSafety.toFixed(2)}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="methodology-section">
+      <h2>1. The Methodology</h2>
+      <p>
+        I am employing a <strong>Two-Stage Discounted Cash Flow (DCF) Model</strong>.
+        This classic intrinsic valuation approach calculates the present value of all future free cash flows a company is expected to generate.
+        Stage 1 explicitly forecasts cash flows over the next 5 years based on a defined growth rate.
+        Stage 2 calculates a Terminal Value for all cash flows into perpetuity beyond Year 5, assuming a lower, sustainable growth rate.
+        Both stages are discounted back to today's dollars using a Weighted Average Cost of Capital (WACC), adjusted for net debt, and divided by shares outstanding.
+      </p>
+    </section>
+
+    <section class="assumptions-section">
+      <h2>2. Gemini's Core Assumptions</h2>
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>Growth (Y1-Y5)</h3>
+            <span class="highlight">{(fcfGrowthRate * 100).toFixed(1)}%</span>
+          </div>
+          <p>
+            PG is a mature consumer staple behemoth. While volume growth might be flat to low single digits, their unmatched pricing power allows them to pass on inflation. Combined with continuous productivity improvements (margin expansion), I am aggressively forecasting a 5.5% annualized FCF growth rate. It requires flawless execution but is achievable given their dominant brand portfolio.
+          </p>
+        </div>
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>Discount Rate</h3>
+            <span class="highlight">{(discountRate * 100).toFixed(1)}%</span>
+          </div>
+          <p>
+            With the 10-Year Treasury at 4.18% (March 2026) and PG's notoriously low beta (~0.4), the required return on equity is lower than the broader market. Their fortress balance sheet means the cost of debt is minimal. I am assigning a WACC of 6.8%. This reflects extreme confidence in the predictability and safety of their future cash streams.
+          </p>
+        </div>
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>Terminal Growth</h3>
+            <span class="highlight">{(terminalGrowthRate * 100).toFixed(1)}%</span>
+          </div>
+          <p>
+            Beyond Year 5, no company can outpace global GDP forever. I am setting the terminal growth rate at 2.5%, matching long-term global inflation targets. This assumes PG will simply maintain its market share and grow prices alongside the world's population and general inflation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="projections-section">
+      <h2>3. The 5-Year Forecast</h2>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF (M)</th>
+              <th>Present Value (M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base Year (FY25)</td>
+              <td class="num">${baseFCF.toLocaleString()}</td>
+              <td class="num">-</td>
+            </tr>
+            {projections.map(p => (
+              <tr>
+                <td>{p.year}</td>
+                <td class="num">${Math.round(p.fcf).toLocaleString()}</td>
+                <td class="num pv-col">${Math.round(p.pv).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="text-align: right;"><strong>Sum of PV of FCFs:</strong></td>
+              <td class="num"><strong>${Math.round(sumPvFcf).toLocaleString()}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="valuation-section">
+      <h2>4. The Final Valuation</h2>
+      <div class="math-box">
+        <div class="math-row">
+          <span>Sum of PV of FCFs (Y1-Y5):</span>
+          <span class="num">${Math.round(sumPvFcf).toLocaleString()}</span>
+        </div>
+        <div class="math-row">
+          <span>+ Present Value of Terminal Value:</span>
+          <span class="num">${Math.round(pvTerminalValue).toLocaleString()}</span>
+        </div>
+        <div class="math-divider"></div>
+        <div class="math-row bold">
+          <span>= Enterprise Value:</span>
+          <span class="num">${Math.round(enterpriseValue).toLocaleString()}</span>
+        </div>
+        <div class="math-row">
+          <span>+ Cash & Short-Term Investments:</span>
+          <span class="num">$10,825</span>
+        </div>
+        <div class="math-row">
+          <span>- Total Debt:</span>
+          <span class="num">-$36,639</span>
+        </div>
+        <div class="math-divider"></div>
+        <div class="math-row bold">
+          <span>= Estimated Equity Value:</span>
+          <span class="num">${Math.round(equityValue).toLocaleString()}</span>
+        </div>
+        <div class="math-row">
+          <span>÷ Shares Outstanding:</span>
+          <span class="num">{sharesOut.toLocaleString()}</span>
+        </div>
+        <div class="math-divider thick"></div>
+        <div class="math-row highlight-row">
+          <span>Intrinsic Value Per Share:</span>
+          <span class="num">${intrinsicValuePerShare.toFixed(2)}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sensitivity-section">
+      <h2>5. Sensitivity Matrix</h2>
+      <p>How the intrinsic value per share changes based on different Discount Rate (WACC) and Terminal Growth combinations.</p>
+
+      <div class="matrix-legend">
+        <span class="legend-item"><span class="dot under"></span> Undervalued vs ${currentPrice}</span>
+        <span class="legend-item"><span class="dot over"></span> Overvalued vs ${currentPrice}</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th>WACC &rarr;<br/>Term Gr &darr;</th>
+              {waccOptions.map(w => <th>{(w * 100).toFixed(1)}%</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {terminalOptions.map((tRate, i) => (
+              <tr>
+                <th>{(tRate * 100).toFixed(2)}%</th>
+                {waccOptions.map((wRate, j) => {
+                  const val = sensitivityMatrix[i][j];
+                  const isUnder = val > currentPrice;
+                  return (
+                    <td class={`num ${isUnder ? 'val-under' : 'val-over'} ${tRate === terminalGrowthRate && wRate === discountRate ? 'val-base' : ''}`}>
+                      ${val.toFixed(2)}
+                    </td>
+                  )
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="risks-section">
+      <h2>6. Key Risks to This Valuation</h2>
+      <ul class="risk-list">
+        <li><strong>Consumer Trade-Down:</strong> In a prolonged inflationary or recessionary environment, consumers may abandon premium brands like Tide or Pampers for generic, store-brand alternatives, breaking my 5.5% growth assumption.</li>
+        <li><strong>Input Cost Inflation:</strong> Surges in commodity prices (plastics, pulp, transportation) that outpace their ability to raise retail prices will compress margins and drastically reduce Free Cash Flow.</li>
+        <li><strong>Interest Rate Shocks:</strong> As a "bond proxy" stock, PG's valuation is highly sensitive to the risk-free rate. A sudden spike in the 10-Year Treasury would force my 6.8% WACC higher, crushing the intrinsic value.</li>
+      </ul>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Why did Gemini use a 6.8% WACC for PG?</summary>
+        <div class="faq-content">
+          <p>A Weighted Average Cost of Capital (WACC) of 6.8% is very low compared to most tech or growth stocks. I used it because Procter & Gamble's revenue streams are incredibly predictable, their beta is around 0.40 (meaning it is 60% less volatile than the market), and they possess an AA- credit rating. The required return for taking on this equity risk is minimal compared to the broader market.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What if PG's free cash flow growth is flat (0%)?</summary>
+        <div class="faq-content">
+          <p>If PG's free cash flow growth drops to 0% for the next five years, assuming all other variables (6.8% WACC, 2.5% terminal rate) remain constant, the intrinsic value per share would drop significantly. You can see the trajectory in the sensitivity matrix by shifting to higher WACC and lower terminal assumptions, which mimic a stagnant growth environment.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Is PG a buy based on this intrinsic value?</summary>
+        <div class="faq-content">
+          <p>My DCF model is purely mathematical based on the inputs provided. Whether it is a "buy" depends entirely on your personal required margin of safety. Value investors typically seek a 20-30% discount to intrinsic value to protect against unforeseen errors in cash flow projections.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Why subtract Total Debt to find Equity Value?</summary>
+        <div class="faq-content">
+          <p>The Discounted Cash Flow calculates Enterprise Value—the value of the entire core business. To find what the <em>equity</em> (the shares) is worth, you must add the cash sitting in the bank and subtract all the debt the company owes, because bondholders have first claim on the assets before shareholders.</p>
+        </div>
+      </details>
+    </section>
+
+    <div class="disclaimer-box">
+      <p><strong>Disclaimer:</strong> This intrinsic value calculation is compiled exclusively by an AI (Gemini 2.5 Pro) for educational and illustrative purposes only. It is not financial advice, an investment recommendation, or an endorsement to buy or sell securities. Discounted Cash Flow models are highly sensitive to assumptions, and small tweaks to growth or discount rates can result in drastically different valuations. Always conduct your own due diligence or consult a licensed financial advisor.</p>
+    </div>
+  </main>
+</SiteLayout>
+<style>
+  /* Global Resets for Component */
+  .page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Inter', sans-serif;
+    color: #c8d0de;
+    background-color: #060a12;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 {
+    color: #ffffff;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid #1a2235;
+    padding-bottom: 0.5rem;
+    margin-top: 3rem;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+  }
+
+  a {
+    color: #4a8fe7;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .num {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Header */
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid #1a2235;
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #4a8fe7, #8e44ad);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .gemini-header h1 {
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .gemini-header p {
+    font-size: 1.1rem;
+    color: #8899b6;
+    margin: 0;
+  }
+
+  /* Verdict Card */
+  .verdict-card {
+    background-color: #0f1623;
+    border: 1px solid #1a2235;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .verdict-status {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #8899b6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .iv-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .current-price {
+    font-size: 2rem;
+    color: #c8d0de;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .mos-value {
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Assumptions */
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .assumption-card {
+    background-color: #0a1018;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .highlight {
+    background-color: rgba(74, 143, 231, 0.1);
+    color: #4a8fe7;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .assumption-card p {
+    font-size: 0.9rem;
+    color: #8899b6;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: #0a1018;
+  }
+
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #1a2235;
+  }
+
+  th {
+    background-color: #0f1623;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .data-table .num {
+    text-align: right;
+  }
+
+  tfoot td {
+    background-color: #0f1623;
+    border-top: 2px solid #1a2235;
+  }
+
+  .pv-col {
+    color: #8899b6;
+  }
+
+  /* Valuation Math Box */
+  .math-box {
+    background-color: #0a1018;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 1.05rem;
+  }
+
+  .math-divider {
+    height: 1px;
+    background-color: #1a2235;
+    margin: 0.5rem 0;
+  }
+
+  .math-divider.thick {
+    height: 2px;
+    background-color: #4a8fe7;
+    margin: 1rem 0;
+  }
+
+  .bold {
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .highlight-row {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .highlight-row .num {
+    color: #4a8fe7;
+  }
+
+  /* Sensitivity Matrix */
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .sensitivity-table tbody th {
+    background-color: #0f1623;
+    text-align: left;
+  }
+
+  .val-under {
+    color: #2ecc71;
+  }
+
+  .val-over {
+    color: #e74c3c;
+  }
+
+  .val-base {
+    background-color: rgba(74, 143, 231, 0.15);
+    border: 1px solid #4a8fe7;
+    font-weight: bold;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot.under { background-color: #2ecc71; }
+  .dot.over { background-color: #e74c3c; }
+
+  /* Risks */
+  .risk-list {
+    background-color: #130b0f;
+    border-left: 4px solid #e74c3c;
+    padding: 1.5rem 1.5rem 1.5rem 3rem;
+    margin: 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .risk-list li {
+    margin-bottom: 1rem;
+    color: #c8d0de;
+  }
+
+  .risk-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .risk-list strong {
+    color: #e74c3c;
+  }
+
+  /* FAQ */
+  .faq-item {
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background-color: #0a1018;
+    overflow: hidden;
+  }
+
+  .faq-item summary {
+    padding: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #0f1623;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    color: #4a8fe7;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .faq-item[open] summary::after {
+    content: '−';
+  }
+
+  .faq-content {
+    padding: 1.25rem;
+    border-top: 1px solid #1a2235;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Disclaimer */
+  .disclaimer-box {
+    background-color: #0a1018;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .disclaimer-box strong {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 2.5rem;
+    }
+    .gemini-header h1 {
+      font-size: 2rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: right;
+    }
+    .matrix-legend {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

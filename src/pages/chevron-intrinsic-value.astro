@@ -1,0 +1,580 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Chevron Corporation (CVX) Intrinsic Value",
+  description: "An independent intrinsic value estimate for Chevron Corporation (CVX) using a two-stage discounted cash flow (DCF) model.",
+  category: "study",
+  published: "2026-03-18"
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Gemini 2.5 Pro"
+  }
+});
+
+// Financial Data (Recent Fiscal Year / Current)
+const currentPrice = 199.56;
+const sharesOutstanding = 1981217539;
+const fcfBase = 16592000000;
+const totalDebt = 46742999040;
+const totalCash = 6296999936;
+const netDebt = totalDebt - totalCash;
+
+// DCF Assumptions
+const fcfGrowthRate = 0.05; // 5% growth for years 1-5 (Chevron's focus on high-return assets and modest volume growth)
+const wacc = 0.085; // 8.5% Discount Rate (4.18% Risk Free Rate + ~5% Equity Risk Premium * ~1.1 Beta, offset slightly by cost of debt)
+const terminalGrowthRate = 0.02; // 2% Terminal Growth (aligns with long-term GDP and inflation)
+const years = 5;
+
+// Projections
+const projectedFCF = [];
+let pvOfFCF = 0;
+
+for (let i = 1; i <= years; i++) {
+  const fcf = fcfBase * Math.pow(1 + fcfGrowthRate, i);
+  const pv = fcf / Math.pow(1 + wacc, i);
+  projectedFCF.push({ year: i, fcf, pv });
+  pvOfFCF += pv;
+}
+
+// Terminal Value Calculation (Gordon Growth Model)
+const finalYearFCF = projectedFCF[years - 1].fcf;
+const nextYearFCF = finalYearFCF * (1 + terminalGrowthRate);
+const terminalValue = nextYearFCF / (wacc - terminalGrowthRate);
+const pvOfTerminalValue = terminalValue / Math.pow(1 + wacc, years);
+
+// Enterprise and Equity Value
+const enterpriseValue = pvOfFCF + pvOfTerminalValue;
+const equityValue = enterpriseValue - netDebt;
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+
+// Verdict
+const upside = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// Formatting Utilities
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(val);
+const formatBillions = (val) => `$${(val / 1e9).toFixed(2)}B`;
+
+// Sensitivity Matrix Data Generation (5x5)
+const growthRates = [0.03, 0.04, 0.05, 0.06, 0.07]; // Year 1-5 FCF Growth variations
+const waccRates = [0.065, 0.075, 0.085, 0.095, 0.105]; // WACC variations
+
+const sensitivityMatrix = waccRates.map(w => {
+  return growthRates.map(g => {
+    let tempPvFcf = 0;
+    for (let i = 1; i <= years; i++) {
+      const fcf = fcfBase * Math.pow(1 + g, i);
+      tempPvFcf += fcf / Math.pow(1 + w, i);
+    }
+    const tempFinalYearFcf = fcfBase * Math.pow(1 + g, years);
+    const tempNextYearFcf = tempFinalYearFcf * (1 + terminalGrowthRate);
+    const tempTv = tempNextYearFcf / (w - terminalGrowthRate);
+    const tempPvTv = tempTv / Math.pow(1 + w, years);
+    const tempEv = tempPvFcf + tempPvTv;
+    const tempEq = tempEv - netDebt;
+    return tempEq / sharesOutstanding;
+  });
+});
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/chevron-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="compile-badge">Compiled by Gemini 2.5 Pro</div>
+    <h1>Chevron Corporation (CVX) Intrinsic Value Analysis</h1>
+    <p class="subtitle">An independent estimate of Chevron's fair value using a two-stage discounted cash flow model.</p>
+
+    <div class="verdict-card">
+      <div class="verdict-header">
+        <h2>Verdict: {isUndervalued ? 'Undervalued' : 'Overvalued'}</h2>
+        <span class={`pill ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+          {isUndervalued ? '+' : ''}{upside.toFixed(2)}%
+        </span>
+      </div>
+      <div class="verdict-body">
+        <div class="metric">
+          <span class="label">Intrinsic Value</span>
+          <span class="value number">{formatCurrency(intrinsicValuePerShare)}</span>
+        </div>
+        <div class="metric">
+          <span class="label">Current Price</span>
+          <span class="value number">{formatCurrency(currentPrice)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Methodology & Core Assumptions</h2>
+      <p>This DCF analysis utilizes the Free Cash Flow (FCF) approach to equity valuation. Free Cash Flow represents the cash available to all investors, both debt and equity. It is calculated by projecting future cash flows, determining a terminal value for all cash flows beyond the projection period, discounting both to their present value, and finally adjusting for the company's net debt to arrive at an intrinsic equity value per share.</p>
+
+      <div class="assumption-cards">
+        <div class="card">
+          <h3>Growth Rate (Years 1-5): <span class="number">{(fcfGrowthRate * 100).toFixed(1)}%</span></h3>
+          <p>Chevron is a mature, cyclical energy giant. However, its significant investments in the Permian Basin, recent acquisitions (like Hess, pending approvals), and a steady shift towards lower-carbon energy streams suggest it can still achieve moderate volume and efficiency gains. A 5% FCF growth rate balances its robust asset base against the inherent volatility of global oil prices.</p>
+        </div>
+        <div class="card">
+          <h3>Discount Rate (WACC): <span class="number">{(wacc * 100).toFixed(1)}%</span></h3>
+          <p>Using the Capital Asset Pricing Model (CAPM): A risk-free rate of 4.18% (10-Year US Treasury), an equity risk premium of ~5%, and a beta of slightly above 1.0. Given Chevron's strong balance sheet, the after-tax cost of debt slightly lowers the overall Weighted Average Cost of Capital (WACC) to an estimated 8.5%.</p>
+        </div>
+        <div class="card">
+          <h3>Terminal Growth: <span class="number">{(terminalGrowthRate * 100).toFixed(1)}%</span></h3>
+          <p>A 2% terminal growth rate is selected. This aligns with long-term macroeconomic inflation targets and GDP growth. While the energy transition poses long-term risks to fossil fuel demand, Chevron's massive scale and investments in alternative energies justify a stable, perpetual growth rate matching inflation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>5-Year Free Cash Flow Projections</h2>
+      <p>Starting Base FCF (TTM): <strong>{formatBillions(fcfBase)}</strong></p>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th class="right">Projected FCF</th>
+              <th class="right">Present Value (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projectedFCF.map((item) => (
+              <tr>
+                <td>Year {item.year}</td>
+                <td class="right number">{formatBillions(item.fcf)}</td>
+                <td class="right number">{formatBillions(item.pv)}</td>
+              </tr>
+            ))}
+            <tr class="total-row">
+              <td>Total PV of 5-Yr FCF</td>
+              <td></td>
+              <td class="right number">{formatBillions(pvOfFCF)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Terminal Value Calculation</h2>
+      <p>The Terminal Value captures the value of all cash flows beyond Year 5, assuming steady growth into perpetuity.</p>
+      <ul>
+        <li><strong>Terminal Growth Rate:</strong> {(terminalGrowthRate * 100).toFixed(1)}%</li>
+        <li><strong>Discount Rate (WACC):</strong> {(wacc * 100).toFixed(1)}%</li>
+        <li><strong>Implied Terminal Value (TV):</strong> {formatBillions(terminalValue)}</li>
+      </ul>
+      <p><strong>Present Value of TV:</strong> {formatBillions(pvOfTerminalValue)}</p>
+    </div>
+
+    <div class="content-section">
+      <h2>Final Valuation</h2>
+      <p>We combine the present values, adjust for debt and cash, and divide by total shares to determine the intrinsic value per share.</p>
+      <div class="table-container">
+        <table>
+          <tbody>
+            <tr>
+              <td>PV of 5-Year Cash Flows</td>
+              <td class="right number">{formatBillions(pvOfFCF)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td class="right number">{formatBillions(pvOfTerminalValue)}</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Implied Enterprise Value</strong></td>
+              <td class="right number"><strong>{formatBillions(enterpriseValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Add: Total Cash</td>
+              <td class="right number">{formatBillions(totalCash)}</td>
+            </tr>
+            <tr>
+              <td>Less: Total Debt</td>
+              <td class="right number">({formatBillions(totalDebt)})</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Implied Equity Value</strong></td>
+              <td class="right number"><strong>{formatBillions(equityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="right number">{(sharesOutstanding / 1e9).toFixed(2)}B</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="right number"><strong>{formatCurrency(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Sensitivity Analysis</h2>
+      <p>DCF models are highly sensitive to their inputs. The matrix below demonstrates how the intrinsic value fluctuates when modifying the WACC and FCF Growth Rate.</p>
+      <div class="table-container sensitivity">
+        <table>
+          <thead>
+            <tr>
+              <th>WACC \ Growth</th>
+              {growthRates.map((g) => (
+                <th class="right">{(g * 100).toFixed(1)}%</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {waccRates.map((w, wIndex) => (
+              <tr>
+                <td><strong>{(w * 100).toFixed(1)}%</strong></td>
+                {sensitivityMatrix[wIndex].map((val) => {
+                  const localUpside = ((val - currentPrice) / currentPrice) * 100;
+                  const cellClass = localUpside > 15 ? 'deep-green' : localUpside > 0 ? 'light-green' : localUpside > -15 ? 'light-red' : 'deep-red';
+                  return (
+                    <td class={`right number ${cellClass}`}>{formatCurrency(val)}</td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Key Risks to This Valuation</h2>
+      <ul>
+        <li><strong>Commodity Price Volatility:</strong> Chevron's cash flows are inherently tied to global crude oil and natural gas prices, which are subject to extreme geopolitical and economic fluctuations.</li>
+        <li><strong>Regulatory & Environmental Pressures:</strong> Increasing global legislation aimed at accelerating the energy transition could force premature asset retirements or massive compliance costs.</li>
+        <li><strong>Capital Expenditure Demands:</strong> Maintaining production levels requires massive ongoing investments (CapEx), which can rapidly compress Free Cash Flow if operational efficiencies falter.</li>
+      </ul>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>Why use Free Cash Flow instead of Earnings (Net Income)?</h3>
+        <p>Earnings include non-cash accounting expenses like depreciation and amortization, and they can be legally manipulated through accounting practices. Free Cash Flow represents the actual hard cash generated by the business that is available to be returned to shareholders or reinvested, making it a purer measure of intrinsic value.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How does the Hess Corporation acquisition affect this DCF?</h3>
+        <p>The pending acquisition of Hess will significantly alter Chevron's capital structure and future cash flows, particularly by adding prime assets in Guyana. However, because the deal has faced regulatory and arbitration delays, this model relies primarily on Chevron's standalone historical base FCF, assuming organic integration.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is the terminal growth rate capped at 2%?</h3>
+        <p>A terminal growth rate assumes a company will grow at that pace forever. If a company's terminal rate exceeds long-term global GDP growth or inflation, the math implies the company will eventually overtake the entire global economy. Therefore, 2% is a standard, conservative cap.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This intrinsic value analysis was autonomously compiled by Gemini 2.5 Pro for educational purposes only. It relies on publicly available financial data and subjective assumptions. It is not financial advice. Do not make investment decisions based solely on this calculation.
+    </div>
+
+  </div>
+</SiteLayout>
+<style>
+  /* Base Reset & Variables */
+  html {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #1a2333;
+    padding-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #e2e8f0;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+
+  ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  strong {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  /* Utility Classes */
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .number {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+  }
+
+  /* Specific Components */
+  .compile-badge {
+    display: inline-block;
+    background-color: #1e3a8a;
+    color: #bfdbfe;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #3b82f6;
+  }
+
+  .verdict-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  }
+
+  .verdict-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+    font-size: 1.5rem;
+  }
+
+  .pill {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .pill.undervalued {
+    background-color: rgba(22, 163, 74, 0.2);
+    color: #4ade80;
+    border: 1px solid #22c55e;
+  }
+
+  .pill.overvalued {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+    border: 1px solid #ef4444;
+  }
+
+  .verdict-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric .label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .metric .value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .assumption-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .assumption-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .card h3 {
+    margin-top: 0;
+    font-size: 1.125rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card h3 .number {
+    color: #4a8fe7;
+  }
+
+  .card p {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 0;
+  }
+
+  /* Table Styles */
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 0.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .total-row {
+    background-color: rgba(255, 255, 255, 0.05);
+    font-weight: 700;
+  }
+
+  .highlight-row {
+    background-color: rgba(74, 143, 231, 0.15);
+    font-size: 1.125rem;
+  }
+
+  .highlight-row td {
+    color: #ffffff;
+    border-top: 2px solid #4a8fe7;
+  }
+
+  /* Sensitivity Matrix Specifics */
+  .sensitivity th {
+    text-align: center;
+  }
+
+  .sensitivity td {
+    text-align: center;
+    border: 1px solid #1e293b;
+  }
+
+  .deep-green {
+    background-color: rgba(22, 163, 74, 0.25);
+    color: #86efac;
+  }
+
+  .light-green {
+    background-color: rgba(22, 163, 74, 0.1);
+    color: #bbf7d0;
+  }
+
+  .light-red {
+    background-color: rgba(220, 38, 38, 0.1);
+    color: #fecaca;
+  }
+
+  .deep-red {
+    background-color: rgba(220, 38, 38, 0.25);
+    color: #fca5a5;
+  }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+  }
+
+  .faq-item {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 4rem;
+    padding: 1.5rem;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #fbbf24;
+  }
+</style>
