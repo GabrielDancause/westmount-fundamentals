@@ -386,6 +386,18 @@ footer {
     This site provides data for informational purposes only. Not investment advice. Past performance does not guarantee future results. Always do your own research before making investment decisions.
   </div>
 
+  
+  <section class="embed-section" style="max-width:800px;margin:40px auto;padding:0 24px">
+    <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
+      <h3 style="font-size:16px;color:var(--text-bright,#fff);margin-bottom:8px">📎 Embed This Data</h3>
+      <p style="font-size:13px;color:var(--text-dim,#94a3b8);margin-bottom:12px">Add this widget to your website or blog — free, no attribution required beyond the built-in link.</p>
+      <div style="position:relative">
+        <code id="embed-code" style="display:block;background:var(--bg-color,#060a12);padding:14px;border-radius:8px;font-size:12px;color:var(--text-primary,#c8d0de);font-family:monospace;white-space:pre-wrap;word-break:break-all;line-height:1.5">&lt;iframe src=&quot;https://westmountfundamentals.com/embed/short-interest.html&quot; width=&quot;600&quot; height=&quot;520&quot; frameborder=&quot;0&quot; style=&quot;border-radius:12px&quot;&gt;&lt;/iframe&gt;</code>
+        <button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').textContent.replace(/&lt;/g,\'<\').replace(/&gt;/g,\'>\').replace(/&quot;/g,\'\"\'));this.textContent=\'Copied!\';setTimeout(()=>this.textContent=\'Copy\',2000)" style="position:absolute;top:8px;right:8px;background:var(--accent-color,#4a8fe7);color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Copy</button>
+      </div>
+    </div>
+  </section>
+
   <section style="max-width:800px;margin:40px auto;padding:0 24px">
     <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
