@@ -1,0 +1,572 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Deere & Company (DE) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Deere & Company. Using actual FY2025 financials to arrive at a single fair value estimate for DE shares.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/deere-intrinsic-value"
+  }
+};
+
+export const meta = {
+  title: "Deere & Company (DE) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on Deere & Company using FY2025 actuals. One number. Every assumption disclosed. Here's what Deere is really worth.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   Every number is sourced from Deere's FY2025 Financials (via StockAnalysis).
+   We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
+   ═══════════════════════════════════════════════════════════════ */
+
+// --- INPUTS (all in millions USD unless noted) ---
+const fcf2025 = 3231;                  // FY2025 Free Cash Flow ($M)
+const sharesOutstanding = 270.9;       // Basic shares outstanding ($M) — FY2025
+const cashAndInvestments = 9687;       // Cash + short-term investments ($M)
+const totalDebt = 63936;               // Total debt (Short-term + Long-term) ($M)
+const netCash = cashAndInvestments - totalDebt; // -$54,249M
+
+// --- ASSUMPTIONS (fully disclosed below) ---
+const growthRatePhase1 = 0.06;         // 6% FCF growth, Years 1-5
+const growthRateTerminal = 0.03;       // 3% perpetuity growth (terminal)
+const discountRate = 0.095;            // 9.5% WACC / required return
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+let fcf = fcf2025;
+for (let yr = 1; yr <= 5; yr++) {
+  fcf = fcf * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+// --- ENTERPRISE VALUE ---
+const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+// --- EQUITY VALUE ---
+const equityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+// Market comparison
+const currentPrice = 574.73;
+const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+
+// --- HISTORICAL DATA for charts ---
+const revenueHistory = [
+  { year: 2021, value: 44024 },
+  { year: 2022, value: 52577 },
+  { year: 2023, value: 61251 },
+  { year: 2024, value: 51716 },
+  { year: 2025, value: 45684 },
+];
+const fcfHistory = [
+  { year: 2021, value: 5146 },
+  { year: 2022, value: 911 },
+  { year: 2023, value: 4121 },
+  { year: 2024, value: 4429 },
+  { year: 2025, value: 3231 },
+];
+const epsHistory = [
+  { year: 2021, value: 18.99 },
+  { year: 2022, value: 23.28 },
+  { year: 2023, value: 34.63 },
+  { year: 2024, value: 25.62 },
+  { year: 2025, value: 18.50 },
+];
+const marginHistory = [
+  { year: 2021, operating: 19.52, profit: 13.55, fcfMargin: 11.69 },
+  { year: 2022, operating: 19.38, profit: 13.56, fcfMargin: 1.73 },
+  { year: 2023, operating: 25.26, profit: 16.58, fcfMargin: 6.73 },
+  { year: 2024, operating: 24.27, profit: 13.71, fcfMargin: 8.56 },
+  { year: 2025, operating: 20.64, profit: 10.94, fcfMargin: 7.07 },
+];
+
+// Sensitivity analysis
+const sensitivityRates = [0.075, 0.085, 0.095, 0.105, 0.115];
+const sensitivityGrowth = [0.02, 0.04, 0.06, 0.08, 0.10];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      let f = fcf2025;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="Deere & Company (DE) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on Deere & Company using FY2025 actuals. One number. Every assumption disclosed. Here's what Deere is really worth."
+  canonical="https://westmountfundamentals.com/deere-intrinsic-value"
+  schema={schema}
+>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.badge { display: inline-block; padding: 6px 14px; background: rgba(74,143,231,0.1); border: 1px solid rgba(74,143,231,0.3); color: #4a8fe7; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 24px; }
+.compiled-by { margin-top: 12px; font-size: 0.9rem; color: #8496b0; font-family: 'JetBrains Mono', monospace; }
+h1 { font-size: 2.5rem; color: #ffffff; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 24px; }
+.subtitle { font-size: 1.25rem; color: #8496b0; max-width: 700px; margin: 0 auto; }
+
+/* Content */
+.content { padding: 60px 0 100px; }
+h2 { font-size: 1.75rem; color: #ffffff; margin: 48px 0 24px; padding-bottom: 12px; border-bottom: 1px solid #152040; }
+h3 { font-size: 1.25rem; color: #e2e8f0; margin: 32px 0 16px; }
+p { margin-bottom: 20px; font-size: 1.05rem; }
+ul { margin-bottom: 24px; padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #ffffff; font-weight: 600; }
+
+/* Verdict Card */
+.verdict-card { background: #0a101d; border: 1px solid #1a2642; border-radius: 12px; padding: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; margin: 40px 0; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+.vc-main { flex: 1; min-width: 250px; }
+.vc-label { font-size: 0.9rem; color: #8496b0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.vc-value { font-size: 3.5rem; font-weight: 700; color: #ffffff; line-height: 1; font-family: 'JetBrains Mono', monospace; }
+.vc-stats { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 24px; }
+.vcs-item { display: flex; flex-direction: column; }
+.vcs-label { font-size: 0.85rem; color: #8496b0; margin-bottom: 4px; }
+.vcs-val { font-size: 1.2rem; font-weight: 600; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; }
+.vc-status { padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; margin-left: auto; border: 1px solid currentColor; }
+
+/* Methodology & Assumptions */
+.methodology-box { background: rgba(74,143,231,0.05); border-left: 4px solid #4a8fe7; padding: 24px; border-radius: 0 8px 8px 0; margin: 32px 0; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin: 32px 0; }
+.assumption-card { background: #0a101d; border: 1px solid #1a2642; border-radius: 8px; padding: 24px; }
+.ac-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #152040; padding-bottom: 12px; margin-bottom: 16px; }
+.ac-title { font-weight: 600; color: #ffffff; font-size: 1.1rem; }
+.ac-value { font-size: 1.5rem; font-weight: 700; color: #4a8fe7; font-family: 'JetBrains Mono', monospace; }
+.ac-desc { font-size: 0.95rem; color: #8496b0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 32px 0; border: 1px solid #1a2642; border-radius: 8px; background: #0a101d; }
+table { width: 100%; border-collapse: collapse; text-align: right; font-variant-numeric: tabular-nums; }
+th { background: #0e1628; padding: 16px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #8496b0; border-bottom: 1px solid #1a2642; font-weight: 600; }
+td { padding: 16px; border-bottom: 1px solid #152040; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #0e1628; }
+.row-total td { font-weight: 700; color: #ffffff; background: rgba(74,143,231,0.05); border-top: 1px solid #1a2642; }
+.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Charts */
+.bar-chart { margin: 32px 0 48px; }
+.bar-row { display: flex; align-items: center; margin-bottom: 12px; }
+.bar-label { width: 60px; font-size: 0.9rem; color: #8496b0; font-family: 'JetBrains Mono', monospace; }
+.bar-track { flex: 1; height: 32px; background: #0a101d; border-radius: 4px; overflow: hidden; border: 1px solid #1a2642; position: relative; }
+.bar-fill { height: 100%; display: flex; align-items: center; padding-left: 12px; font-size: 0.85rem; font-weight: 600; color: #ffffff; font-family: 'JetBrains Mono', monospace; transition: width 1s ease-out; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1e3a8a, #3b82f6); }
+.bar-fill.fcf { background: linear-gradient(90deg, #064e3b, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #4c1d95, #8b5cf6); }
+
+/* Sensitivity */
+.sensitivity-table th { text-align: center; }
+.sensitivity-table td { text-align: center; }
+.sensitivity-table td:first-child { font-weight: 600; background: #0e1628; text-align: left; }
+.sensitivity-table .current { background: rgba(74,143,231,0.15); font-weight: 700; color: #ffffff; border: 1px solid #4a8fe7; }
+
+/* FAQ & Sources */
+.faq { margin: 32px 0; }
+details { background: #0a101d; border: 1px solid #1a2642; border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+summary { padding: 20px; font-weight: 600; color: #ffffff; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; font-size: 1.5rem; color: #4a8fe7; font-weight: 400; }
+details[open] summary::after { content: '−'; }
+.faq-answer { padding: 0 20px 20px; color: #8496b0; border-top: 1px solid #152040; padding-top: 20px; }
+.sources, .cite-block { margin: 48px 0; padding: 24px; background: #0a101d; border-radius: 8px; border: 1px solid #1a2642; font-size: 0.9rem; }
+.sources h4, .cite-block h4 { color: #ffffff; margin-bottom: 12px; font-size: 1rem; }
+.sources li { color: #8496b0; margin-bottom: 8px; }
+
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 32px 0; }
+.related-card { background: #0a101d; border: 1px solid #1a2642; padding: 20px; border-radius: 8px; transition: all 0.2s; display: block; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); background: #0e1628; text-decoration: none; }
+.rc-title { font-weight: 600; color: #ffffff; margin-bottom: 8px; }
+.rc-desc { font-size: 0.85rem; color: #8496b0; }
+
+.disclaimer { font-size: 0.85rem; color: #64748b; padding-top: 24px; border-top: 1px solid #152040; }
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="badge">Study</div>
+    <h1>Deere &amp; Company (DE) Intrinsic Value</h1>
+    <p class="subtitle">A transparent, step-by-step discounted cash flow valuation based on actual FY2025 financials.</p>
+    <div class="compiled-by">Compiled by Gemini 2.5 Pro</div>
+  </div>
+</div>
+
+<div class="container content">
+  <p>Deere &amp; Company is the world's leading manufacturer of agricultural machinery, but its cyclicality makes valuation complex. Following peak agricultural cycle earnings in 2023, Deere has seen revenue and free cash flow normalize downward. The market struggles to price cyclical companies when they fall from peak cycle earnings.</p>
+
+  <p>To cut through the noise, we built a two-stage Discounted Cash Flow (DCF) model using Deere's actual FY2025 financial data. Our goal is to find the intrinsic value — the present value of all future cash flows.</p>
+
+  <div class="verdict-card">
+    <div class="vc-main">
+      <div class="vc-label">Estimated Intrinsic Value</div>
+      <div class="vc-value">${roundedIV.toFixed(2)}</div>
+      <div class="vc-stats">
+        <div class="vcs-item">
+          <div class="vcs-label">Current Price</div>
+          <div class="vcs-val">${currentPrice.toFixed(2)}</div>
+        </div>
+        <div class="vcs-item">
+          <div class="vcs-label">Margin of Safety</div>
+          <div class="vcs-val" style={`color: ${verdictColor}`}>{marginOfSafety}%</div>
+        </div>
+      </div>
+    </div>
+    <div class="vc-status" style={`color: ${verdictColor}`}>{verdictText}</div>
+  </div>
+
+  <h2>The Methodology</h2>
+  <div class="methodology-box">
+    <p>We use a <strong>Two-Stage Free Cash Flow to Equity (FCFE)</strong> model. Here's how it works:</p>
+    <ul>
+      <li><strong>Phase 1 (Years 1-5):</strong> We project Free Cash Flow using a normalized growth rate.</li>
+      <li><strong>Phase 2 (Terminal Value):</strong> We calculate the value of the company in perpetuity beyond year 5 using the Gordon Growth Model.</li>
+      <li><strong>Discounting:</strong> All future cash flows are discounted back to today's dollars using the Weighted Average Cost of Capital (WACC).</li>
+      <li><strong>Adjustments:</strong> We add total cash and subtract total debt to arrive at the equity value, then divide by basic shares outstanding.</li>
+    </ul>
+  </div>
+
+  <h2>Core Assumptions</h2>
+  <p>A DCF is only as good as its inputs. Here are the exact numbers we plugged into the model. You can verify the starting financials against Deere's FY2025 SEC filings.</p>
+
+  <div class="grid-2">
+    <div class="assumption-card">
+      <div class="ac-header">
+        <div class="ac-title">FY2025 Free Cash Flow</div>
+        <div class="ac-value">${(fcf2025 / 1000).toFixed(2)}B</div>
+      </div>
+      <div class="ac-desc">Starting base. Actual FY2025 operating cash flow minus CapEx. Note that FCF dropped from FY24 ($4.4B) to FY25 ($3.2B) as the agriculture cycle cooled.</div>
+    </div>
+    <div class="assumption-card">
+      <div class="ac-header">
+        <div class="ac-title">Phase 1 Growth (1-5 Yrs)</div>
+        <div class="ac-value">{(growthRatePhase1 * 100).toFixed(1)}%</div>
+      </div>
+      <div class="ac-desc">Estimated annual FCF growth as the agricultural cycle finds a trough and precision agriculture adoption continues to drive margin expansion and recurring revenue.</div>
+    </div>
+    <div class="assumption-card">
+      <div class="ac-header">
+        <div class="ac-title">Terminal Growth Rate</div>
+        <div class="ac-value">{(growthRateTerminal * 100).toFixed(1)}%</div>
+      </div>
+      <div class="ac-desc">The perpetual growth rate beyond Year 5. Pegged to long-term global inflation and GDP growth estimates. A mature industrial company cannot grow faster than the economy forever.</div>
+    </div>
+    <div class="assumption-card">
+      <div class="ac-header">
+        <div class="ac-title">Discount Rate (WACC)</div>
+        <div class="ac-value">{(discountRate * 100).toFixed(1)}%</div>
+      </div>
+      <div class="ac-desc">Our required rate of return. Based on a 4.18% 10-Year Treasury yield (Risk-Free Rate), adding an equity risk premium adjusted for Deere's historical beta and debt levels.</div>
+    </div>
+  </div>
+
+  <h2>Step 1: Projecting Free Cash Flow (Years 1-5)</h2>
+  <p>Applying our {(growthRatePhase1 * 100)}% growth rate to the FY2025 base, here are the projected cash flows for the next five years, and their present value discounted at {(discountRate * 100)}%.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Projected FCF ($M)</th>
+          <th>Discount Factor</th>
+          <th>Present Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {projectedFCF.map(p => (
+          <tr>
+            <td style="text-align:left">Year {p.year}</td>
+            <td>${p.fcf.toLocaleString()}</td>
+            <td>{p.pvFactor.toFixed(4)}</td>
+            <td>${p.pvFCF.toLocaleString()}</td>
+          </tr>
+        ))}
+        <tr class="row-total">
+          <td colspan="3" style="text-align:left">Present Value of Phase 1 Cash Flows</td>
+          <td>${pvPhase1.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Step 2: Calculating Terminal Value</h2>
+  <p>To find what Deere is worth from Year 6 to infinity, we use the Gordon Growth Model. We take Year 5 FCF, grow it by our {(growthRateTerminal * 100)}% terminal rate to get Year 6, and divide by the discount rate minus the terminal growth rate.</p>
+  <ul>
+    <li><strong>Year 6 FCF:</strong> ${Math.round(fcfYear6).toLocaleString()}M</li>
+    <li><strong>Terminal Value:</strong> ${terminalValue.toLocaleString()}M</li>
+    <li><strong>Present Value of Terminal Value:</strong> ${pvTerminalValue.toLocaleString()}M</li>
+  </ul>
+
+  <h2>Step 3: Finding Intrinsic Value Per Share</h2>
+  <p>We sum the present values of Phase 1 and the Terminal Value to get the Enterprise Value. Then we add back cash and subtract total debt (yielding Net Debt) to find the Equity Value. Finally, we divide by the number of shares outstanding.</p>
+
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr>
+          <td style="text-align:left">PV of Phase 1 Cash Flows</td>
+          <td>${pvPhase1.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">PV of Terminal Value</td>
+          <td>${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td style="text-align:left">Enterprise Value</td>
+          <td>${enterpriseValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">Plus: Cash &amp; Short-Term Investments</td>
+          <td>${cashAndInvestments.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">Less: Total Debt</td>
+          <td style="color:#ef4444">-${totalDebt.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td style="text-align:left">Equity Value</td>
+          <td>${equityValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td style="text-align:left">Divided by Shares Outstanding (Millions)</td>
+          <td>{sharesOutstanding}</td>
+        </tr>
+        <tr class="row-total">
+          <td style="text-align:left">Intrinsic Value Per Share</td>
+          <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ HISTORICAL CHARTS ═══ -->
+  <h2>Financial Track Record</h2>
+  <p>Before trusting a forward projection, look at where the company has been. Here is Deere's 5-year cyclical performance.</p>
+
+  <h3>Revenue ($B)</h3>
+  <div class="bar-chart">
+    {revenueHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill revenue" style={`width: ${(r.value / 61251) * 100}%`}>
+            ${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Free Cash Flow ($B)</h3>
+  <div class="bar-chart">
+    {fcfHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill fcf" style={`width: ${(r.value / 5146) * 100}%`}>
+            ${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Earnings Per Share (Basic)</h3>
+  <div class="bar-chart">
+    {epsHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill eps" style={`width: ${(r.value / 34.63) * 100}%`}>
+            ${r.value.toFixed(2)}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- ═══ MARGIN TRENDS ═══ -->
+  <h3>Margin Trends</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Operating Margin</th>
+          <th>Profit Margin</th>
+          <th>FCF Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {marginHistory.map(m => (
+          <tr>
+            <td style="text-align:left">{m.year}</td>
+            <td>{m.operating}%</td>
+            <td>{m.profit}%</td>
+            <td>{m.fcfMargin}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Key observation:</strong> Deere exhibits pronounced cyclicality. Record farm income drove massive revenue and margin expansion through 2023, followed by a rapid deceleration in 2024 and 2025 as the agricultural cycle cooled down and equipment demand normalized.</p>
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Our base case uses {(growthRatePhase1 * 100)}% growth and {(discountRate * 100)}% discount rate. But valuation is an art. Here's what the intrinsic value looks like under different assumptions. Find the combination you believe in.</p>
+
+  <div class="table-wrap">
+    <table class="sensitivity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+          {sensitivityGrowth.map(g => (
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityTable.map(row => (
+          <tr>
+            <td>{(row.dr * 100).toFixed(1)}%</td>
+            {row.values.map((v, i) => (
+              <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                ${v}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p>The highlighted cell is our base case. Because Deere carries significant debt (related to its John Deere Financial operations), the equity value is highly sensitive to changes in required return and terminal growth.</p>
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>What This Model Doesn't Capture</h2>
+  <p>No model is complete. Here's what a DCF inherently misses — and how it might bias our estimate.</p>
+
+  <h3>Upside risks (our number could be too low)</h3>
+  <ul>
+    <li><strong>Precision Agriculture Boom:</strong> Software and autonomous driving retrofits create high-margin, recurring revenue that softens the blow of equipment sales cycles. If adoption accelerates, margins will structurally improve beyond historical norms.</li>
+    <li><strong>Faster Cycle Rebound:</strong> If global commodity prices spike or interest rates fall rapidly, farmer sentiment and equipment upgrade cycles could return faster than anticipated.</li>
+    <li><strong>Pricing Power:</strong> Deere has immense brand loyalty and pricing power, allowing it to preserve margins better than competitors even during downturns.</li>
+  </ul>
+
+  <h3>Downside risks (our number could be too high)</h3>
+  <ul>
+    <li><strong>Prolonged Trough:</strong> Agricultural cycles can be long. If farm incomes remain depressed for an extended period, FCF growth could be negative or flat rather than our projected 6%.</li>
+    <li><strong>Interest Rates & Financing:</strong> High borrowing costs impact farmers' ability to finance new machinery and put pressure on John Deere Financial's credit portfolio.</li>
+    <li><strong>Used Equipment Glut:</strong> High inventory of used machinery can severely cannibalize new equipment sales, depressing revenue.</li>
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>Why is Deere's Intrinsic Value so low compared to its price?</summary>
+      <div class="faq-answer">Deere currently has high debt loads ($63.9B total debt vs $9.7B cash), largely related to its financing arm. Moreover, its cash flow dropped significantly in FY2025 as the agriculture cycle cooled. A DCF model based on these depressed FCF figures combined with a high net debt results in a conservative valuation. The market is likely pricing in a swift cyclical recovery.</div>
+    </details>
+    <details>
+      <summary>Why use a 9.5% discount rate?</summary>
+      <div class="faq-answer">The 10-year Treasury yields 4.18% (March 2026). Factoring in an equity risk premium and Deere's cyclical risk profile, a 9.5% Cost of Capital provides a sufficient margin of safety for the inherent volatility in agricultural markets.</div>
+    </details>
+    <details>
+      <summary>Why exclude John Deere Financial's debt?</summary>
+      <div class="faq-answer">We did not exclude it. Our model conservatively subtracts total debt ($63.9B) to find the equity value. Many analysts prefer to value the industrial and financial operations separately, which often yields a higher intrinsic value.</div>
+    </details>
+    <details>
+      <summary>Is this a buy recommendation?</summary>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, time horizon, tax situation, and conviction in the assumptions. We provide the tools and transparency — you make the decision.</div>
+    </details>
+  </div>
+
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+    <p>Westmount Research. "Deere & Company (DE) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
+  </div>
+
+  <!-- ═══ DATA SOURCES ═══ -->
+  <div class="sources">
+    <h4>Data Sources & Methodology</h4>
+    <ul>
+      <li>Deere & Company FY2025 Financials, via StockAnalysis</li>
+      <li>U.S. 10-Year Treasury yield (4.18%) as of March 2026</li>
+      <li>Share price ($574.73) as of market close March 18, 2026</li>
+      <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+      <li>All calculations performed in real-time using source data (no third-party valuation services)</li>
+    </ul>
+  </div>
+
+  <!-- ═══ RELATED ═══ -->
+  <h2>Related Pages</h2>
+  <div class="related-grid">
+    <a href="/what-is-intrinsic-value" class="related-card">
+      <div class="rc-title">What Is Intrinsic Value?</div>
+      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
+    </a>
+    <a href="/dcf-calculator" class="related-card">
+      <div class="rc-title">DCF Calculator</div>
+      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
+    </a>
+    <a href="/what-is-free-cash-flow" class="related-card">
+      <div class="rc-title">What Is Free Cash Flow?</div>
+      <div class="rc-desc">Why FCF matters more than earnings for valuation.</div>
+    </a>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>
