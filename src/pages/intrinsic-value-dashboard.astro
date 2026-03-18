@@ -1,0 +1,647 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Intrinsic Value Dashboard: 60 Largest Companies by Market Cap",
+  "description": "Gemini 2.5 Pro ran a two-stage DCF on the 60 biggest publicly traded companies. Every assumption disclosed. Every number computed. See which stocks are overvalued and undervalued.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
+  "publisher": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://westmountfundamentals.com/intrinsic-value-dashboard" }
+};
+
+export const meta = {
+  title: "Intrinsic Value Dashboard: 60 Largest Companies",
+  description: "DCF-based intrinsic value estimates for the 60 biggest companies by market cap. Compiled by Gemini 2.5 Pro with full transparency on assumptions.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+const companies = [
+  {
+    "slug": "asml-intrinsic-value",
+    "name": "ASML Holding N.V.",
+    "ticker": "ASML",
+    "iv": 951.47,
+    "price": 1376.3
+  },
+  {
+    "slug": "abbvie-intrinsic-value",
+    "name": "AbbVie Inc.",
+    "ticker": "ABBV",
+    "iv": 141.73,
+    "price": 211.11
+  },
+  {
+    "slug": "adobe-intrinsic-value",
+    "name": "Adobe Inc.",
+    "ticker": "ADBE",
+    "iv": 701.96,
+    "price": 248.75
+  },
+  {
+    "slug": "amd-intrinsic-value",
+    "name": "Advanced Micro Devices, Inc.",
+    "ticker": "AMD",
+    "iv": 147.61,
+    "price": 199.52
+  },
+  {
+    "slug": "google-intrinsic-value",
+    "name": "Alphabet Inc.",
+    "ticker": "GOOGL",
+    "iv": 142.23,
+    "price": 310.92
+  },
+  {
+    "slug": "amazon-intrinsic-value",
+    "name": "Amazon.com, Inc.",
+    "ticker": "AMZN",
+    "iv": 22.74,
+    "price": 211.56
+  },
+  {
+    "slug": "american-express-intrinsic-value",
+    "name": "American Express Company",
+    "ticker": "AXP",
+    "iv": 456.97,
+    "price": 298.01
+  },
+  {
+    "slug": "apple-intrinsic-value",
+    "name": "Apple Inc.",
+    "ticker": "AAPL",
+    "iv": 206.86,
+    "price": 252.38
+  },
+  {
+    "slug": "applied-materials-intrinsic-value",
+    "name": "Applied Materials, Inc.",
+    "ticker": "AMAT",
+    "iv": 154.32,
+    "price": 354.6
+  },
+  {
+    "slug": "arista-networks-intrinsic-value",
+    "name": "Arista Networks, Inc.",
+    "ticker": "ANET",
+    "iv": 86.25,
+    "price": 135.38
+  },
+  {
+    "slug": "bank-of-america-intrinsic-value",
+    "name": "Bank of America Corporation",
+    "ticker": "BAC",
+    "iv": 32.48,
+    "price": 47.59
+  },
+  {
+    "slug": "berkshire-hathaway-intrinsic-value",
+    "name": "Berkshire Hathaway Inc.",
+    "ticker": "BRK.B",
+    "iv": 536.04,
+    "price": 487.63
+  },
+  {
+    "slug": "booking-holdings-intrinsic-value",
+    "name": "Booking Holdings Inc.",
+    "ticker": "BKNG",
+    "iv": 6970.96,
+    "price": 4438.44
+  },
+  {
+    "slug": "broadcom-intrinsic-value",
+    "name": "Broadcom Inc.",
+    "ticker": "AVGO",
+    "iv": 213.54,
+    "price": 318.92
+  },
+  {
+    "slug": "caterpillar-intrinsic-value",
+    "name": "Caterpillar Inc.",
+    "ticker": "CAT",
+    "iv": 243.62,
+    "price": 707.06
+  },
+  {
+    "slug": "chevron-intrinsic-value",
+    "name": "Chevron Corporation",
+    "ticker": "CVX",
+    "iv": 129.12,
+    "price": 199.56
+  },
+  {
+    "slug": "cisco-intrinsic-value",
+    "name": "Cisco Systems, Inc.",
+    "ticker": "CSCO",
+    "iv": 47.38,
+    "price": null
+  },
+  {
+    "slug": "costco-intrinsic-value",
+    "name": "Costco Wholesale Corporation",
+    "ticker": "COST",
+    "iv": 526.67,
+    "price": 988.74
+  },
+  {
+    "slug": "eli-lilly-intrinsic-value",
+    "name": "Eli Lilly and Company",
+    "ticker": "LLY",
+    "iv": 507.89,
+    "price": 915.59
+  },
+  {
+    "slug": "exxon-mobil-intrinsic-value",
+    "name": "Exxon Mobil Corporation",
+    "ticker": "XOM",
+    "iv": 91.18,
+    "price": 158.99
+  },
+  {
+    "slug": "ge-aerospace-intrinsic-value",
+    "name": "GE Aerospace",
+    "ticker": "GE",
+    "iv": 127.29,
+    "price": 302.55
+  },
+  {
+    "slug": "ibm-intrinsic-value",
+    "name": "IBM Corporation",
+    "ticker": "IBM",
+    "iv": 210.15,
+    "price": 254.68
+  },
+  {
+    "slug": "intel-intrinsic-value",
+    "name": "Intel Corporation",
+    "ticker": "INTC",
+    "iv": 33.96,
+    "price": 44.61
+  },
+  {
+    "slug": "intuitive-surgical-intrinsic-value",
+    "name": "Intuitive Surgical, Inc.",
+    "ticker": "ISRG",
+    "iv": 252.81,
+    "price": 477.2
+  },
+  {
+    "slug": "jpmorgan-intrinsic-value",
+    "name": "JPMorgan Chase & Co.",
+    "ticker": "JPM",
+    "iv": 279.22,
+    "price": 287.54
+  },
+  {
+    "slug": "johnson-and-johnson-intrinsic-value",
+    "name": "Johnson & Johnson",
+    "ticker": "JNJ",
+    "iv": 223.3,
+    "price": 238.96
+  },
+  {
+    "slug": "lam-research-intrinsic-value",
+    "name": "Lam Research Corporation",
+    "ticker": "LRCX",
+    "iv": 115.1,
+    "price": 229.58
+  },
+  {
+    "slug": "linde-intrinsic-value",
+    "name": "Linde plc",
+    "ticker": "LIN",
+    "iv": 231.59,
+    "price": 490.44
+  },
+  {
+    "slug": "mastercard-intrinsic-value",
+    "name": "Mastercard Incorporated",
+    "ticker": "MA",
+    "iv": 536.98,
+    "price": 491.37
+  },
+  {
+    "slug": "mcdonalds-intrinsic-value",
+    "name": "McDonald's Corporation",
+    "ticker": "MCD",
+    "iv": 299.74,
+    "price": 320.57
+  },
+  {
+    "slug": "merck-intrinsic-value",
+    "name": "Merck & Co., Inc.",
+    "ticker": "MRK",
+    "iv": 82.8,
+    "price": 114.51
+  },
+  {
+    "slug": "meta-intrinsic-value",
+    "name": "Meta Platforms, Inc.",
+    "ticker": "META",
+    "iv": 643.59,
+    "price": 621.5
+  },
+  {
+    "slug": "microsoft-intrinsic-value",
+    "name": "Microsoft Corporation",
+    "ticker": "MSFT",
+    "iv": 274.94,
+    "price": 395.5
+  },
+  {
+    "slug": "morgan-stanley-intrinsic-value",
+    "name": "Morgan Stanley",
+    "ticker": "MS",
+    "iv": 160.66,
+    "price": 159.47
+  },
+  {
+    "slug": "nvidia-intrinsic-value",
+    "name": "NVIDIA Corporation",
+    "ticker": "NVDA",
+    "iv": 90.58,
+    "price": 182.69
+  },
+  {
+    "slug": "netflix-intrinsic-value",
+    "name": "Netflix, Inc.",
+    "ticker": "NFLX",
+    "iv": 49.03,
+    "price": 93.86
+  },
+  {
+    "slug": "oracle-intrinsic-value",
+    "name": "Oracle Corporation",
+    "ticker": "ORCL",
+    "iv": 72.22,
+    "price": 152.94
+  },
+  {
+    "slug": "palo-alto-networks-intrinsic-value",
+    "name": "Palo Alto Networks",
+    "ticker": "PANW",
+    "iv": 150.2,
+    "price": 168.33
+  },
+  {
+    "slug": "pepsico-intrinsic-value",
+    "name": "PepsiCo, Inc.",
+    "ticker": "PEP",
+    "iv": 118.22,
+    "price": 155.14
+  },
+  {
+    "slug": "philip-morris-intrinsic-value",
+    "name": "Philip Morris International",
+    "ticker": "PM",
+    "iv": 129.22,
+    "price": 167.84
+  },
+  {
+    "slug": "qualcomm-intrinsic-value",
+    "name": "QUALCOMM Incorporated",
+    "ticker": "QCOM",
+    "iv": 241.25,
+    "price": 130.66
+  },
+  {
+    "slug": "rtx-intrinsic-value",
+    "name": "RTX Corporation",
+    "ticker": "RTX",
+    "iv": 109.83,
+    "price": 206.39
+  },
+  {
+    "slug": "sap-intrinsic-value",
+    "name": "SAP SE",
+    "ticker": "SAP",
+    "iv": 178.59,
+    "price": 187.17
+  },
+  {
+    "slug": "salesforce-intrinsic-value",
+    "name": "Salesforce, Inc.",
+    "ticker": "CRM",
+    "iv": 376.78,
+    "price": 193.99
+  },
+  {
+    "slug": "servicenow-intrinsic-value",
+    "name": "ServiceNow, Inc.",
+    "ticker": "NOW",
+    "iv": 231.9,
+    "price": 114.55
+  },
+  {
+    "slug": "spotify-intrinsic-value",
+    "name": "Spotify Technology S.A.",
+    "ticker": "SPOT",
+    "iv": 415.88,
+    "price": 515.54
+  },
+  {
+    "slug": "t-mobile-intrinsic-value",
+    "name": "T-Mobile US, Inc.",
+    "ticker": "TMUS",
+    "iv": 202.13,
+    "price": 208.73
+  },
+  {
+    "slug": "tsmc-intrinsic-value",
+    "name": "Taiwan Semiconductor (TSMC)",
+    "ticker": "TSMC",
+    "iv": 920.8,
+    "price": 343.68
+  },
+  {
+    "slug": "tesla-intrinsic-value",
+    "name": "Tesla, Inc.",
+    "ticker": "TSLA",
+    "iv": 37.68,
+    "price": 398.27
+  },
+  {
+    "slug": "texas-instruments-intrinsic-value",
+    "name": "Texas Instruments",
+    "ticker": "TXN",
+    "iv": 216.95,
+    "price": 193.75
+  },
+  {
+    "slug": "coca-cola-intrinsic-value",
+    "name": "The Coca-Cola Company",
+    "ticker": "KO",
+    "iv": 21.9,
+    "price": 76.47
+  },
+  {
+    "slug": "goldman-sachs-intrinsic-value",
+    "name": "The Goldman Sachs Group",
+    "ticker": "GS",
+    "iv": 648.5,
+    "price": 810.86
+  },
+  {
+    "slug": "home-depot-intrinsic-value",
+    "name": "The Home Depot, Inc.",
+    "ticker": "HD",
+    "iv": 299.36,
+    "price": 335.75
+  },
+  {
+    "slug": "procter-gamble-intrinsic-value",
+    "name": "The Procter & Gamble Company",
+    "ticker": "PG",
+    "iv": 152.68,
+    "price": 147.63
+  },
+  {
+    "slug": "uber-intrinsic-value",
+    "name": "Uber Technologies, Inc.",
+    "ticker": "UBER",
+    "iv": 126.72,
+    "price": null
+  },
+  {
+    "slug": "unitedhealth-intrinsic-value",
+    "name": "UnitedHealth Group",
+    "ticker": "UNH",
+    "iv": 400.91,
+    "price": 285.54
+  },
+  {
+    "slug": "visa-intrinsic-value",
+    "name": "Visa Inc.",
+    "ticker": "V",
+    "iv": 297.59,
+    "price": 301.37
+  },
+  {
+    "slug": "walmart-intrinsic-value",
+    "name": "Walmart Inc.",
+    "ticker": "WMT",
+    "iv": 45.92,
+    "price": 122.77
+  },
+  {
+    "slug": "wells-fargo-intrinsic-value",
+    "name": "Wells Fargo & Company",
+    "ticker": "WFC",
+    "iv": 36.68,
+    "price": 76.6
+  }
+];
+
+// Compute derived fields
+const enriched = companies.map(c => {
+  const margin = (c.iv && c.price) ? ((c.iv - c.price) / c.price * 100) : null;
+  const verdict = margin !== null ? (margin > 0 ? "Undervalued" : "Overvalued") : "N/A";
+  return { ...c, margin: margin !== null ? Math.round(margin * 10) / 10 : null, verdict };
+}).sort((a, b) => (b.margin || -999) - (a.margin || -999));
+
+const undervalued = enriched.filter(c => c.margin !== null && c.margin > 0);
+const overvalued = enriched.filter(c => c.margin !== null && c.margin <= 0);
+const totalCompanies = enriched.length;
+---
+
+<SiteLayout
+  site="westmount"
+  title="Intrinsic Value Dashboard: 60 Largest Companies"
+  description="DCF-based intrinsic value estimates for the 60 biggest companies by market cap. Compiled by Gemini 2.5 Pro with full transparency on assumptions."
+  canonical="https://westmountfundamentals.com/intrinsic-value-dashboard"
+  schema={schema}
+>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.6; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); border-bottom: 1px solid #152040; position: relative; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 40px auto; max-width: 800px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-value.green { color: #10b981; }
+.stat-value.red { color: #ef4444; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+p { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+
+.controls { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 200px; background: #0a1020; border: 1px solid #152040; color: #fff; padding: 12px 16px; border-radius: 10px; font-size: 0.95rem; outline: none; }
+.search-box:focus { border-color: #4a8fe7; }
+.filter-btn { background: #0a1020; border: 1px solid #152040; color: #7a8a9e; padding: 10px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.filter-btn:hover, .filter-btn.active { background: rgba(74,143,231,0.1); color: #4a8fe7; border-color: #4a8fe7; }
+
+.table-wrap { overflow-x: auto; margin: 24px 0 60px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.72rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; cursor: pointer; user-select: none; }
+th:first-child, th:nth-child(2) { text-align: left; }
+th:hover { color: #fff; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; }
+td:first-child { text-align: center; font-family: 'JetBrains Mono', monospace; color: #5a6a80; font-size: 0.8rem; }
+td:nth-child(2) { text-align: left; }
+td.mono { font-family: 'JetBrains Mono', monospace; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.ticker { color: #4a8fe7; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+.company-name { color: #e0e6f0; font-weight: 600; }
+.company-link { display: flex; flex-direction: column; gap: 2px; }
+.positive { color: #10b981; }
+.negative { color: #ef4444; }
+.badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.badge-under { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+.badge-over { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.15); }
+
+.method-note { margin: 40px 0; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.method-note h3 { color: #e0e6f0; margin-bottom: 8px; }
+.method-note p { font-size: 0.9rem; color: #7a8a9e; margin-bottom: 8px; }
+.method-note p:last-child { margin-bottom: 0; }
+
+.disclaimer { margin: 40px 0 60px; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Original Research</div>
+    <h1>Intrinsic Value Dashboard</h1>
+    <p class="subtitle">Two-stage DCF valuations for the 60 largest companies by market cap — each compiled independently by Gemini 2.5 Pro with every assumption disclosed.</p>
+    <p class="date">Updated March 18, 2026 · Data: FY2025 10-K filings via S&P Global</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">{totalCompanies}</div>
+      <div class="stat-label">Companies Analyzed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value green">{undervalued.length}</div>
+      <div class="stat-label">Undervalued</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value red">{overvalued.length}</div>
+      <div class="stat-label">Overvalued</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search-box" id="search" placeholder="Search by company or ticker..." />
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="under">Undervalued</button>
+    <button class="filter-btn" data-filter="over">Overvalued</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="iv-table">
+      <thead>
+        <tr>
+          <th style="text-align:center; width:40px">#</th>
+          <th style="text-align:left">Company</th>
+          <th>Ticker</th>
+          <th>Intrinsic Value</th>
+          <th>Market Price</th>
+          <th>Margin</th>
+          <th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        {enriched.map((c, i) => (
+          <tr data-verdict={c.verdict.toLowerCase()} data-name={`${c.name} ${c.ticker}`.toLowerCase()}>
+            <td>{i + 1}</td>
+            <td>
+              <a href={`/${c.slug}`} class="company-link">
+                <span class="company-name">{c.name}</span>
+              </a>
+            </td>
+            <td><span class="ticker">{c.ticker}</span></td>
+            <td class="mono">${c.iv?.toFixed(2) || 'N/A'}</td>
+            <td class="mono">{c.price ? `$${c.price.toFixed(2)}` : 'N/A'}</td>
+            <td class={`mono ${c.margin !== null && c.margin > 0 ? 'positive' : 'negative'}`}>
+              {c.margin !== null ? `${c.margin > 0 ? '+' : ''}${c.margin.toFixed(1)}%` : 'N/A'}
+            </td>
+            <td>
+              <span class={`badge ${c.verdict === 'Undervalued' ? 'badge-under' : 'badge-over'}`}>
+                {c.verdict}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="method-note">
+    <h3>Methodology</h3>
+    <p>Each company was valued using a <strong>two-stage discounted cash flow (DCF)</strong> model. Gemini 2.5 Pro independently selected the FCF growth rate (Years 1-5), discount rate (WACC), and terminal growth rate for each company based on its business fundamentals.</p>
+    <p>All financial data comes from FY2025 10-K filings via S&P Global Market Intelligence. Stock prices are as of market close March 17, 2026. Click any company to see the full analysis with every assumption explained.</p>
+    <p>The Google (GOOGL) analysis also has a parallel version <a href="/google-intrinsic-value">compiled by Claude Opus 4.6</a> for comparison.</p>
+  </div>
+
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>These valuations are for educational purposes only. They are computed by an AI model using a specific set of assumptions that may prove incorrect. This is not investment advice. Past performance does not predict future results. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+
+<script is:inline>
+  // Search
+  document.getElementById('search')?.addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#iv-table tbody tr').forEach(tr => {
+      const name = tr.dataset.name || '';
+      tr.style.display = name.includes(q) ? '' : 'none';
+    });
+  });
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+      document.querySelectorAll('#iv-table tbody tr').forEach(tr => {
+        if (filter === 'all') { tr.style.display = ''; return; }
+        const verdict = tr.dataset.verdict || '';
+        tr.style.display = verdict.includes(filter) ? '' : 'none';
+      });
+    });
+  });
+
+  // Column sorting
+  document.querySelectorAll('#iv-table th').forEach((th, colIdx) => {
+    th.addEventListener('click', () => {
+      const tbody = document.querySelector('#iv-table tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const dir = th.dataset.sort === 'asc' ? 'desc' : 'asc';
+      document.querySelectorAll('#iv-table th').forEach(h => delete h.dataset.sort);
+      th.dataset.sort = dir;
+      rows.sort((a, b) => {
+        let va = a.children[colIdx]?.textContent.trim() || '';
+        let vb = b.children[colIdx]?.textContent.trim() || '';
+        const na = parseFloat(va.replace(/[$,%+]/g, ''));
+        const nb = parseFloat(vb.replace(/[$,%+]/g, ''));
+        if (!isNaN(na) && !isNaN(nb)) return dir === 'asc' ? na - nb : nb - na;
+        return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    });
+  });
+</script>
+</SiteLayout>
