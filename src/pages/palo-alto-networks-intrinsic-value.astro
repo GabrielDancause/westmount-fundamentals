@@ -1,0 +1,625 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+// --- METADATA ---
+export const meta = {
+  title: "Palo Alto Networks (PANW) Intrinsic Value - Gemini's DCF Analysis",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Palo Alto Networks (PANW) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// The prompt requires me to make bold assumptions as Gemini 2.5 Pro.
+// FCF Growth (Y1-Y5): 18%. Palo Alto Networks is leading the platformization of cybersecurity.
+// As organizations consolidate their security stacks into zero-trust architectures, PANW's comprehensive suite drives massive recurring revenue and expanding free cash flow margins.
+// Discount Rate (WACC): 9.0%. With a highly robust balance sheet and low debt profile, 9.0% heavily weighs the cost of equity (reflecting an ERP of ~5%, risk-free rate of 4.18%, and beta of ~0.82) while recognizing the stability of premium cybersecurity cash flows.
+// Terminal Growth: 3.5%. Cybersecurity is a permanent, non-discretionary expenditure. Constant threat evolution dictates that spending will grow slightly above GDP indefinitely.
+
+const baseFCF = 3470; // in Millions
+const sharesOut = 811; // in Millions
+const currentPrice = 168.33;
+const netCash = 2565; // Cash & ST investments - Total Debt (2268 + 635 - 338)
+
+const fcfGrowthRate = 0.18;
+const discountRate = 0.090;
+const terminalGrowthRate = 0.035;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.080, 0.085, 0.090, 0.095, 0.100];
+const sensitivityGrowthRates = [0.025, 0.030, 0.035, 0.040, 0.045];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "datePublished": meta.published,
+    "author": {
+      "@type": "Organization",
+      "name": "Gemini 2.5 Pro"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why did Gemini project an 18% Free Cash Flow growth rate for PANW?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The 18% growth rate assumes Palo Alto Networks will successfully execute its platformization strategy. By consolidating disparate security point products into comprehensive, integrated solutions, PANW can capture a larger share of wallet from existing customers, driving higher recurring revenue and strong operational leverage leading to expanding free cash flow margins."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the primary risk to this valuation model?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The primary risk is heightened competition and macro-economic software spending fatigue. If customers delay large, multi-year cybersecurity transformations or if competitors like Microsoft and CrowdStrike apply heavy pricing pressure, PANW may not achieve the 18% FCF growth projected here."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this model account for stock-based compensation (SBC)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This model utilizes Free Cash Flow (Operating Cash Flow minus Capital Expenditures). Stock-based compensation is a non-cash expense added back to operating cash flow. While SBC inflates FCF, it ultimately increases shares outstanding over time. We use the current fully diluted share count, but aggressive ongoing share dilution could degrade the intrinsic value per share calculated here."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/palo-alto-networks-intrinsic-value"
+  schema={schema}
+>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <div class="gemini-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>Palo Alto Networks (PANW) Intrinsic Value</h1>
+      <p class="subtitle">An independent two-stage discounted cash flow (DCF) analysis.</p>
+    </header>
+
+    <section class="verdict-section">
+      <div class={`verdict-card ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+        <div class="verdict-header">
+          <h2>Final Verdict</h2>
+          <span class="status-badge">{isUndervalued ? 'Undervalued' : 'Overvalued'}</span>
+        </div>
+        <div class="price-comparison">
+          <div class="price-box">
+            <span class="label">Intrinsic Value</span>
+            <span class="value main-value">{formatMoney(intrinsicValuePerShare)}</span>
+          </div>
+          <div class="price-divider">vs</div>
+          <div class="price-box">
+            <span class="label">Current Price</span>
+            <span class="value current-value">{formatMoney(currentPrice)}</span>
+          </div>
+        </div>
+        <div class="margin-box">
+          <span class="label">Margin of Safety:</span>
+          <span class={`margin-value ${isUndervalued ? 'positive' : 'negative'}`}>
+            {marginOfSafety > 0 ? '+' : ''}{marginOfSafety.toFixed(2)}%
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="methodology-section">
+      <h2>Gemini's Bold Assumptions</h2>
+      <p>As an advanced AI, I do not rely on standard analyst consensus. This is an independent DCF analysis based on Palo Alto Networks' core business fundamentals and strategic positioning in the evolving cybersecurity landscape.</p>
+
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>FCF Growth (Y1-Y5)</h3>
+            <span class="metric">{formatPercent(fcfGrowthRate)}</span>
+          </div>
+          <p><strong>Rationale:</strong> PANW is successfully driving its platformization strategy. By consolidating zero-trust network access, cloud security, and AI-driven security operations, it captures immense cross-selling leverage and higher recurring revenue margins.</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>Discount Rate (WACC)</h3>
+            <span class="metric">{formatPercent(discountRate)}</span>
+          </div>
+          <p><strong>Rationale:</strong> Utilizing the 10-Year US Treasury yield (4.18%) as a risk-free rate, a ~0.82 beta, and a strong market risk premium, 9.0% properly reflects the cost of capital for a resilient, cash-generating SaaS/cybersecurity business with a clean balance sheet.</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="card-header">
+            <h3>Terminal Growth Rate</h3>
+            <span class="metric">{formatPercent(terminalGrowthRate)}</span>
+          </div>
+          <p><strong>Rationale:</strong> Cybersecurity is a permanent, non-discretionary expense. Given constant threat evolution, terminal growth must slightly exceed historical GDP growth. 3.5% reflects perpetual necessity without assuming unrealistic indefinite hypergrowth.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="calculations-section">
+      <h2>DCF Projections Table</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Projected FCF</th>
+              <th>Discount Factor (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base Year (FY25 Actual)</td>
+              <td class="num">{formatMillions(baseFCF)}</td>
+              <td class="num">-</td>
+            </tr>
+            {projections.map((row) => (
+              <tr>
+                <td>{row.year}</td>
+                <td class="num">{formatMillions(row.fcf)}</td>
+                <td class="num">{formatMillions(row.pv)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Sum of PV (Years 1-5)</td>
+              <td></td>
+              <td class="num highlight">{formatMillions(sumPvFcf)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="valuation-summary">
+        <h3>Final Valuation Steps</h3>
+        <ul class="steps-list">
+          <li>
+            <span class="step-label">Terminal Value (Year 5)</span>
+            <span class="step-value num">{formatMillions(terminalValue)}</span>
+          </li>
+          <li>
+            <span class="step-label">PV of Terminal Value</span>
+            <span class="step-value num">{formatMillions(pvTerminalValue)}</span>
+          </li>
+          <li>
+            <span class="step-label">Enterprise Value</span>
+            <span class="step-value num">{formatMillions(enterpriseValue)}</span>
+          </li>
+          <li>
+            <span class="step-label">Plus: Net Cash</span>
+            <span class="step-value num">{formatMillions(netCash)}</span>
+          </li>
+          <li class="total-row">
+            <span class="step-label">Total Equity Value</span>
+            <span class="step-value num">{formatMillions(totalEquityValue)}</span>
+          </li>
+          <li>
+            <span class="step-label">Shares Outstanding</span>
+            <span class="step-value num">{sharesOut} Million</span>
+          </li>
+          <li class="final-row">
+            <span class="step-label">Intrinsic Value Per Share</span>
+            <span class="step-value num">{formatMoney(intrinsicValuePerShare)}</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sensitivity-section">
+      <h2>Sensitivity Analysis</h2>
+      <p>How does the intrinsic value change if we alter the Discount Rate or Terminal Growth Rate?</p>
+
+      <div class="table-container">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="matrix-corner">Growth \ WACC</th>
+              {sensitivityDiscountRates.map(d => (
+                <th>{formatPercent(d)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityMatrix.map(row => (
+              <tr>
+                <th>{formatPercent(row.growthRate)}</th>
+                {row.values.map(val => {
+                  const diff = ((val - currentPrice) / currentPrice) * 100;
+                  const cellClass = val > currentPrice ? 'cell-undervalued' : 'cell-overvalued';
+                  return (
+                    <td class={`num ${cellClass}`}>
+                      <div class="val">{formatMoney(val)}</div>
+                      <div class="diff">{diff > 0 ? '+' : ''}{diff.toFixed(1)}%</div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="dot green"></span> Undervalued</span>
+        <span class="legend-item"><span class="dot red"></span> Overvalued</span>
+      </div>
+    </section>
+
+    <section class="risks-section">
+      <h2>Key Risks to This Valuation</h2>
+      <ul class="risks-list">
+        <li><strong>Competition & Consolidation:</strong> While PANW leads in platformization, aggressive competition from Microsoft, CrowdStrike, and Zscaler could force pricing pressures and squeeze free cash flow margins.</li>
+        <li><strong>Stock-Based Compensation (SBC):</strong> This DCF relies on Free Cash Flow. PANW's historical reliance on high SBC effectively dilutes shareholders. If SBC growth outpaces cash flow generation, the intrinsic value per share decreases over time.</li>
+        <li><strong>Macroeconomic Slowdown:</strong> Cybersecurity spending was long viewed as immune to macro headwinds. However, persistent corporate cost-cutting or delayed IT transformations could push back the projected Y1-Y5 growth cycle.</li>
+      </ul>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Why did Gemini project an 18% Free Cash Flow growth rate for PANW?</summary>
+          <div class="faq-content">
+            <p>The 18% growth rate assumes Palo Alto Networks will successfully execute its platformization strategy. By consolidating disparate security point products into comprehensive, integrated solutions, PANW can capture a larger share of wallet from existing customers, driving higher recurring revenue and strong operational leverage leading to expanding free cash flow margins.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>What is the primary risk to this valuation model?</summary>
+          <div class="faq-content">
+            <p>The primary risk is heightened competition and macro-economic software spending fatigue. If customers delay large, multi-year cybersecurity transformations or if competitors like Microsoft and CrowdStrike apply heavy pricing pressure, PANW may not achieve the 18% FCF growth projected here.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>Does this model account for stock-based compensation (SBC)?</summary>
+          <div class="faq-content">
+            <p>This model utilizes Free Cash Flow (Operating Cash Flow minus Capital Expenditures). Stock-based compensation is a non-cash expense added back to operating cash flow. While SBC inflates FCF, it ultimately increases shares outstanding over time. We use the current fully diluted share count, but aggressive ongoing share dilution could degrade the intrinsic value per share calculated here.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <footer class="disclaimer">
+      <p><strong>Disclaimer:</strong> This content was generated by Gemini 2.5 Pro as an educational demonstration of the Discounted Cash Flow valuation methodology. It is not financial advice. Do your own research or consult a licensed professional before making investment decisions.</p>
+    </footer>
+  </div>
+</SiteLayout>
+
+<style>
+  .page-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: #c8d0de;
+    background-color: #060a12;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 {
+    color: #f1f5f9;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; }
+  h3 { font-size: 1.25rem; }
+  p { margin-bottom: 1.25rem; }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .gemini-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #4a8fe7, #818cf8);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    color: #94a3b8;
+  }
+
+  .verdict-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .verdict-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+
+  .verdict-card.undervalued { border-top: 4px solid #10b981; }
+  .verdict-card.overvalued { border-top: 4px solid #ef4444; }
+
+  .verdict-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .verdict-header h2 { margin: 0; border: none; font-size: 1.5rem; }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .undervalued .status-badge { background-color: rgba(16, 185, 129, 0.1); color: #34d399; }
+  .overvalued .status-badge { background-color: rgba(239, 68, 68, 0.1); color: #f87171; }
+
+  .price-comparison {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .price-box .label { font-size: 0.875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+  .price-box .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #f1f5f9; }
+
+  .price-divider {
+    font-size: 1.25rem;
+    color: #475569;
+    font-style: italic;
+  }
+
+  .margin-box {
+    padding-top: 1rem;
+    border-top: 1px dashed #334155;
+    font-size: 1.125rem;
+  }
+  .margin-value { font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-left: 0.5rem; }
+  .margin-value.positive { color: #34d399; }
+  .margin-value.negative { color: #f87171; }
+
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .assumption-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 0.5rem;
+  }
+  .card-header h3 { margin: 0; font-size: 1.125rem; color: #e2e8f0; }
+  .metric { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #4a8fe7; }
+  .assumption-card p { margin: 0; font-size: 0.95rem; color: #94a3b8; }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #1e293b;
+  }
+  th { background-color: #0f172a; color: #e2e8f0; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  tfoot td { background-color: #0f172a; font-weight: 600; border-top: 2px solid #334155; }
+  .num { font-family: 'JetBrains Mono', monospace; text-align: right; }
+  .highlight { color: #4a8fe7; }
+
+  .valuation-summary {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  .valuation-summary h3 { margin-top: 0; }
+  .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .steps-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #334155;
+  }
+  .steps-list li:last-child { border-bottom: none; }
+  .step-label { color: #94a3b8; }
+  .step-value { font-weight: 500; color: #e2e8f0; }
+  .total-row { border-top: 2px solid #334155; border-bottom: none !important; margin-top: 0.5rem; padding-top: 1rem !important; }
+  .total-row .step-label, .total-row .step-value { font-weight: 700; color: #f1f5f9; }
+  .final-row {
+    background-color: rgba(74, 143, 231, 0.1);
+    border-radius: 6px;
+    padding: 1rem !important;
+    margin-top: 1rem;
+  }
+  .final-row .step-label { font-weight: 700; color: #f1f5f9; }
+  .final-row .step-value { font-size: 1.5rem; font-weight: 700; color: #4a8fe7; }
+
+  .matrix-table th { text-align: center; }
+  .matrix-corner { background-color: #1e293b; color: #94a3b8; font-size: 0.875rem; }
+  .matrix-table tbody th { background-color: #0f172a; }
+  .cell-undervalued { background-color: rgba(16, 185, 129, 0.05); }
+  .cell-overvalued { background-color: rgba(239, 68, 68, 0.05); }
+  .matrix-table .val { font-weight: 600; color: #e2e8f0; margin-bottom: 0.25rem; }
+  .matrix-table .diff { font-size: 0.75rem; color: #94a3b8; }
+  .cell-undervalued .diff { color: #34d399; }
+  .cell-overvalued .diff { color: #f87171; }
+
+  .legend {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.green { background-color: #10b981; }
+  .dot.red { background-color: #ef4444; }
+
+  .risks-list {
+    padding-left: 1.5rem;
+    color: #94a3b8;
+  }
+  .risks-list li { margin-bottom: 0.75rem; }
+  .risks-list strong { color: #e2e8f0; }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .faq-item {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .faq-item summary {
+    padding: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    color: #4a8fe7;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-content {
+    padding: 0 1.25rem 1.25rem;
+    color: #94a3b8;
+    border-top: 1px solid #1e293b;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+  }
+
+  .disclaimer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #1e293b;
+    font-size: 0.875rem;
+    color: #64748b;
+    text-align: center;
+  }
+</style>
