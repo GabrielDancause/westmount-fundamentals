@@ -1,0 +1,636 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Caterpillar Inc. (CAT) Intrinsic Value - Gemini's DCF Analysis",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Caterpillar Inc. (CAT) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// Compiled by Gemini 2.5 Pro
+// The prompt requires me to make bold assumptions as Gemini.
+// FCF Growth (Y1-Y5): 6%. Caterpillar is cyclical but is investing in autonomy and services which smooths out revenue. 6% represents steady growth through a typical business cycle.
+// Discount Rate (WACC): 8.5%. With a strong balance sheet and solid global footprint, an 8.5% WACC balances the 4.18% risk-free rate, historical beta around 1.1-1.2, and equity risk premium.
+// Terminal Growth: 2.5%. Long-term growth aligning with GDP growth, as construction and mining machinery will always be fundamentally tied to global economic expansion.
+
+const baseFCF = 7453; // in Millions
+const sharesOut = 465.29; // in Millions
+const currentPrice = 707.06;
+const netCash = 9333 - 44058; // Cash - Total Debt in Millions. Cash=9333, Debt=44058 -> -34725
+
+const fcfGrowthRate = 0.06;
+const discountRate = 0.085;
+const terminalGrowthRate = 0.025;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.075, 0.080, 0.085, 0.090, 0.095];
+const sensitivityGrowthRates = [0.015, 0.020, 0.025, 0.030, 0.035];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Caterpillar Inc. (CAT) Intrinsic Value - Gemini's DCF Analysis",
+      "author": {
+        "@type": "Person",
+        "name": "Gemini 2.5 Pro"
+      },
+      "datePublished": "2026-03-18",
+      "description": "An independent discounted cash flow (DCF) intrinsic value analysis of Caterpillar Inc. (CAT) compiled entirely by Gemini 2.5 Pro.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why use a 6% growth rate for Caterpillar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "While historically cyclical, CAT's increasing shift toward autonomous machinery, recurring services, and parts revenue helps smooth out cash flows. A 6% rate balances its maturity with its strong pricing power and global infrastructure growth tailwinds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is the discount rate set to 8.5%?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "8.5% reflects CAT's beta (around 1.1), the current 10-year treasury yield of 4.18%, and a reasonable equity risk premium. It accounts for the inherent cyclical risks of the heavy machinery sector while recognizing the company's strong balance sheet."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Caterpillar currently overvalued or undervalued?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `Based on my DCF analysis, the calculated intrinsic value is ${formatMoney(intrinsicValuePerShare)}. Compared to the current price of ${formatMoney(currentPrice)}, it appears to be ${isUndervalued ? 'undervalued' : 'overvalued'}.`
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Caterpillar Inc. (CAT) Intrinsic Value | Westmount Fundamentals"
+  description="An independent discounted cash flow (DCF) intrinsic value analysis of Caterpillar Inc. (CAT) compiled entirely by Gemini 2.5 Pro."
+  canonical="https://westmountfundamentals.com/caterpillar-intrinsic-value"
+  schema={schema}
+>
+  <div class="dcf-container">
+    <header class="dcf-header">
+      <div class="ai-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>Caterpillar Inc. (CAT) Intrinsic Value</h1>
+      <p class="subtitle">Independent Two-Stage Discounted Cash Flow (DCF) Analysis</p>
+    </header>
+
+    <section class="verdict-card">
+      <div class="verdict-content">
+        <div class="verdict-prices">
+          <div class="price-box">
+            <span class="label">Current Price</span>
+            <span class="value">{formatMoney(currentPrice)}</span>
+          </div>
+          <div class="price-box highlight">
+            <span class="label">Intrinsic Value</span>
+            <span class="value">{formatMoney(intrinsicValuePerShare)}</span>
+          </div>
+        </div>
+
+        <div class="verdict-result">
+          <h2>Verdict: <span class={isUndervalued ? 'text-green' : 'text-red'}>{isUndervalued ? 'Undervalued' : 'Overvalued'}</span></h2>
+          <p>Margin of Safety: <strong>{marginOfSafety > 0 ? '+' : ''}{marginOfSafety.toFixed(2)}%</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="methodology">
+      <h2>Methodology & Assumptions</h2>
+      <p>This valuation uses a two-stage Discounted Cash Flow (DCF) model. The first stage forecasts Free Cash Flow (FCF) for the next 5 years, while the second stage calculates the Terminal Value. Both are then discounted back to present value.</p>
+
+      <div class="assumption-cards">
+        <div class="card">
+          <h3>Growth Rate (Y1-Y5)</h3>
+          <div class="metric">{formatPercent(fcfGrowthRate)}</div>
+          <p>Caterpillar is cyclical but is investing in autonomy and services which smooths out revenue. 6% represents steady growth through a typical business cycle.</p>
+        </div>
+        <div class="card">
+          <h3>Discount Rate (WACC)</h3>
+          <div class="metric">{formatPercent(discountRate)}</div>
+          <p>With a strong balance sheet and solid global footprint, an 8.5% WACC balances the 4.18% risk-free rate, historical beta around 1.1-1.2, and equity risk premium.</p>
+        </div>
+        <div class="card">
+          <h3>Terminal Growth</h3>
+          <div class="metric">{formatPercent(terminalGrowthRate)}</div>
+          <p>Long-term growth aligning with GDP growth, as construction and mining machinery will always be fundamentally tied to global economic expansion.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="projections">
+      <h2>Free Cash Flow Projections</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF</th>
+              <th>Discount Factor</th>
+              <th>Present Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projections.map(p => (
+              <tr>
+                <td>{p.year}</td>
+                <td class="num">{formatMillions(p.fcf)}</td>
+                <td class="num">{(1 / (p.fcf / p.pv)).toFixed(3)}</td>
+                <td class="num">{formatMillions(p.pv)}</td>
+              </tr>
+            ))}
+            <tr class="summary-row">
+              <td colspan="3">Sum of Present Value of FCFs</td>
+              <td class="num bold">{formatMillions(sumPvFcf)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="valuation">
+      <h2>Final Valuation Calculation</h2>
+      <div class="table-container">
+        <table>
+          <tbody>
+            <tr>
+              <td>Terminal Value</td>
+              <td class="num">{formatMillions(terminalValue)}</td>
+            </tr>
+            <tr>
+              <td>Present Value of Terminal Value</td>
+              <td class="num">{formatMillions(pvTerminalValue)}</td>
+            </tr>
+            <tr>
+              <td>Sum of Present Value of FCFs</td>
+              <td class="num">{formatMillions(sumPvFcf)}</td>
+            </tr>
+            <tr class="summary-row">
+              <td>Enterprise Value</td>
+              <td class="num bold">{formatMillions(enterpriseValue)}</td>
+            </tr>
+            <tr>
+              <td>Net Cash / (Debt)</td>
+              <td class="num">{formatMillions(netCash)}</td>
+            </tr>
+            <tr class="summary-row">
+              <td>Total Equity Value</td>
+              <td class="num bold">{formatMillions(totalEquityValue)}</td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="num">{sharesOut.toFixed(2)}M</td>
+            </tr>
+            <tr class="final-row">
+              <td>Intrinsic Value Per Share</td>
+              <td class="num highlight-text">{formatMoney(intrinsicValuePerShare)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sensitivity">
+      <h2>Sensitivity Analysis</h2>
+      <p>Intrinsic value per share based on varying discount rates (columns) and terminal growth rates (rows).</p>
+
+      <div class="table-container">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Growth / Discount</th>
+              {sensitivityDiscountRates.map(d => (
+                <th>{formatPercent(d)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityMatrix.map(row => (
+              <tr>
+                <th>{formatPercent(row.growthRate)}</th>
+                {row.values.map(val => (
+                  <td class={`num ${val > currentPrice ? 'bg-green' : 'bg-red'}`}>
+                    {formatMoney(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="matrix-legend">
+          <span class="legend-item"><span class="swatch green"></span> Undervalued</span>
+          <span class="legend-item"><span class="swatch red"></span> Overvalued</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="risks">
+      <h2>Key Risks to Consider</h2>
+      <ul>
+        <li><strong>Cyclicality:</strong> Heavy reliance on the construction and mining sectors, which are highly sensitive to economic cycles and interest rates.</li>
+        <li><strong>Currency Exposure:</strong> As a global exporter, strong USD negatively impacts foreign earnings conversion.</li>
+        <li><strong>Supply Chain & Commodities:</strong> Steel and component costs can pressure margins if pricing power doesn't keep up.</li>
+        <li><strong>Geopolitics:</strong> Trade tensions or tariffs can significantly affect international sales.</li>
+      </ul>
+    </section>
+
+    <section class="faq">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>Why use a 6% growth rate for Caterpillar?</summary>
+        <p>While historically cyclical, CAT's increasing shift toward autonomous machinery, recurring services, and parts revenue helps smooth out cash flows. A 6% rate balances its maturity with its strong pricing power and global infrastructure growth tailwinds.</p>
+      </details>
+      <details>
+        <summary>Why is the discount rate set to 8.5%?</summary>
+        <p>8.5% reflects CAT's beta (around 1.1), the current 10-year treasury yield of 4.18%, and a reasonable equity risk premium. It accounts for the inherent cyclical risks of the heavy machinery sector while recognizing the company's strong balance sheet.</p>
+      </details>
+      <details>
+        <summary>Is Caterpillar currently overvalued or undervalued?</summary>
+        <p>Based on my DCF analysis, the calculated intrinsic value is {formatMoney(intrinsicValuePerShare)}. Compared to the current price of {formatMoney(currentPrice)}, it appears to be {isUndervalued ? 'undervalued' : 'overvalued'}.</p>
+      </details>
+    </section>
+
+    <section class="disclaimer">
+      <p><strong>Disclaimer:</strong> This analysis was compiled by an AI (Gemini 2.5 Pro) based on historical data and projected assumptions. It does not constitute financial advice. Always do your own research or consult a certified financial planner before making investment decisions.</p>
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .dcf-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    color: #c8d0de;
+    background-color: #060a12;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: #8b9bb4;
+    margin-bottom: 2rem;
+  }
+
+  .ai-badge {
+    display: inline-block;
+    background: #4a8fe7;
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .num {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .highlight-text {
+    color: #4a8fe7;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  .text-green { color: #10b981; }
+  .text-red { color: #ef4444; }
+
+  /* Cards */
+  .verdict-card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .verdict-prices {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .price-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1e293b;
+    padding: 1.5rem 2.5rem;
+    border-radius: 8px;
+  }
+
+  .price-box.highlight {
+    border: 2px solid #4a8fe7;
+    background: rgba(74, 143, 231, 0.1);
+  }
+
+  .price-box .label {
+    font-size: 0.875rem;
+    color: #8b9bb4;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .price-box .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .verdict-result {
+    text-align: center;
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+  }
+
+  .verdict-result h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .assumption-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .card {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+    color: #8b9bb4;
+    margin-bottom: 0.5rem;
+  }
+
+  .card .metric {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+  }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 3rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th {
+    background: #1e293b;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  td.num {
+    text-align: right;
+  }
+
+  .summary-row td {
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 2px solid #334155;
+  }
+
+  .final-row td {
+    background: rgba(74, 143, 231, 0.1);
+    border-top: 2px solid #4a8fe7;
+    font-weight: bold;
+  }
+
+  /* Sensitivity Matrix */
+  table.matrix th {
+    text-align: center;
+  }
+
+  table.matrix tbody th {
+    background: #1e293b;
+    text-align: left;
+  }
+
+  table.matrix td.num {
+    text-align: center;
+  }
+
+  .bg-green { background-color: rgba(16, 185, 129, 0.15); color: #34d399; }
+  .bg-red { background-color: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .swatch.green { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; }
+  .swatch.red { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; }
+
+  /* Sections */
+  section {
+    margin-bottom: 4rem;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.75rem;
+  }
+
+  /* FAQ */
+  details {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  summary {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    content: "▶";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #4a8fe7;
+    transition: transform 0.2s ease;
+  }
+
+  details[open] summary::before {
+    transform: translateY(-50%) rotate(90deg);
+  }
+
+  details p {
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+    color: #cbd5e1;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    font-size: 0.875rem;
+    color: #64748b;
+    border-top: 1px solid #1e293b;
+    padding-top: 2rem;
+    margin-top: 4rem;
+  }
+</style>

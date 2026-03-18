@@ -1,0 +1,589 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+export const meta = {
+  title: "Cisco Systems, Inc. (CSCO) Intrinsic Value",
+  description: "A comprehensive discounted cash flow (DCF) analysis of Cisco Systems (CSCO) by Gemini 2.5 Pro, evaluating intrinsic value, free cash flow projections, and margin of safety.",
+  category: "study",
+  published: "2026-03-18"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals"
+  }
+};
+
+// --- DATA FETCHING ---
+// Fallback static data based on S&P Global / Yahoo Finance (March 2026) in case fetch fails
+let price = 79.325;
+let freeCashFlow = 10129500160;
+let totalCash = 15777000448;
+let totalDebt = 31740000256;
+let sharesOut = 3949893042;
+let fetchSuccess = false;
+
+try {
+  // Fetch real-time data from StockAnalysis API endpoints (using user-agent to prevent blocking)
+  const options = { headers: { "User-Agent": "Mozilla/5.0" } };
+
+  // 1. Get quote for price and shares out
+  const quoteRes = await fetch('https://stockanalysis.com/api/symbols/csco/quote', options);
+  if (quoteRes.ok) {
+    const quoteData = await quoteRes.json();
+    if (quoteData.data && quoteData.data.p) price = quoteData.data.p;
+    if (quoteData.data && quoteData.data.shares) sharesOut = quoteData.data.shares;
+  }
+
+  // 2. Get financials for TTM Free Cash Flow
+  const cfRes = await fetch('https://stockanalysis.com/api/screener/s/f/cash-flow-statement.json?e=csco&t=ttm', options);
+  if (cfRes.ok) {
+    const cfData = await cfRes.json();
+    if (cfData.data && cfData.data.data) {
+        // find FCF metric in data array
+        const fcfRow = cfData.data.data.find(row => row.i === 'fcf');
+        if (fcfRow && fcfRow.d && fcfRow.d.length > 0) {
+            freeCashFlow = fcfRow.d[0];
+        }
+    }
+  }
+
+  fetchSuccess = true;
+} catch (e) {
+  console.log("Fetch failed, using fallback static data.", e);
+}
+
+// --- ASSUMPTIONS & RATIONALE ---
+// Gemini 2.5 Pro Conviction Assumptions
+const wacc = 0.082; // 8.2%
+const waccRationale = "Using CAPM with a 10Y Treasury of 4.18%, an equity risk premium of ~5%, and Cisco's historically low beta (~0.9). Despite recent AI hype and Splunk integration, CSCO remains a mature, stable tech incumbent with predictable enterprise networking revenues. 8.2% accurately reflects its relatively low cost of capital and modest risk profile.";
+
+const fcfGrowth1to5 = 0.05; // 5.0%
+const fcfGrowthRationale = "Cisco is transitioning from low-margin hardware to high-margin recurring software and security subscriptions, supercharged by the $28B Splunk acquisition. While legacy switching faces headwinds, synergies and cross-selling will drive a modest 5% FCF CAGR over the next 5 years as the business mix shifts.";
+
+const terminalGrowth = 0.025; // 2.5%
+const terminalGrowthRationale = "In the terminal phase (Year 6+), a 2.5% perpetual growth rate aligns with long-term global GDP growth and target inflation. Cisco's entrenched position in enterprise infrastructure ensures it will grow steadily with the broader digital economy, without outstripping it infinitely.";
+
+// --- FORMATTING HELPERS ---
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+const formatPrice = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatPercent = (val) => new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(val);
+const formatBillions = (val) => `$${(val / 1e9).toFixed(2)}B`;
+
+// --- DCF CALCULATIONS ---
+// Stage 1: Years 1-5 Projections
+const projectedFCF = [];
+const discountFactors = [];
+const pvOfFCF = [];
+let currentFCF = freeCashFlow;
+let sumPvOfFcf = 0;
+
+for (let year = 1; year <= 5; year++) {
+  currentFCF *= (1 + fcfGrowth1to5);
+  const discountFactor = Math.pow(1 + wacc, year);
+  const pv = currentFCF / discountFactor;
+
+  projectedFCF.push(currentFCF);
+  discountFactors.push(discountFactor);
+  pvOfFCF.push(pv);
+  sumPvOfFcf += pv;
+}
+
+// Stage 2: Terminal Value
+const year5FCF = projectedFCF[4];
+const expectedNextYearFCF = year5FCF * (1 + terminalGrowth);
+const terminalValue = expectedNextYearFCF / (wacc - terminalGrowth);
+const pvOfTerminalValue = terminalValue / discountFactors[4];
+
+// Valuation Bridge
+const enterpriseValue = sumPvOfFcf + pvOfTerminalValue;
+const equityValue = enterpriseValue + totalCash - totalDebt;
+const intrinsicValuePerShare = equityValue / sharesOut;
+
+// Verdict
+const marginOfSafety = (intrinsicValuePerShare - price) / intrinsicValuePerShare;
+const isUndervalued = intrinsicValuePerShare > price;
+const premiumOrDiscountStr = isUndervalued
+  ? `Discount of ${formatPercent(Math.abs(marginOfSafety))}`
+  : `Premium of ${formatPercent(Math.abs(marginOfSafety))}`;
+
+// --- SENSITIVITY MATRIX (5x5) ---
+const waccVariations = [-0.01, -0.005, 0, 0.005, 0.01]; // -1%, -0.5%, Base, +0.5%, +1%
+const tgVariations = [-0.01, -0.005, 0, 0.005, 0.01];
+
+const sensitivityMatrix = waccVariations.map(wDelta => {
+  const currentWacc = wacc + wDelta;
+  return tgVariations.map(tgDelta => {
+    const currentTg = terminalGrowth + tgDelta;
+
+    // Quick recalculate sum of PVs
+    let tempSumPV = 0;
+    let tempFCF = freeCashFlow;
+    for(let i=1; i<=5; i++) {
+        tempFCF *= (1 + fcfGrowth1to5);
+        tempSumPV += tempFCF / Math.pow(1 + currentWacc, i);
+    }
+
+    // Quick recalc TV
+    const tempY5Fcf = tempFCF;
+    const tempTV = (tempY5Fcf * (1 + currentTg)) / (currentWacc - currentTg);
+    const tempPVTV = tempTV / Math.pow(1 + currentWacc, 5);
+
+    const tempEV = tempSumPV + tempPVTV;
+    const tempEqV = tempEV + totalCash - totalDebt;
+    return tempEqV / sharesOut;
+  });
+});
+
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/cisco-intrinsic-value" schema={schema}>
+  <div class="page-content">
+
+    <header class="report-header">
+      <div class="gemini-badge">COMPILED BY GEMINI 2.5 PRO</div>
+      <h1>Cisco Systems, Inc. (CSCO) Intrinsic Value Estimate</h1>
+      <p class="subtitle">A Comprehensive 2-Stage Discounted Cash Flow (DCF) Analysis</p>
+    </header>
+
+    <div class="verdict-card" data-valuation={isUndervalued ? 'undervalued' : 'overvalued'}>
+      <div class="verdict-content">
+        <h2>Verdict: {isUndervalued ? 'Undervalued' : 'Overvalued'}</h2>
+        <div class="verdict-grid">
+          <div class="verdict-stat">
+            <span class="label">Current Price</span>
+            <span class="value">{formatPrice(price)}</span>
+          </div>
+          <div class="verdict-stat primary">
+            <span class="label">Intrinsic Value</span>
+            <span class="value highlight">{formatPrice(intrinsicValuePerShare)}</span>
+          </div>
+          <div class="verdict-stat">
+            <span class="label">Margin of Safety</span>
+            <span class={`value ${isUndervalued ? 'positive' : 'negative'}`}>
+              {isUndervalued ? '+' : ''}{formatPercent(marginOfSafety)}
+            </span>
+          </div>
+        </div>
+        <p class="verdict-summary">
+          Based on our fundamental analysis and explicit assumptions, Cisco Systems is currently trading at a <strong>{premiumOrDiscountStr}</strong> to its estimated intrinsic value.
+        </p>
+      </div>
+    </div>
+
+    <section class="methodology">
+      <h2>Methodology & Base Assumptions</h2>
+      <p>This study employs a Two-Stage Free Cash Flow to the Firm (FCFF) valuation model. The model forecasts cash flows generated by the core business over the next five years, subsequently applying a terminal value to account for all future cash flows beyond year five. These cash flows are then discounted back to present value using an estimated Weighted Average Cost of Capital (WACC).</p>
+
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>Discount Rate (WACC)</h3>
+            <span class="assumption-value">{formatPercent(wacc)}</span>
+          </div>
+          <p class="rationale">{waccRationale}</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>FCF Growth (Years 1-5)</h3>
+            <span class="assumption-value">{formatPercent(fcfGrowth1to5)} / yr</span>
+          </div>
+          <p class="rationale">{fcfGrowthRationale}</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>Terminal Growth Rate</h3>
+            <span class="assumption-value">{formatPercent(terminalGrowth)} / yr</span>
+          </div>
+          <p class="rationale">{terminalGrowthRationale}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="projections">
+      <h2>Stage 1: Free Cash Flow Projections (Years 1-5)</h2>
+      <p>Starting from a TTM Free Cash Flow base of <strong>{formatBillions(freeCashFlow)}</strong>, we project a steady {formatPercent(fcfGrowth1to5)} annual growth rate through Year 5 as Splunk integration yields operational synergies and the recurring revenue mix expands.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF</th>
+              <th>Discount Factor (PV)</th>
+              <th>Present Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projectedFCF.map((fcf, index) => (
+              <tr>
+                <td>Year {index + 1}</td>
+                <td class="num">{formatCurrency(fcf)}</td>
+                <td class="num">{(1 / discountFactors[index]).toFixed(4)}</td>
+                <td class="num">{formatCurrency(pvOfFCF[index])}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-right"><strong>Total PV of Stage 1 Cash Flows:</strong></td>
+              <td class="num highlight-td"><strong>{formatCurrency(sumPvOfFcf)}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="terminal-value">
+      <h2>Stage 2: Terminal Value Calculation</h2>
+      <p>The terminal value captures the ongoing worth of Cisco at the end of Year 5, assuming it grows perpetually at our assigned <strong>{formatPercent(terminalGrowth)}</strong> rate.</p>
+
+      <div class="calc-box">
+        <div class="calc-row">
+          <span>Expected FCF in Year 6:</span>
+          <span class="num">{formatCurrency(expectedNextYearFCF)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Capitalization Rate (WACC - TV Growth):</span>
+          <span class="num">{formatPercent(wacc - terminalGrowth)}</span>
+        </div>
+        <div class="calc-row total-row">
+          <span>Terminal Value (End of Year 5):</span>
+          <span class="num">{formatCurrency(terminalValue)}</span>
+        </div>
+        <div class="calc-row discount-row">
+          <span>Present Value of Terminal Value:</span>
+          <span class="num highlight-text">{formatCurrency(pvOfTerminalValue)}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-valuation">
+      <h2>Enterprise Value to Equity Value Bridge</h2>
+      <p>To find the intrinsic value per share for equity holders, we must adjust the entire Enterprise Value (the core business) by adding excess cash and subtracting outstanding debt obligations.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <tbody>
+            <tr>
+              <td>PV of Stage 1 Cash Flows</td>
+              <td class="num">{formatCurrency(sumPvOfFcf)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td class="num">{formatCurrency(pvOfTerminalValue)}</td>
+            </tr>
+            <tr class="subtotal-row">
+              <td><strong>Implied Enterprise Value</strong></td>
+              <td class="num"><strong>{formatCurrency(enterpriseValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>(+) Total Cash & Equivalents</td>
+              <td class="num positive-val">{formatCurrency(totalCash)}</td>
+            </tr>
+            <tr>
+              <td>(-) Total Debt</td>
+              <td class="num negative-val">({formatCurrency(totalDebt)})</td>
+            </tr>
+            <tr class="subtotal-row">
+              <td><strong>Implied Equity Value</strong></td>
+              <td class="num"><strong>{formatCurrency(equityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>(/) Shares Outstanding</td>
+              <td class="num">{sharesOut.toLocaleString('en-US')}</td>
+            </tr>
+            <tr class="final-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="num highlight-td"><strong>{formatPrice(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sensitivity-analysis">
+      <h2>Sensitivity Matrix</h2>
+      <p>Valuation is inherently uncertain and highly sensitive to our two most critical assumptions: the Discount Rate (WACC) and the Terminal Growth Rate. The matrix below displays the intrinsic value per share across a range of variations.</p>
+
+      <div class="table-wrapper matrix-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th colspan="2" rowspan="2" class="empty-cell border-none"></th>
+              <th colspan="5" class="header-span">Terminal Growth Rate</th>
+            </tr>
+            <tr>
+              {tgVariations.map(tg => (
+                <th class="col-header">{formatPercent(terminalGrowth + tg)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {waccVariations.map((w, rowIdx) => (
+              <tr>
+                {rowIdx === 0 && (
+                  <th rowspan="5" class="row-span"><span>WACC</span></th>
+                )}
+                <th class="row-header">{formatPercent(wacc + w)}</th>
+                {tgVariations.map((tg, colIdx) => {
+                  const val = sensitivityMatrix[rowIdx][colIdx];
+                  const isCurrentBase = w === 0 && tg === 0;
+                  return (
+                    <td class={`num ${isCurrentBase ? 'base-case' : ''}`}>
+                      {formatPrice(val)}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="key-risks">
+      <h2>Key Risks to Our Thesis</h2>
+      <div class="risk-list">
+        <div class="risk-item">
+          <strong>Integration Execution:</strong> Extracting the modeled synergies and FCF growth from the $28B Splunk acquisition requires flawless operational execution. Failure to integrate cultures, cross-sell effectively, or retain key talent could severely impair the projected 5% FCF growth rate.
+        </div>
+        <div class="risk-item">
+          <strong>Intense Competition in AI Infrastructure:</strong> While Cisco dominates traditional enterprise networking, it faces aggressive competition from Arista Networks and NVIDIA in the high-speed backend infrastructure required for generative AI data centers. A loss of market share here could compress terminal growth expectations.
+        </div>
+        <div class="risk-item">
+          <strong>Macroeconomic IT Spending Cycles:</strong> Cisco's revenue remains heavily tethered to corporate IT budgets. A prolonged macroeconomic slowdown could delay hardware refresh cycles and stall software deployments, impairing our near-term cash flow assumptions.
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <details>
+          <summary>Why did Gemini use an 8.2% WACC for Cisco?</summary>
+          <p>An 8.2% discount rate was selected based on the Capital Asset Pricing Model (CAPM). Given the 10-Year US Treasury yield of 4.18%, an equity risk premium of ~5%, and Cisco's historical beta of roughly 0.9, an 8.2% rate effectively captures the risk associated with Cisco's mature, relatively stable cash flows while demanding an appropriate premium over risk-free assets.</p>
+        </details>
+      </div>
+      <div class="faq-item">
+        <details>
+          <summary>What happens if Cisco's free cash flow doesn't grow at 5%?</summary>
+          <p>If Cisco's FCF growth stagnates or declines due to integration failures or macroeconomic pressure, the intrinsic value will decrease proportionally. You can reference the Sensitivity Matrix above to see how lower terminal growth rates (a proxy for long-term stagnation) heavily compress the final valuation.</p>
+        </details>
+      </div>
+      <div class="faq-item">
+        <details>
+          <summary>Does this analysis factor in Cisco's dividend payments?</summary>
+          <p>Yes. A Free Cash Flow to the Firm (FCFF) DCF model inherently values the entire cash-generating capacity of the business <em>before</em> it decides how to allocate that cash (e.g., dividends, share buybacks, or debt reduction). Because we value the total available cash, the dividend is already baked into the intrinsic value.</p>
+        </details>
+      </div>
+    </section>
+
+    <div class="disclaimer">
+      <p><strong>Disclaimer:</strong> This DCF analysis was generated by an AI language model (Gemini 2.5 Pro) for educational and illustrative purposes only. It does not constitute financial advice, investment recommendations, or an endorsement to buy or sell securities. The valuation is highly sensitive to the subjective assumptions used for growth rates and discount rates. Always conduct your own due diligence and consult with a licensed financial professional before making investment decisions.</p>
+    </div>
+
+  </div>
+</SiteLayout>
+<style>
+  /* Base & Theme */
+  .page-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    color: #c8d0de; /* text-primary */
+    font-family: 'Inter', sans-serif;
+    background-color: #060a12; /* site background */
+  }
+
+  /* Typography */
+  h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #ffffff; text-align: center; font-weight: 800; line-height: 1.2; }
+  h2 { font-size: 1.75rem; margin-top: 3.5rem; margin-bottom: 1.5rem; color: #ffffff; font-weight: 700; border-bottom: 1px solid #1a2235; padding-bottom: 0.75rem;}
+  h3 { font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #c8d0de; font-weight: 600; }
+  p { margin-bottom: 1.5rem; color: #a0aec0; font-size: 1.05rem; line-height: 1.7; }
+  .subtitle { text-align: center; font-size: 1.25rem; color: #a0aec0; margin-bottom: 3rem; }
+
+  /* Utilities */
+  .num { font-family: 'JetBrains Mono', monospace; }
+  .text-right { text-align: right; }
+  .positive { color: #10b981; }
+  .negative { color: #ef4444; }
+
+  /* Header Badge */
+  .report-header { text-align: center; margin-bottom: 3rem; }
+  .gemini-badge {
+    display: inline-block;
+    background-color: #1a2235;
+    color: #4a8fe7;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(74, 143, 231, 0.2);
+  }
+
+  /* Verdict Card */
+  .verdict-card {
+    background-color: #0b1120;
+    border: 1px solid #1a2235;
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 4rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  }
+  .verdict-card[data-valuation="undervalued"] { border-top: 4px solid #10b981; }
+  .verdict-card[data-valuation="overvalued"] { border-top: 4px solid #ef4444; }
+  .verdict-content h2 { margin-top: 0; border: none; padding-bottom: 0; color: #ffffff; text-align: center; margin-bottom: 2rem; }
+
+  .verdict-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .verdict-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: #131b2f;
+    border-radius: 8px;
+    border: 1px solid #1a2235;
+  }
+  .verdict-stat.primary {
+    background-color: rgba(74, 143, 231, 0.1);
+    border-color: rgba(74, 143, 231, 0.3);
+  }
+
+  .verdict-stat .label { font-size: 0.9rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; font-weight: 600; }
+  .verdict-stat .value { font-size: 1.75rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #ffffff; }
+  .verdict-stat .value.highlight { color: #4a8fe7; font-size: 2.25rem; }
+  .verdict-summary { text-align: center; font-size: 1.15rem; color: #c8d0de; margin: 0; }
+  .verdict-summary strong { color: #ffffff; }
+
+  /* Assumptions Grid */
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .assumption-card {
+    background-color: #0b1120;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .assumption-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; border-bottom: 1px solid #1a2235; padding-bottom: 0.5rem; }
+  .assumption-header h3 { margin: 0; font-size: 1.1rem; color: #ffffff; }
+  .assumption-value { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; color: #4a8fe7; }
+  .rationale { font-size: 0.95rem; margin: 0; color: #a0aec0; line-height: 1.6; }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 2rem 0;
+    background-color: #0b1120;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+  }
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th, td { padding: 1rem 1.25rem; border-bottom: 1px solid #1a2235; }
+  th { background-color: #131b2f; color: #ffffff; font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background-color: #131b2f; }
+
+  .subtotal-row td { background-color: rgba(255,255,255,0.02); }
+  .final-row td { background-color: rgba(74, 143, 231, 0.1); border-top: 2px solid #4a8fe7; }
+  .highlight-td { color: #4a8fe7; font-size: 1.1rem; }
+  .positive-val { color: #10b981; }
+  .negative-val { color: #ef4444; }
+
+  /* Calc Boxes */
+  .calc-box {
+    background-color: #0b1120;
+    border: 1px solid #1a2235;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  .calc-row { display: flex; justify-content: space-between; padding: 0.75rem 0; color: #c8d0de; border-bottom: 1px dashed #1a2235; }
+  .calc-row:last-child { border-bottom: none; }
+  .total-row { font-weight: 700; color: #ffffff; border-top: 1px solid #1a2235; margin-top: 0.5rem; padding-top: 1rem; }
+  .discount-row { font-weight: 700; font-size: 1.1rem; background-color: rgba(74,143,231,0.05); padding: 1rem; border-radius: 4px; margin-top: 0.5rem;}
+  .highlight-text { color: #4a8fe7; }
+
+  /* Sensitivity Matrix Specific */
+  .matrix-wrapper { overflow-x: auto; }
+  .matrix-table th, .matrix-table td { border: 1px solid #1a2235; text-align: center; }
+  .matrix-table .col-header { background-color: #131b2f; color: #a0aec0; }
+  .matrix-table .row-header { background-color: #131b2f; color: #a0aec0; }
+  .matrix-table .header-span { background-color: #060a12; border-bottom: none; }
+  .matrix-table .row-span { background-color: #060a12; border-right: none; vertical-align: middle; }
+  .matrix-table .row-span span { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.2em; text-transform: uppercase; color: #ffffff; }
+  .matrix-table .base-case { background-color: rgba(74, 143, 231, 0.15); font-weight: 700; color: #ffffff; border: 2px solid #4a8fe7; }
+  .matrix-table .empty-cell { background-color: transparent; border: none; }
+
+  /* Risks */
+  .risk-list { margin-top: 2rem; }
+  .risk-item {
+    background-color: #0b1120;
+    border-left: 4px solid #ef4444;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0 8px 8px 0;
+    color: #a0aec0;
+    line-height: 1.6;
+  }
+  .risk-item strong { color: #ffffff; display: block; margin-bottom: 0.5rem; font-size: 1.1rem; }
+
+  /* FAQ Styles */
+  .faq-section { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #1a2235; }
+  .faq-item { margin-bottom: 1rem; background-color: #0b1120; border: 1px solid #1a2235; border-radius: 8px; overflow: hidden; }
+  .faq-item details { width: 100%; }
+  .faq-item summary {
+    padding: 1.25rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #ffffff;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: "+";
+    color: #4a8fe7;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+    transition: transform 0.2s ease-in-out;
+  }
+  .faq-item details[open] summary::after { content: "−"; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item details[open] summary { border-bottom: 1px solid #1a2235; }
+  .faq-item p { padding: 1.25rem; margin-bottom: 0; color: #a0aec0; }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 4rem;
+    padding: 1.5rem;
+    background-color: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #718096;
+  }
+  .disclaimer p { margin: 0; font-size: 0.9rem; }
+  .disclaimer strong { color: #a0aec0; }
+</style>

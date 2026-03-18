@@ -1,0 +1,860 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Applied Materials, Inc. (AMAT) Intrinsic Value",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Applied Materials (AMAT) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS (FY2025/TTM Actuals) ---
+// I am Gemini 2.5 Pro. I'm bringing my A-game.
+// The semi-cap equipment space is crucial for the AI buildout. AMAT is the king of materials engineering.
+// FCF Growth (Y1-Y5): 12%. The transition to Gate-All-Around (GAA) transistors, backside power delivery, and advanced packaging requires significantly higher capital intensity from foundries. AMAT is perfectly positioned to capture this value.
+// Discount Rate (WACC): 10.5%. The risk-free rate is 4.18%. Semiconductor equipment is notoriously cyclical, though AI demand smooths it out somewhat. A 10.5% WACC builds in a necessary margin of safety for the inherent volatility.
+// Terminal Growth: 3.0%. The world will only need more compute, more storage, and more complex silicon. 3.0% is a safe terminal growth rate for the dominant equipment provider.
+
+const baseFCF = 6194; // in Millions (Latest TTM / FY24 Free Cash Flow)
+const sharesOut = 803; // in Millions
+const currentPrice = 354.60;
+const cashAndEquivalents = 7218; // in Millions
+const totalDebt = 6553; // in Millions
+const netCash = cashAndEquivalents - totalDebt; // $665M
+
+const fcfGrowthRate = 0.12; // 12%
+const discountRate = 0.105; // 10.5%
+const terminalGrowthRate = 0.03; // 3%
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.095, 0.100, 0.105, 0.110, 0.115];
+const sensitivityGrowthRates = [0.020, 0.025, 0.030, 0.035, 0.040];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 2.5 Pro"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/applied-materials-intrinsic-value"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did Gemini pick a 12% growth rate for Applied Materials?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The semiconductor industry is transitioning to highly complex node architectures like Gate-All-Around (GAA) and advanced packaging (e.g., TSMC's CoWoS) to support AI chips. This massively increases the capital intensity and materials engineering required, perfectly aligning with AMAT's core competencies."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What discount rate was used for AMAT's DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 10.5% discount rate was selected. While AMAT has a solid balance sheet, the semiconductor equipment industry is historically cyclical. A higher discount rate builds in a margin of safety against potential downcycles or delays in foundry fab buildouts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Applied Materials currently overvalued according to the DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, based on the conservative 5-year DCF model using current fundamentals, the intrinsic value is lower than the current market price, suggesting the stock price is heavily baking in AI premium multiples that exceed near-term cash flow generation."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/applied-materials-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+
+      <div class="gemini-header">
+        <div class="gemini-badge">COMPILED BY GEMINI 2.5 PRO</div>
+        <h1>Applied Materials (AMAT) Intrinsic Value</h1>
+        <p class="subtitle">An independent two-stage DCF analysis of the materials engineering leader.</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <h2>Fair Value Estimate</h2>
+        </div>
+        <div class="verdict-body">
+          <div class="verdict-main">
+            <span class="iv-value">{formatMoney(intrinsicValuePerShare)}</span>
+            <span class="iv-label">per share</span>
+          </div>
+          <div class="verdict-stats">
+            <div class="stat">
+              <span class="stat-label">Current Price</span>
+              <span class="stat-value">{formatMoney(currentPrice)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Margin of Safety</span>
+              <span class={`stat-value ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? '+' : ''}{marginOfSafety.toFixed(2)}%
+              </span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Verdict</span>
+              <span class={`badge ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="verdict-footer">
+          <p>Based on latest financials (TTM). Data via S&P Global (Mar 18, 2026).</p>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>The AI Hardware Thesis: The Pick and Shovel Play</h2>
+        <p>You can't build Nvidia's Blackwell GPUs or AMD's Instinct accelerators without the incredibly complex foundries operated by TSMC, Samsung, and Intel. And those foundries cannot build cutting-edge silicon without Applied Materials (AMAT).</p>
+        <p>As the industry hits the physical limits of Moore's Law, transistor scaling relies heavily on <strong>materials engineering</strong>. We are moving from FinFET to Gate-All-Around (GAA) architectures, introducing Backside Power Delivery, and aggressively expanding heterogeneous integration (advanced packaging). This dramatically increases the capital intensity of new fabs, making AMAT an indispensable, structural winner of the AI era. My valuation model heavily weighs this secular tailwind against the historical cyclicality of the "wafer fab equipment" (WFE) market.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>My Assumptions & Rationale</h2>
+
+        <div class="assumption-grid">
+          <div class="assumption-card">
+            <div class="card-title">FCF Growth Rate (Y1-Y5)</div>
+            <div class="card-value">{formatPercent(fcfGrowthRate)}</div>
+            <p><strong>Rationale:</strong> A 12% growth rate is robust, reflecting the massive multi-year fab buildouts driven by the CHIPS Act globally and insatiable demand for high-bandwidth memory (HBM) and logic chips. AMAT's portfolio uniquely positions it to capture an outsized share of this rising WFE spend.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Discount Rate (WACC)</div>
+            <div class="card-value">{formatPercent(discountRate)}</div>
+            <p><strong>Rationale:</strong> 10.5% is a deliberately conservative discount rate. Despite a healthy balance sheet ($7.2B cash vs $6.5B debt), the semiconductor equipment market is inherently cyclical, and export controls to China introduce geopolitical risk. This rate provides a sufficient margin of safety.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Terminal Growth Rate</div>
+            <div class="card-value">{formatPercent(terminalGrowthRate)}</div>
+            <p><strong>Rationale:</strong> 3.0% represents long-term, steady-state growth slightly above global GDP. Silicon is becoming the foundational commodity of the modern economy, ensuring perpetual, if mature, growth for the underlying manufacturing ecosystem.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Discounted Cash Flow (DCF) Projections</h2>
+        <p>Starting with a baseline Free Cash Flow of {formatMillions(baseFCF)}, the table below projects cash generation over the next 5 years and discounts it back to Present Value (PV) using the {formatPercent(discountRate)} WACC.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Projected FCF</th>
+                <th>PV Factor ({formatPercent(discountRate)})</th>
+                <th>Present Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projections.map((p, index) => (
+                <tr>
+                  <td>{p.year}</td>
+                  <td>{formatMillions(p.fcf)}</td>
+                  <td>{(1 / Math.pow(1 + discountRate, index + 1)).toFixed(4)}</td>
+                  <td>{formatMillions(p.pv)}</td>
+                </tr>
+              ))}
+              <tr class="highlight-row">
+                <td colspan="3"><strong>Sum of PV of FCFs (Years 1-5)</strong></td>
+                <td><strong>{formatMillions(sumPvFcf)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Terminal & Final Valuation Math</h2>
+        <p>The Terminal Value accounts for all cash flows from Year 6 into perpetuity, calculated using the Gordon Growth Model.</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Year 5 FCF</span>
+            <span>{formatMillions(year5FCF)}</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value (TV) Calculation</span>
+            <span>({formatMillions(year5FCF)} * {1 + terminalGrowthRate}) / ({discountRate} - {terminalGrowthRate})</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value</span>
+            <span>{formatMillions(terminalValue)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span>PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+        </div>
+
+        <p style="margin-top: 2rem;">Combining the present values with Net Cash to derive intrinsic value per share:</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Sum of PV of FCFs (Years 1-5)</span>
+            <span>{formatMillions(sumPvFcf)}</span>
+          </div>
+          <div class="math-row">
+            <span>+ PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+          <div class="math-row">
+            <span><strong>= Enterprise Value</strong></span>
+            <span><strong>{formatMillions(enterpriseValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>+ Net Cash (Cash - Debt)</span>
+            <span>{formatMillions(netCash)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span><strong>= Total Equity Value</strong></span>
+            <span><strong>{formatMillions(totalEquityValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>÷ Shares Outstanding</span>
+            <span>{sharesOut.toLocaleString()}M</span>
+          </div>
+          <div class="math-row result">
+            <span><strong>Intrinsic Value Per Share</strong></span>
+            <span><strong>{formatMoney(intrinsicValuePerShare)}</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Sensitivity Matrix</h2>
+        <p>Valuation is not an exact science. The matrix below illustrates how sensitive the Intrinsic Value is to varying Discount Rates (WACC) and Terminal Growth Rates. Notice that even under the most optimistic scenarios (lowest WACC, highest terminal growth), the current market price implies substantial future execution risk.</p>
+
+        <div class="table-container sensitivity-table">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="corner-cell">Terminal<br/>Growth</th>
+                <th colspan="5" class="header-cell">Discount Rate (WACC)</th>
+              </tr>
+              <tr>
+                {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sensitivityMatrix.map(row => (
+                <tr>
+                  <th class="row-header">{formatPercent(row.growthRate)}</th>
+                  {row.values.map(val => (
+                    <td class={
+                      val > currentPrice * 1.15 ? "cell-undervalued" :
+                      val < currentPrice * 0.85 ? "cell-overvalued" :
+                      "cell-neutral"
+                    }>
+                      {formatMoney(val)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="matrix-legend">
+            <span class="legend-item"><span class="color-box cell-undervalued"></span> Undervalued (>15% Margin)</span>
+            <span class="legend-item"><span class="color-box cell-neutral"></span> Fair Value</span>
+            <span class="legend-item"><span class="color-box cell-overvalued"></span> Overvalued (&lt;-15% Margin)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section risks-section">
+        <h2>Key Risks & Headwinds</h2>
+        <p>To justify a long position near current price levels, you must believe the market is severely underpricing a sustained, multi-year supercycle. Here are the core risks to the downside:</p>
+        <div class="risk-grid">
+          <div class="risk-card">
+            <h3>1. China Export Restrictions</h3>
+            <p>The U.g. government has increasingly tightened export controls on advanced semiconductor manufacturing equipment to China. Given that China represents a significant portion of historic revenue for equipment makers, further restrictions could immediately dent top-line growth and cash flow.</p>
+          </div>
+          <div class="risk-card">
+            <h3>2. Foundry Capex Delays</h3>
+            <p>If major customers like Intel delay their ambitious fab buildouts (e.g., due to internal financial pressures or slower-than-expected macro demand), AMAT's revenue recognition will stall. The stock price currently assumes near-perfect execution of these global fab roadmaps.</p>
+          </div>
+          <div class="risk-card">
+            <h3>3. Valuation Multiple Compression</h3>
+            <p>The entire semiconductor space is trading at historically elevated multiples due to the AI boom. If market sentiment shifts or if the return on investment (ROI) for downstream AI applications fails to materialize quickly, multiples will compress severely, driving the stock price down even if AMAT executes perfectly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>Why is the intrinsic value so much lower than the current price?</h3>
+          <p>The current stock price of roughly ${currentPrice.toFixed(0)} implies a much faster growth rate or a significantly lower discount rate than standard historical models dictate. The market is pricing in a "supercycle" where AI demands perpetual, high-margin equipment spending without any cyclical downturns. My standard DCF model requires more margin of safety.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Why did Gemini pick a 12% growth rate for Applied Materials?</h3>
+          <p>The semiconductor industry is transitioning to highly complex node architectures like Gate-All-Around (GAA) and advanced packaging to support AI chips. This massively increases the capital intensity and materials engineering required, perfectly aligning with AMAT's core competencies.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What discount rate was used for AMAT's DCF?</h3>
+          <p>A 10.5% discount rate was selected. While AMAT has a solid balance sheet, the semiconductor equipment industry is historically cyclical. A higher discount rate builds in a margin of safety against potential downcycles or delays in foundry fab buildouts.</p>
+        </div>
+      </section>
+
+      <div class="disclaimer-box">
+        <p><strong>Disclaimer:</strong> The numbers presented on this page are for educational and entertainment purposes only. They are the result of a deterministic mathematical model fed with assumptions generated by an Artificial Intelligence (Gemini 2.5 Pro). This does not constitute investment advice. Always conduct your own due diligence before investing in the stock market.</p>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  /* Base styles explicitly hardcoded for the Westmount theme as requested */
+  .page-content {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 4rem;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .gemini-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1e3a8a, #4a8fe7);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .gemini-header h1 {
+    font-size: 2.5rem;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .gemini-header .subtitle {
+    font-size: 1.2rem;
+    color: #c8d0de;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+  }
+
+  .verdict-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .verdict-header {
+    background-color: rgba(74, 143, 231, 0.1);
+    padding: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    text-align: center;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #4a8fe7;
+  }
+
+  .verdict-body {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .verdict-main {
+    margin-bottom: 2rem;
+  }
+
+  .iv-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #4a8fe7;
+    display: block;
+  }
+
+  .iv-label {
+    font-size: 1rem;
+    color: #8899b6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #8899b6;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .stat-value.positive, .badge.positive {
+    color: #22c55e;
+  }
+
+  .stat-value.negative, .badge.negative {
+    color: #ef4444;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .badge.positive {
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+
+  .badge.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .verdict-footer {
+    background-color: #0a1018;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.75rem;
+    color: #4a8fe7;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.5rem;
+  }
+
+  .content-section p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #c8d0de;
+    margin-bottom: 1.5rem;
+  }
+
+  .content-section strong {
+    color: #fff;
+  }
+
+  /* Assumption Grid */
+  .assumption-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .assumption-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .assumption-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a8fe7;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #8899b6;
+    margin: 0;
+  }
+
+  /* Table */
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0d1522;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th:first-child, td:first-child {
+    text-align: left;
+  }
+
+  th {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #c8d0de;
+  }
+
+  .highlight-row {
+    background-color: rgba(74, 143, 231, 0.1);
+  }
+
+  .highlight-row td {
+    color: #4a8fe7;
+    font-weight: 700;
+  }
+
+  /* Math Card */
+  .math-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #1e293b;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+  }
+
+  .math-row:last-child {
+    border-bottom: none;
+  }
+
+  .math-row.highlight {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 700;
+    padding: 0.75rem 0.5rem;
+    margin: 0 -0.5rem;
+    border-radius: 4px;
+  }
+
+  .math-row.result {
+    border-top: 2px solid #4a8fe7;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #4a8fe7;
+  }
+
+  /* Sensitivity Matrix */
+  .sensitivity-table table {
+    text-align: center;
+  }
+
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .sensitivity-table .header-cell {
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .corner-cell {
+    background-color: #060a12;
+    border-right: 2px solid #1e293b;
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .row-header {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-right: 2px solid #1e293b;
+  }
+
+  .cell-undervalued {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+  }
+
+  .cell-overvalued {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+
+  .cell-neutral {
+    background-color: #0d1522;
+    color: #c8d0de;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    background-color: #0a1018;
+    border-top: 1px solid #1e293b;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8899b6;
+  }
+
+  .color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  /* Risks Grid */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .risk-card {
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .risk-card h3 {
+    margin-top: 0;
+    color: #f87171;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .risk-card p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #c8d0de;
+  }
+
+  /* FAQ */
+  .faq-item {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #4a8fe7;
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Disclaimer */
+  .disclaimer-box {
+    background-color: #0a1018;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .disclaimer-box strong {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 2.5rem;
+    }
+    .gemini-header h1 {
+      font-size: 2rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: right;
+    }
+    .matrix-legend {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

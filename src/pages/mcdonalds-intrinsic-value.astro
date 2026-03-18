@@ -1,0 +1,677 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "McDonald's Corporation (MCD) Intrinsic Value",
+  description: "An independent intrinsic value estimate for McDonald's Corporation (MCD) using a two-stage discounted cash flow (DCF) model. Compiled by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "McDonald's Corporation (MCD) Intrinsic Value",
+  "description": "An independent intrinsic value estimate for McDonald's Corporation (MCD) using a two-stage discounted cash flow (DCF) model. Compiled by Gemini 2.5 Pro.",
+  "author": {
+    "@type": "Organization",
+    "name": "Gemini 2.5 Pro"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://westmountfundamentals.com/logo.png"
+    }
+  },
+  "datePublished": "2026-03-18",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/mcdonalds-intrinsic-value"
+  }
+};
+
+// --- Financial Data Input ---
+// Fetched via yfinance for FY ending Dec 2025
+const ticker = "MCD";
+const currentPrice = 320.57;
+const sharesOutstandingMillions = 712.15;
+const freeCashFlowMillions = 6296;
+const totalDebtMillions = 54830;
+const totalCashMillions = 774;
+
+// --- DCF Assumptions ---
+// WACC Calculation:
+// 10-Year US Treasury Rate (Risk-Free Rate): 4.18%
+// Implied Equity Risk Premium (ERP): 5.00%
+// MCD Beta (5Y Monthly): ~0.50 (highly defensive, stable cash flows)
+// Cost of Equity (CAPM) = 4.18% + (0.50 * 5.00%) = 6.68%
+// Assuming an optimal capital structure and tax-shielded cost of debt,
+// a WACC of 6.68% represents a highly confident discount rate for McDonald's.
+const discountRate = 0.0668;
+
+// Growth Rate (Years 1-5):
+// Given pricing power, ongoing digitalization, and resilient franchise model,
+// a 6.00% FCF CAGR over the next 5 years is realistic, driven by unit expansion and margin defense.
+const growthRate1to5 = 0.06;
+
+// Terminal Growth Rate:
+// A terminal rate of 4.00% might seem high for a mature business, but MCD's global
+// scale and pricing power uniquely position it to outpace baseline GDP growth in a higher inflation regime.
+const terminalGrowthRate = 0.04;
+
+// --- DCF Math (Years 1-5) ---
+let futureFCF = [];
+let presentValueFCF = [];
+let totalPresentValueFCF = 0;
+
+let lastFCF = freeCashFlowMillions;
+for (let i = 1; i <= 5; i++) {
+  lastFCF = lastFCF * (1 + growthRate1to5);
+  futureFCF.push(lastFCF);
+
+  let pv = lastFCF / Math.pow(1 + discountRate, i);
+  presentValueFCF.push(pv);
+  totalPresentValueFCF += pv;
+}
+
+// --- Terminal Value Math ---
+const finalYearFCF = futureFCF[4]; // Year 5 FCF
+const terminalValue = (finalYearFCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const presentValueTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- Final Valuation ---
+const enterpriseValue = totalPresentValueFCF + presentValueTerminalValue;
+const equityValue = enterpriseValue + totalCashMillions - totalDebtMillions;
+const intrinsicValuePerShare = equityValue / sharesOutstandingMillions;
+
+// Valuation Verdict
+const marginOfSafety = (intrinsicValuePerShare - currentPrice) / intrinsicValuePerShare;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+const verdictText = isUndervalued ? "UNDERVALUED" : "OVERVALUED";
+const verdictClass = isUndervalued ? "verdict-positive" : "verdict-negative";
+
+// --- Formatting Helpers ---
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+const formatMillions = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+const formatPercent = (val) => new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2 }).format(val);
+
+// --- Sensitivity Matrix ---
+// 5x5 Matrix: WACC (columns) vs Terminal Growth Rate (rows)
+const waccSteps = [discountRate - 0.02, discountRate - 0.01, discountRate, discountRate + 0.01, discountRate + 0.02];
+const tgrSteps = [terminalGrowthRate - 0.01, terminalGrowthRate - 0.005, terminalGrowthRate, terminalGrowthRate + 0.005, terminalGrowthRate + 0.01];
+
+const sensitivityMatrix = tgrSteps.map(tgr => {
+  return waccSteps.map(wacc => {
+    // Recalculate PV of FCF for this WACC
+    let tempTotalPvFCF = 0;
+    let tempLastFCF = freeCashFlowMillions;
+    for (let i = 1; i <= 5; i++) {
+      tempLastFCF = tempLastFCF * (1 + growthRate1to5);
+      tempTotalPvFCF += tempLastFCF / Math.pow(1 + wacc, i);
+    }
+
+    // Recalculate Terminal Value
+    let tempFinalFCF = freeCashFlowMillions * Math.pow(1 + growthRate1to5, 5);
+    // If WACC is too close to TGR, valuation blows up to infinity, cap it or return null
+    if (wacc <= tgr) return null;
+
+    let tempTV = (tempFinalFCF * (1 + tgr)) / (wacc - tgr);
+    let tempPvTV = tempTV / Math.pow(1 + wacc, 5);
+
+    let tempEV = tempTotalPvFCF + tempPvTV;
+    let tempEqV = tempEV + totalCashMillions - totalDebtMillions;
+    return tempEqV / sharesOutstandingMillions;
+  });
+});
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/mcdonalds-intrinsic-value" schema={schema}>
+  <div class="page-content">
+
+    <div class="header-section">
+      <div class="header-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>McDonald's Corporation (MCD) Intrinsic Value</h1>
+      <p>An independent two-stage discounted cash flow analysis.</p>
+    </div>
+
+    <div class={`verdict-card ${verdictClass}`}>
+      <div class="verdict-header">
+        <h2>Gemini's Fair Value Estimate</h2>
+        <div class="verdict-badge">{verdictText}</div>
+      </div>
+      <div class="verdict-metrics">
+        <div class="metric-box">
+          <span class="metric-label">Current Price</span>
+          <span class="metric-value">{formatCurrency(currentPrice)}</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-label">Intrinsic Value</span>
+          <span class="metric-value highlight">{formatCurrency(intrinsicValuePerShare)}</span>
+        </div>
+        <div class="metric-box">
+          <span class="metric-label">Margin of Safety</span>
+          <span class="metric-value">{formatPercent(marginOfSafety)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>The Methodology</h2>
+      <p>This study employs a robust two-stage discounted cash flow (DCF) model to ascertain the intrinsic value of McDonald's Corporation (MCD). By projecting future free cash flows, applying an appropriate discount rate, and determining a terminal value, we can strip away market sentiment to reveal the underlying economic worth of the enterprise. All data utilized is drawn from the most recent fiscal year.</p>
+
+      <p>Why a two-stage model? It acknowledges that McDonald's will experience a period of defined growth (Years 1-5) as it capitalizes on near-term strategic initiatives—such as digital expansion and menu innovation—followed by a perpetual state of mature, steady-state growth.</p>
+    </div>
+
+    <div class="assumptions-grid">
+      <div class="assumption-card">
+        <h3>Discount Rate (WACC)</h3>
+        <div class="assumption-value">{formatPercent(discountRate)}</div>
+        <p>Calculated using the Capital Asset Pricing Model (CAPM). Given the 10-Year US Treasury yield of 4.18% and MCD's exceptionally low beta of ~0.50 (reflecting deep defensive characteristics), a 6.68% cost of capital is highly justified. McDonald's resilient franchise model insulates cash flows even in recessionary environments.</p>
+      </div>
+
+      <div class="assumption-card">
+        <h3>5-Year Growth Rate</h3>
+        <div class="assumption-value">{formatPercent(growthRate1to5)}</div>
+        <p>A 6.00% CAGR applied to Years 1-5. While mature, McDonald's continues to wring efficiencies from scale, accelerate digital/loyalty adoption, and command absolute pricing power over core menu items. This growth rate confidently reflects their ability to expand margins despite wage pressures.</p>
+      </div>
+
+      <div class="assumption-card">
+        <h3>Terminal Growth Rate</h3>
+        <div class="assumption-value">{formatPercent(terminalGrowthRate)}</div>
+        <p>Set at 4.00% into perpetuity. A bold assumption for a legacy brand, yet fiercely defensible. Given persistent structural inflation and McDonald's unique position to aggressively pass on costs via its highly-franchised base, terminal growth will comfortably outpace baseline historical GDP.</p>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Stage 1: Free Cash Flow Projections (Years 1-5)</h2>
+      <p>Starting with the most recent fiscal year Free Cash Flow of <strong>{formatMillions(freeCashFlowMillions)}</strong>, we project outward at our 6.00% growth rate and discount back to present value using our 6.68% WACC.</p>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCF (Millions)</th>
+              <th>Present Value (Millions)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {futureFCF.map((fcf, index) => (
+              <tr>
+                <td>Year {index + 1}</td>
+                <td class="num">{formatMillions(fcf)}</td>
+                <td class="num">{formatMillions(presentValueFCF[index])}</td>
+              </tr>
+            ))}
+            <tr class="total-row">
+              <td colspan="2">Sum of Present Value FCFs</td>
+              <td class="num highlight">{formatMillions(totalPresentValueFCF)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Stage 2: Terminal Value & Final Valuation</h2>
+      <p>The Terminal Value captures the value of all cash flows generated beyond Year 5, assuming perpetual growth. We utilize the Gordon Growth Model, projecting the final cash flow forward by the 4.00% terminal rate, and dividing by the difference between our discount rate and terminal rate.</p>
+
+      <div class="table-container valuation-bridge">
+        <table>
+          <tbody>
+            <tr>
+              <td>Terminal Value (Year 5)</td>
+              <td class="num">{formatMillions(terminalValue)}</td>
+            </tr>
+            <tr>
+              <td><strong>Present Value of Terminal Value</strong></td>
+              <td class="num highlight">{formatMillions(presentValueTerminalValue)}</td>
+            </tr>
+            <tr class="bridge-gap">
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td>Enterprise Value (PV FCFs + PV TV)</td>
+              <td class="num">{formatMillions(enterpriseValue)}</td>
+            </tr>
+            <tr>
+              <td>Plus: Total Cash</td>
+              <td class="num">{formatMillions(totalCashMillions)}</td>
+            </tr>
+            <tr>
+              <td>Less: Total Debt</td>
+              <td class="num">({formatMillions(totalDebtMillions)})</td>
+            </tr>
+            <tr>
+              <td><strong>Implied Equity Value</strong></td>
+              <td class="num highlight">{formatMillions(equityValue)}</td>
+            </tr>
+            <tr class="bridge-gap">
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding (Millions)</td>
+              <td class="num">{sharesOutstandingMillions.toFixed(2)}</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="num highlight">{formatCurrency(intrinsicValuePerShare)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Sensitivity Analysis</h2>
+      <p>Valuation is not an exact science; it is a range of probabilities. The matrix below demonstrates how the intrinsic value fluctuates when stress-testing the two most critical assumptions: the Discount Rate (WACC) and the Terminal Growth Rate.</p>
+
+      <div class="table-container sensitivity-table">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th colspan="5" class="text-center">Discount Rate (WACC)</th>
+            </tr>
+            <tr>
+              <th>Term. Growth</th>
+              {waccSteps.map(w => <th class="num">{formatPercent(w)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {tgrSteps.map((tgr, rIdx) => (
+              <tr>
+                <th>{formatPercent(tgr)}</th>
+                {sensitivityMatrix[rIdx].map((val, cIdx) => (
+                  <td class={`num ${waccSteps[cIdx] === discountRate && tgr === terminalGrowthRate ? 'target-cell' : ''}`}>
+                    {val ? formatCurrency(val) : "N/A"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="matrix-note">*The highlighted cell represents our base-case scenario.</p>
+    </div>
+
+    <div class="highlight-box">
+      <h2>Key Risks to the Valuation</h2>
+      <ul class="risk-list">
+        <li><strong>Consumer Discretionary Squeeze:</strong> While historically resilient, a severe, prolonged macroeconomic contraction could pressure low-income consumers, leading to reduced foot traffic and trade-down behavior that outpaces pricing power.</li>
+        <li><strong>GLP-1 Drug Headwinds:</strong> The widespread adoption of weight-loss pharmaceuticals (GLP-1 agonists) presents a structural tail-risk to aggregate caloric consumption, potentially challenging long-term volume growth in core markets.</li>
+        <li><strong>Wage Inflation & Franchisee Margins:</strong> Persistent upward pressure on minimum wages, particularly in the US and Europe, could compress operator margins. While McDonald's is highly franchised, franchisee distress ultimately impacts corporate royalty streams and reinvestment capacity.</li>
+      </ul>
+    </div>
+
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <h3>Why is McDonald's Debt so high?</h3>
+        <p>McDonald's intentionally operates with a heavily leveraged balance sheet. Due to its incredibly stable, annuity-like franchise royalty cash flows, the company can safely service massive debt loads. They frequently use this cheap debt to fund massive share repurchase programs, effectively optimizing their capital structure to maximize equity returns.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Does a DCF account for dividends?</h3>
+        <p>Yes, inherently. A DCF model discounts Free Cash Flow to Equity (FCFE) or Firm (FCFF). Free cash flow is the total cash available to be distributed to shareholders, whether that takes the form of dividends, share buybacks, or cash held on the balance sheet. Therefore, the dividend yield is already "priced in" to the intrinsic value.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Why use Free Cash Flow instead of Earnings (EPS)?</h3>
+        <p>Earnings per share (EPS) is an accounting metric subject to heavy manipulation through non-cash depreciation, amortization, and one-time write-offs. Free Cash Flow measures the actual, hard cash entering and exiting the business—the true lifeblood of an enterprise. Valuation is fundamentally based on cash generation, not accounting profits.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>Disclaimer:</strong> This valuation is generated by Gemini 2.5 Pro and is provided strictly for educational and informational purposes. It does not constitute financial advice, investment recommendations, or an endorsement of McDonald's Corporation (MCD). All DCF models are heavily reliant on forward-looking assumptions which are inherently uncertain. Always conduct independent due diligence or consult a licensed financial advisor before making investment decisions.
+    </div>
+
+  </div>
+</SiteLayout>
+<style>
+  /* --- Westmount Fundamentals Dark Theme Core Styles --- */
+  .page-content {
+    color: #c8d0de;
+    background-color: #060a12;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  h1, h2, h3 {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  h1 { font-size: 2.5rem; margin-top: 0; }
+  h2 { font-size: 1.75rem; margin-top: 2rem; border-bottom: 1px solid #152040; padding-bottom: 0.5rem; }
+  h3 { font-size: 1.25rem; margin-top: 1.5rem; }
+
+  p { margin-bottom: 1.25rem; }
+
+  .num {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .highlight {
+    color: #4a8fe7;
+    font-weight: bold;
+  }
+
+  /* --- Header --- */
+  .header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .header-badge {
+    display: inline-block;
+    background-color: #152040;
+    color: #4a8fe7;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(74, 143, 231, 0.3);
+  }
+
+  .header-section p {
+    color: #94a3b8;
+    font-size: 1.125rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* --- Verdict Card --- */
+  .verdict-card {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .verdict-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #152040;
+    padding-bottom: 1rem;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    border: none;
+    font-size: 1.5rem;
+  }
+
+  .verdict-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-positive .verdict-badge {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+
+  .verdict-negative .verdict-badge {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .verdict-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .metric-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(6, 10, 18, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #152040;
+  }
+
+  .metric-label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .metric-value.highlight {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 640px) {
+    .verdict-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .verdict-metrics { grid-template-columns: 1fr; }
+  }
+
+  /* --- Assumption Grid --- */
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .assumption-card {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .assumption-card:hover {
+    transform: translateY(-2px);
+    border-color: #4a8fe7;
+  }
+
+  .assumption-card h3 {
+    margin-top: 0;
+    font-size: 1.125rem;
+    color: #94a3b8;
+  }
+
+  .assumption-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.875rem;
+    color: #c8d0de;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* --- Tables --- */
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #152040;
+  }
+
+  th {
+    background-color: rgba(21, 32, 64, 0.5);
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  .total-row td {
+    background-color: rgba(74, 143, 231, 0.1);
+    font-weight: 700;
+    border-top: 2px solid #4a8fe7;
+  }
+
+  .valuation-bridge td {
+    padding: 0.75rem 1rem;
+  }
+
+  .valuation-bridge td.num {
+    text-align: right;
+  }
+
+  .bridge-gap td {
+    height: 1rem;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+  }
+
+  /* --- Sensitivity Matrix --- */
+  .sensitivity-table th.text-center {
+    text-align: center;
+    border-bottom: 2px solid #152040;
+  }
+
+  .sensitivity-table th.num {
+    text-align: center;
+    background-color: rgba(21, 32, 64, 0.3);
+  }
+
+  .sensitivity-table td {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+  }
+
+  .sensitivity-table td.target-cell {
+    background-color: rgba(74, 143, 231, 0.2);
+    font-weight: 700;
+    color: #4a8fe7;
+    border: 1px solid #4a8fe7;
+  }
+
+  .matrix-note {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+    margin-top: -1rem;
+  }
+
+  /* --- Content Elements --- */
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .highlight-box {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .highlight-box h2 {
+    margin-top: 0;
+    border: none;
+    color: #4a8fe7;
+  }
+
+  .risk-list {
+    margin: 0;
+    padding-left: 1.5rem;
+  }
+
+  .risk-list li {
+    margin-bottom: 1rem;
+  }
+
+  .risk-list strong {
+    color: #ffffff;
+  }
+
+  /* --- FAQ Section --- */
+  .faq-section {
+    margin: 3rem 0;
+  }
+
+  .faq-item {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    color: #ffffff;
+    font-size: 1.125rem;
+  }
+
+  .faq-item p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* --- Disclaimer --- */
+  .disclaimer-box {
+    margin-top: 4rem;
+    padding: 1rem;
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-align: justify;
+  }
+
+  .disclaimer-box strong {
+    color: #c8d0de;
+  }
+</style>

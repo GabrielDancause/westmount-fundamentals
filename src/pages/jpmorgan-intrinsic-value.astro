@@ -1,0 +1,849 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "JPMorgan Chase & Co. (JPM) Intrinsic Value",
+  description: "A comprehensive two-stage discounted cash flow (DCF) intrinsic value analysis of JPMorgan Chase & Co. (JPM) compiled by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18"
+};
+
+const currentPrice = 287.54;
+const sharesOutstanding = 2697032375;
+const netIncome = 57048000000;
+
+// Banks don't typically use traditional FCF because operating cash flows include loans/deposits which are core business inventory.
+// We are using a Normalized FCFE (Free Cash Flow to Equity) approach.
+// Assuming ~80% of Net Income is excess capital that can be returned to shareholders (dividends + buybacks) after fulfilling Tier 1 capital ratios.
+const normalizedFCFE = netIncome * 0.8;
+
+// Valuation Assumptions
+const riskFreeRate = 0.0418; // 10-Year US Treasury Rate
+const beta = 1.12;
+const equityRiskPremium = 0.048; // Standard ERP
+const costOfEquity = riskFreeRate + (beta * equityRiskPremium); // WACC equivalent for financial institutions (we only discount equity cash flows)
+
+const initialGrowthRate = 0.055; // 5.5% growth years 1-5, justified by JPM's structural advantages and stable net interest margins
+const terminalGrowthRate = 0.025; // 2.5% matching long-term inflation
+
+const discountRate = costOfEquity;
+
+// Years 1-5 Projections
+const projections = [];
+let prevFCF = normalizedFCFE;
+let presentValueOfFCF = 0;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + initialGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: i,
+    projectedFCF,
+    discountFactor,
+    pvOfFCF
+  });
+
+  presentValueOfFCF += pvOfFCF;
+  prevFCF = projectedFCF;
+}
+
+// Terminal Value Calculation (Gordon Growth Model)
+const finalYearFCF = projections[4].projectedFCF;
+const terminalValue = (finalYearFCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const discountFactorYear5 = projections[4].discountFactor;
+const presentValueOfTerminalValue = terminalValue / discountFactorYear5;
+
+// Total Intrinsic Value
+const totalEquityValue = presentValueOfFCF + presentValueOfTerminalValue;
+const intrinsicValuePerShare = totalEquityValue / sharesOutstanding;
+
+// Valuation Metrics
+const marginOfSafety = (intrinsicValuePerShare - currentPrice) / currentPrice;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// Sensitivity Matrix Data (Discount Rate vs Terminal Growth)
+const sensitivityMatrix = [];
+const discountRates = [discountRate - 0.02, discountRate - 0.01, discountRate, discountRate + 0.01, discountRate + 0.02];
+const terminalRates = [terminalGrowthRate - 0.01, terminalGrowthRate - 0.005, terminalGrowthRate, terminalGrowthRate + 0.005, terminalGrowthRate + 0.01];
+
+for (let i = 0; i < discountRates.length; i++) {
+  const row = [];
+  for (let j = 0; j < terminalRates.length; j++) {
+    const dr = discountRates[i];
+    const tg = terminalRates[j];
+
+    // Quick recalc of TV and PVs for matrix
+    let tempPvFcf = 0;
+    let tempPrevFcf = normalizedFCFE;
+    for (let k = 1; k <= 5; k++) {
+      tempPrevFcf = tempPrevFcf * (1 + initialGrowthRate);
+      tempPvFcf += tempPrevFcf / Math.pow(1 + dr, k);
+    }
+    const tempFinalFcf = tempPrevFcf;
+    const tempTv = (tempFinalFcf * (1 + tg)) / (dr - tg);
+    const tempPvTv = tempTv / Math.pow(1 + dr, 5);
+    const tempValuePerShare = (tempPvFcf + tempPvTv) / sharesOutstanding;
+
+    row.push(tempValuePerShare);
+  }
+  sensitivityMatrix.push(row);
+}
+
+// Schema
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "author": {
+    "@type": "Organization",
+    "name": "Gemini 2.5 Pro"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://westmountfundamentals.com/logo.png"
+    }
+  },
+  "datePublished": meta.published
+});
+
+// Helper for formatting currency
+const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(val);
+const formatBillions = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2, notation: "compact", compactDisplay: "short" }).format(val);
+const formatPercent = (val) => new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(val);
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/jpmorgan-intrinsic-value" schema={schema}>
+  <article class="valuation-article">
+    <header class="article-header">
+      <div class="header-tag">Compiled by Gemini 2.5 Pro</div>
+      <h1>JPMorgan Chase & Co. (JPM) Intrinsic Value Analysis</h1>
+      <p class="article-subtitle">A two-stage discounted cash flow model assessing the fundamental value of America's largest bank.</p>
+      <div class="meta-info">
+        <span>Published: March 18, 2026</span>
+        <span>Target Asset: JPM</span>
+      </div>
+    </header>
+
+    <section class="verdict-section">
+      <div class={`verdict-card ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+        <div class="verdict-label">ESTIMATED INTRINSIC VALUE</div>
+        <div class="verdict-value">{formatCurrency(intrinsicValuePerShare)}</div>
+
+        <div class="verdict-comparison">
+          <div class="comp-item">
+            <span class="comp-label">Current Price</span>
+            <span class="comp-val">{formatCurrency(currentPrice)}</span>
+          </div>
+          <div class="comp-item">
+            <span class="comp-label">Margin of Safety</span>
+            <span class={`comp-val ${isUndervalued ? 'positive' : 'negative'}`}>{formatPercent(marginOfSafety)}</span>
+          </div>
+        </div>
+        <div class="verdict-conclusion">
+          {isUndervalued
+            ? "Based on our model, JPM appears undervalued compared to its current market price, offering a positive margin of safety for long-term investors."
+            : "Based on our model, JPM appears overvalued compared to its current market price, lacking a sufficient margin of safety at current levels."
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="methodology-section content-block">
+      <h2>Methodology: Why Normalized FCFE?</h2>
+      <p>Standard Discounted Cash Flow (DCF) models rely on Unlevered Free Cash Flow. However, traditional FCF does not work for banks. For financial institutions, operating cash flows are skewed because changes in deposits and loans—the bank's core "inventory"—are treated as working capital changes. This regularly results in massive, artificially negative Free Cash Flow figures (e.g., JPM's reported FCF is deeply negative).</p>
+      <p>Instead, we use a <strong>Normalized Free Cash Flow to Equity (FCFE)</strong> approach. FCFE represents the cash available to be returned to equity shareholders (via dividends and buybacks) after the bank has met its regulatory Tier 1 capital requirements and reinvested enough to support targeted loan growth. Historically, highly efficient, mature banks like JPMorgan can return approximately 80% of their Net Income to shareholders. Therefore, our Base Year FCFE is estimated as 80% of JPM's trailing Net Income ({formatBillions(netIncome)}), resulting in a starting cash flow of <strong>{formatBillions(normalizedFCFE)}</strong>.</p>
+    </section>
+
+    <section class="assumptions-section">
+      <h2>Key Valuation Assumptions</h2>
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <h3>Growth Rate (Years 1-5)</h3>
+          <div class="assumption-val">{formatPercent(initialGrowthRate)}</div>
+          <p>We project a moderate 5.5% annual growth in cash flow available to equity. This factors in JPM's fortress balance sheet, superior technology stack, and dominant market share, balanced against the reality of a massive existing asset base and potential regulatory headwinds.</p>
+        </div>
+        <div class="assumption-card">
+          <h3>Discount Rate (Cost of Equity)</h3>
+          <div class="assumption-val">{formatPercent(discountRate)}</div>
+          <p>For financial institutions, we discount equity cash flows by the Cost of Equity, calculated via the Capital Asset Pricing Model (CAPM). Using a 10-Year Treasury risk-free rate of {formatPercent(riskFreeRate)}, a beta of {beta}, and an equity risk premium of {formatPercent(equityRiskPremium)}.</p>
+        </div>
+        <div class="assumption-card">
+          <h3>Terminal Growth Rate</h3>
+          <div class="assumption-val">{formatPercent(terminalGrowthRate)}</div>
+          <p>In the terminal phase (Year 6 onwards), we assume the bank grows perpetually at 2.5%, roughly matching long-term target inflation and nominal GDP growth in the United States.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="projections-section content-block">
+      <h2>Free Cash Flow to Equity Projections (Years 1-5)</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Projected FCFE</th>
+              <th>Discount Factor</th>
+              <th>Present Value (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projections.map((p) => (
+              <tr>
+                <td>{p.year}</td>
+                <td class="num">{formatBillions(p.projectedFCF)}</td>
+                <td class="num">{p.discountFactor.toFixed(4)}</td>
+                <td class="num">{formatBillions(p.pvOfFCF)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-right font-bold">Sum of Present Value of FCFE (Y1-5)</td>
+              <td class="num font-bold highlight">{formatBillions(presentValueOfFCF)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="terminal-section content-block">
+      <h2>Terminal Value Calculation</h2>
+      <p>The terminal value captures the value of the bank assuming stable, perpetual growth after year 5. We use the Gordon Growth Model:</p>
+
+      <div class="calculation-box">
+        <div class="calc-row">
+          <span>Final Year FCFE (Year 5)</span>
+          <span class="num">{formatBillions(finalYearFCF)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Terminal Growth Rate</span>
+          <span class="num">{formatPercent(terminalGrowthRate)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Discount Rate</span>
+          <span class="num">{formatPercent(discountRate)}</span>
+        </div>
+        <div class="calc-divider"></div>
+        <div class="calc-row result">
+          <span>Terminal Value</span>
+          <span class="num">{formatBillions(terminalValue)}</span>
+        </div>
+        <div class="calc-row">
+          <span>Discount Factor (Year 5)</span>
+          <span class="num">{discountFactorYear5.toFixed(4)}</span>
+        </div>
+        <div class="calc-row result final">
+          <span>Present Value of Terminal Value</span>
+          <span class="num">{formatBillions(presentValueOfTerminalValue)}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-valuation-section content-block">
+      <h2>Final Intrinsic Value</h2>
+      <div class="table-container">
+        <table>
+          <tbody>
+            <tr>
+              <td>Present Value of FCFE (Years 1-5)</td>
+              <td class="num">{formatBillions(presentValueOfFCF)}</td>
+            </tr>
+            <tr>
+              <td>Present Value of Terminal Value</td>
+              <td class="num">{formatBillions(presentValueOfTerminalValue)}</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Total Equity Value</strong></td>
+              <td class="num highlight"><strong>{formatBillions(totalEquityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="num">{new Intl.NumberFormat('en-US').format(sharesOutstanding)}</td>
+            </tr>
+            <tr class="per-share-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="num highlight"><strong>{formatCurrency(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sensitivity-section content-block">
+      <h2>Sensitivity Matrix</h2>
+      <p>Valuation models are highly sensitive to assumptions. The matrix below shows how the intrinsic value per share shifts under different Discount Rates and Terminal Growth Rates.</p>
+
+      <div class="matrix-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="matrix-corner"></th>
+              <th colspan="5" class="matrix-header-top">Terminal Growth Rate</th>
+            </tr>
+            <tr>
+              {terminalRates.map(tg => <th class="num">{formatPercent(tg)}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {discountRates.map((dr, i) => (
+              <tr>
+                {i === 0 && <th rowspan="5" class="matrix-header-side"><div class="side-text">Discount Rate</div></th>}
+                <th class="num side-label">{formatPercent(dr)}</th>
+                {sensitivityMatrix[i].map(val => (
+                  <td class={`num matrix-cell ${val > currentPrice ? 'val-good' : 'val-bad'}`}>
+                    {formatCurrency(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="matrix-legend">
+          <span class="legend-item"><span class="swatch good"></span> Undervalued</span>
+          <span class="legend-item"><span class="swatch bad"></span> Overvalued</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="risks-section content-block">
+      <h2>Key Risks to This Valuation</h2>
+      <ul class="risk-list">
+        <li><strong>Net Interest Margin Compression:</strong> A rapidly declining rate environment could squeeze net interest income, which has heavily bolstered JPM's profits in recent years.</li>
+        <li><strong>Regulatory Capital Rules (Basel III Endgame):</strong> Stricter capital requirements force banks to hold more capital against assets. This directly reduces the percentage of Net Income that can be classified as FCFE and returned to shareholders.</li>
+        <li><strong>Macroeconomic Deterioration:</strong> An unexpected recession would lead to a spike in provision for credit losses (PCL) and consumer defaults, severely impacting the base year Net Income used for projections.</li>
+      </ul>
+    </section>
+
+    <section class="faq-section content-block">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Why is JPMorgan's standard Free Cash Flow negative?</summary>
+        <div class="faq-content">
+          <p>Banks take in deposits and lend them out. In cash flow statements, an increase in loans (an asset) is counted as a cash outflow. If a bank is growing its loan book aggressively, its operating cash flow often turns deeply negative. This is a sign of business growth, not financial distress, which is why standard FCF is inappropriate for bank valuation.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What is Free Cash Flow to Equity (FCFE)?</summary>
+        <div class="faq-content">
+          <p>FCFE measures the cash left over after taxes, capital expenditures, and debt repayments, minus the capital needed to maintain required regulatory ratios. It represents the maximum theoretical amount a bank could pay out in dividends and share buybacks without harming its operational stability.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Why use Cost of Equity instead of WACC?</summary>
+        <div class="faq-content">
+          <p>For non-financial companies, we discount Unlevered FCF using the Weighted Average Cost of Capital (WACC). However, for a bank, debt is not just capital; it is raw material (deposits). Because we are projecting cash flows specifically available to equity holders (FCFE), we must discount them using only the Cost of Equity.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="disclaimer-section">
+      <p><strong>Disclaimer:</strong> This DCF analysis is independently compiled by Gemini 2.5 Pro for educational and informational purposes only. It relies on assumptions regarding future growth, discount rates, and economic conditions that are inherently uncertain. This page does not constitute financial advice, an investment recommendation, or an offer to buy or sell securities. Always conduct your own due diligence or consult a licensed financial advisor before making investment decisions.</p>
+    </section>
+
+  </article>
+</SiteLayout>
+<style>
+  .valuation-article {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    font-family: 'Inter', sans-serif;
+    color: #c8d0de;
+    background-color: #060a12;
+    line-height: 1.6;
+  }
+
+  .article-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .header-tag {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    background-color: #1a2333;
+    color: #4a8fe7;
+    border: 1px solid #4a8fe7;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .article-header h1 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .article-subtitle {
+    font-size: 1.25rem;
+    color: #a0aec0;
+    margin: 0 0 1.5rem 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .meta-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    font-size: 0.875rem;
+    color: #718096;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Verdict Card */
+  .verdict-section {
+    margin-bottom: 4rem;
+  }
+
+  .verdict-card {
+    background-color: #111827;
+    border: 2px solid #2d3748;
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verdict-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+  }
+
+  .verdict-card.undervalued::before {
+    background-color: #48bb78;
+  }
+
+  .verdict-card.overvalued::before {
+    background-color: #f56565;
+  }
+
+  .verdict-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #a0aec0;
+    margin-bottom: 0.5rem;
+  }
+
+  .verdict-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    line-height: 1;
+  }
+
+  .verdict-comparison {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #0d131f;
+    border-radius: 8px;
+  }
+
+  .comp-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .comp-label {
+    font-size: 0.875rem;
+    color: #a0aec0;
+    margin-bottom: 0.25rem;
+  }
+
+  .comp-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .comp-val.positive {
+    color: #48bb78;
+  }
+
+  .comp-val.negative {
+    color: #f56565;
+  }
+
+  .verdict-conclusion {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #e2e8f0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Content Blocks */
+  .content-block {
+    margin-bottom: 4rem;
+  }
+
+  .content-block h2 {
+    font-size: 1.75rem;
+    color: #ffffff;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2d3748;
+  }
+
+  .content-block p {
+    margin: 0 0 1.25rem 0;
+  }
+
+  .content-block strong {
+    color: #ffffff;
+  }
+
+  /* Assumptions Grid */
+  .assumptions-section {
+    margin-bottom: 4rem;
+  }
+
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .assumption-card {
+    background-color: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .assumption-card h3 {
+    font-size: 1.125rem;
+    color: #a0aec0;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .assumption-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.9375rem;
+    margin: 0;
+    color: #cbd5e0;
+  }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+    background-color: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #2d3748;
+  }
+
+  th {
+    background-color: #1a2333;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+  }
+
+  td.num {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .font-bold {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .highlight {
+    color: #4a8fe7;
+    font-size: 1.125rem;
+  }
+
+  .total-row td {
+    background-color: #1a2333;
+    border-top: 2px solid #4a8fe7;
+  }
+
+  .per-share-row td {
+    background-color: #111827;
+    border-top: 2px solid #48bb78;
+    font-size: 1.25rem;
+  }
+
+  /* Calc Box */
+  .calculation-box {
+    background-color: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 500px;
+  }
+
+  .calc-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+
+  .calc-row .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .calc-divider {
+    height: 1px;
+    background-color: #2d3748;
+    margin: 0.5rem 0;
+  }
+
+  .calc-row.result {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .calc-row.final {
+    color: #4a8fe7;
+    font-size: 1.125rem;
+  }
+
+  /* Matrix */
+  .matrix-wrapper {
+    overflow-x: auto;
+    background-color: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .matrix-table {
+    width: auto;
+    margin: 0 auto;
+  }
+
+  .matrix-table th, .matrix-table td {
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border: 1px solid #2d3748;
+  }
+
+  .matrix-corner {
+    background-color: transparent;
+    border: none !important;
+  }
+
+  .matrix-header-top {
+    background-color: #1a2333;
+    color: #a0aec0;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+  }
+
+  .matrix-header-side {
+    background-color: #1a2333;
+    border: none;
+    padding: 0;
+    width: 40px;
+    position: relative;
+  }
+
+  .side-text {
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    color: #a0aec0;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    margin-left: -40px;
+    margin-top: -10px;
+  }
+
+  .side-label, .matrix-table thead .num {
+    background-color: #1a2333;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .matrix-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .matrix-cell:hover {
+    filter: brightness(1.2);
+  }
+
+  .val-good {
+    background-color: rgba(72, 187, 120, 0.15);
+    color: #68d391;
+  }
+
+  .val-bad {
+    background-color: rgba(245, 101, 101, 0.15);
+    color: #fc8181;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #a0aec0;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+  }
+
+  .swatch.good {
+    background-color: rgba(72, 187, 120, 0.25);
+    border: 1px solid #48bb78;
+  }
+
+  .swatch.bad {
+    background-color: rgba(245, 101, 101, 0.25);
+    border: 1px solid #f56565;
+  }
+
+  /* Lists & FAQ */
+  .risk-list {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+  }
+
+  .risk-list li {
+    margin-bottom: 1rem;
+  }
+
+  .faq-item {
+    background-color: #111827;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .faq-item summary {
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    background-color: #1a2333;
+    list-style: none;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    color: #4a8fe7;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .faq-item[open] summary::after {
+    content: '-';
+  }
+
+  .faq-content {
+    padding: 1.5rem;
+    border-top: 1px solid #2d3748;
+  }
+
+  .faq-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Disclaimer */
+  .disclaimer-section {
+    padding: 1.5rem;
+    background-color: #0d131f;
+    border-left: 4px solid #4a8fe7;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: #a0aec0;
+  }
+
+  .disclaimer-section p {
+    margin: 0;
+  }
+
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .article-header h1 {
+      font-size: 2rem;
+    }
+    .verdict-value {
+      font-size: 3rem;
+    }
+    .verdict-comparison {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+  }
+</style>

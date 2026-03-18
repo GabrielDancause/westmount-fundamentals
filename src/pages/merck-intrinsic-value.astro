@@ -1,0 +1,766 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Merck & Co., Inc. (MRK) Intrinsic Value",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Merck & Co., Inc. (MRK) compiled by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// FCF Growth (Y1-Y5): 4.0%. Merck faces a significant patent cliff for its blockbuster drug Keytruda in 2028. While their pipeline (Prometheus acquisition, Harpoon Therapeutics, ADC collaborations) is robust, replacing $25B+ in annual revenue is a massive hurdle. A 4% growth rate reflects moderate near-term growth offset by the impending cliff, requiring successful pipeline execution just to maintain this trajectory.
+// Discount Rate (WACC): 7.5%. MRK is a highly defensive stock with a very low beta (0.26). However, the massive concentration risk tied to Keytruda warrants a premium over the standard CAPM output. Given the 10-Year Treasury at 4.18%, a 7.5% WACC balances the company's strong current cash generation against the pipeline execution risk.
+// Terminal Growth: 2.0%. Representing long-term GDP-like growth. The pharmaceutical industry is mature, and while MRK will continue to innovate, a conservative terminal growth rate is prudent given the cyclical nature of drug development and patent expirations.
+
+const baseFCF = 11886.75; // in Millions
+const sharesOut = 2472.39; // in Millions
+const currentPrice = 114.51;
+const netCash = -35969.0; // Cash & ST investments - Total Debt (Net Debt is actually positive, so netCash is negative)
+
+const fcfGrowthRate = 0.04;
+const discountRate = 0.075;
+const terminalGrowthRate = 0.02;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.065, 0.070, 0.075, 0.080, 0.085];
+const sensitivityGrowthRates = [0.010, 0.015, 0.020, 0.025, 0.030];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "author": {
+      "@type": "Person",
+      "name": "Gemini 2.5 Pro"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://westmountfundamentals.com/logo.png"
+      }
+    },
+    "datePublished": meta.published
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why is the free cash flow growth rate so low for Merck?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Merck faces a massive patent cliff for its flagship oncology drug, Keytruda, in 2028. Keytruda currently accounts for roughly 40% of their total revenue. A 4% growth rate factors in the immense challenge of replacing this revenue through their pipeline and recent acquisitions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Keytruda's patent expiration impact the valuation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The patent expiration is the primary driver of risk in this model. It suppresses the terminal growth rate (2.0%) and elevates the required discount rate (7.5%) to account for the execution risk of successfully commercializing the pipeline to offset the impending revenue gap."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is MRK undervalued according to this DCF?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `According to this independent analysis by Gemini 2.5 Pro, MRK's estimated intrinsic value is ${formatMoney(intrinsicValuePerShare)} per share. Compared to the current price of ${formatMoney(currentPrice)}, it appears ${isUndervalued ? 'undervalued' : 'overvalued'} with a margin of safety of ${formatPercent(Math.abs(marginOfSafety)/100)}.`
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/merck-intrinsic-value" schema={schema}>
+  <article class="valuation-container">
+    <header class="valuation-header">
+      <div class="ai-badge">Compiled by Gemini 2.5 Pro</div>
+      <h1>Merck & Co., Inc. (MRK) Intrinsic Value</h1>
+      <p class="subtitle">A Discounted Cash Flow (DCF) Analysis</p>
+    </header>
+
+    <section class="verdict-section">
+      <div class={`verdict-card ${isUndervalued ? 'undervalued' : 'overvalued'}`}>
+        <h2>Final Verdict</h2>
+        <div class="verdict-comparison">
+          <div class="verdict-metric">
+            <span class="label">Intrinsic Value</span>
+            <span class="value">{formatMoney(intrinsicValuePerShare)}</span>
+          </div>
+          <div class="verdict-divider">vs</div>
+          <div class="verdict-metric">
+            <span class="label">Current Price</span>
+            <span class="value">{formatMoney(currentPrice)}</span>
+          </div>
+        </div>
+        <div class="verdict-conclusion">
+          MRK is currently <strong>{isUndervalued ? 'Undervalued' : 'Overvalued'}</strong> by {formatPercent(Math.abs(marginOfSafety)/100)}
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Methodology: Two-Stage DCF</h2>
+      <p>This intrinsic value estimate utilizes a two-stage Discounted Cash Flow (DCF) model. This approach projects Free Cash Flow (FCF) for the next five years (Stage 1) and then calculates a Terminal Value to represent all future cash flows beyond year 5 (Stage 2). These future cash flows are then discounted back to their present value using the Weighted Average Cost of Capital (WACC).</p>
+
+      <div class="assumptions-grid">
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>FCF Growth (Y1-Y5)</h3>
+            <span class="assumption-value">{formatPercent(fcfGrowthRate)}</span>
+          </div>
+          <p>Merck faces a significant patent cliff for its blockbuster drug Keytruda in 2028. While their pipeline (Prometheus acquisition, Harpoon Therapeutics, ADC collaborations) is robust, replacing $25B+ in annual revenue is a massive hurdle. A 4% growth rate reflects moderate near-term growth offset by the impending cliff, requiring successful pipeline execution just to maintain this trajectory.</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>Discount Rate (WACC)</h3>
+            <span class="assumption-value">{formatPercent(discountRate)}</span>
+          </div>
+          <p>MRK is a highly defensive stock with a very low beta (0.26). However, the massive concentration risk tied to Keytruda warrants a premium over the standard CAPM output. Given the 10-Year Treasury at 4.18%, a 7.5% WACC balances the company's strong current cash generation against the pipeline execution risk.</p>
+        </div>
+
+        <div class="assumption-card">
+          <div class="assumption-header">
+            <h3>Terminal Growth Rate</h3>
+            <span class="assumption-value">{formatPercent(terminalGrowthRate)}</span>
+          </div>
+          <p>Representing long-term GDP-like growth. The pharmaceutical industry is mature, and while MRK will continue to innovate, a conservative terminal growth rate is prudent given the cyclical nature of drug development and patent expirations.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Stage 1: 5-Year Free Cash Flow Projections</h2>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Projected FCF</th>
+              <th>Present Value (PV)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projections.map((p) => (
+              <tr>
+                <td>{p.year}</td>
+                <td class="numeric">{formatMillions(p.fcf)}</td>
+                <td class="numeric">{formatMillions(p.pv)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><strong>Sum of PV of FCFs</strong></td>
+              <td></td>
+              <td class="numeric"><strong>{formatMillions(sumPvFcf)}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Stage 2: Terminal Value</h2>
+      <div class="calc-box">
+        <p><strong>Terminal Value formula:</strong> (Year 5 FCF * (1 + Terminal Growth)) / (Discount Rate - Terminal Growth)</p>
+        <p><strong>Terminal Value:</strong> {formatMillions(terminalValue)}</p>
+        <p><strong>Present Value of Terminal Value:</strong> {formatMillions(pvTerminalValue)}</p>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Final Valuation</h2>
+      <div class="table-container">
+        <table class="valuation-table">
+          <tbody>
+            <tr>
+              <td>PV of 5-Year FCFs</td>
+              <td class="numeric">{formatMillions(sumPvFcf)}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td class="numeric">+ {formatMillions(pvTerminalValue)}</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Enterprise Value</strong></td>
+              <td class="numeric"><strong>{formatMillions(enterpriseValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Plus: Net Cash (Cash - Debt)</td>
+              <td class="numeric">{formatMillions(netCash)}</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>Total Equity Value</strong></td>
+              <td class="numeric"><strong>{formatMillions(totalEquityValue)}</strong></td>
+            </tr>
+            <tr>
+              <td>Shares Outstanding</td>
+              <td class="numeric">/ {(sharesOut).toLocaleString()}M</td>
+            </tr>
+            <tr class="final-row">
+              <td><strong>Intrinsic Value Per Share</strong></td>
+              <td class="numeric"><strong>{formatMoney(intrinsicValuePerShare)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Sensitivity Matrix</h2>
+      <p>This matrix shows how the intrinsic value changes under different growth and discount rate assumptions.</p>
+
+      <div class="table-container">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th>Growth / WACC</th>
+              {sensitivityDiscountRates.map(d => (
+                <th class="numeric">{formatPercent(d)}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityMatrix.map(row => (
+              <tr>
+                <th>{formatPercent(row.growthRate)}</th>
+                {row.values.map(val => (
+                  <td class={`numeric ${val > currentPrice ? 'cell-undervalued' : 'cell-overvalued'}`}>
+                    {formatMoney(val)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="matrix-legend">
+        <span class="legend-item"><span class="legend-color legend-undervalued"></span> Undervalued</span>
+        <span class="legend-item"><span class="legend-color legend-overvalued"></span> Overvalued</span>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2>Key Risks to This Valuation</h2>
+      <ul class="risk-list">
+        <li><strong>Keytruda Patent Cliff (2028):</strong> This is the single biggest risk. Keytruda generates a massive portion of Merck's revenue. If the pipeline fails to adequately offset the revenue loss from biosimilar competition starting in 2028, these FCF projections will be overly optimistic.</li>
+        <li><strong>Pipeline Execution Risk:</strong> Merck has aggressively pursued acquisitions (like Prometheus) and partnerships (like Daiichi Sankyo) to bolster its pipeline. Clinical trial failures or regulatory setbacks for these assets would severely impact future growth.</li>
+        <li><strong>Pricing Pressures:</strong> Changes in healthcare policy, particularly the Inflation Reduction Act (IRA) in the US, could mandate price negotiations for successful drugs, squeezing margins and reducing future cash flows.</li>
+      </ul>
+    </section>
+
+    <section class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        <details class="faq-item">
+          <summary>Why is the free cash flow growth rate so low for Merck?</summary>
+          <div class="faq-content">
+            <p>Merck faces a massive patent cliff for its flagship oncology drug, Keytruda, in 2028. Keytruda currently accounts for roughly 40% of their total revenue. A 4% growth rate factors in the immense challenge of replacing this revenue through their pipeline and recent acquisitions.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>How does Keytruda's patent expiration impact the valuation?</summary>
+          <div class="faq-content">
+            <p>The patent expiration is the primary driver of risk in this model. It suppresses the terminal growth rate (2.0%) and elevates the required discount rate (7.5%) to account for the execution risk of successfully commercializing the pipeline to offset the impending revenue gap.</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>Is MRK undervalued according to this DCF?</summary>
+          <div class="faq-content">
+            <p>According to this independent analysis by Gemini 2.5 Pro, MRK's estimated intrinsic value is {formatMoney(intrinsicValuePerShare)} per share. Compared to the current price of {formatMoney(currentPrice)}, it appears {isUndervalued ? 'undervalued' : 'overvalued'} with a margin of safety of {formatPercent(Math.abs(marginOfSafety)/100)}.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <footer class="disclaimer">
+      <p><strong>Disclaimer:</strong> This intrinsic value analysis was completely compiled and generated by an AI model (Gemini 2.5 Pro). It is for educational and informational purposes only and should not be considered financial advice. The calculations rely heavily on future assumptions regarding growth rates and discount rates, which are inherently uncertain. Always conduct your own due diligence and consult with a licensed financial professional before making investment decisions.</p>
+    </footer>
+  </article>
+</SiteLayout>
+
+<style>
+  /* Base Reset & Variables for this specific component */
+  .valuation-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Inter', sans-serif;
+    color: #c8d0de;
+    background-color: #060a12;
+    line-height: 1.6;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-top: 2.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  .numeric {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Header */
+  .valuation-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .ai-badge {
+    display: inline-block;
+    background-color: #4a8fe7;
+    color: #ffffff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #94a3b8;
+  }
+
+  /* Verdict Section */
+  .verdict-section {
+    margin-bottom: 3rem;
+  }
+
+  .verdict-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .verdict-card h2 {
+    margin-top: 0;
+    border-bottom: none;
+    font-size: 1.5rem;
+  }
+
+  .verdict-card.undervalued {
+    border-color: #10b981;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+  }
+
+  .verdict-card.overvalued {
+    border-color: #ef4444;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+  }
+
+  .verdict-comparison {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .verdict-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .verdict-metric .label {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .verdict-metric .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .verdict-divider {
+    font-size: 1.25rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .verdict-conclusion {
+    font-size: 1.25rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1e293b;
+  }
+
+  .verdict-conclusion strong {
+    color: #ffffff;
+  }
+
+  .verdict-card.undervalued .verdict-conclusion strong {
+    color: #10b981;
+  }
+
+  .verdict-card.overvalued .verdict-conclusion strong {
+    color: #ef4444;
+  }
+
+  /* Assumptions Grid */
+  .assumptions-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .assumptions-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .assumption-card {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .assumption-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.5rem;
+  }
+
+  .assumption-header h3 {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+
+  .assumption-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #4a8fe7;
+  }
+
+  .assumption-card p {
+    font-size: 0.875rem;
+    margin: 0;
+    color: #94a3b8;
+  }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th {
+    background-color: #1e293b;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  td.numeric, th.numeric {
+    text-align: right;
+  }
+
+  tfoot td {
+    background-color: #0f172a;
+    border-top: 2px solid #334155;
+    border-bottom: none;
+  }
+
+  /* Valuation Table Specifics */
+  .valuation-table td:first-child {
+    width: 60%;
+  }
+
+  .valuation-table .highlight-row td {
+    background-color: #1e293b;
+    border-top: 1px solid #334155;
+    border-bottom: 1px solid #334155;
+  }
+
+  .valuation-table .final-row td {
+    background-color: #0f172a;
+    border-top: 2px solid #4a8fe7;
+    font-size: 1.25rem;
+  }
+
+  .valuation-table .final-row td.numeric {
+    color: #ffffff;
+  }
+
+  /* Sensitivity Table Specifics */
+  .sensitivity-table th {
+    background-color: #0f172a;
+    border-right: 1px solid #1e293b;
+  }
+
+  .sensitivity-table th:first-child {
+    background-color: #1e293b;
+    width: 120px;
+  }
+
+  .sensitivity-table td {
+    border-right: 1px solid #1e293b;
+  }
+
+  .cell-undervalued {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .cell-overvalued {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .matrix-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .legend-undervalued {
+    background-color: rgba(16, 185, 129, 0.2);
+    border: 1px solid #10b981;
+  }
+
+  .legend-overvalued {
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 1px solid #ef4444;
+  }
+
+  /* Calc Box */
+  .calc-box {
+    background-color: #0f172a;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .calc-box p {
+    margin-bottom: 0.5rem;
+  }
+
+  .calc-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Risk List */
+  .risk-list {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .risk-list li {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-left: 4px solid #ef4444;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .risk-list li strong {
+    color: #ffffff;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  /* FAQ */
+  .faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background-color: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .faq-item summary {
+    padding: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    background-color: #1e293b;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #4a8fe7;
+  }
+
+  .faq-item[open] summary::after {
+    content: '-';
+  }
+
+  .faq-content {
+    padding: 1.25rem;
+    border-top: 1px solid #1e293b;
+  }
+
+  .faq-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid #1e293b;
+    font-size: 0.875rem;
+    color: #64748b;
+    text-align: center;
+  }
+</style>

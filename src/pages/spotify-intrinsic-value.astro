@@ -1,0 +1,929 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+// --- METADATA ---
+export const meta = {
+  title: "Spotify Technology S.A. (SPOT) Intrinsic Value",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Spotify Technology S.A. (SPOT) compiled entirely by Gemini 2.5 Pro.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+// --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
+// The prompt requires me to make bold assumptions as Gemini.
+// FCF Growth (Y1-Y5): 20%. Spotify has reached an inflection point. With margin expansion from price hikes, audiobook penetration, and podcast profitability, cash flow will surge as the variable cost structure improves.
+// Discount Rate (WACC): 10.5%. Given the high beta (1.71) and competition from tech giants (Apple, Amazon), a 10.5% rate reflects a solid premium over the 4.18% risk-free rate while acknowledging their market leadership.
+// Terminal Growth: 3.0%. A conservative estimate slightly above GDP, assuming streaming becomes a mature, saturated global utility but retains pricing power.
+
+const baseFCF = 2872; // in Millions
+const sharesOut = 205.83; // in Millions
+const currentPrice = 515.54;
+const netCash = 7511; // Cash & ST investments (9467) - Total Debt (1956)
+
+const fcfGrowthRate = 0.20;
+const discountRate = 0.105;
+const terminalGrowthRate = 0.03;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.095, 0.100, 0.105, 0.110, 0.115];
+const sensitivityGrowthRates = [0.020, 0.025, 0.030, 0.035, 0.040];
+
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      // Re-calculate TV and PV with new rates
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      // Re-calculate PV of FCFs with new discount rate
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val) => (val * 100).toFixed(1) + '%';
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 2.5 Pro"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/spotify-intrinsic-value"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why did Gemini pick a 20% growth rate for Spotify?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Gemini projects that Spotify has reached an inflection point. With margin expansion from consistent price hikes, rising audiobook penetration, and podcast segment profitability, cash flow will surge rapidly as operating leverage kicks in."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What discount rate was used for Spotify's DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A 10.5% discount rate was selected. This reflects a 4.18% risk-free rate and Spotify's high beta (1.71), acknowledging the intense competition from massive tech giants like Apple and Amazon in the audio space."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Spotify undervalued according to Gemini?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `According to Gemini's DCF model using FY2025 actuals, Spotify is currently ${isUndervalued ? 'undervalued' : 'overvalued'}, with an intrinsic value estimate of ${formatMoney(intrinsicValuePerShare)} per share.`
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/spotify-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+
+      <div class="gemini-header">
+        <div class="gemini-badge">COMPILED BY GEMINI 2.5 PRO</div>
+        <h1>Spotify (SPOT) Intrinsic Value</h1>
+        <p class="subtitle">An independent two-stage DCF analysis by a frontier AI model.</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <h2>Fair Value Estimate</h2>
+        </div>
+        <div class="verdict-body">
+          <div class="verdict-main">
+            <span class="iv-value">{formatMoney(intrinsicValuePerShare)}</span>
+            <span class="iv-label">per share</span>
+          </div>
+          <div class="verdict-stats">
+            <div class="stat">
+              <span class="stat-label">Current Price</span>
+              <span class="stat-value">{formatMoney(currentPrice)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Margin of Safety</span>
+              <span class={`stat-value ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? '+' : ''}{marginOfSafety.toFixed(2)}%
+              </span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Verdict</span>
+              <span class={`badge ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="verdict-footer">
+          <p>Based on FY2025 actuals. Data via S&P Global (Mar 2026).</p>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>The AI Thesis: Why I See Massive Margin Expansion</h2>
+        <p>Spotify has spent the last decade building an insurmountable lead in audio distribution, effectively training the global population to stream music. But until recently, gross margins were structurally squeezed by music label royalty structures. The company appeared to be trapped in a low-margin, high-volume game. <strong>That narrative is fundamentally broken.</strong></p>
+        <p>We are witnessing an inflection point. Spotify has successfully implemented price hikes without meaningful churn, expanded its margin profile via audiobooks and podcast ad networks (which don't carry the same variable cost burden as music), and optimized its operating expenses. My valuation model relies on this operating leverage, projecting that incremental revenues will drop straight to the bottom line over the next five years, creating a massive cash flow surge.</p>
+      </section>
+
+      <section class="content-section">
+        <h2>My Assumptions & Rationale</h2>
+
+        <div class="assumption-grid">
+          <div class="assumption-card">
+            <div class="card-title">FCF Growth Rate (Y1-Y5)</div>
+            <div class="card-value">{formatPercent(fcfGrowthRate)}</div>
+            <p><strong>Rationale:</strong> A 20% growth rate acknowledges that Spotify's free cash flow ($2.87B in 2025) is entering a period of hyper-acceleration. This is driven by operating leverage: pricing power in premium subs, high-margin advertising growth, and a shrinking reliance on pure-play music streaming as podcasts and audiobooks scale. They have crossed the profitability threshold, and growth will compound fast.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Discount Rate (WACC)</div>
+            <div class="card-value">{formatPercent(discountRate)}</div>
+            <p><strong>Rationale:</strong> A 10.5% rate is required here. While Spotify dominates, it is fighting a multi-front war against Apple (Apple Music) and Amazon (Amazon Music)—competitors who treat audio as a loss leader to sell hardware or Prime subscriptions. The 10.5% reflects a 4.18% risk-free rate, a volatile 1.71 beta, and the execution risk inherent in a highly competitive sector.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Terminal Growth Rate</div>
+            <div class="card-value">{formatPercent(terminalGrowthRate)}</div>
+            <p><strong>Rationale:</strong> 3.0% is a safe, realistic estimate. Eventually, global subscriber penetration will hit a ceiling. However, Spotify will maintain GDP-level growth (or slightly higher) indefinitely by utilizing its pricing power as a global utility, gently raising subscription costs over time.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Discounted Cash Flow (DCF) Projections</h2>
+        <p>Starting with the FY2025 base FCF of {formatMillions(baseFCF)}, the table below outlines the 5-year projection discounted back to Present Value (PV) using the {formatPercent(discountRate)} WACC.</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Projected FCF</th>
+                <th>PV Factor ({formatPercent(discountRate)})</th>
+                <th>Present Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projections.map((p, index) => (
+                <tr>
+                  <td>{p.year}</td>
+                  <td>{formatMillions(p.fcf)}</td>
+                  <td>{(1 / Math.pow(1 + discountRate, index + 1)).toFixed(4)}</td>
+                  <td>{formatMillions(p.pv)}</td>
+                </tr>
+              ))}
+              <tr class="highlight-row">
+                <td colspan="3"><strong>Sum of PV of FCFs (Years 1-5)</strong></td>
+                <td><strong>{formatMillions(sumPvFcf)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Terminal & Final Valuation Math</h2>
+        <p>The Terminal Value accounts for all cash flows from Year 6 into perpetuity, calculated using the Gordon Growth Model.</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Year 5 FCF</span>
+            <span>{formatMillions(year5FCF)}</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value (TV) Calculation</span>
+            <span>({formatMillions(year5FCF)} * {1 + terminalGrowthRate}) / ({discountRate} - {terminalGrowthRate})</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value</span>
+            <span>{formatMillions(terminalValue)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span>PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+        </div>
+
+        <p style="margin-top: 2rem;">Adding it all together with Net Cash:</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Sum of PV of FCFs (Years 1-5)</span>
+            <span>{formatMillions(sumPvFcf)}</span>
+          </div>
+          <div class="math-row">
+            <span>+ PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+          <div class="math-row">
+            <span><strong>= Enterprise Value</strong></span>
+            <span><strong>{formatMillions(enterpriseValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>+ Net Cash (Cash - Debt)</span>
+            <span>{formatMillions(netCash)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span><strong>= Total Equity Value</strong></span>
+            <span><strong>{formatMillions(totalEquityValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>÷ Shares Outstanding</span>
+            <span>{sharesOut.toLocaleString()}M</span>
+          </div>
+          <div class="math-row result">
+            <span><strong>Intrinsic Value Per Share</strong></span>
+            <span><strong>{formatMoney(intrinsicValuePerShare)}</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Sensitivity Matrix</h2>
+        <p>A single intrinsic value relies on rigid assumptions. The sensitivity matrix below demonstrates how the intrinsic value changes when we adjust the Discount Rate (WACC) and the Terminal Growth Rate.</p>
+
+        <div class="table-container sensitivity-table">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="corner-cell">Terminal<br/>Growth</th>
+                <th colspan="5" class="header-cell">Discount Rate (WACC)</th>
+              </tr>
+              <tr>
+                {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sensitivityMatrix.map(row => (
+                <tr>
+                  <th class="row-header">{formatPercent(row.growthRate)}</th>
+                  {row.values.map(val => (
+                    <td class={
+                      val > currentPrice * 1.15 ? "cell-undervalued" :
+                      val < currentPrice * 0.85 ? "cell-overvalued" :
+                      "cell-neutral"
+                    }>
+                      {formatMoney(val)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="matrix-legend">
+            <span class="legend-item"><span class="color-box cell-undervalued"></span> Undervalued (>15% Margin)</span>
+            <span class="legend-item"><span class="color-box cell-neutral"></span> Fair Value</span>
+            <span class="legend-item"><span class="color-box cell-overvalued"></span> Overvalued (&lt;-15% Margin)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section risks-section">
+        <h2>Risks & Bear Case</h2>
+        <p>While my valuation is bullish on operating leverage, a balanced analysis requires identifying the key vectors that could disrupt these assumptions:</p>
+        <div class="risk-grid">
+          <div class="risk-card">
+            <h3>1. Big Tech Subsidy Wars</h3>
+            <p>Spotify's primary competitors (Apple Music, YouTube Music, Amazon Music) are backed by trillion-dollar balance sheets. These rivals do not need their audio segments to be wildly profitable; they use them to drive ecosystem lock-in. If a competitor radically slashes prices or offers extreme bundling, Spotify's pricing power could evaporate.</p>
+          </div>
+          <div class="risk-card">
+            <h3>2. AI Music Generation</h3>
+            <p>The rise of generative AI models capable of creating high-quality, royalty-free audio tracks (like Suno or Udio) poses a unique risk. If "AI Muzak" replaces traditional background or study playlists, Spotify could save on royalties, but it also risks commoditizing the audio experience and alienating the core music industry it relies on.</p>
+          </div>
+          <div class="risk-card">
+            <h3>3. Label Renegotiations</h3>
+            <p>Spotify's core business relies on licensing agreements with the "Big Three" record labels (Universal, Sony, Warner). While Spotify has diversified into podcasts and audiobooks to gain leverage, a severe breakdown or unfavorable renegotiation of these royalty rates could instantly compress margins and derail the 20% FCF growth thesis.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+          <h3>Why did Gemini pick a 20% growth rate for Spotify?</h3>
+          <p>Gemini projects that Spotify has reached an inflection point. With margin expansion from consistent price hikes, rising audiobook penetration, and podcast segment profitability, cash flow will surge rapidly as operating leverage kicks in.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What discount rate was used for Spotify's DCF?</h3>
+          <p>A 10.5% discount rate was selected. This reflects a 4.18% risk-free rate and Spotify's high beta (1.71), acknowledging the intense competition from massive tech giants like Apple and Amazon in the audio space.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Is Spotify undervalued according to Gemini?</h3>
+          <p>According to Gemini's DCF model using FY2025 actuals, Spotify is currently {isUndervalued ? 'undervalued' : 'overvalued'}, with an intrinsic value estimate of {formatMoney(intrinsicValuePerShare)} per share, highlighting a margin of safety of {marginOfSafety.toFixed(2)}%.</p>
+        </div>
+      </section>
+
+      <div class="disclaimer-box">
+        <p><strong>Disclaimer:</strong> The numbers presented on this page are for educational and entertainment purposes only. They are the result of a deterministic mathematical model fed with assumptions generated by an Artificial Intelligence (Gemini 2.5 Pro). This does not constitute investment advice. Always conduct your own due diligence before investing in the stock market.</p>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+<style>
+  /* Base styles explicitly hardcoded for the Westmount theme as requested */
+  .page-content {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 4rem;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .gemini-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1e3a8a, #4a8fe7);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .gemini-header h1 {
+    font-size: 2.5rem;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .gemini-header .subtitle {
+    font-size: 1.2rem;
+    color: #c8d0de;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+  }
+
+  .claude-link {
+    font-size: 0.9rem;
+    color: #8899b6;
+  }
+
+  .claude-link a {
+    color: #4a8fe7;
+    text-decoration: underline;
+  }
+
+  .verdict-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .verdict-header {
+    background-color: rgba(74, 143, 231, 0.1);
+    padding: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    text-align: center;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #4a8fe7;
+  }
+
+  .verdict-body {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .verdict-main {
+    margin-bottom: 2rem;
+  }
+
+  .iv-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #4a8fe7;
+    display: block;
+  }
+
+  .iv-label {
+    font-size: 1rem;
+    color: #8899b6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #8899b6;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .stat-value.positive, .badge.positive {
+    color: #22c55e;
+  }
+
+  .stat-value.negative, .badge.negative {
+    color: #ef4444;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .badge.positive {
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+
+  .badge.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .verdict-footer {
+    background-color: #0a1018;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.75rem;
+    color: #4a8fe7;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.5rem;
+  }
+
+  .content-section p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #c8d0de;
+    margin-bottom: 1.5rem;
+  }
+
+  .content-section strong {
+    color: #fff;
+  }
+
+  /* Assumption Grid */
+  .assumption-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .assumption-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .assumption-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a8fe7;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #8899b6;
+    margin: 0;
+  }
+
+  /* Table */
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0d1522;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th:first-child, td:first-child {
+    text-align: left;
+  }
+
+  th {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #c8d0de;
+  }
+
+  .highlight-row {
+    background-color: rgba(74, 143, 231, 0.1);
+  }
+
+  .highlight-row td {
+    color: #4a8fe7;
+    font-weight: 700;
+  }
+
+  /* Math Card */
+  .math-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #1e293b;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+  }
+
+  .math-row:last-child {
+    border-bottom: none;
+  }
+
+  .math-row.highlight {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 700;
+    padding: 0.75rem 0.5rem;
+    margin: 0 -0.5rem;
+    border-radius: 4px;
+  }
+
+  .math-row.result {
+    border-top: 2px solid #4a8fe7;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #4a8fe7;
+  }
+
+  /* Sensitivity Matrix */
+  .sensitivity-table table {
+    text-align: center;
+  }
+
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .sensitivity-table .header-cell {
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .corner-cell {
+    background-color: #060a12;
+    border-right: 2px solid #1e293b;
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .row-header {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-right: 2px solid #1e293b;
+  }
+
+  .cell-undervalued {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+  }
+
+  .cell-overvalued {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+
+  .cell-neutral {
+    background-color: #0d1522;
+    color: #c8d0de;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    background-color: #0a1018;
+    border-top: 1px solid #1e293b;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8899b6;
+  }
+
+  .color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  /* Bar Chart */
+  .bar-chart-container {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 2rem 1rem 1rem;
+    margin: 2rem 0;
+    height: 300px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .bar-chart {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 100%;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  .bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 15%;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    width: 100%;
+    background-color: #1e293b;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+
+  .bar.highlight {
+    background-color: #4a8fe7;
+  }
+
+  .bar-label {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .bar.highlight .bar-label {
+    color: #4a8fe7;
+    font-weight: 700;
+  }
+
+  .bar-year {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  /* Risks Grid */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .risk-card {
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .risk-card h3 {
+    margin-top: 0;
+    color: #f87171;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .risk-card p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #c8d0de;
+  }
+
+  /* FAQ */
+  .faq-item {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #4a8fe7;
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Disclaimer */
+  .disclaimer-box {
+    background-color: #0a1018;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .disclaimer-box strong {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 2.5rem;
+    }
+    .gemini-header h1 {
+      font-size: 2rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: right;
+    }
+    .matrix-legend {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>
