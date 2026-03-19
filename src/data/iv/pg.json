@@ -15,19 +15,54 @@
     "fcfGrowth": {
       "title": "FCF Growth Rate (Y1-Y5)",
       "rate": 0.068,
-      "rationale": ""
+      "rationale": "With the 10-Year Treasury at 4.18% (March 2026) and PG's notoriously low beta (~0.4), the required return on equity is lower than the broader market. Their fortress balance sheet means the cost of debt is minimal. I am assigning a WACC of 6.8%. This reflects extreme confidence in the predictability and safety of their future cash streams."
     },
     "discountRate": {
       "title": "Discount Rate (WACC)",
       "rate": 0.055,
-      "rationale": ""
+      "rationale": "PG is a mature consumer staple behemoth. While volume growth might be flat to low single digits, their unmatched pricing power allows them to pass on inflation. Combined with continuous productivity improvements (margin expansion), I am aggressively forecasting a 5.5% annualized FCF growth rate. It requires flawless execution but is achievable given their dominant brand portfolio."
     },
     "terminalGrowth": {
       "title": "Terminal Growth Rate",
       "rate": 0.025,
-      "rationale": ""
+      "rationale": "Beyond Year 5, no company can outpace global GDP forever. I am setting the terminal growth rate at 2.5%, matching long-term global inflation targets. This assumes PG will simply maintain its market share and grow prices alongside the world's population and general inflation."
     }
   },
   "verdictFooter": "Based on FY2025 actuals. Data via S&P Global (Mar 18, 2026).",
-  "published": "2026-03-18"
+  "published": "2026-03-18",
+  "risks": {
+    "introText": "",
+    "items": [
+      {
+        "title": "Consumer Trade-Down",
+        "description": "In a prolonged inflationary or recessionary environment, consumers may abandon premium brands like Tide or Pampers for generic, store-brand alternatives, breaking my 5.5% growth assumption."
+      },
+      {
+        "title": "Input Cost Inflation",
+        "description": "Surges in commodity prices (plastics, pulp, transportation) that outpace their ability to raise retail prices will compress margins and drastically reduce Free Cash Flow."
+      },
+      {
+        "title": "Interest Rate Shocks",
+        "description": "As a \"bond proxy\" stock, PG's valuation is highly sensitive to the risk-free rate. A sudden spike in the 10-Year Treasury would force my 6.8% WACC higher, crushing the intrinsic value."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "question": "Why did Gemini use a 6.8% WACC for PG?",
+      "answer": "A Weighted Average Cost of Capital (WACC) of 6.8% is very low compared to most tech or growth stocks. I used it because Procter & Gamble's revenue streams are incredibly predictable, their beta is around 0.40 (meaning it is 60% less volatile than the market), and they possess an AA- credit rating. The required return for taking on this equity risk is minimal compared to the broader market."
+    },
+    {
+      "question": "What if PG's free cash flow growth is flat (0%)?",
+      "answer": "If PG's free cash flow growth drops to 0% for the next five years, assuming all other variables (6.8% WACC, 2.5% terminal rate) remain constant, the intrinsic value per share would drop significantly. You can see the trajectory in the sensitivity matrix by shifting to higher WACC and lower terminal assumptions, which mimic a stagnant growth environment."
+    },
+    {
+      "question": "Is PG a buy based on this intrinsic value?",
+      "answer": "My DCF model is purely mathematical based on the inputs provided. Whether it is a \"buy\" depends entirely on your personal required margin of safety. Value investors typically seek a 20-30% discount to intrinsic value to protect against unforeseen errors in cash flow projections."
+    },
+    {
+      "question": "Why subtract Total Debt to find Equity Value?",
+      "answer": "The Discounted Cash Flow calculates Enterprise Value\u2014the value of the entire core business. To find what the <em data-astro-cid-yjt47p7y>equity</em> (the shares) is worth, you must add the cash sitting in the bank and subtract all the debt the company owes, because bondholders have first claim on the assets before shareholders."
+    }
+  ]
 }

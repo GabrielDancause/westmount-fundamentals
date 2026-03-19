@@ -15,14 +15,45 @@
     "discountRate": {
       "title": "Discount Rate (WACC)",
       "rate": 0.0956,
-      "rationale": ""
+      "rationale": "For financial institutions, we discount equity cash flows by the Cost of Equity, calculated via the Capital Asset Pricing Model (CAPM). Using a 10-Year Treasury risk-free rate of 4.18%, a beta of 1.12, and an equity risk premium of 4.8%."
     },
     "terminalGrowth": {
       "title": "Terminal Growth Rate",
       "rate": 0.025,
-      "rationale": ""
+      "rationale": "In the terminal phase (Year 6 onwards), we assume the bank grows perpetually at 2.5%, roughly matching long-term target inflation and nominal GDP growth in the United States."
     }
   },
   "verdictFooter": "Based on FY2025 actuals. Data via S&P Global (Mar 18, 2026).",
-  "published": "2026-03-18"
+  "published": "2026-03-18",
+  "risks": {
+    "introText": "",
+    "items": [
+      {
+        "title": "Net Interest Margin Compression",
+        "description": "A rapidly declining rate environment could squeeze net interest income, which has heavily bolstered JPM's profits in recent years."
+      },
+      {
+        "title": "Regulatory Capital Rules (Basel III Endgame)",
+        "description": "Stricter capital requirements force banks to hold more capital against assets. This directly reduces the percentage of Net Income that can be classified as FCFE and returned to shareholders."
+      },
+      {
+        "title": "Macroeconomic Deterioration",
+        "description": "An unexpected recession would lead to a spike in provision for credit losses (PCL) and consumer defaults, severely impacting the base year Net Income used for projections."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "question": "Why is JPMorgan's standard Free Cash Flow negative?",
+      "answer": "Banks take in deposits and lend them out. In cash flow statements, an increase in loans (an asset) is counted as a cash outflow. If a bank is growing its loan book aggressively, its operating cash flow often turns deeply negative. This is a sign of business growth, not financial distress, which is why standard FCF is inappropriate for bank valuation."
+    },
+    {
+      "question": "What is Free Cash Flow to Equity (FCFE)?",
+      "answer": "FCFE measures the cash left over after taxes, capital expenditures, and debt repayments, minus the capital needed to maintain required regulatory ratios. It represents the maximum theoretical amount a bank could pay out in dividends and share buybacks without harming its operational stability."
+    },
+    {
+      "question": "Why use Cost of Equity instead of WACC?",
+      "answer": "For non-financial companies, we discount Unlevered FCF using the Weighted Average Cost of Capital (WACC). However, for a bank, debt is not just capital; it is raw material (deposits). Because we are projecting cash flows specifically available to equity holders (FCFE), we must discount them using only the Cost of Equity."
+    }
+  ]
 }

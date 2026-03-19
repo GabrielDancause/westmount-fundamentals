@@ -14,19 +14,54 @@
     "fcfGrowth": {
       "title": "FCF Growth Rate (Y1-Y5)",
       "rate": 0.03,
-      "rationale": ""
+      "rationale": "A conservative 3.0% growth rate reflecting long-term nominal GDP growth and WFC's stabilized position post-asset cap controversies. Banks generally grow alongside the broader economy."
     },
     "discountRate": {
       "title": "Discount Rate (WACC)",
       "rate": 0.095,
-      "rationale": ""
+      "rationale": "Set at 9.5%. Utilizing CAPM with a 10-Year Treasury yield of 4.18%, a beta of ~1.1, and an equity risk premium of 5.0%, adjusting slightly upwards to account for persistent regulatory overhang."
     },
     "terminalGrowth": {
       "title": "Terminal Growth Rate",
       "rate": 0.025,
-      "rationale": ""
+      "rationale": "Set at 2.5%. A bank cannot outgrow the global economy in perpetuity. This aligns with long-run inflation expectations and sustainable nominal GDP expansion."
     }
   },
   "verdictFooter": "Based on FY2025 actuals. Data via S&P Global (Mar 18, 2026).",
-  "published": "2026-03-18"
+  "published": "2026-03-18",
+  "risks": {
+    "introText": "",
+    "items": [
+      {
+        "title": "Regulatory Asset Cap",
+        "description": "WFC has operated under an unprecedented Federal Reserve asset cap since 2018. If this cap remains in place longer than the market anticipates, the 3.0% short-term growth assumption will be highly optimistic."
+      },
+      {
+        "title": "Net Interest Margin (NIM) Compression",
+        "description": "As interest rates potentially fall, WFC's net interest income could contract, suppressing normalized cash flow below the historic $7.98B average."
+      },
+      {
+        "title": "Commercial Real Estate (CRE) Exposure",
+        "description": "WFC holds a substantial portfolio of commercial real estate loans, particularly office properties, which remain vulnerable to elevated default rates."
+      },
+      {
+        "title": "Cyclical Downturns",
+        "description": "A severe macroeconomic recession would drive up credit loss provisions, collapsing free cash flow and invalidating the steady growth trajectory modeled here."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "question": "Why is Wells Fargo's Free Cash Flow negative in some years?",
+      "answer": "For banks, Free Cash Flow is heavily influenced by changes in operational assets and liabilities\u2014specifically loan originations and deposits. When a bank aggressively originates new loans, cash outflows spike, resulting in negative FCF for that period, even if the bank reports strong net income. This is why a normalized, multi-year average is preferred for bank DCF models."
+    },
+    {
+      "question": "How does the asset cap affect the DCF model?",
+      "answer": "The Federal Reserve's asset cap prevents Wells Fargo from growing its balance sheet. In a DCF, this primarily suppresses the short-term Free Cash Flow growth rate. The conservative 3.0% growth rate modeled here assumes limited, highly-optimized loan growth and a primary focus on cost-cutting and efficiency rather than aggressive balance sheet expansion."
+    },
+    {
+      "question": "Why use CAPM for a bank's Cost of Equity?",
+      "answer": "The Capital Asset Pricing Model (CAPM) incorporates the risk-free rate (10-Year Treasury) and the equity risk premium, adjusted by the stock's volatility relative to the market (Beta). Given banks' exposure to systemic risk, interest rate risk, and regulatory risk, an elevated cost of equity (like 9.5%) is necessary to adequately discount future, uncertain cash flows."
+    }
+  ]
 }

@@ -14,19 +14,54 @@
     "fcfGrowth": {
       "title": "FCF Growth Rate (Y1-Y5)",
       "rate": 0.105,
-      "rationale": ""
+      "rationale": "Using the CAPM model against a 4.18% 10-Year US Treasury yield. TSMC operates in geopolitically sensitive territory, warranting a higher equity risk premium, resulting in a 10.5% required rate of return."
     },
     "discountRate": {
       "title": "Discount Rate (WACC)",
       "rate": 0.105,
-      "rationale": ""
+      "rationale": "Using the CAPM model against a 4.18% 10-Year US Treasury yield. TSMC operates in geopolitically sensitive territory, warranting a higher equity risk premium, resulting in a 10.5% required rate of return."
     },
     "terminalGrowth": {
       "title": "Terminal Growth Rate",
       "rate": 0.035,
-      "rationale": ""
+      "rationale": "A 3.5% terminal growth rate reflects TSMC's permanent, undeniable economic moat. Silicon fabrication is fundamental to modern civilization, ensuring long-term growth slightly outpacing global GDP."
     }
   },
   "verdictFooter": "Based on FY2025 actuals. Data via S&P Global (Mar 18, 2026).",
-  "published": "2026-03-18"
+  "published": "2026-03-18",
+  "risks": {
+    "introText": "",
+    "items": [
+      {
+        "title": "Geopolitical Tension",
+        "description": "The dominant risk remains China-Taiwan relations. Any kinetic action or blockade would catastrophic for TSM operations."
+      },
+      {
+        "title": "Capital Intensity",
+        "description": "Pushing physical limits of silicon fabrication (2nm and below) requires exponentially higher capital expenditures, potentially suppressing future FCF conversion."
+      },
+      {
+        "title": "Customer Concentration",
+        "description": "A massive portion of high-margin revenue relies on a handful of mega-cap tech companies (Apple, NVIDIA, AMD)."
+      },
+      {
+        "title": "Intel Foundry Services",
+        "description": "Subsidized domestic competition in the US via the CHIPS act could eventually challenge TSMC's absolute dominance."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "question": "Why is a 10.5% discount rate used for TSMC?",
+      "answer": "While TSMC has pristine financials, its primary manufacturing base is located in Taiwan. This introduces localized geopolitical risks that must be priced into the equity risk premium, elevating the Weighted Average Cost of Capital (WACC) compared to a US-domiciled mega-cap tech company."
+    },
+    {
+      "question": "Are these calculations based on ADRs or Common Shares?",
+      "answer": "This DCF uses the US-listed ADR (NYSE: TSM). One TSM ADR represents five underlying common shares listed on the Taiwan Stock Exchange. The share counts, pricing, and Free Cash Flow figures have been translated to USD metrics mapping to the ADR."
+    },
+    {
+      "question": "What happens to TSM if AI growth slows down?",
+      "answer": "If AI capital expenditures by hyperscalers cool down, the 20% growth rate assumption would be overly aggressive. This scenario is mapped in the Sensitivity Matrix\u2014if growth drops to 16%, the intrinsic value would fall below the current market price."
+    }
+  ]
 }

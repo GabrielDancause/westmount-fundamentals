@@ -14,14 +14,49 @@
     "discountRate": {
       "title": "Discount Rate (WACC)",
       "rate": 0.11,
-      "rationale": ""
+      "rationale": "A two-stage Discounted Cash Flow (DCF) model to determine the fair value of GS stock based on future cash flow projections."
     },
     "terminalGrowth": {
       "title": "Terminal Growth Rate",
       "rate": 0.025,
-      "rationale": ""
+      "rationale": "The perpetual growth rate applied after Year 5. Set slightly above long-term inflation targets, representing sustainable economic expansion for a global banking leader."
     }
   },
   "verdictFooter": "Based on FY2025 actuals. Data via S&P Global (Mar 18, 2026).",
-  "published": "2026-03-18"
+  "published": "2026-03-18",
+  "risks": {
+    "introText": "",
+    "items": [
+      {
+        "title": "Interest Rate Sensitivity",
+        "description": "Goldman Sachs' trading revenues and investment banking deal flows are highly sensitive to Federal Reserve interest rate policies and overall liquidity in the financial system."
+      },
+      {
+        "title": "Macroeconomic Downturns",
+        "description": "A recession could significantly impact capital markets, reducing M&A activity and IPO underwriting fees, which are core profit drivers for GS."
+      },
+      {
+        "title": "Regulatory Capital Requirements",
+        "description": "Changes in Basel III endgame rules or other regulatory frameworks could force GS to hold more capital, reducing the net income available to common shareholders and lowering the effective FCFE."
+      },
+      {
+        "title": "Market Volatility",
+        "description": "While volatility can boost trading revenues in the short term, prolonged market distress can lead to significant mark-to-market losses on principal investments."
+      }
+    ]
+  },
+  "faq": [
+    {
+      "question": "Why use Net Income instead of Free Cash Flow for Goldman Sachs?",
+      "answer": "For banks and financial institutions like Goldman Sachs, traditional Free Cash Flow is heavily distorted by changes in working capital (such as customer deposits, loan originations, and trading assets). Because banks operate with money as their primary inventory, operating cash flow is not a reliable metric for valuation. Instead, we use Normalized Net Income, which serves as a proxy for Free Cash Flow to Equity (FCFE), measuring the cash available to shareholders after all obligations and reinvestment needs are met."
+    },
+    {
+      "question": "What growth rate is used for Goldman Sachs in this DCF?",
+      "answer": "This model assumes a 6.5% annual growth rate for the first 5 years. While GS has strong wealth management and trading divisions, financial services are cyclical and sensitive to interest rates and macroeconomic conditions. A 6.5% rate balances their strong market position with the inherent volatility of deal flows and trading revenues."
+    },
+    {
+      "question": "What is the discount rate used for this valuation?",
+      "answer": "The model uses an 11.0% discount rate (Cost of Equity). Given the March 2026 10-Year US Treasury Rate of 4.18%, a beta of approximately 1.3 for Goldman Sachs, and an equity risk premium of 5.5%, the Capital Asset Pricing Model (CAPM) suggests a required return of around 11.3%. We have adopted 11.0% as a reasonable cost of equity to discount future cash flows."
+    }
+  ]
 }
