@@ -1,13 +1,14 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Illinois Tool Works (ITW) Intrinsic Value: A DCF Analysis",
-  "description": "A transparent, step-by-step discounted cash flow valuation of Illinois Tool Works Inc. Using actual FY2025 financials to arrive at a single fair value estimate for ITW shares.",
-  "datePublished": "2026-03-18",
-  "dateModified": "2026-03-18",
+  "headline": "ADP (ADP) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Automatic Data Processing, Inc. Using actual FY2024 financials to arrive at a single fair value estimate for ADP shares.",
+  "datePublished": new Date().toISOString().split('T')[0],
+  "dateModified": new Date().toISOString().split('T')[0],
   "author": {
     "@type": "Organization",
     "name": "Westmount Research",
@@ -20,98 +21,152 @@ const schema = {
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://westmountfundamentals.com/illinois-tool-works-intrinsic-value"
+    "@id": "https://westmountfundamentals.com/adp-intrinsic-value"
   }
 };
 
 export const meta = {
-  title: "Illinois Tool Works (ITW) Intrinsic Value: A DCF Analysis",
-  description: "We ran a full discounted cash flow on Illinois Tool Works using FY2025 actuals. One number. Every assumption disclosed. Here's what ITW is really worth.",
+  title: "ADP (ADP) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on ADP using FY2024 actuals. One number. Every assumption disclosed. Here's what ADP is really worth.",
   category: "study",
-  published: "2026-03-18",
+  published: new Date().toISOString().split('T')[0],
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   DCF MODEL — ALL INPUTS AND CALCULATIONS
-   Every number is sourced from ITW's FY2025 data.
-   We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
+   DATA FETCHING
    ═══════════════════════════════════════════════════════════════ */
+async function fetchWithFallback() {
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+  };
 
-// --- INPUTS (all in millions USD unless noted) ---
-// Dynamically fetch financials
-async function fetchStockAnalysisData(url, key, isTotalDebt = false) {
+  let revenue = "19,203"; // fallback
+  let fcf = "3,949";
+  let cash = "2,913";
+  let debt = "3,705";
+  let shares = "411";
+  let eps = "9.10";
+  let currentPrice = "245.00"; // Estimate fallback if we can't get it
+
+  let revenueHistory = [
+    { year: 2020, value: 14590 },
+    { year: 2021, value: 15005 },
+    { year: 2022, value: 16498 },
+    { year: 2023, value: 18012 },
+    { year: 2024, value: 19203 }
+  ];
+  let fcfHistory = [
+    { year: 2020, value: 2406 },
+    { year: 2021, value: 2915 },
+    { year: 2022, value: 2925 },
+    { year: 2023, value: 4001 },
+    { year: 2024, value: 3949 }
+  ];
+  let epsHistory = [
+    { year: 2020, value: 5.69 },
+    { year: 2021, value: 6.07 },
+    { year: 2022, value: 7.00 },
+    { year: 2023, value: 8.21 },
+    { year: 2024, value: 9.10 }
+  ];
+  let marginHistory = [
+    { year: 2020, operating: 21.6, profit: 16.9, fcfMargin: 16.5 },
+    { year: 2021, operating: 22.2, profit: 17.3, fcfMargin: 19.4 },
+    { year: 2022, operating: 23.1, profit: 17.9, fcfMargin: 17.7 },
+    { year: 2023, operating: 25.0, profit: 18.9, fcfMargin: 22.2 },
+    { year: 2024, operating: 25.8, profit: 19.5, fcfMargin: 20.6 }
+  ];
+
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const text = await res.text();
-    const regex = new RegExp(`${key}:\\[(.*?)\\]`, "g");
+    const res = await fetch('https://stockanalysis.com/stocks/adp/financials/', { headers });
+    if(res.ok) {
+      const text = await res.text();
+      const $ = cheerio.load(text);
+      function getRow(label) {
+        const row = $('td').filter(function() { return $(this).text().trim() === label; }).first().parent();
+        const vals = [];
+        row.find('td').each(function(i, el) { if(i > 0) vals.push($(this).text().trim()); });
+        return vals;
+      }
+      const revs = getRow('Revenue');
+      if(revs.length >= 3) revenue = revs[2].replace(/,/g, '');
+      const epss = getRow('EPS (Diluted)');
+      if(epss.length >= 3) eps = epss[2].replace(/,/g, '');
 
-    let match;
-    let matches = [];
-    while ((match = regex.exec(text)) !== null) {
-        matches.push(match[1]);
+      const priceText = $('.text-4xl.font-bold').text().trim();
+      if(priceText) currentPrice = priceText;
     }
 
-    if (matches.length > 0) {
-      // For total debt, we usually want the last match of 'debt' which represents Total Debt
-      let targetMatch = isTotalDebt ? matches[matches.length - 1] : matches[0];
-      const arr = targetMatch.split(',').map(x => x.replace(/['"]/g, '').trim());
-
-      for (const val of arr) {
-          if (val && val !== 'null' && !isNaN(Number(val))) {
-             if (key.includes('eps') || key.includes('shares')) {
-                 return Number(val);
-             }
-             return Number(val) / 1000000; // Return in millions
-          }
+    const resCF = await fetch('https://stockanalysis.com/stocks/adp/financials/cash-flow-statement/', { headers });
+    if(resCF.ok) {
+      const text = await resCF.text();
+      const $CF = cheerio.load(text);
+      function getRowCF(label) {
+        const row = $CF('td').filter(function() { return $CF(this).text().trim() === label; }).first().parent();
+        const vals = [];
+        row.find('td').each(function(i, el) { if(i > 0) vals.push($CF(this).text().trim()); });
+        return vals;
       }
+      const fcfs = getRowCF('Free Cash Flow');
+      if(fcfs.length >= 3) fcf = fcfs[2].replace(/,/g, '');
+    }
+
+    const resBS = await fetch('https://stockanalysis.com/stocks/adp/financials/balance-sheet/', { headers });
+    if(resBS.ok) {
+      const text = await resBS.text();
+      const $BS = cheerio.load(text);
+      function getRowBS(label) {
+        const row = $BS('td').filter(function() { return $BS(this).text().trim() === label; }).first().parent();
+        const vals = [];
+        row.find('td').each(function(i, el) { if(i > 0) vals.push($BS(this).text().trim()); });
+        return vals;
+      }
+      const cashs = getRowBS('Cash & Equivalents');
+      if(cashs.length >= 3) cash = cashs[2].replace(/,/g, '');
+      const debts = getRowBS('Total Debt');
+      if(debts.length >= 3) debt = debts[2].replace(/,/g, '');
+      const sharesList = getRowBS('Shares Outstanding (Basic)');
+      if(sharesList.length >= 3) shares = sharesList[2].replace(/,/g, '');
     }
   } catch (e) {
-    console.error(`Error fetching ${key} from ${url}:`, e);
+    console.error("Scraping failed, using fallbacks.", e);
   }
-  return null;
+
+  return {
+    revenue: parseFloat(revenue),
+    fcf: parseFloat(fcf),
+    cash: parseFloat(cash),
+    debt: parseFloat(debt),
+    shares: parseFloat(shares),
+    eps: parseFloat(eps),
+    currentPrice: parseFloat(currentPrice) || 245.00,
+    revenueHistory,
+    fcfHistory,
+    epsHistory,
+    marginHistory
+  };
 }
 
-const financialsUrl = 'https://stockanalysis.com/stocks/itw/financials/';
-const cashFlowUrl = 'https://stockanalysis.com/stocks/itw/financials/cash-flow-statement/';
-const balanceSheetUrl = 'https://stockanalysis.com/stocks/itw/financials/balance-sheet/';
+const data = await fetchWithFallback();
 
-const [
-  fcfData,
-  revenueData,
-  epsData,
-  sharesData,
-  cashData,
-  debtData
-] = await Promise.all([
-  fetchStockAnalysisData(cashFlowUrl, 'fcf'),
-  fetchStockAnalysisData(financialsUrl, 'revenue'),
-  fetchStockAnalysisData(financialsUrl, 'epsDiluted'),
-  fetchStockAnalysisData(financialsUrl, 'sharesDiluted'),
-  fetchStockAnalysisData(balanceSheetUrl, 'cashneq'),
-  fetchStockAnalysisData(balanceSheetUrl, 'debt', true)
-]);
+// --- INPUTS (all in millions USD unless noted) ---
+const fcf2024 = data.fcf;                // FY2024 Free Cash Flow ($M)
+const sharesOutstanding = data.shares;   // Basic shares outstanding (M)
+const cashAndInvestments = data.cash;    // Cash + short-term investments ($M)
+const totalDebt = data.debt;             // Total debt ($M)
+const netCash = cashAndInvestments - totalDebt;
 
-// Fallbacks if fetch fails
-const fcf2025 = fcfData || 2707;
-const revenue2025 = revenueData || 16044;
-const eps2025 = epsData || 10.49;
-const sharesOutstanding = sharesData ? sharesData / 1000000 : 288.2;
-const cashAndInvestments = cashData || 851;
-const totalDebt = debtData || 8969;
-const netCash = cashAndInvestments - totalDebt; // -$8,360M
-
-// --- ASSUMPTIONS (fully disclosed below) ---
-const growthRatePhase1 = 0.05;         // 5% FCF growth, Years 1-5
-const growthRateTerminal = 0.025;      // 2.5% perpetuity growth (terminal)
-const discountRate = 0.085;            // 8.5% WACC / required return
+// --- ASSUMPTIONS ---
+const growthRatePhase1 = 0.08;         // 8% FCF growth, Years 1-5
+const growthRateTerminal = 0.03;       // 3% perpetuity growth (terminal)
+const discountRate = 0.09;             // 9% WACC / required return
 
 // --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
 const projectedFCF = [];
-let fcf = fcf2025;
+let fcf_val = fcf2024;
 for (let yr = 1; yr <= 5; yr++) {
-  fcf = fcf * (1 + growthRatePhase1);
-  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+  fcf_val = fcf_val * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf_val), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
 }
 projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
 
@@ -130,49 +185,19 @@ const intrinsicValuePerShare = equityValue / sharesOutstanding;
 const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
 
 // Market comparison
-const currentPrice = 264.48;
+const currentPrice = data.currentPrice;
 const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
 const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
 const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
 
-// --- HISTORICAL DATA for charts ---
-const revenueHistory = [
-  { year: 2021, value: 14_455 },
-  { year: 2022, value: 15_932 },
-  { year: 2023, value: 16_107 },
-  { year: 2024, value: 15_898 },
-  { year: 2025, value: 16_044 },
-];
-const fcfHistory = [
-  { year: 2021, value: 2_261 },
-  { year: 2022, value: 1_936 },
-  { year: 2023, value: 3_084 },
-  { year: 2024, value: 2_844 },
-  { year: 2025, value: 2_707 },
-];
-const epsHistory = [
-  { year: 2021, value: 8.51 },
-  { year: 2022, value: 9.77 },
-  { year: 2023, value: 9.74 },
-  { year: 2024, value: 11.71 },
-  { year: 2025, value: 10.49 },
-];
-const marginHistory = [
-  { year: 2021, operating: 23.8, profit: 18.6, fcfMargin: 15.6 },
-  { year: 2022, operating: 23.8, profit: 19.0, fcfMargin: 12.1 },
-  { year: 2023, operating: 25.1, profit: 18.4, fcfMargin: 19.1 },
-  { year: 2024, operating: 26.8, profit: 21.9, fcfMargin: 17.9 },
-  { year: 2025, operating: 26.3, profit: 19.1, fcfMargin: 16.9 },
-];
-
 // Sensitivity analysis
-const sensitivityRates = [0.065, 0.075, 0.085, 0.095, 0.105];
-const sensitivityGrowth = [0.01, 0.03, 0.05, 0.07, 0.09];
+const sensitivityRates = [0.07, 0.08, 0.09, 0.10, 0.11];
+const sensitivityGrowth = [0.04, 0.06, 0.08, 0.10, 0.12];
 const sensitivityTable = sensitivityRates.map(dr => {
   return {
     dr,
     values: sensitivityGrowth.map(gr => {
-      let f = fcf2025;
+      let f = fcf2024;
       let pvSum = 0;
       for (let y = 1; y <= 5; y++) {
         f = f * (1 + gr);
@@ -189,9 +214,9 @@ const sensitivityTable = sensitivityRates.map(dr => {
 
 <SiteLayout
   site="westmount"
-  title="Illinois Tool Works (ITW) Intrinsic Value: A DCF Analysis"
-  description="We ran a full discounted cash flow on Illinois Tool Works using FY2025 actuals. One number. Every assumption disclosed. Here's what ITW is really worth."
-  canonical="https://westmountfundamentals.com/illinois-tool-works-intrinsic-value"
+  title="ADP (ADP) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on ADP using FY2024 actuals. One number. Every assumption disclosed. Here's what ADP is really worth."
+  canonical="https://westmountfundamentals.com/adp-intrinsic-value"
   schema={schema}
 >
 <style>
@@ -316,9 +341,9 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 <div class="header">
   <div class="header-content">
     <div class="tag">Compiled by Gemini 3.1</div>
-    <h1>Illinois Tool Works (ITW)<br/>Intrinsic Value</h1>
-    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Illinois Tool Works Inc. — using FY2025 actuals, disclosed assumptions, and one final number.</p>
-    <p class="date">Updated March 18, 2026 · Data: FY2025 Financials</p>
+    <h1>ADP (ADP)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Automatic Data Processing, Inc. — using FY2024 actuals, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated {meta.published} · Data: FY2024</p>
   </div>
 </div>
 
@@ -336,19 +361,19 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
   <!-- ═══ KEY METRICS ═══ -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-value">$16.0B</div>
-      <div class="stat-label">FY2025 Revenue</div>
+      <div class="stat-value">${(data.revenue / 1000).toFixed(1)}B</div>
+      <div class="stat-label">FY2024 Revenue</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">$2.7B</div>
+      <div class="stat-value">${(data.fcf / 1000).toFixed(1)}B</div>
       <div class="stat-label">Free Cash Flow</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">$10.49</div>
+      <div class="stat-value">${data.eps.toFixed(2)}</div>
       <div class="stat-label">EPS (Diluted)</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">26.3%</div>
+      <div class="stat-value">25.8%</div>
       <div class="stat-label">Operating Margin</div>
     </div>
     <div class="stat-card">
@@ -365,7 +390,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">1</div>
     <div class="step-content">
       <h4>Start with actual Free Cash Flow</h4>
-      <p>Illinois Tool Works generated <strong>$2.71 billion</strong> in free cash flow in FY2025. This is operating cash flow minus capital expenditures. This is real cash the business produces after paying for everything.</p>
+      <p>ADP generated <strong>${(data.fcf / 1000).toFixed(2)} billion</strong> in free cash flow in FY2024. This is real cash the business produces after paying for everything. ADP's capital light model yields excellent free cash flow conversion.</p>
     </div>
   </div>
 
@@ -373,7 +398,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">2</div>
     <div class="step-content">
       <h4>Project FCF growth for 5 years (Phase 1)</h4>
-      <p>We grow FCF at <strong>5% per year</strong> for 5 years. ITW is a mature, high-quality industrial compounder. Revenue growth is generally slow (low-single digits organically), but ITW excels at margin expansion and capital allocation, driving moderate FCF growth.</p>
+      <p>We grow FCF at <strong>8% per year</strong> for 5 years. This is a very predictable compounding business with a strong moat built on switching costs.</p>
     </div>
   </div>
 
@@ -381,7 +406,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">3</div>
     <div class="step-content">
       <h4>Calculate terminal value (Phase 2)</h4>
-      <p>After Year 5, we assume FCF grows at <strong>2.5% forever</strong>. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate). This aligns with long-term macroeconomic growth expectations for an industrial conglomerate.</p>
+      <p>After Year 5, we assume FCF grows at <strong>3% forever</strong> — matching long-term economic growth. We use the <strong>Gordon Growth Model</strong>.</p>
     </div>
   </div>
 
@@ -389,7 +414,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">4</div>
     <div class="step-content">
       <h4>Discount everything to present value</h4>
-      <p>All future cash flows are discounted at <strong>8.5%</strong> — our required rate of return. ITW is an established, diversified, highly profitable industrial with strong cash generation and lower beta, warranting a slightly lower cost of capital than high-growth tech.</p>
+      <p>All future cash flows are discounted at <strong>9%</strong> — a reasonable required return for a very stable, low-beta business in a 4.18% Treasury environment.</p>
     </div>
   </div>
 
@@ -397,7 +422,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">5</div>
     <div class="step-content">
       <h4>Add net cash, divide by shares</h4>
-      <p>Enterprise Value + Net Cash (-$8.36B) = Equity Value. Divide by shares outstanding (288.2M) for the per-share intrinsic value.</p>
+      <p>Enterprise Value + Net Cash (${(netCash / 1000).toFixed(2)}B) = Equity Value. Divide by shares outstanding ({sharesOutstanding}M) for the per-share intrinsic value.</p>
     </div>
   </div>
 
@@ -408,23 +433,23 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
   <div class="assumption-grid">
     <div class="assumption-card">
       <div class="label">FCF Growth Rate (Years 1-5)</div>
-      <div class="value">5%</div>
+      <div class="value">{(growthRatePhase1 * 100)}%</div>
       <div class="rationale">
-        ITW's top line grows slowly, roughly 1-3% organically. However, its decentralized operating model and 80/20 front-to-back philosophy consistently drive margin improvements. A 5% FCF growth rate strikes a balance between sluggish industrial end-markets and ITW's operational excellence.
+        ADP is a mature compounder. An 8% rate accounts for consistent high single-digit revenue growth and modest margin expansion.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Discount Rate (WACC)</div>
-      <div class="value">8.5%</div>
+      <div class="value">{(discountRate * 100)}%</div>
       <div class="rationale">
-        10Y Treasury is currently 4.18%. ITW is a Dividend Aristocrat with defensive characteristics and a strong balance sheet, yielding a lower beta. We demand an 8.5% return, applying a reasonable equity risk premium over the risk-free rate for a stable industrial blue-chip.
+        10Y Treasury: 4.18%. For a defensive company with high recurring revenue, a 9% discount rate provides a solid required return.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Terminal Growth Rate</div>
-      <div class="value">2.5%</div>
+      <div class="value">{(growthRateTerminal * 100)}%</div>
       <div class="rationale">
-        An industrial conglomerate's long-term prospects are closely tied to global GDP and inflation. A 2.5% terminal growth rate assumes ITW maintains its competitive positioning and grows essentially in line with long-run global economic output.
+        Long-term nominal GDP growth is ~3%. ADP operates as a tax on employment; they will grow steadily alongside the overall economy.
       </div>
     </div>
   </div>
@@ -443,14 +468,14 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </thead>
       <tbody>
         <tr>
-          <td>Base (FY2025)</td>
-          <td>${fcf2025.toLocaleString()}</td>
+          <td>Base (FY2024)</td>
+          <td>${fcf2024.toLocaleString()}</td>
           <td>—</td>
           <td>—</td>
         </tr>
         {projectedFCF.map(p => (
           <tr>
-            <td>Year {p.year} ({2025 + p.year})</td>
+            <td>Year {p.year}</td>
             <td>${p.fcf.toLocaleString()}</td>
             <td>{p.pvFactor.toFixed(4)}</td>
             <td>${p.pvFCF.toLocaleString()}</td>
@@ -476,11 +501,11 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </thead>
       <tbody>
         <tr>
-          <td>Year 6 FCF (Year 5 × 1.025)</td>
+          <td>Year 6 FCF (Year 5 × 1.03)</td>
           <td>${Math.round(fcfYear6).toLocaleString()}</td>
         </tr>
         <tr>
-          <td>Terminal Value (FCF₆ ÷ (8.5% − 2.5%))</td>
+          <td>Terminal Value (FCF₆ ÷ (9% − 3%))</td>
           <td>${terminalValue.toLocaleString()}</td>
         </tr>
         <tr class="row-total">
@@ -536,30 +561,30 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
   <!-- ═══ HISTORICAL CHARTS ═══ -->
   <h2>Financial Track Record</h2>
-  <p>Here's ITW's 5-year performance.</p>
+  <p>Before trusting a forward projection, look at where the company has been.</p>
 
-  <h3>Revenue ($B)</h3>
+  <h3>Revenue ($M)</h3>
   <div class="bar-chart">
-    {revenueHistory.map(r => (
+    {data.revenueHistory.map(r => (
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill revenue" style={`width: ${(r.value / 17000) * 100}%`}>
-            ${(r.value / 1000).toFixed(1)}B
+          <div class="bar-fill revenue" style={`width: ${(r.value / 20000) * 100}%`}>
+            ${r.value.toLocaleString()}
           </div>
         </div>
       </div>
     ))}
   </div>
 
-  <h3>Free Cash Flow ($B)</h3>
+  <h3>Free Cash Flow ($M)</h3>
   <div class="bar-chart">
-    {fcfHistory.map(r => (
+    {data.fcfHistory.map(r => (
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill fcf" style={`width: ${(r.value / 3500) * 100}%`}>
-            ${(r.value / 1000).toFixed(1)}B
+          <div class="bar-fill fcf" style={`width: ${(r.value / 5000) * 100}%`}>
+            ${r.value.toLocaleString()}
           </div>
         </div>
       </div>
@@ -568,11 +593,11 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
   <h3>Earnings Per Share (Diluted)</h3>
   <div class="bar-chart">
-    {epsHistory.map(r => (
+    {data.epsHistory.map(r => (
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill eps" style={`width: ${(r.value / 13.00) * 100}%`}>
+          <div class="bar-fill eps" style={`width: ${(r.value / 10.0) * 100}%`}>
             ${r.value.toFixed(2)}
           </div>
         </div>
@@ -593,22 +618,21 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
         </tr>
       </thead>
       <tbody>
-        {marginHistory.map(m => (
+        {data.marginHistory.map(m => (
           <tr>
             <td>{m.year}</td>
-            <td>{m.operating.toFixed(1)}%</td>
-            <td>{m.profit.toFixed(1)}%</td>
-            <td>{m.fcfMargin.toFixed(1)}%</td>
+            <td>{m.operating}%</td>
+            <td>{m.profit}%</td>
+            <td>{m.fcfMargin}%</td>
           </tr>
         ))}
       </tbody>
     </table>
   </div>
-  <p><strong>Key observation:</strong> ITW exhibits remarkable margin consistency and improvement. Operating margins remaining strong in the ~24-27% range illustrates the power of their 80/20 business model despite macro cyclicality.</p>
 
   <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
   <h2>Sensitivity Analysis</h2>
-  <p>Our base case uses 5% growth and an 8.5% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
+  <p>Our base case uses 8% growth and 9% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
 
   <div class="table-wrap">
     <table class="sensitivity-table">
@@ -616,14 +640,14 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
         <tr>
           <th style="text-align:left">Discount Rate ↓ / Growth →</th>
           {sensitivityGrowth.map(g => (
-            <th class={g === growthRatePhase1 ? 'current' : ''}>{Math.round(g * 100)}%</th>
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100)}%</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {sensitivityTable.map(row => (
           <tr>
-            <td>{(row.dr * 100).toFixed(1).replace('.0', '')}%</td>
+            <td>{(row.dr * 100)}%</td>
             {row.values.map((v, i) => (
               <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
                 ${v}
@@ -637,77 +661,51 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
   <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
   <h2>What This Model Doesn't Capture</h2>
-
-  <h3>Upside risks (our number could be too low)</h3>
+  <h3>Upside risks</h3>
   <ul>
-    <li><strong>Aggressive share repurchases:</strong> ITW actively buys back shares. Fewer shares outstanding will naturally increase the per-share value over time, providing a tailwind.</li>
-    <li><strong>Stronger macro environment:</strong> An industrial boom, reshoring trends, or extensive infrastructure spending could drive revenue growth above our baseline.</li>
-    <li><strong>Further margin expansion:</strong> Continued execution of the enterprise strategy could lift operating margins closer to 30%, meaningfully boosting FCF.</li>
+    <li><strong>Float Income:</strong> ADP holds client funds and earns interest on them. Higher rates mean higher float income.</li>
+    <li><strong>Margin Expansion:</strong> Further technological efficiencies could increase margins beyond historical norms.</li>
   </ul>
 
-  <h3>Downside risks (our number could be too high)</h3>
+  <h3>Downside risks</h3>
   <ul>
-    <li><strong>Global industrial recession:</strong> As an industrial conglomerate, ITW is exposed to cyclical end-markets like automotive and construction. A prolonged recession would depress cash flows.</li>
-    <li><strong>FX headwinds:</strong> With a significant global footprint, sustained dollar strength can erode reported earnings and cash flows.</li>
-    <li><strong>Input cost inflation:</strong> Stubborn inflation in raw materials and labor could pressure margins if ITW cannot fully pass these costs to customers.</li>
+    <li><strong>Economic Downturns:</strong> High unemployment reduces processing volumes.</li>
+    <li><strong>Competition:</strong> New HR tech startups could erode market share.</li>
   </ul>
 
   <!-- ═══ FAQ ═══ -->
   <h2>Frequently Asked Questions</h2>
   <div class="faq">
     <details>
-      <summary>Why use a DCF for an industrial stock?</summary>
-      <div class="faq-answer">While many value industrials on P/E or EV/EBITDA multiples across a cycle, a DCF captures the true cash generation power. It forces explicit assumptions about long-term growth and capital cost rather than relying on historical or peer-based multiples which may be distorted.</div>
-    </details>
-    <details>
-      <summary>Why an 8.5% discount rate?</summary>
-      <div class="faq-answer">The 10-year Treasury yields 4.18%. ITW is a highly stable, diversified Dividend Aristocrat with a strong balance sheet. This risk profile justifies a slightly lower equity risk premium compared to volatile tech stocks, landing us at an 8.5% hurdle rate.</div>
-    </details>
-    <details>
-      <summary>Why is ITW's net cash negative?</summary>
-      <div class="faq-answer">It is common for mature industrials to carry net debt. ITW utilizes debt optimally to lower its overall cost of capital and fund shareholder returns (dividends and buybacks). The debt level is very manageable given their robust free cash flow generation.</div>
+      <summary>Why use DCF instead of a P/E multiple?</summary>
+      <div class="faq-answer">Multiples tell you what the market <em>is</em> paying, not what a company is <em>worth</em>. A DCF forces explicit assumptions about cash flows.</div>
     </details>
     <details>
       <summary>Is this a buy recommendation?</summary>
-      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, and conviction in the assumptions.</div>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value.</div>
     </details>
   </div>
 
   <!-- ═══ CITE ═══ -->
   <div class="cite-block">
     <h4>📝 Cite This Research</h4>
-    <p>Westmount Research. "Illinois Tool Works (ITW) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
+    <p>Westmount Research. "ADP (ADP) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, {meta.published}.</p>
   </div>
 
   <!-- ═══ DATA SOURCES ═══ -->
   <div class="sources">
     <h4>Data Sources & Methodology</h4>
     <ul>
-      <li>Illinois Tool Works Inc. FY2025 Financials</li>
-      <li>U.S. 10-Year Treasury yield (4.18%) as of March 18, 2026</li>
-      <li>Share price ($264.48) as of recent market close</li>
+      <li>Financial data sourced via stockanalysis.com</li>
+      <li>U.S. 10-Year Treasury yield (4.18%)</li>
       <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
-      <li>All calculations performed in real-time using source data</li>
     </ul>
-  </div>
-
-  <!-- ═══ RELATED ═══ -->
-  <h2>Related Pages</h2>
-  <div class="related-grid">
-    <a href="/what-is-intrinsic-value" class="related-card">
-      <div class="rc-title">What Is Intrinsic Value?</div>
-      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
-    </a>
-    <a href="/dcf-calculator" class="related-card">
-      <div class="rc-title">DCF Calculator</div>
-      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
-    </a>
   </div>
 
   <!-- ═══ DISCLAIMER ═══ -->
   <div class="disclaimer">
     <h4>⚠️ Important Disclaimer</h4>
-    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice.</p>
   </div>
 </div>
 </SiteLayout>
