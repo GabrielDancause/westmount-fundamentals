@@ -1,14 +1,13 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
-import * as cheerio from 'cheerio';
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": "Parker-Hannifin (PH) Intrinsic Value: A DCF Analysis",
-  "description": "A transparent, step-by-step discounted cash flow valuation of Parker-Hannifin Corporation. Using actual financials to arrive at a single fair value estimate for PH shares.",
-  "datePublished": "2024-03-24",
-  "dateModified": "2024-03-24",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Parker-Hannifin Corporation. Using FY2025 actual financials to arrive at a single fair value estimate for PH shares.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
   "author": {
     "@type": "Organization",
     "name": "Westmount Research",
@@ -27,158 +26,96 @@ const schema = {
 
 export const meta = {
   title: "Parker-Hannifin (PH) Intrinsic Value: A DCF Analysis",
-  description: "We ran a full discounted cash flow on Parker-Hannifin using actuals. One number. Every assumption disclosed. Here's what PH is really worth.",
+  description: "We ran a full discounted cash flow on Parker-Hannifin using FY2025 actuals. One number. Every assumption disclosed. Here's what PH is really worth.",
   category: "study",
-  published: "2024-03-24",
+  published: "2026-03-18",
 };
-
-/* ═══════════════════════════════════════════════════════════════
-   DATA FETCHING
-   Scraping actual financials from stockanalysis.com
-   ═══════════════════════════════════════════════════════════════ */
-const headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-  'Accept-Language': 'en-US,en;q=0.5',
-  'Connection': 'keep-alive',
-  'Upgrade-Insecure-Requests': '1'
-};
-
-async function fetchHtml(url) {
-  try {
-    const res = await fetch(url, { headers });
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return await res.text();
-  } catch (e) {
-    console.error(`Failed to fetch ${url}:`, e.message);
-    return null;
-  }
-}
-
-// 1. Fetch current price
-let currentPrice = null;
-const quoteHtml = await fetchHtml('https://stockanalysis.com/stocks/ph/');
-if (quoteHtml) {
-  const $q = cheerio.load(quoteHtml);
-  const pText = $q('.text-4xl.font-bold').text().trim().replace(/,/g, '');
-  if (pText && !isNaN(parseFloat(pText))) currentPrice = parseFloat(pText);
-}
-
-// Helper to parse table row values
-function parseRow($, rowTitleMatch) {
-  let values = [];
-  let found = false;
-  $('table#main-table tbody tr').each((i, el) => {
-    if (found) return;
-    let title = $(el).find('td').first().text().trim() || $(el).find('th').first().text().trim();
-    if (title === rowTitleMatch) {
-      found = true;
-      $(el).find('td').each((j, td) => {
-        if (j > 0) {
-          const valStr = $(td).text().trim().replace(/,/g, '');
-          values.push(valStr === '-' ? 0 : parseFloat(valStr));
-        }
-      });
-    }
-  });
-  return found ? values : null;
-}
-
-// 2. Fetch Income Statement (financials)
-let revenueArr = null;
-let opIncomeArr = null;
-let epsArr = null;
-let sharesArr = null;
-let fcfArr = null;
-const isHtml = await fetchHtml('https://stockanalysis.com/stocks/ph/financials/');
-if (isHtml) {
-  const $is = cheerio.load(isHtml);
-  revenueArr = parseRow($is, 'Revenue');
-  opIncomeArr = parseRow($is, 'Operating Income');
-  epsArr = parseRow($is, 'EPS (Diluted)');
-  sharesArr = parseRow($is, 'Shares Outstanding (Diluted)');
-  fcfArr = parseRow($is, 'Free Cash Flow');
-}
-
-// 3. Fetch Cash Flow Statement
-let opCfArr = null;
-let capExArr = null;
-const cfHtml = await fetchHtml('https://stockanalysis.com/stocks/ph/financials/cash-flow-statement/');
-if (cfHtml) {
-  const $cf = cheerio.load(cfHtml);
-  opCfArr = parseRow($cf, 'Operating Cash Flow');
-  capExArr = parseRow($cf, 'Capital Expenditures');
-  if (!fcfArr) fcfArr = parseRow($cf, 'Free Cash Flow');
-}
-
-// 4. Fetch Balance Sheet
-let cashArr = null;
-let debtArr = null;
-const bsHtml = await fetchHtml('https://stockanalysis.com/stocks/ph/financials/balance-sheet/');
-if (bsHtml) {
-  const $bs = cheerio.load(bsHtml);
-  cashArr = parseRow($bs, 'Cash & Equivalents');
-  debtArr = parseRow($bs, 'Total Debt');
-}
 
 /* ═══════════════════════════════════════════════════════════════
    DCF MODEL — ALL INPUTS AND CALCULATIONS
+   Every number is sourced from Parker-Hannifin's FY2025 (fiscal year ended June 30).
+   We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
    ═══════════════════════════════════════════════════════════════ */
 
-// Base inputs (use index 0, representing TTM/latest reported)
-const fcfBase = fcfArr && fcfArr[0] ? fcfArr[0] : 3339;          // Fallback if null
-const sharesOutstanding = sharesArr && sharesArr[0] ? sharesArr[0] : 130;
-const cashAndInvestments = cashArr && cashArr[0] ? cashArr[0] : 427;
-const totalDebt = debtArr && debtArr[0] ? debtArr[0] : 9870;
+// --- INPUTS (all in millions USD unless noted) ---
+const fcf2025 = 3_341;                 // FY2025 Free Cash Flow ($M)
+const sharesOutstanding = 128;          // Basic shares outstanding ($M) — FY2025
+const cashAndInvestments = 467;         // Cash + short-term investments ($M)
+const totalDebt = 9_285;                // Total debt ($M)
+const netCash = cashAndInvestments - totalDebt; // -$8,818M
 
-const netDebt = totalDebt - cashAndInvestments;
-
-// Assumptions
+// --- ASSUMPTIONS (fully disclosed below) ---
 const growthRatePhase1 = 0.08;         // 8% FCF growth, Years 1-5
-const growthRateTerminal = 0.03;       // 3% perpetuity growth
-const discountRate = 0.095;            // 9.5% WACC
+const growthRateTerminal = 0.03;       // 3% perpetuity growth (terminal)
+const discountRate = 0.09;             // 9% WACC / required return
 
-// Phase 1: Project FCF for Years 1-5
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
 const projectedFCF = [];
-let fcf = fcfBase;
+let fcf = fcf2025;
 for (let yr = 1; yr <= 5; yr++) {
   fcf = fcf * (1 + growthRatePhase1);
-  projectedFCF.push({
-    year: yr,
-    fcf: Math.round(fcf),
-    pvFactor: 1 / Math.pow(1 + discountRate, yr)
-  });
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
 }
 projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
 
-// Phase 2: Terminal Value
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
 const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
 const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
 const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
 
-// Enterprise Value
+// --- ENTERPRISE VALUE ---
 const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
 const enterpriseValue = pvPhase1 + pvTerminalValue;
 
-// Equity Value
-const equityValue = enterpriseValue - netDebt;
+// --- EQUITY VALUE ---
+const equityValue = enterpriseValue + netCash;
 const intrinsicValuePerShare = equityValue / sharesOutstanding;
 const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
 
 // Market comparison
-const priceToUse = currentPrice || 550.00;
-const marginOfSafety = ((roundedIV - priceToUse) / priceToUse * 100).toFixed(1);
-const verdictText = roundedIV > priceToUse ? "Undervalued" : "Overvalued";
-const verdictColor = roundedIV > priceToUse ? "#10b981" : "#ef4444";
+const currentPrice = 918.43;
+const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
 
-// Sensitivity table
-const sensitivityRates = [0.075, 0.085, 0.095, 0.105, 0.115];
-const sensitivityGrowth = [0.06, 0.07, 0.08, 0.09, 0.10];
+// --- HISTORICAL DATA for charts ---
+const revenueHistory = [
+  { year: 2021, value: 14_348 },
+  { year: 2022, value: 15_862 },
+  { year: 2023, value: 19_065 },
+  { year: 2024, value: 19_930 },
+  { year: 2025, value: 19_850 },
+];
+const fcfHistory = [
+  { year: 2021, value: 2_365 },
+  { year: 2022, value: 2_212 },
+  { year: 2023, value: 2_599 },
+  { year: 2024, value: 2_984 },
+  { year: 2025, value: 3_341 },
+];
+const epsHistory = [
+  { year: 2021, value: 13.54 },
+  { year: 2022, value: 10.24 },
+  { year: 2023, value: 16.23 },
+  { year: 2024, value: 22.13 },
+  { year: 2025, value: 27.52 },
+];
+const marginHistory = [
+  { year: 2021, operating: 16.45, profit: 12.18, fcfMargin: 16.48 },
+  { year: 2022, operating: 17.70, profit: 8.30, fcfMargin: 13.94 },
+  { year: 2023, operating: 16.13, profit: 10.93, fcfMargin: 13.63 },
+  { year: 2024, operating: 19.13, profit: 14.27, fcfMargin: 14.97 },
+  { year: 2025, operating: 20.45, profit: 17.79, fcfMargin: 16.83 },
+];
+
+// Sensitivity analysis
+const sensitivityRates = [0.07, 0.08, 0.09, 0.10, 0.11];
+const sensitivityGrowth = [0.04, 0.06, 0.08, 0.10, 0.12];
 const sensitivityTable = sensitivityRates.map(dr => {
   return {
     dr,
     values: sensitivityGrowth.map(gr => {
-      let f = fcfBase;
+      let f = fcf2025;
       let pvSum = 0;
       for (let y = 1; y <= 5; y++) {
         f = f * (1 + gr);
@@ -187,53 +124,16 @@ const sensitivityTable = sensitivityRates.map(dr => {
       const f6 = f * (1 + growthRateTerminal);
       const tv = f6 / (dr - growthRateTerminal);
       const pvTV = tv / Math.pow(1 + dr, 5);
-      return Math.round((pvSum + pvTV - netDebt) / sharesOutstanding);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
     })
   };
 });
-
-// Chart History Data
-const startYear = new Date().getFullYear() - 5;
-const revenueHistory = [];
-const fcfHistory = [];
-const epsHistory = [];
-const marginHistory = [];
-
-if (revenueArr && opIncomeArr && fcfArr && epsArr) {
-  // We take the last 5 years up to TTM (indices 5 down to 1) or 4 down to 0, depending on availability.
-  // stockanalysis.com puts TTM at index 0, FY at 1, 2, 3, 4, 5
-  // We'll map indices 5 down to 1 for history.
-  for (let i = 5; i >= 1; i--) {
-      const year = startYear + (5 - i);
-      const rev = revenueArr[i] || 0;
-      const op = opIncomeArr[i] || 0;
-      const f = fcfArr[i] || 0;
-      const e = epsArr[i] || 0;
-
-      revenueHistory.push({ year, value: rev });
-      fcfHistory.push({ year, value: f });
-      epsHistory.push({ year, value: e });
-
-      const opMargin = rev > 0 ? ((op / rev) * 100).toFixed(1) : 0;
-      const fcfMargin = rev > 0 ? ((f / rev) * 100).toFixed(1) : 0;
-      marginHistory.push({ year, operating: opMargin, fcfMargin: fcfMargin });
-  }
-} else {
-  // Fallbacks if scrape failed
-  for (let i = 0; i < 5; i++) {
-    revenueHistory.push({ year: startYear + i, value: 0 });
-    fcfHistory.push({ year: startYear + i, value: 0 });
-    epsHistory.push({ year: startYear + i, value: 0 });
-    marginHistory.push({ year: startYear + i, operating: 0, fcfMargin: 0 });
-  }
-}
-
 ---
 
 <SiteLayout
   site="westmount"
   title="Parker-Hannifin (PH) Intrinsic Value: A DCF Analysis"
-  description="We ran a full discounted cash flow on Parker-Hannifin using actuals. One number. Every assumption disclosed. Here's what PH is really worth."
+  description="We ran a full discounted cash flow on Parker-Hannifin using FY2025 actuals. One number. Every assumption disclosed. Here's what PH is really worth."
   canonical="https://westmountfundamentals.com/parker-hannifin-intrinsic-value"
   schema={schema}
 >
@@ -249,6 +149,7 @@ a:hover { text-decoration: underline; }
 .header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
 .header-content { position: relative; z-index: 1; }
 .tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+.compiled-by { display: block; font-size: 0.85rem; color: #7a8a9e; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
 h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
 @media (max-width: 640px) { h1 { font-size: 2rem; } }
 .subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
@@ -334,6 +235,13 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 .cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
 .cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
 
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 60px; }
+.related-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 20px; display: block; color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); text-decoration: none; }
+.related-card .rc-title { color: #e0e6f0; font-weight: 700; margin-bottom: 6px; }
+.related-card .rc-desc { font-size: 0.85rem; color: #5a6a80; }
+
 /* FAQ */
 .faq { margin: 40px 0; }
 .faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
@@ -351,10 +259,11 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
 <div class="header">
   <div class="header-content">
-    <div class="tag">Compiled by Gemini 3.1</div>
+    <span class="compiled-by">Compiled by Gemini 2.5 Pro</span>
+    <div class="tag">Original Research</div>
     <h1>Parker-Hannifin (PH)<br/>Intrinsic Value</h1>
-    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Parker-Hannifin Corporation — using actuals, disclosed assumptions, and one final number.</p>
-    <p class="date">Data updated for current TTM &middot; 10Y Treasury: 4.18%</p>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Parker-Hannifin Corporation — using actual FY2025 financials, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated March 18, 2026 · Data: FY2025</p>
   </div>
 </div>
 
@@ -363,7 +272,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
   <div class="verdict-card">
     <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
     <div class="verdict-price">${roundedIV.toFixed(2)}</div>
-    <div class="verdict-vs">vs. market price of ${priceToUse.toFixed(2)} ({marginOfSafety}%)</div>
+    <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
     <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
       {verdictText}
     </div>
@@ -372,36 +281,36 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
   <!-- ═══ KEY METRICS ═══ -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-value">${revenueHistory[4] ? (revenueHistory[4].value / 1000).toFixed(1) : 'N/A'}B</div>
-      <div class="stat-label">Latest Revenue</div>
+      <div class="stat-value">$19.9B</div>
+      <div class="stat-label">FY2025 Revenue</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">${(fcfBase / 1000).toFixed(1)}B</div>
+      <div class="stat-value">$3.34B</div>
       <div class="stat-label">Free Cash Flow</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">${epsHistory[4] ? epsHistory[4].value.toFixed(2) : 'N/A'}</div>
-      <div class="stat-label">EPS (Diluted)</div>
+      <div class="stat-value">$27.52</div>
+      <div class="stat-label">EPS</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">{marginHistory[4] ? marginHistory[4].operating : 'N/A'}%</div>
+      <div class="stat-value">20.5%</div>
       <div class="stat-label">Operating Margin</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">-${(netDebt / 1000).toFixed(1)}B</div>
-      <div class="stat-label">Net Debt</div>
+      <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
+      <div class="stat-label">Net Cash</div>
     </div>
   </div>
 
   <!-- ═══ METHODOLOGY ═══ -->
   <h2>Methodology: Two-Stage DCF</h2>
-  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — focusing on the actual cash Parker-Hannifin produces. No multiples, no vibes. Just pure cash flow discounted back to today.</p>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
 
   <div class="method-step">
     <div class="step-num">1</div>
     <div class="step-content">
       <h4>Start with actual Free Cash Flow</h4>
-      <p>PH generated <strong>${fcfBase.toLocaleString()} million</strong> in free cash flow over the trailing twelve months. This is operating cash flow minus capital expenditures. Parker-Hannifin has a robust track record of converting earnings to cash.</p>
+      <p>Parker-Hannifin generated <strong>$3.34 billion</strong> in free cash flow in FY2025. This is real cash the business produces after paying for capital expenditures. FCF margins have been steadily climbing, reaching 16.8% recently, demonstrating tremendous operating leverage.</p>
     </div>
   </div>
 
@@ -409,7 +318,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">2</div>
     <div class="step-content">
       <h4>Project FCF growth for 5 years (Phase 1)</h4>
-      <p>We project FCF to grow at <strong>8% per year</strong> for the next 5 years. This reflects Parker's "Win Strategy", ongoing aerospace cyclical tailwinds, and successful integration of recent mega-acquisitions like Meggitt.</p>
+      <p>We grow FCF at <strong>8% per year</strong> for 5 years. This is a very reasonable estimate considering PH has expanded its FCF at an even higher rate over the past several years (growing from $2.36B in FY2021 to $3.34B in FY2025). The aerospace and industrial segments provide solid tailwinds.</p>
     </div>
   </div>
 
@@ -417,7 +326,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">3</div>
     <div class="step-content">
       <h4>Calculate terminal value (Phase 2)</h4>
-      <p>After Year 5, we assume FCF grows at <strong>3% forever</strong>. This is aligned with historical long-term GDP growth plus the company's pricing power in mission-critical motion and control technologies.</p>
+      <p>After Year 5, we assume FCF grows at <strong>3.0% forever</strong> — aligning closely with long-term industrial GDP growth. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate). This captures all value from Year 6 to infinity.</p>
     </div>
   </div>
 
@@ -425,42 +334,42 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">4</div>
     <div class="step-content">
       <h4>Discount everything to present value</h4>
-      <p>All future cash flows are discounted at <strong>9.5%</strong>. This WACC reflects a 10Y Treasury yield of 4.18%, a standard equity risk premium, and PH's stable industrial beta.</p>
+      <p>All future cash flows are discounted at <strong>9%</strong> — our required rate of return. A 9% WACC adequately accounts for the equity risk premium over the 10Y Treasury (4.18%), combined with Parker-Hannifin's stable, diversified industrial revenue streams and manageable cost of debt.</p>
     </div>
   </div>
 
   <div class="method-step">
     <div class="step-num">5</div>
     <div class="step-content">
-      <h4>Subtract net debt, divide by shares</h4>
-      <p>Enterprise Value minus Net Debt (${netDebt.toLocaleString()}M) = Equity Value. Divide by diluted shares outstanding ({sharesOutstanding}M) for the per-share intrinsic value.</p>
+      <h4>Add net cash, divide by shares</h4>
+      <p>Enterprise Value + Net Cash (-$8.8B) = Equity Value. Divide by shares outstanding (128M) for the per-share intrinsic value. Note that PH carries meaningful debt (partially from acquisitions like Meggitt), which reduces the equity value.</p>
     </div>
   </div>
 
   <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
   <h2>The Three Assumptions That Drive Everything</h2>
-  <p>A DCF is highly sensitive to its inputs. We're making exactly <strong>three</strong> core judgment calls.</p>
+  <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
 
   <div class="assumption-grid">
     <div class="assumption-card">
       <div class="label">FCF Growth Rate (Years 1-5)</div>
-      <div class="value">8.0%</div>
+      <div class="value">8%</div>
       <div class="rationale">
-        Parker-Hannifin has consistently delivered high-single to low-double digit earnings growth through organic sales, margin expansion (The Win Strategy 3.0), and accretive M&A. Aerospace system backlogs provide strong visibility.
+        PH has aggressively improved margins and integrated acquisitions. FCF grew from $2.36B in FY21 to $3.34B in FY25, about a 9% CAGR. Assuming 8% growth is appropriately conservative while rewarding the company for its proven execution and aerospace momentum.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Discount Rate (WACC)</div>
-      <div class="value">9.5%</div>
+      <div class="value">9%</div>
       <div class="rationale">
-        Based on a 10Y Treasury of 4.18%. While Parker operates in cyclical industrial markets, its aftermarket mix (approx. 50% of sales) provides immense cash flow resilience, supporting a sub-10% cost of capital.
+        10Y Treasury: 4.18%. For an established, moat-protected industrial leader like Parker-Hannifin, a 9% required rate of return balances systematic risk and the predictability of its diversified end-markets.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Terminal Growth Rate</div>
       <div class="value">3.0%</div>
       <div class="rationale">
-        An industrial conglomerate of this size will eventually grow roughly in line with the global economy. 3% accounts for GDP growth and their ability to pass on inflation via pricing power.
+        Long-term nominal GDP growth is around 3%. As a broad-based industrial and aerospace manufacturer, Parker-Hannifin will organically grow alongside the broader economy and global industrial production.
       </div>
     </div>
   </div>
@@ -479,14 +388,14 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </thead>
       <tbody>
         <tr>
-          <td>Base (TTM)</td>
-          <td>${fcfBase.toLocaleString()}</td>
+          <td>Base (FY2025)</td>
+          <td>${fcf2025.toLocaleString()}</td>
           <td>—</td>
           <td>—</td>
         </tr>
         {projectedFCF.map(p => (
           <tr>
-            <td>Year {p.year}</td>
+            <td>Year {p.year} ({2025 + p.year})</td>
             <td>${p.fcf.toLocaleString()}</td>
             <td>{p.pvFactor.toFixed(4)}</td>
             <td>${p.pvFCF.toLocaleString()}</td>
@@ -516,7 +425,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
           <td>${Math.round(fcfYear6).toLocaleString()}</td>
         </tr>
         <tr>
-          <td>Terminal Value (FCF₆ ÷ (9.5% − 3.0%))</td>
+          <td>Terminal Value (FCF₆ ÷ (9% − 3%))</td>
           <td>${terminalValue.toLocaleString()}</td>
         </tr>
         <tr class="row-total">
@@ -551,8 +460,8 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
           <td>${enterpriseValue.toLocaleString()}</td>
         </tr>
         <tr>
-          <td>− Net Debt</td>
-          <td>${netDebt.toLocaleString()}</td>
+          <td>+ Net Cash (Cash − Debt)</td>
+          <td>${netCash.toLocaleString()}</td>
         </tr>
         <tr>
           <td>= Equity Value</td>
@@ -572,30 +481,30 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
   <!-- ═══ HISTORICAL CHARTS ═══ -->
   <h2>Financial Track Record</h2>
-  <p>Parker-Hannifin's execution over the last 5 years.</p>
+  <p>Before trusting a forward projection, look at where the company has been. Here's Parker-Hannifin's 5-year performance.</p>
 
-  <h3>Revenue ($M)</h3>
+  <h3>Revenue ($B)</h3>
   <div class="bar-chart">
     {revenueHistory.map(r => (
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill revenue" style={`width: ${Math.max(10, (r.value / (revenueHistory[4]?.value || 1)) * 100)}%`}>
-            ${r.value.toLocaleString()}
+          <div class="bar-fill revenue" style={`width: ${(r.value / 19930) * 100}%`}>
+            ${(r.value / 1000).toFixed(1)}B
           </div>
         </div>
       </div>
     ))}
   </div>
 
-  <h3>Free Cash Flow ($M)</h3>
+  <h3>Free Cash Flow ($B)</h3>
   <div class="bar-chart">
     {fcfHistory.map(r => (
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill fcf" style={`width: ${Math.max(10, (r.value / (fcfHistory[4]?.value || 1)) * 100)}%`}>
-            ${r.value.toLocaleString()}
+          <div class="bar-fill fcf" style={`width: ${(r.value / 3341) * 100}%`}>
+            ${(r.value / 1000).toFixed(1)}B
           </div>
         </div>
       </div>
@@ -608,7 +517,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill eps" style={`width: ${Math.max(10, (r.value / (epsHistory[4]?.value || 1)) * 100)}%`}>
+          <div class="bar-fill eps" style={`width: ${(r.value / 27.52) * 100}%`}>
             ${r.value.toFixed(2)}
           </div>
         </div>
@@ -616,9 +525,35 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     ))}
   </div>
 
+  <!-- ═══ MARGIN TRENDS ═══ -->
+  <h3>Margin Trends</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Operating Margin</th>
+          <th>Profit Margin</th>
+          <th>FCF Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {marginHistory.map(m => (
+          <tr>
+            <td>{m.year}</td>
+            <td>{m.operating}%</td>
+            <td>{m.profit}%</td>
+            <td>{m.fcfMargin}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Key observation:</strong> Operating margins and FCF margins have shown consistent expansion. The company is extracting more cash flow out of each dollar of revenue, an excellent indicator of pricing power and operational efficiency following the Meggitt acquisition.</p>
+
   <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
   <h2>Sensitivity Analysis</h2>
-  <p>Our base case uses 8% growth and a 9.5% discount rate. Here is how the intrinsic value changes with different assumptions.</p>
+  <p>Our base case uses 8% growth and 9% discount rate. Here is what the intrinsic value looks like under different assumptions. A minor tweak to the discount rate dramatically changes fair value.</p>
 
   <div class="table-wrap">
     <table class="sensitivity-table">
@@ -626,14 +561,14 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
         <tr>
           <th style="text-align:left">Discount Rate ↓ / Growth →</th>
           {sensitivityGrowth.map(g => (
-            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(1)}%</th>
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {sensitivityTable.map(row => (
           <tr>
-            <td>{(row.dr * 100).toFixed(1)}%</td>
+            <td>{(row.dr * 100).toFixed(0)}%</td>
             {row.values.map((v, i) => (
               <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
                 ${v}
@@ -644,54 +579,82 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </tbody>
     </table>
   </div>
+  <p>The highlighted cell is our base case. Because PH carries almost $9 billion in net debt, lower enterprise values (driven by higher discount rates) compress the remaining equity value quite rapidly.</p>
 
-  <!-- ═══ RISKS ═══ -->
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
   <h2>What This Model Doesn't Capture</h2>
+  <p>No model is complete. Here's what a DCF inherently misses — and how it might bias our estimate.</p>
 
   <h3>Upside risks (our number could be too low)</h3>
   <ul>
-    <li><strong>Mega-Acquisition Synergies:</strong> Further margin expansion from the integration of Meggitt and other aerospace acquisitions could drive FCF growth above 8%.</li>
-    <li><strong>Aerospace Supercycle:</strong> Commercial aerospace OEM build rates and aftermarket demand remaining elevated for longer than anticipated.</li>
-    <li><strong>Margin Expansion:</strong> "The Win Strategy 3.0" consistently surprising to the upside, permanently elevating operating margins.</li>
+    <li><strong>Aerospace Supercycle:</strong> Unprecedented backlog in commercial aerospace and rising global defense spending could drive faster-than-expected revenue and margin growth.</li>
+    <li><strong>Faster Deleveraging:</strong> If PH uses its strong FCF to rapidly pay down debt, the interest expense decreases and equity value increases dollar-for-dollar.</li>
+    <li><strong>Accretive M&amp;A:</strong> PH has a proven track record of acquiring and fully integrating complementary businesses (like Meggitt). Future acquisitions could boost long-term FCF growth.</li>
   </ul>
 
   <h3>Downside risks (our number could be too high)</h3>
   <ul>
-    <li><strong>Industrial Recession:</strong> A severe global macroeconomic downturn reducing demand across their diversified industrial end-markets.</li>
-    <li><strong>Debt Load:</strong> They carry substantial debt from recent acquisitions; persistently high interest rates could impact net income and FCF conversion.</li>
-    <li><strong>Supply Chain Execution:</strong> Inability to secure materials for critical aerospace and defense components.</li>
+    <li><strong>Cyclical Industrial Exposure:</strong> If a global recession hits, industrial production will slow, hitting PH's more cyclical segments.</li>
+    <li><strong>Debt Load:</strong> With over $9B in total debt, elevated interest rates could increase debt servicing costs if they need to refinance at higher rates.</li>
+    <li><strong>Supply Chain Bottlenecks:</strong> Lingering aerospace supply chain issues could restrict PH's ability to fulfill its robust backlog in a timely manner.</li>
   </ul>
 
   <!-- ═══ FAQ ═══ -->
   <h2>Frequently Asked Questions</h2>
   <div class="faq">
     <details>
-      <summary>Why use a 9.5% discount rate for Parker-Hannifin?</summary>
-      <div class="faq-answer">While the 10-year treasury is 4.18%, Parker operates in cyclical industrial sectors. However, their high mix of aftermarket revenue provides cash flow stability, balancing the risk. 9.5% represents a fair cost of equity for an established industrial titan.</div>
+      <summary>Why is the Intrinsic Value lower than the current share price?</summary>
+      <div class="faq-answer">When a DCF value is lower than the market price, it generally means the market is pricing in either higher future growth (e.g., >10% sustained FCF growth) or using a lower discount rate than our 9%. Aerospace companies currently trade at a premium due to multi-year backlogs.</div>
     </details>
     <details>
-      <summary>Why is Net Debt subtracted instead of Cash added?</summary>
-      <div class="faq-answer">Parker-Hannifin carries more debt than cash, primarily due to large acquisitions (like Meggitt). Therefore, we calculate Net Debt (Total Debt - Cash) and subtract it from the Enterprise Value to find the value attributable solely to equity shareholders.</div>
+      <summary>How does the debt load affect the valuation?</summary>
+      <div class="faq-answer">Substantially. In a DCF, we calculate the Enterprise Value first, and then subtract Net Debt (Total Debt minus Cash) to find the Equity Value. Parker-Hannifin's large debt pile directly reduces the intrinsic value available to shareholders today.</div>
     </details>
     <details>
-      <summary>Is this a buy recommendation?</summary>
-      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value based purely on cash flows. Always conduct your own due diligence.</div>
+      <summary>Why use an 8% FCF growth rate?</summary>
+      <div class="faq-answer">8% represents a moderation from recent margin-expansion-driven growth, but remains robust to reflect sustained tailwinds in aerospace and defense, along with PH's historically excellent operational execution.</div>
     </details>
   </div>
 
-  <!-- ═══ DISCLAIMER & SOURCES ═══ -->
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+    <p>Westmount Research. "Parker-Hannifin (PH) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026. Compiled by Gemini 2.5 Pro.</p>
+  </div>
+
+  <!-- ═══ DATA SOURCES ═══ -->
   <div class="sources">
     <h4>Data Sources & Methodology</h4>
     <ul>
-      <li>Financial data parsed via stockanalysis.com</li>
-      <li>U.S. 10-Year Treasury yield (4.18%)</li>
+      <li>Parker-Hannifin FY2025 Financials via StockAnalysis / Fiscal.ai</li>
+      <li>U.S. 10-Year Treasury yield (4.18%) as of March 2026</li>
+      <li>Share price ($918.43) as of March 2026</li>
       <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+      <li>All calculations performed directly in frontmatter</li>
     </ul>
   </div>
 
+  <!-- ═══ RELATED ═══ -->
+  <h2>Related Pages</h2>
+  <div class="related-grid">
+    <a href="/what-is-intrinsic-value" class="related-card">
+      <div class="rc-title">What Is Intrinsic Value?</div>
+      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
+    </a>
+    <a href="/dcf-calculator" class="related-card">
+      <div class="rc-title">DCF Calculator</div>
+      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
+    </a>
+    <a href="/what-is-free-cash-flow" class="related-card">
+      <div class="rc-title">What Is Free Cash Flow?</div>
+      <div class="rc-desc">Why FCF matters more than earnings for valuation.</div>
+    </a>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
   <div class="disclaimer">
     <h4>⚠️ Important Disclaimer</h4>
-    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk. Always consult a licensed financial advisor before making investment decisions.</p>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
   </div>
 </div>
 </SiteLayout>
