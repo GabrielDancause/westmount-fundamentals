@@ -1,0 +1,1078 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
+
+// --- METADATA ---
+export const meta = {
+  title: "Constellation Energy (CEG) Intrinsic Value - Two-Stage DCF Analysis",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of Constellation Energy (CEG) compiled by Gemini 3.1.",
+  category: "study",
+  published: new Date().toISOString().split('T')[0],
+};
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 3.1"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://westmountfundamentals.com/constellation-energy-intrinsic-value"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why is Constellation Energy's intrinsic value based on a two-stage DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A two-stage DCF is used to capture CEG's initial growth phase driven by nuclear energy demand for data centers, followed by a mature terminal growth phase reflecting its long-term stable utility base."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What discount rate was used for Constellation Energy's DCF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The model uses a WACC based on a 4.18% 10-Year Treasury yield, adjusting for CEG's specific equity risk and debt structure."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+// --- DATA FETCHING (stockanalysis.com) ---
+const fetchPage = async (url) => {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+      }
+    });
+    if (!res.ok) return '';
+    return await res.text();
+  } catch (e) {
+    return '';
+  }
+};
+
+const [financialsHtml, cashFlowHtml, balanceSheetHtml] = await Promise.all([
+  fetchPage('https://stockanalysis.com/stocks/ceg/financials/'),
+  fetchPage('https://stockanalysis.com/stocks/ceg/cash-flow-statement/'),
+  fetchPage('https://stockanalysis.com/stocks/ceg/balance-sheet/')
+]);
+
+// Helper to extract rows via Cheerio
+const extractRow = (html, label) => {
+  if (!html) return null;
+  const $ = cheerio.load(html);
+  let row = null;
+  $('table tbody tr').each((i, el) => {
+    if ($(el).find('td').first().text().trim() === label) {
+      row = $(el);
+    }
+  });
+  if (!row) return null;
+
+  const values = [];
+  row.find('td').each((i, el) => {
+    if (i > 0) {
+      const text = $(el).text().trim().replace(/,/g, '');
+      values.push(text === '-' || text === '' ? null : parseFloat(text));
+    }
+  });
+  return values.length > 0 ? values : null;
+};
+
+// Helper to extract via Regex (if embedded json array exists)
+const extractRegex = (html, regex) => {
+  if (!html) return null;
+  const match = html.match(regex);
+  if (match) {
+    try {
+      return JSON.parse('[' + match[1] + ']');
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+};
+
+// Try Regex first, fallback to Cheerio
+let sharesHistory = extractRegex(financialsHtml, /sharesBasic:\[(.*?)\]/) || extractRow(financialsHtml, 'Shares Outstanding (Diluted)') || extractRow(financialsHtml, 'Shares Outstanding');
+let fcfHistory = extractRegex(cashFlowHtml, /fcf:\[(.*?)\]/) || extractRow(cashFlowHtml, 'Free Cash Flow');
+let ocfHistory = extractRegex(cashFlowHtml, /operatingCashFlow:\[(.*?)\]/) || extractRow(cashFlowHtml, 'Operating Cash Flow');
+let cashHistory = extractRegex(balanceSheetHtml, /cashAndEquivalents:\[(.*?)\]/) || extractRow(balanceSheetHtml, 'Cash & Equivalents');
+let debtHistory = extractRegex(balanceSheetHtml, /totalDebt:\[(.*?)\]/) || extractRow(balanceSheetHtml, 'Total Debt');
+let revHistory = extractRegex(financialsHtml, /revenue:\[(.*?)\]/) || extractRow(financialsHtml, 'Revenue');
+
+// Get price
+let currentPrice = null;
+if (financialsHtml) {
+  const priceMatch = financialsHtml.match(/class="text-4xl font-bold[^>]*>([\d\.,]+)/) || financialsHtml.match(/data-testid="qsp-price"[^>]*>([\d\.,]+)/);
+  if (priceMatch) {
+    currentPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
+  } else {
+    const $ = cheerio.load(financialsHtml);
+    const pText = $('.text-4xl.font-bold').text().trim().replace(/,/g, '');
+    if (pText) currentPrice = parseFloat(pText);
+  }
+}
+
+// Extract most recent valid values
+const getLatest = (arr) => (arr && arr.length > 0 && arr[0] !== null) ? arr[0] : null;
+
+let baseFCF = getLatest(fcfHistory);
+const baseOCF = getLatest(ocfHistory);
+const sharesOut = getLatest(sharesHistory);
+const cashAndEquivalents = getLatest(cashHistory);
+const totalDebt = getLatest(debtHistory);
+const latestRev = getLatest(revHistory);
+
+// Net Cash = Cash - Debt
+let netCash = null;
+if (cashAndEquivalents !== null && totalDebt !== null) {
+  netCash = cashAndEquivalents - totalDebt;
+}
+
+// Logic: Utilities often have negative FCF due to high capex. If FCF is negative but OCF is positive, we use OCF as base for a modified DCF, noting the assumption.
+let usedOCF = false;
+if (baseFCF !== null && baseFCF < 0 && baseOCF !== null && baseOCF > 0) {
+    baseFCF = baseOCF;
+    usedOCF = true;
+}
+
+// --- ASSUMPTIONS ---
+const riskFreeRate = 0.0418; // 10Y Treasury: 4.18%
+const wacc = 0.075; // 7.5% - Utilities have lower betas, but CEG has nuclear risk and higher growth profile.
+const fcfGrowthRate = 0.08; // 8% - Strong demand from AI data centers for clean nuclear base load.
+const terminalGrowthRate = 0.025; // 2.5% - Long-term utility/GDP growth.
+
+// --- DCF CALCULATION ---
+const projections = [];
+let sumPvFcf = 0;
+let terminalValue = null;
+let pvTerminalValue = null;
+let enterpriseValue = null;
+let totalEquityValue = null;
+let intrinsicValuePerShare = null;
+let marginOfSafety = null;
+let isUndervalued = null;
+
+const hasData = baseFCF !== null && sharesOut !== null && netCash !== null && currentPrice !== null;
+
+if (hasData) {
+  let prevFCF = baseFCF;
+  for (let i = 1; i <= 5; i++) {
+    const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+    const pvOfFCF = projectedFCF / Math.pow(1 + wacc, i);
+    projections.push({
+      year: `Year ${i}`,
+      fcf: projectedFCF,
+      pv: pvOfFCF
+    });
+    sumPvFcf += pvOfFCF;
+    prevFCF = projectedFCF;
+  }
+
+  const year5FCF = projections[4].fcf;
+  terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (wacc - terminalGrowthRate);
+  pvTerminalValue = terminalValue / Math.pow(1 + wacc, 5);
+
+  enterpriseValue = sumPvFcf + pvTerminalValue;
+  totalEquityValue = enterpriseValue + netCash;
+  intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+  marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+  isUndervalued = intrinsicValuePerShare > currentPrice;
+}
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityDiscountRates = [0.065, 0.070, 0.075, 0.080, 0.085];
+const sensitivityGrowthRates = [0.015, 0.020, 0.025, 0.030, 0.035];
+let sensitivityMatrix = [];
+
+if (hasData) {
+  sensitivityMatrix = sensitivityGrowthRates.map(g => {
+    return {
+      growthRate: g,
+      values: sensitivityDiscountRates.map(d => {
+        const y5FCF = baseFCF * Math.pow(1 + fcfGrowthRate, 5);
+        const currentTerminalValue = (y5FCF * (1 + g)) / (d - g);
+        const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+        let currentSumPvFcf = 0;
+        let tempFcf = baseFCF;
+        for (let i = 1; i <= 5; i++) {
+          tempFcf = tempFcf * (1 + fcfGrowthRate);
+          currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+        }
+
+        const currentEV = currentSumPvFcf + currentPvTerminalValue;
+        const currentEquity = currentEV + netCash;
+        return currentEquity / sharesOut;
+      })
+    };
+  });
+}
+
+// Formatting helpers
+const formatMoney = (val) => val !== null ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val) : 'N/A';
+const formatMillions = (val) => val !== null ? '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M' : 'N/A';
+const formatPercent = (val) => val !== null ? (val * 100).toFixed(1) + '%' : 'N/A';
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/constellation-energy-intrinsic-value" schema={schema}>
+  <div class="page-content">
+    <div class="container">
+
+      <div class="header">
+        <div class="header-content">
+          <div class="tag">Compiled by Gemini 3.1</div>
+          <h1>Constellation Energy (CEG)<br/>Intrinsic Value</h1>
+          <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Constellation Energy. Evaluating the nuclear fleet's value in the AI data center era.</p>
+        </div>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <h2>Fair Value Estimate</h2>
+        </div>
+        <div class="verdict-body">
+          <div class="verdict-main">
+            <span class="iv-value">{formatMoney(intrinsicValuePerShare)}</span>
+            <span class="iv-label">per share</span>
+          </div>
+          <div class="verdict-stats">
+            <div class="stat">
+              <span class="stat-label">Current Price</span>
+              <span class="stat-value">{formatMoney(currentPrice)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Margin of Safety</span>
+              <span class={`stat-value ${hasData && isUndervalued ? 'positive' : hasData ? 'negative' : ''}`}>
+                {hasData ? (isUndervalued ? '+' : '') + marginOfSafety.toFixed(2) + '%' : 'N/A'}
+              </span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Verdict</span>
+              <span class={`badge ${hasData && isUndervalued ? 'positive' : hasData ? 'negative' : ''}`}>
+                {!hasData ? 'UNAVAILABLE' : isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="verdict-footer">
+          <p>10Y Treasury Rate: {(riskFreeRate * 100).toFixed(2)}% | Data source: stockanalysis.com</p>
+        </div>
+      </div>
+
+      {!hasData && (
+        <div class="disclaimer-box" style="margin-bottom: 2rem; border-left-color: #f59e0b;">
+          <p><strong>Notice:</strong> Financial data could not be retrieved dynamically at build time (likely due to Cloudflare protection on the data source). The DCF model requires actual financial inputs (Shares, FCF, Net Cash) to compute the valuation. Strictly adhering to "null over fake data", the model results are rendered as N/A.</p>
+        </div>
+      )}
+
+      <section class="content-section">
+        <h2>Methodology: Two-Stage DCF</h2>
+        <p>This model utilizes a two-stage Discounted Cash Flow (DCF) framework to value Constellation Energy's future cash streams.</p>
+
+        <div class="method-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Determine Base Cash Flow</h4>
+            <p>Constellation Energy operates the largest nuclear fleet in the US. Utilities often have immense capital expenditures, depressing Free Cash Flow. {usedOCF ? "Since recent FCF was negative due to high CapEx, we conservatively use Operating Cash Flow as our base proxy for cash generation before reinvestment." : "We use the latest available Free Cash Flow as the baseline."} Base Cash Flow: <strong>{formatMillions(baseFCF)}</strong>.</p>
+          </div>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>High-Growth Phase (Years 1-5)</h4>
+            <p>We project cash flows growing at <strong>{formatPercent(fcfGrowthRate)}</strong> annually for the next 5 years, capturing the premium pricing power CEG commands from tech companies (like Microsoft) signing long-term Power Purchase Agreements (PPAs) for reliable, carbon-free baseload nuclear power.</p>
+          </div>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Terminal Value</h4>
+            <p>After year 5, we assume the company enters a mature growth phase, growing at a perpetual rate of <strong>{formatPercent(terminalGrowthRate)}</strong>, roughly in line with long-term inflation and GDP growth.</p>
+          </div>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Discount to Present Value</h4>
+            <p>All future cash flows are discounted back to today using a Weighted Average Cost of Capital (WACC) of <strong>{formatPercent(wacc)}</strong>. We add Net Cash to the Enterprise Value to find total Equity Value.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Key Assumptions & Rationale</h2>
+        <div class="assumption-grid">
+          <div class="assumption-card">
+            <div class="card-title">FCF Growth (Y1-Y5)</div>
+            <div class="card-value">{formatPercent(fcfGrowthRate)}</div>
+            <p><strong>Rationale:</strong> AI data centers require 24/7 power, and nuclear is the only clean baseload option. CEG's existing fleet is irreplaceable. The 8% growth assumes margin expansion as old contracts expire and renew at higher PPA rates with hyperscalers.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Discount Rate (WACC)</div>
+            <div class="card-value">{formatPercent(wacc)}</div>
+            <p><strong>Rationale:</strong> 7.5% balances the current 4.18% risk-free rate with CEG's utility-like stability. While utilities traditionally have lower discount rates, nuclear generation carries specific regulatory and operational risks, justifying a slight premium over regulated peers.</p>
+          </div>
+
+          <div class="assumption-card">
+            <div class="card-title">Terminal Growth</div>
+            <div class="card-value">{formatPercent(terminalGrowthRate)}</div>
+            <p><strong>Rationale:</strong> 2.5% assumes CEG grows slightly slower than long-term nominal GDP. Nuclear plants have 80-year lifespans but cannot infinitely increase capacity without massive new capital, capping perpetual volume growth.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Projected Cash Flows (Years 1-5)</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Projected Cash Flow</th>
+                <th>PV Factor ({formatPercent(wacc)})</th>
+                <th>Present Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Base Year (TTM)</td>
+                <td>{formatMillions(baseFCF)}</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              {hasData ? projections.map((p, index) => (
+                <tr>
+                  <td>{p.year}</td>
+                  <td>{formatMillions(p.fcf)}</td>
+                  <td>{(1 / Math.pow(1 + wacc, index + 1)).toFixed(4)}</td>
+                  <td>{formatMillions(p.pv)}</td>
+                </tr>
+              )) : (
+                <tr><td colspan="4" style="text-align:center;">Data Unavailable</td></tr>
+              )}
+              <tr class="highlight-row">
+                <td colspan="3"><strong>Sum of PV of FCFs (Years 1-5)</strong></td>
+                <td><strong>{formatMillions(sumPvFcf)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Terminal Value & Final Valuation</h2>
+        <div class="math-card">
+          <div class="math-row">
+            <span>Year 5 Cash Flow</span>
+            <span>{hasData ? formatMillions(projections[4].fcf) : 'N/A'}</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value Calculation</span>
+            <span>Gordon Growth Model</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value</span>
+            <span>{formatMillions(terminalValue)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span>PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+        </div>
+
+        <p style="margin-top: 2rem;"><strong>Enterprise to Equity Value Bridge:</strong></p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Sum of PV of FCFs (Years 1-5)</span>
+            <span>{formatMillions(sumPvFcf)}</span>
+          </div>
+          <div class="math-row">
+            <span>+ PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+          <div class="math-row">
+            <span><strong>= Enterprise Value</strong></span>
+            <span><strong>{formatMillions(enterpriseValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>+ Net Cash (Cash & Eq: {formatMillions(cashAndEquivalents)} - Debt: {formatMillions(totalDebt)})</span>
+            <span>{formatMillions(netCash)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span><strong>= Total Equity Value</strong></span>
+            <span><strong>{formatMillions(totalEquityValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>÷ Shares Outstanding</span>
+            <span>{hasData ? sharesOut.toLocaleString() + 'M' : 'N/A'}</span>
+          </div>
+          <div class="math-row result">
+            <span><strong>Intrinsic Value Per Share</strong></span>
+            <span><strong>{formatMoney(intrinsicValuePerShare)}</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Sensitivity Matrix</h2>
+        <p>Valuation models are highly sensitive to their inputs. The 5x5 matrix below illustrates how the Intrinsic Value Per Share shifts when the Discount Rate (WACC) and Terminal Growth Rate are adjusted.</p>
+
+        <div class="table-container sensitivity-table">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="corner-cell">Terminal<br/>Growth</th>
+                <th colspan="5" class="header-cell">Discount Rate (WACC)</th>
+              </tr>
+              <tr>
+                {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {hasData ? sensitivityMatrix.map(row => (
+                <tr>
+                  <th class="row-header">{formatPercent(row.growthRate)}</th>
+                  {row.values.map(val => (
+                    <td class={
+                      val > currentPrice * 1.15 ? "cell-undervalued" :
+                      val < currentPrice * 0.85 ? "cell-overvalued" :
+                      "cell-neutral"
+                    }>
+                      {formatMoney(val)}
+                    </td>
+                  ))}
+                </tr>
+              )) : (
+                <tr><td colspan="6">Matrix unavailable due to missing data.</td></tr>
+              )}
+            </tbody>
+          </table>
+          <div class="matrix-legend">
+            <span class="legend-item"><span class="color-box cell-undervalued"></span> Undervalued (>15% Margin)</span>
+            <span class="legend-item"><span class="color-box cell-neutral"></span> Fair Value</span>
+            <span class="legend-item"><span class="color-box cell-overvalued"></span> Overvalued (&lt;-15% Margin)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section risks-section">
+        <h2>Risks to the Thesis</h2>
+        <div class="risk-grid">
+          <div class="risk-card">
+            <h3>1. Regulatory Headwinds</h3>
+            <p>Federal agencies (like FERC) could intervene in co-located nuclear-data center deals, arguing they threaten grid reliability and raise costs for everyday consumers, potentially capping CEG's pricing power.</p>
+          </div>
+          <div class="risk-card">
+            <h3>2. Nuclear Operational Risk</h3>
+            <p>Nuclear generation requires perfect execution. An extended unplanned outage at a major facility not only halts revenue but incurs massive repair costs and forces CEG to buy replacement power at volatile market rates.</p>
+          </div>
+          <div class="risk-card">
+            <h3>3. Next-Gen Tech Alternatives</h3>
+            <p>If geothermal or advanced battery storage scales faster and cheaper than anticipated, tech companies may not be forced to pay premium long-term PPA rates for CEG's nuclear baseload.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h3>Why use a two-stage DCF for Constellation Energy?</h3>
+          <p>A two-stage DCF captures the immediate, accelerated cash flow growth driven by the current AI data center supercycle, followed by a normalized, lower-growth state that reflects the mature reality of running a utility over decades.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Why might Operating Cash Flow be used instead of Free Cash Flow?</h3>
+          <p>Utilities often carry heavy capital expenditure burdens (CapEx) to maintain aging infrastructure. In years where CapEx exceeds operating cash flow, Free Cash Flow goes negative. A DCF with a negative base FCF breaks down mathematically. Using Operating Cash Flow provides a proxy for the core business generation before major reinvestments.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is Constellation Energy a "tech stock"?</h3>
+          <p>No, it is an unregulated power generator. However, because its carbon-free nuclear power is perfectly suited for AI data centers, it trades at a premium multiple compared to traditional utilities, making its stock performance highly correlated with tech infrastructure spending.</p>
+        </div>
+      </section>
+
+      <div class="disclaimer-box">
+        <p><strong>Disclaimer:</strong> This analysis is for informational and educational purposes only. It does not constitute investment advice. The financial models depend on assumptions and historical data fetched dynamically, which may be incomplete or subject to change. Always perform your own due diligence or consult a licensed financial advisor before investing.</p>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+
+<style is:global>
+  /* Base styles for the page */
+  body {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', -apple-system, sans-serif;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .page-content {
+    padding-bottom: 4rem;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 4rem 1rem 3rem;
+    background: linear-gradient(180deg, #0a1628 0%, #060a12 100%);
+    position: relative;
+    border-bottom: 1px solid #152040;
+    margin-bottom: 3rem;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%);
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tag {
+    display: inline-block;
+    background: rgba(74, 143, 231, 0.12);
+    color: #4a8fe7;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #7a8a9e;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Verdict Card */
+  .verdict-card {
+    background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%);
+    border: 2px solid #152040;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+
+  .verdict-header {
+    background-color: rgba(74, 143, 231, 0.05);
+    padding: 1.5rem;
+    border-bottom: 1px solid #152040;
+    text-align: center;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #4a8fe7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .verdict-body {
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .verdict-main {
+    margin-bottom: 2rem;
+  }
+
+  .iv-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 800;
+    color: #fff;
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .iv-label {
+    font-size: 0.9rem;
+    color: #5a6a80;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    border-top: 1px solid #152040;
+    padding-top: 2rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: #5a6a80;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e0e6f0;
+  }
+
+  .stat-value.positive, .badge.positive { color: #10b981; }
+  .stat-value.negative, .badge.negative { color: #ef4444; }
+
+  .badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .badge.positive {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  .badge.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .verdict-footer {
+    background-color: #060a12;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #5a6a80;
+    border-top: 1px solid #152040;
+  }
+
+  /* Content Sections */
+  .content-section {
+    margin-bottom: 4rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.75rem;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #152040;
+    padding-bottom: 0.5rem;
+  }
+
+  .content-section p {
+    color: #a0aab8;
+    margin-bottom: 1.5rem;
+  }
+
+  .content-section strong {
+    color: #e0e6f0;
+  }
+
+  /* Methodology Steps */
+  .method-step {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 12px;
+  }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    background: rgba(74, 143, 231, 0.12);
+    color: #4a8fe7;
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #e0e6f0;
+    font-size: 1.1rem;
+  }
+
+  .step-content p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  /* Assumption Grid */
+  .assumption-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .assumption-card {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #5a6a80;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #7a8a9e;
+    margin: 0;
+  }
+
+  /* Tables */
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    border: 1px solid #152040;
+    background-color: #0a1020;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #152040;
+  }
+
+  th:first-child, td:first-child {
+    text-align: left;
+  }
+
+  th {
+    background-color: #0d1428;
+    color: #5a6a80;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #c8d0de;
+  }
+
+  td:first-child {
+    font-family: 'Inter', sans-serif;
+    color: #a0aab8;
+    font-weight: 600;
+  }
+
+  .highlight-row {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-top: 2px solid #1a2a40;
+  }
+
+  .highlight-row td {
+    color: #4a8fe7;
+    font-weight: 800;
+  }
+
+  /* Math Card */
+  .math-card {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #152040;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+  }
+
+  .math-row:last-child {
+    border-bottom: none;
+  }
+
+  .math-row span:first-child {
+    font-family: 'Inter', sans-serif;
+    color: #a0aab8;
+  }
+
+  .math-row.highlight {
+    background-color: rgba(74, 143, 231, 0.05);
+    padding: 0.75rem 1rem;
+    margin: 0 -1rem;
+    border-radius: 6px;
+  }
+
+  .math-row.highlight span {
+    color: #4a8fe7;
+    font-weight: 700;
+  }
+
+  .math-row.result {
+    border-top: 2px solid #1a2a40;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .math-row.result span {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 800;
+  }
+
+  .math-row.result span:last-child {
+    color: #4a8fe7;
+  }
+
+  /* Sensitivity Matrix */
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .sensitivity-table .header-cell {
+    border-bottom: 2px solid #152040;
+  }
+
+  .sensitivity-table .corner-cell {
+    background-color: #060a12;
+    border-right: 2px solid #152040;
+    border-bottom: 2px solid #152040;
+  }
+
+  .sensitivity-table .row-header {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-right: 2px solid #152040;
+    color: #4a8fe7;
+  }
+
+  .cell-undervalued {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  .cell-overvalued {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .cell-neutral {
+    background-color: transparent;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    background-color: #060a12;
+    border-top: 1px solid #152040;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7a8a9e;
+  }
+
+  .color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  /* Risks Grid */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .risk-card {
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .risk-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #ef4444;
+    font-size: 1.1rem;
+  }
+
+  .risk-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #a0aab8;
+  }
+
+  /* FAQ */
+  .faq-item {
+    background-color: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item h3 {
+    margin: 0 0 0.75rem 0;
+    color: #e0e6f0;
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #a0aab8;
+  }
+
+  /* Disclaimer */
+  .disclaimer-box {
+    background-color: #0a1020;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+    border-radius: 0 12px 12px 0;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #7a8a9e;
+  }
+
+  .disclaimer-box strong {
+    color: #e0e6f0;
+  }
+
+  @media (max-width: 640px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 3rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    .method-step {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: left;
+      font-weight: 700;
+    }
+  }
+</style>

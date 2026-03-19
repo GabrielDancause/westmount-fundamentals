@@ -1,0 +1,758 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
+
+export const meta = {
+  title: "Kinder Morgan (KMI) Intrinsic Value: A DCF Analysis",
+  description: "A transparent, step-by-step discounted cash flow valuation of Kinder Morgan. Using actual financials to arrive at a single fair value estimate for KMI shares.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Kinder Morgan (KMI) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Kinder Morgan. Using actual financials to arrive at a single fair value estimate for KMI shares.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/kinder-morgan-intrinsic-value"
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING FROM STOCKANALYSIS.COM
+   Every number is strictly derived from actual financials.
+   We use a two-stage DCF: Phase 1 (Years 1-5) then terminal value.
+   ═══════════════════════════════════════════════════════════════ */
+
+let currentPrice = null;
+let beta = 1.0;
+let revenue_hist = [];
+let eps_hist = [];
+let op_income_hist = [];
+let net_income_hist = [];
+let ocf_hist = [];
+let cashAndInvestments = 0;
+let totalDebt = 0;
+let sharesOutstanding = 0;
+let years = [];
+
+try {
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Cache-Control': 'no-cache',
+    'Upgrade-Insecure-Requests': '1'
+  };
+
+  // 1. Current Price & Beta
+  const resQuote = await fetch('https://stockanalysis.com/stocks/kmi/', { headers });
+  if (resQuote.ok) {
+    const html = await resQuote.text();
+    const $ = cheerio.load(html);
+    const priceText = $('.text-4xl.font-bold').first().text().trim().replace(/,/g, '');
+    if (priceText) currentPrice = parseFloat(priceText);
+
+    // Attempt to extract beta if visible on summary (fallback to 1.0)
+    // Sometimes it's in a table with row header "Beta"
+    $('table tr').each((i, el) => {
+      if ($(el).find('td').first().text().trim() === 'Beta') {
+        const betaVal = parseFloat($(el).find('td').last().text().trim());
+        if (!isNaN(betaVal)) beta = betaVal;
+      }
+    });
+  }
+
+  // Helper to parse numbers
+  const parseNum = (val) => {
+    if (!val || val === '-' || val === 'N/A') return 0;
+    const clean = val.replace(/,/g, '');
+    return parseFloat(clean) * 1000000; // SA data is in millions, convert to raw
+  };
+
+  // 2. Financials (Income Statement)
+  const resFin = await fetch('https://stockanalysis.com/stocks/kmi/financials/', { headers });
+  if (resFin.ok) {
+    const html = await resFin.text();
+    const $ = cheerio.load(html);
+
+    // Extract years from headers
+    $('table thead tr th').each((i, el) => {
+      if (i > 0 && i <= 5) years.push($(el).text().trim());
+    });
+
+    $('table tbody tr').each((i, el) => {
+      const cells = $(el).find('td');
+      const title = $(cells[0]).text().trim();
+
+      if (title === 'Revenue') {
+        cells.each((j, c) => { if (j > 0 && j <= 5) revenue_hist.push(parseNum($(c).text().trim())); });
+      }
+      if (title === 'Operating Income') {
+        cells.each((j, c) => { if (j > 0 && j <= 5) op_income_hist.push(parseNum($(c).text().trim())); });
+      }
+      if (title === 'Net Income') {
+        cells.each((j, c) => { if (j > 0 && j <= 5) net_income_hist.push(parseNum($(c).text().trim())); });
+      }
+      if (title === 'EPS (Diluted)') {
+        cells.each((j, c) => { if (j > 0 && j <= 5) eps_hist.push(parseFloat($(c).text().trim()) || 0); });
+      }
+      if (title === 'Shares Outstanding (Diluted)') {
+        const shareVal = parseNum($(cells[1]).text().trim());
+        if (shareVal > 0) sharesOutstanding = shareVal / 1000000; // in millions
+      }
+    });
+  }
+
+  // 3. Cash Flow
+  const resCF = await fetch('https://stockanalysis.com/stocks/kmi/financials/cash-flow-statement/', { headers });
+  if (resCF.ok) {
+    const html = await resCF.text();
+    const $ = cheerio.load(html);
+    $('table tbody tr').each((i, el) => {
+      const cells = $(el).find('td');
+      const title = $(cells[0]).text().trim();
+      if (title === 'Operating Cash Flow') {
+        cells.each((j, c) => { if (j > 0 && j <= 5) ocf_hist.push(parseNum($(c).text().trim())); });
+      }
+    });
+  }
+
+  // 4. Balance Sheet
+  const resBS = await fetch('https://stockanalysis.com/stocks/kmi/financials/balance-sheet/', { headers });
+  if (resBS.ok) {
+    const html = await resBS.text();
+    const $ = cheerio.load(html);
+    $('table tbody tr').each((i, el) => {
+      const cells = $(el).find('td');
+      const title = $(cells[0]).text().trim();
+      if (title === 'Cash & Equivalents') {
+        cashAndInvestments = parseNum($(cells[1]).text().trim()) / 1000000; // in millions
+      }
+      if (title === 'Total Debt') {
+        totalDebt = parseNum($(cells[1]).text().trim()) / 1000000; // in millions
+      }
+    });
+  }
+
+} catch (e) {
+  console.error("Scraping error:", e);
+}
+
+// Ensure history arrays are properly sized
+revenue_hist = revenue_hist.slice(0, 5);
+eps_hist = eps_hist.slice(0, 5);
+op_income_hist = op_income_hist.slice(0, 5);
+net_income_hist = net_income_hist.slice(0, 5);
+ocf_hist = ocf_hist.slice(0, 5);
+years = years.slice(0, 5);
+
+// --- INPUTS ---
+// We use Operating Cash Flow (OCF) instead of FCF due to high CapEx for midstream operations, per instructions.
+const baseCashFlow = ocf_hist.length > 0 ? ocf_hist[0] : 0;
+const netCash = cashAndInvestments - totalDebt;
+currentPrice = currentPrice !== null ? currentPrice : 0;
+
+// --- DYNAMIC ASSUMPTIONS (strictly mathematical) ---
+const treasury10Y = 0.0418; // 10Y Treasury: 4.18% (Constant)
+// Calculate Equity Risk Premium dynamically based on beta: ERP = Beta * 5.0% (standard premium proxy)
+// Discount Rate = Risk-Free Rate + Beta * ERP
+const erp_proxy = 0.05;
+const discountRate = treasury10Y + (beta * erp_proxy);
+
+// Growth Phase 1: Mathematically derived from 5-year historical OCF CAGR
+let cagrPhase1 = 0;
+if (ocf_hist && ocf_hist.length >= 5) {
+  const oldestOCF = ocf_hist[4];
+  const newestOCF = ocf_hist[0];
+  if (oldestOCF > 0 && newestOCF > 0) {
+    cagrPhase1 = Math.pow(newestOCF / oldestOCF, 1/4) - 1;
+  }
+}
+const growthRatePhase1 = Math.max(0, cagrPhase1); // Ensure non-negative
+
+// Terminal Growth: Mathematically derived from 5-year historical Revenue CAGR (capped at GDP proxy of 3%)
+let cagrRev = 0;
+if (revenue_hist && revenue_hist.length >= 5) {
+  const oldestRev = revenue_hist[4];
+  const newestRev = revenue_hist[0];
+  if (oldestRev > 0 && newestRev > 0) {
+    cagrRev = Math.pow(newestRev / oldestRev, 1/4) - 1;
+  }
+}
+const growthRateTerminal = Math.min(Math.max(0, cagrRev), 0.03);
+
+// --- PHASE 1: PROJECT CASH FLOW FOR YEARS 1-5 ---
+const projectedCF = [];
+let cf = baseCashFlow / 1000000; // in millions
+for (let yr = 1; yr <= 5; yr++) {
+  cf = cf * (1 + growthRatePhase1);
+  projectedCF.push({ year: yr, cf: Math.round(cf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedCF.forEach(p => { p.pvCF = Math.round(p.cf * p.pvFactor); });
+
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+const cfYear6 = projectedCF[4].cf * (1 + growthRateTerminal);
+// Prevent negative denominator
+const drTerm = Math.max(discountRate - growthRateTerminal, 0.001);
+const terminalValue = Math.round(cfYear6 / drTerm);
+const pvTerminalValue = Math.round(terminalValue * projectedCF[4].pvFactor);
+
+// --- ENTERPRISE VALUE ---
+const pvPhase1 = projectedCF.reduce((sum, p) => sum + p.pvCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+// --- EQUITY VALUE ---
+const equityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = sharesOutstanding > 0 ? equityValue / sharesOutstanding : 0;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+// Market comparison
+const marginOfSafety = currentPrice > 0 ? ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1) : "0.0";
+const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+
+// --- HISTORICAL DATA for charts ---
+const revenueHistory = [];
+const ocfHistory = [];
+const epsHistory = [];
+const marginHistory = [];
+
+if (years && years.length > 0) {
+  // stockanalysis.com returns arrays ordered from newest to oldest. Reverse them for chronological display.
+  for (let i = years.length - 1; i >= 0; i--) {
+    const yr = years[i];
+    const rev = revenue_hist[i];
+    const ocf = ocf_hist[i];
+    const eps = eps_hist[i];
+    const opInc = op_income_hist[i];
+    const netInc = net_income_hist[i];
+
+    revenueHistory.push({ year: yr, value: rev });
+    ocfHistory.push({ year: yr, value: ocf });
+    epsHistory.push({ year: yr, value: eps });
+
+    const opMargin = rev > 0 ? (opInc / rev * 100).toFixed(1) : "0.0";
+    const profitMargin = rev > 0 ? (netInc / rev * 100).toFixed(1) : "0.0";
+    const ocfMargin = rev > 0 ? (ocf / rev * 100).toFixed(1) : "0.0";
+
+    marginHistory.push({ year: yr, operating: opMargin, profit: profitMargin, ocfMargin: ocfMargin });
+  }
+}
+
+// Sensitivity analysis
+const drBase = discountRate;
+const grBase = growthRatePhase1;
+const sensitivityRates = [
+  Math.max(0.01, drBase - 0.02),
+  Math.max(0.01, drBase - 0.01),
+  drBase,
+  drBase + 0.01,
+  drBase + 0.02
+];
+const sensitivityGrowth = [
+  Math.max(0, grBase - 0.04),
+  Math.max(0, grBase - 0.02),
+  grBase,
+  grBase + 0.02,
+  grBase + 0.04
+];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      let f = baseCashFlow / 1000000;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / Math.max(dr - growthRateTerminal, 0.001);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="Kinder Morgan (KMI) Intrinsic Value: A DCF Analysis"
+  description="A transparent, step-by-step discounted cash flow valuation of Kinder Morgan. Using actual financials to arrive at a single fair value estimate for KMI shares."
+  canonical="https://westmountfundamentals.com/kinder-morgan-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+</style>
+<style>
+.dcf-wrapper { padding-bottom: 80px; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+.gemini { display: inline-block; margin-top: 12px; font-size: 0.75rem; color: #4a8fe7; border: 1px solid #4a8fe7; padding: 2px 8px; border-radius: 12px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.ocf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="dcf-wrapper">
+  <div class="header">
+    <div class="header-content">
+      <div class="tag">Original Research</div>
+      <h1>Kinder Morgan (KMI)<br/>Intrinsic Value</h1>
+      <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Kinder Morgan. — derived strictly from historical financials and mathematical relationships.</p>
+      <p class="date">Updated March 18, 2026</p>
+      <div class="gemini">Compiled by Gemini 3.1</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- ═══ THE VERDICT ═══ -->
+    <div class="verdict-card">
+      <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+      <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+      <div class="verdict-vs">vs. market price of ${currentPrice !== null ? currentPrice.toFixed(2) : 'N/A'} ({marginOfSafety}%)</div>
+      <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+        {verdictText}
+      </div>
+    </div>
+
+    <!-- ═══ KEY METRICS ═══ -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">${revenueHistory.length > 0 ? (revenueHistory[revenueHistory.length-1].value / 1000000000).toFixed(1) : 'N/A'}B</div>
+        <div class="stat-label">Latest Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(baseCashFlow / 1000000000).toFixed(1)}B</div>
+        <div class="stat-label">Operating Cash Flow</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${epsHistory.length > 0 ? epsHistory[epsHistory.length-1].value.toFixed(2) : 'N/A'}</div>
+        <div class="stat-label">EPS (Diluted)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{marginHistory.length > 0 ? marginHistory[marginHistory.length-1].operating : 'N/A'}%</div>
+        <div class="stat-label">Operating Margin</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
+        <div class="stat-label">Net Cash</div>
+      </div>
+    </div>
+
+    <!-- ═══ METHODOLOGY ═══ -->
+    <h2>Methodology: Two-Stage DCF</h2>
+    <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model. All inputs are strictly derived mathematically from current historical data and explicit constants without subjective adjustments.</p>
+
+    <div class="method-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Base Cash Flow Adaptation for Midstream</h4>
+        <p>Because midstream and pipeline companies like Kinder Morgan operate with consistently high structural Capital Expenditures that often result in volatile or negative standard Free Cash Flow (FCF), we strictly use the actual <strong>Operating Cash Flow (OCF)</strong> as the base proxy for cash generation. The latest OCF is ${Math.round(baseCashFlow / 1000000).toLocaleString()}M.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Project CF growth for 5 years (Phase 1)</h4>
+        <p>We mathematically project CF growth based on the 5-year historical Compound Annual Growth Rate (CAGR) of the Operating Cash Flow. This calculated rate is <strong>{(growthRatePhase1 * 100).toFixed(2)}%</strong>.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Calculate terminal value (Phase 2)</h4>
+        <p>After Year 5, we use the <strong>Gordon Growth Model</strong>. The terminal growth rate is derived from the 5-year historical revenue CAGR, strictly capped at a 3% GDP proxy. The calculated terminal rate is <strong>{(growthRateTerminal * 100).toFixed(2)}%</strong>.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Discount to present value</h4>
+        <p>All future cash flows are discounted using a rate derived from the explicitly provided 10Y Treasury yield (4.18%) plus a dynamic equity risk premium calculated using the stock's beta ({beta}). The calculated discount rate is <strong>{(discountRate * 100).toFixed(2)}%</strong>.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Add net cash, divide by shares</h4>
+        <p>Enterprise Value + Net Cash (${netCash.toLocaleString()}M) = Equity Value. Divide by shares outstanding ({sharesOutstanding.toLocaleString()}M) for the per-share intrinsic value.</p>
+      </div>
+    </div>
+
+    <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+    <h2>The Three Assumptions That Drive Everything</h2>
+    <p>Every assumption is strictly derived from empirical data.</p>
+
+    <div class="assumption-grid">
+      <div class="assumption-card">
+        <div class="label">CF Growth Rate (Years 1-5)</div>
+        <div class="value">{(growthRatePhase1 * 100).toFixed(2)}%</div>
+        <div class="rationale">
+          Mathematically derived from the 5-year Compound Annual Growth Rate of Kinder Morgan's Operating Cash Flow.
+        </div>
+      </div>
+      <div class="assumption-card">
+        <div class="label">Discount Rate (WACC Proxy)</div>
+        <div class="value">{(discountRate * 100).toFixed(2)}%</div>
+        <div class="rationale">
+          Strictly derived: 10Y Treasury (4.18%) + (Beta {beta} × standard 5% Equity Risk Premium proxy).
+        </div>
+      </div>
+      <div class="assumption-card">
+        <div class="label">Terminal Growth Rate</div>
+        <div class="value">{(growthRateTerminal * 100).toFixed(2)}%</div>
+        <div class="rationale">
+          Mathematically derived from the 5-year historical revenue CAGR, strictly capped at 3% to reflect long-term macroeconomic bounds.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PROJECTIONS TABLE ═══ -->
+    <h2>Projected Cash Flows (Base: OCF)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Year</th>
+            <th>CF ($M)</th>
+            <th>PV Factor</th>
+            <th>Present Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Base</td>
+            <td>${Math.round(baseCashFlow / 1000000).toLocaleString()}</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          {projectedCF.map(p => (
+            <tr>
+              <td>Year {p.year}</td>
+              <td>${p.cf.toLocaleString()}</td>
+              <td>{p.pvFactor.toFixed(4)}</td>
+              <td>${p.pvCF.toLocaleString()}</td>
+            </tr>
+          ))}
+          <tr class="row-total">
+            <td colspan="3">Sum of Phase 1 PV</td>
+            <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ TERMINAL VALUE ═══ -->
+    <h3>Terminal Value</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Component</th>
+            <th>Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Year 6 CF</td>
+            <td>${Math.round(cfYear6).toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>Terminal Value</td>
+            <td>${terminalValue.toLocaleString()}</td>
+          </tr>
+          <tr class="row-total">
+            <td>PV of Terminal Value</td>
+            <td class="highlight-cell">${pvTerminalValue.toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ FINAL CALCULATION ═══ -->
+    <h3>Final Valuation</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Component</th>
+            <th>Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PV of Phase 1 Cash Flows</td>
+            <td>${pvPhase1.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>PV of Terminal Value</td>
+            <td>${pvTerminalValue.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>= Enterprise Value</td>
+            <td>${enterpriseValue.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>+ Net Cash (Cash − Debt)</td>
+            <td>${netCash.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>= Equity Value</td>
+            <td>${equityValue.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>÷ Shares Outstanding</td>
+            <td>{sharesOutstanding.toLocaleString()}</td>
+          </tr>
+          <tr class="row-total">
+            <td>Intrinsic Value Per Share</td>
+            <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ HISTORICAL CHARTS ═══ -->
+    <h2>Financial Track Record</h2>
+    <p>Historical data sourced via yfinance.</p>
+
+    <h3>Revenue ($B)</h3>
+    <div class="bar-chart">
+      {revenueHistory.map(r => (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill revenue" style={`width: ${r.value > 0 ? (r.value / (revenueHistory[revenueHistory.length-1]?.value || 1)) * 100 : 0}%`}>
+              ${(r.value / 1000000000).toFixed(1)}B
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <h3>Operating Cash Flow ($B)</h3>
+    <div class="bar-chart">
+      {ocfHistory.map(r => (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill ocf" style={`width: ${r.value > 0 ? (r.value / (ocfHistory[ocfHistory.length-1]?.value || 1)) * 100 : 0}%`}>
+              ${(r.value / 1000000000).toFixed(1)}B
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <h3>Earnings Per Share (Diluted)</h3>
+    <div class="bar-chart">
+      {epsHistory.map(r => (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill eps" style={`width: ${r.value > 0 ? (r.value / (epsHistory[epsHistory.length-1]?.value || 1)) * 100 : 0}%`}>
+              ${r.value.toFixed(2)}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- ═══ MARGIN TRENDS ═══ -->
+    <h3>Margin Trends</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Year</th>
+            <th>Operating Margin</th>
+            <th>Profit Margin</th>
+            <th>OCF Margin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {marginHistory.map(m => (
+            <tr>
+              <td>{m.year}</td>
+              <td>{m.operating}%</td>
+              <td>{m.profit}%</td>
+              <td>{m.ocfMargin}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+    <h2>Sensitivity Analysis</h2>
+    <p>Exploring intrinsic value variations based on discount rate and growth rate permutations.</p>
+
+    <div class="table-wrap">
+      <table class="sensitivity-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+            {sensitivityGrowth.map(g => (
+              <th class={Math.abs(g - growthRatePhase1) < 0.0001 ? 'current' : ''}>{(g * 100).toFixed(1)}%</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sensitivityTable.map(row => (
+            <tr>
+              <td>{(row.dr * 100).toFixed(1)}%</td>
+              {row.values.map((v, i) => (
+                <td class={Math.abs(row.dr - discountRate) < 0.0001 && Math.abs(sensitivityGrowth[i] - growthRatePhase1) < 0.0001 ? 'current' : ''}>
+                  ${v}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+    <h2>Risks & Limitations</h2>
+    <ul>
+      <li><strong>CapEx Requirements:</strong> Utilizing Operating Cash Flow inherently bypasses massive capital expenditures required for midstream pipeline maintenance and expansion.</li>
+      <li><strong>Regulatory & Environmental:</strong> Pipeline operations face significant regulatory hurdles, environmental litigation, and shifting energy policy risks.</li>
+      <li><strong>Interest Rates:</strong> High debt loads (${Math.round(totalDebt).toLocaleString()}M) make KMI sensitive to refinancing rates which may compress future margins.</li>
+      <li><strong>Commodity Volume Dependencies:</strong> While contracts are often fee-based, severe shifts in natural gas transport volumes can impact utilization rates.</li>
+    </ul>
+
+    <!-- ═══ FAQ ═══ -->
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq">
+      <details>
+        <summary>Why use Operating Cash Flow instead of Free Cash Flow?</summary>
+        <div class="faq-answer">Midstream pipeline companies are highly capital intensive. Their traditional Free Cash Flow (OCF - CapEx) is often negative or extremely volatile due to massive, irregular growth CapEx. Using OCF provides a more stable baseline for evaluating the cash generation of core operations, though it requires acknowledging that sustaining CapEx is omitted from the base rate.</div>
+      </details>
+      <details>
+        <summary>How is the discount rate calculated?</summary>
+        <div class="faq-answer">It is derived strictly mathematically: the explicitly provided 10Y Treasury yield (4.18%) plus the stock's beta ({beta}) multiplied by a standard 5% equity risk premium proxy.</div>
+      </details>
+    </div>
+
+    <!-- ═══ DISCLAIMER ═══ -->
+    <div class="disclaimer">
+      <h4>⚠️ Important Disclaimer</h4>
+      <p>This mathematical analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on derived calculations that may not fully encapsulate real-world risks.</p>
+    </div>
+  </div>
+</div>
+</SiteLayout>

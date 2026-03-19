@@ -1,0 +1,578 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
+
+export const meta = {
+  title: "Union Pacific (UNP) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on Union Pacific. One number. Every assumption disclosed. Here's what UNP is really worth.",
+  category: "study",
+  published: "2026-03-24",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": meta.published,
+  "dateModified": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/union-pacific-intrinsic-value"
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   SCRAPING UNP DATA
+   ═══════════════════════════════════════════════════════════════ */
+const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' };
+
+let currentPrice = null;
+let sharesOutstanding = null;
+let cashAndInvestments = null;
+let totalDebt = null;
+let fcfTrailing = null;
+let revenueTrailing = null;
+let epsTrailing = null;
+
+try {
+  // 1. Stock price
+  const resTicker = await fetch('https://stockanalysis.com/stocks/unp/', { headers });
+  if (resTicker.ok) {
+    const htmlTicker = await resTicker.text();
+    const $ticker = cheerio.load(htmlTicker);
+    const priceText = $ticker('.text-4xl.font-bold').first().text().replace(/[^0-9.]/g, '');
+    currentPrice = parseFloat(priceText) || null;
+  }
+
+  // 2. Balance Sheet (Cash & Debt)
+  const resBS = await fetch('https://stockanalysis.com/stocks/unp/financials/balance-sheet/', { headers });
+  if (resBS.ok) {
+    const htmlBS = await resBS.text();
+    const $bs = cheerio.load(htmlBS);
+    $bs('table tbody tr').each((_, el) => {
+      const rowText = $bs(el).find('td').first().text().trim();
+      const valStr = $bs(el).find('td').eq(1).text().trim().replace(/,/g, '');
+      const val = parseFloat(valStr);
+      if (rowText === 'Cash & Equivalents' || rowText === 'Cash & Short-Term Investments') {
+        if (!cashAndInvestments && !isNaN(val)) cashAndInvestments = val;
+      }
+      if (rowText === 'Total Debt') {
+        if (!totalDebt && !isNaN(val)) totalDebt = val;
+      }
+    });
+  }
+
+  // 3. Financials / Income Statement (Shares, Revenue, EPS)
+  const resFin = await fetch('https://stockanalysis.com/stocks/unp/financials/', { headers });
+  if (resFin.ok) {
+    const htmlFin = await resFin.text();
+    const $fin = cheerio.load(htmlFin);
+    $fin('table tbody tr').each((_, el) => {
+      const rowText = $fin(el).find('td').first().text().trim();
+      const valStr = $fin(el).find('td').eq(1).text().trim().replace(/,/g, '');
+      const val = parseFloat(valStr);
+      if (rowText === 'Shares Outstanding (Basic)' || rowText === 'Shares Outstanding') {
+        if (!sharesOutstanding && !isNaN(val)) sharesOutstanding = val;
+      }
+      if (rowText === 'Revenue') {
+        if (!revenueTrailing && !isNaN(val)) revenueTrailing = val;
+      }
+      if (rowText === 'EPS (Diluted)' || rowText === 'EPS (Basic)') {
+        if (!epsTrailing && !isNaN(val)) epsTrailing = val;
+      }
+    });
+  }
+
+  // 4. Cash Flow Statement (FCF)
+  const resCF = await fetch('https://stockanalysis.com/stocks/unp/financials/cash-flow-statement/', { headers });
+  if (resCF.ok) {
+    const htmlCF = await resCF.text();
+    const $cf = cheerio.load(htmlCF);
+    $cf('table tbody tr').each((_, el) => {
+      const rowText = $cf(el).find('td').first().text().trim();
+      const valStr = $cf(el).find('td').eq(1).text().trim().replace(/,/g, '');
+      const val = parseFloat(valStr);
+      if (rowText === 'Free Cash Flow') {
+        if (!fcfTrailing && !isNaN(val)) fcfTrailing = val;
+      }
+    });
+  }
+} catch (error) {
+  console.error("Error scraping UNP:", error);
+}
+
+// Fallbacks for critical missing data just to allow successful render, strictly 'null over fake data' handled gracefully below
+const isDataValid = currentPrice !== null && fcfTrailing !== null && sharesOutstanding !== null && cashAndInvestments !== null && totalDebt !== null;
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+let projectedFCF = [];
+let terminalValue = null;
+let pvTerminalValue = null;
+let pvPhase1 = null;
+let enterpriseValue = null;
+let equityValue = null;
+let intrinsicValuePerShare = null;
+let roundedIV = null;
+let marginOfSafety = null;
+let verdictText = "Unknown";
+let verdictColor = "#7a8a9e";
+let netCash = null;
+
+// The Three Assumptions
+const growthRatePhase1 = 0.05;         // 5% FCF growth, Years 1-5 (UNP is mature, slow volume growth)
+const growthRateTerminal = 0.025;      // 2.5% perpetuity growth (terminal)
+const discountRate = 0.08;             // 8% WACC / required return (stable, oligopoly moat)
+
+let sensitivityTable = [];
+const sensitivityRates = [0.06, 0.07, 0.08, 0.09, 0.10];
+const sensitivityGrowth = [0.03, 0.04, 0.05, 0.06, 0.07];
+
+if (isDataValid) {
+  netCash = cashAndInvestments - totalDebt;
+
+  // Phase 1: Years 1-5
+  let fcf = fcfTrailing;
+  for (let yr = 1; yr <= 5; yr++) {
+    fcf = fcf * (1 + growthRatePhase1);
+    projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+  }
+  projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+  // Phase 2: Terminal Value
+  const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+  terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+  pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+  // Values
+  pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+  enterpriseValue = pvPhase1 + pvTerminalValue;
+  equityValue = enterpriseValue + netCash;
+  intrinsicValuePerShare = equityValue / sharesOutstanding;
+  roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+  marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+  verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+  verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+
+  // Sensitivity analysis
+  sensitivityTable = sensitivityRates.map(dr => {
+    return {
+      dr,
+      values: sensitivityGrowth.map(gr => {
+        let f = fcfTrailing;
+        let pvSum = 0;
+        for (let y = 1; y <= 5; y++) {
+          f = f * (1 + gr);
+          pvSum += f / Math.pow(1 + dr, y);
+        }
+        const f6 = f * (1 + growthRateTerminal);
+        const tv = f6 / (dr - growthRateTerminal);
+        const pvTV = tv / Math.pow(1 + dr, 5);
+        return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+      })
+    };
+  });
+}
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/union-pacific-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; margin-right: 8px;}
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Original Research</div>
+    <div class="tag">Compiled by Gemini 3.1</div>
+    <h1>Union Pacific (UNP)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Union Pacific Corp. — using trailing actuals, disclosed assumptions, and one final number.</p>
+  </div>
+</div>
+
+<div class="container">
+  {isDataValid ? (
+    <>
+      <!-- ═══ THE VERDICT ═══ -->
+      <div class="verdict-card">
+        <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+        <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+        <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
+        <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+          {verdictText}
+        </div>
+      </div>
+
+      <!-- ═══ KEY METRICS ═══ -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">${revenueTrailing ? (revenueTrailing / 1000).toFixed(1) : 'N/A'}B</div>
+          <div class="stat-label">Trailing Revenue</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${fcfTrailing ? (fcfTrailing / 1000).toFixed(1) : 'N/A'}B</div>
+          <div class="stat-label">Free Cash Flow</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${epsTrailing !== null ? epsTrailing.toFixed(2) : 'N/A'}</div>
+          <div class="stat-label">EPS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
+          <div class="stat-label">Net Cash / (Debt)</div>
+        </div>
+      </div>
+
+      <!-- ═══ METHODOLOGY ═══ -->
+      <h2>Methodology: Two-Stage DCF</h2>
+      <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables. Just future cash flows discounted to today.</p>
+
+      <div class="method-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Start with actual Free Cash Flow</h4>
+          <p>Union Pacific generated <strong>${(fcfTrailing / 1000).toFixed(2)} billion</strong> in free cash flow recently. This is real cash the business produces after paying for capital expenditures, tracks, and trains.</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Project FCF growth for 5 years (Phase 1)</h4>
+          <p>We grow FCF at <strong>{(growthRatePhase1 * 100).toFixed(0)}% per year</strong> for 5 years. UNP operates in a mature duopoly out West. Pricing power allows it to modestly outpace inflation, though volumes are often flat or cyclical.</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Calculate terminal value (Phase 2)</h4>
+          <p>After Year 5, we assume FCF grows at <strong>{(growthRateTerminal * 100).toFixed(1)}% forever</strong> — roughly matching long-term inflation. We use the Gordon Growth Model to capture all value from Year 6 to infinity.</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Discount everything to present value</h4>
+          <p>All future cash flows are discounted at <strong>{(discountRate * 100).toFixed(0)}%</strong> — our required rate of return. This is appropriate for a stable, wide-moat, dividend-paying railroad operating above a 10Y Treasury baseline of 4.18%.</p>
+        </div>
+      </div>
+
+      <div class="method-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Add net cash, divide by shares</h4>
+          <p>Enterprise Value minus Net Debt gives Equity Value. Divide by shares outstanding ({(sharesOutstanding / 1).toFixed(0)}M) for the per-share intrinsic value.</p>
+        </div>
+      </div>
+
+      <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+      <h2>The Three Assumptions That Drive Everything</h2>
+      <p>A DCF is only as good as its inputs. Here's what we chose and why.</p>
+
+      <div class="assumption-grid">
+        <div class="assumption-card">
+          <div class="label">FCF Growth Rate (Years 1-5)</div>
+          <div class="value">{(growthRatePhase1 * 100).toFixed(0)}%</div>
+          <div class="rationale">
+            Railroads are mature. Volume growth is historically tied to industrial production and often sluggish. Growth primarily comes from pricing power (raising rates) and operating ratio improvements (efficiency). 5% is a balanced expectation for a massive, capital-intensive incumbent.
+          </div>
+        </div>
+        <div class="assumption-card">
+          <div class="label">Discount Rate (WACC)</div>
+          <div class="value">{(discountRate * 100).toFixed(0)}%</div>
+          <div class="rationale">
+            10Y Treasury: 4.18%. We use 8% because UNP has a virtually unassailable economic moat (you can't build a new transcontinental railroad), reliable cash flows, and lower cyclicality than many industrials. A lower discount rate is justified for lower fundamental risk.
+          </div>
+        </div>
+        <div class="assumption-card">
+          <div class="label">Terminal Growth Rate</div>
+          <div class="value">{(growthRateTerminal * 100).toFixed(1)}%</div>
+          <div class="rationale">
+            Long-term nominal GDP growth is ~3%, with target inflation at 2%. Railroads move the physical economy. 2.5% assumes UNP essentially tracks long-term inflation and modest economic expansion forever.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+      <h2>Projected Free Cash Flows</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Year</th>
+              <th>FCF ($M)</th>
+              <th>PV Factor</th>
+              <th>Present Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base (Trailing)</td>
+              <td>${fcfTrailing.toLocaleString()}</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            {projectedFCF.map(p => (
+              <tr>
+                <td>Year {p.year}</td>
+                <td>${p.fcf.toLocaleString()}</td>
+                <td>{p.pvFactor.toFixed(4)}</td>
+                <td>${p.pvFCF.toLocaleString()}</td>
+              </tr>
+            ))}
+            <tr class="row-total">
+              <td colspan="3">Sum of Phase 1 PV</td>
+              <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ TERMINAL VALUE ═══ -->
+      <h3>Terminal Value</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Component</th>
+              <th>Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Year 6 FCF</td>
+              <td>${Math.round(projectedFCF[4].fcf * (1 + growthRateTerminal)).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Terminal Value</td>
+              <td>${terminalValue.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>PV of Terminal Value</td>
+              <td class="highlight-cell">${pvTerminalValue.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ FINAL CALCULATION ═══ -->
+      <h3>Final Valuation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Component</th>
+              <th>Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PV of Phase 1 Cash Flows</td>
+              <td>${pvPhase1.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td>${pvTerminalValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>= Enterprise Value</td>
+              <td>${enterpriseValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>+ Net Cash / (Debt)</td>
+              <td>${netCash.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>= Equity Value</td>
+              <td>${equityValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>÷ Shares Outstanding</td>
+              <td>{sharesOutstanding.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>Intrinsic Value Per Share</td>
+              <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+      <h2>Sensitivity Analysis</h2>
+      <p>Our base case uses {(growthRatePhase1 * 100).toFixed(0)}% growth and {(discountRate * 100).toFixed(0)}% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
+
+      <div class="table-wrap">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+              {sensitivityGrowth.map(g => (
+                <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityTable.map(row => (
+              <tr>
+                <td>{(row.dr * 100).toFixed(0)}%</td>
+                {row.values.map((v, i) => (
+                  <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                    ${v}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+      <h2>Risks & What This Model Misses</h2>
+
+      <h3>Upside risks (our number could be too low)</h3>
+      <ul>
+        <li><strong>Margin expansion:</strong> If Precision Scheduled Railroading (PSR) or new automation initiatives drastically improve the operating ratio, cash flows could exceed the 5% growth trend.</li>
+        <li><strong>Near-shoring boom:</strong> Increased manufacturing in Mexico directly benefits UNP's network, which connects key border crossings to the US Midwest.</li>
+        <li><strong>Share repurchases:</strong> Aggressive buybacks consistently lower the share count, artificially driving per-share value up faster than enterprise growth.</li>
+      </ul>
+
+      <h3>Downside risks (our number could be too high)</h3>
+      <ul>
+        <li><strong>Macroeconomic recession:</strong> Rail volumes are sensitive to industrial, agricultural, and consumer goods spending. A severe recession would crush FCF.</li>
+        <li><strong>Labor disputes:</strong> Railroads are highly unionized. Costly contract renegotiations or strikes can severely impact margins.</li>
+        <li><strong>Regulatory pressure:</strong> The Surface Transportation Board (STB) heavily regulates railroads and could mandate reciprocal switching or block future rate increases if service quality drops.</li>
+      </ul>
+
+      <!-- ═══ FAQ ═══ -->
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq">
+        <details>
+          <summary>Why is the discount rate lower than tech companies?</summary>
+          <div class="faq-answer">UNP is an entrenched duopoly (along with BNSF) in the Western US. You cannot physically or economically replicate their track network. Because their moat is virtually impenetrable and their cash flows are highly durable, the perceived risk is lower, justifying a lower required return (8%).</div>
+        </details>
+        <details>
+          <summary>Why use a 2.5% terminal growth rate?</summary>
+          <div class="faq-answer">Railroads are mature businesses tied to the physical economy. 2.5% roughly aligns with the Federal Reserve's long-term inflation target. Expecting a railroad to outgrow nominal GDP in perpetuity is unrealistic; expecting it to shrink is overly pessimistic given pricing power.</div>
+        </details>
+        <details>
+          <summary>Is this a buy recommendation?</summary>
+          <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, and conviction in the assumptions.</div>
+        </details>
+      </div>
+
+    </>
+  ) : (
+    <div class="verdict-card">
+      <div class="verdict-label">Data Unavailable</div>
+      <p style="color: #a0aab8; margin-top: 16px;">We could not fetch the necessary financial data for Union Pacific (UNP) at build time to run the DCF model. Please try again later.</p>
+    </div>
+  )}
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal.</p>
+  </div>
+</div>
+</SiteLayout>
