@@ -1,0 +1,22 @@
+---
+import IntrinsicValuePage from '../templates/IntrinsicValuePage.astro';
+
+export function getStaticPaths() {
+  const files = import.meta.glob('../data/iv/*.json', { eager: true });
+  const paths = [];
+
+  for (const [path, rawData] of Object.entries(files)) {
+    const data = (rawData as any).default ?? rawData;
+    if (data.slug) {
+      paths.push({
+        params: { ivslug: data.slug },
+        props: { data },
+      });
+    }
+  }
+  return paths;
+}
+
+const { data } = Astro.props;
+---
+<IntrinsicValuePage data={data} />
