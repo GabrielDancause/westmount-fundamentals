@@ -1,0 +1,22 @@
+---
+import ProspectScorePage from '../templates/ProspectScorePage.astro';
+
+export function getStaticPaths() {
+  const files = import.meta.glob('../data/prospect/*.json', { eager: true });
+  const paths = [];
+
+  for (const [path, rawData] of Object.entries(files)) {
+    const data = (rawData as any).default ?? rawData;
+    if (data.slug) {
+      paths.push({
+        params: { prospectslug: data.slug },
+        props: { data },
+      });
+    }
+  }
+  return paths;
+}
+
+const { data } = Astro.props;
+---
+<ProspectScorePage data={data} />
