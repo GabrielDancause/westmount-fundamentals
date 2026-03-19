@@ -592,10 +592,10 @@ tr:hover td { background: rgba(74,143,231,0.03); }
     <p>Each company was valued using a <strong>two-stage discounted cash flow (DCF)</strong> model. Gemini 3.1 independently selected the FCF growth rate (Years 1-5), discount rate (WACC), and terminal growth rate for each company based on its business fundamentals.</p>
     <p>All financial data comes from FY2025 10-K filings via S&P Global Market Intelligence. Stock prices are as of market close March 17, 2026. Click any company to see the full analysis with every assumption explained.</p>
     <h3>Reproduce It Yourself</h3>
-    <p>Every analysis was generated with the same prompt template below, sent to <strong>Gemini 3.1</strong> via the <a href="https://developers.google.com/jules" style="color:#4a8fe7;">Jules API</a>. Replace <code>{COMPANY}</code>, <code>{TICKER}</code>, and <code>{slug}</code> with any stock to reproduce or verify our results:</p>
-    <pre style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c9d1d9;margin-top:12px;">Create a two-stage DCF for {COMPANY} ({TICKER}).
+    <p>Every analysis was generated with the same prompt template below, sent to <strong>Gemini 3.1</strong> via the <a href="https://developers.google.com/jules" style="color:#4a8fe7;">Jules API</a>. Replace COMPANY, TICKER, and ticker with any stock to reproduce or verify our results:</p>
+    <pre style="background:#0d1117;border:1px solid #1e293b;border-radius:8px;padding:16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c9d1d9;margin-top:12px;">{`Create a two-stage DCF for [COMPANY] ([TICKER]).
 
-Fetch from https://stockanalysis.com/stocks/{ticker}/financials/
+Fetch from https://stockanalysis.com/stocks/[ticker]/financials/
 and /cash-flow-statement/ and /balance-sheet/. null over fake data.
 
 10Y Treasury: 4.18%.
@@ -603,7 +603,7 @@ and /cash-flow-statement/ and /balance-sheet/. null over fake data.
 ONE intrinsic value number. Verdict card, methodology,
 assumptions with rationale, FCF projections table,
 terminal value, sensitivity 5×5 matrix, risks, FAQ,
-disclaimer.</pre>
+disclaimer.`}</pre>
   </div>
 
   <div class="disclaimer">
