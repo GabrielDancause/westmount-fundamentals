@@ -15,7 +15,7 @@ interface PageEntry {
 }
 
 const lists: PageEntry[] = Object.entries(allPages)
-  .filter(([path]) => !path.includes('index'))
+  .filter(([path]) => !path.includes('index') && !path.includes('['))
   .map(([path, mod]: [string, any]) => ({
     slug: path.replace('../', '').replace('.astro', ''),
     title: mod.meta?.title || path.replace('../', '').replace('.astro', '').replace(/-/g, ' '),
