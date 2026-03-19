@@ -1,0 +1,79 @@
+{
+  "slug": "nvidia-intrinsic-value",
+  "ticker": "NVDA",
+  "companyName": "NVIDIA Corporation",
+  "title": "NVIDIA Corporation (NVDA) Intrinsic Value",
+  "description": "An independent discounted cash flow (DCF) intrinsic value analysis of NVIDIA Corporation (NVDA) compiled entirely by Gemini 3.1.",
+  "published": "2026-03-18",
+
+  "baseFCF": 58129,
+  "sharesOut": 24300,
+  "currentPrice": 182.69,
+  "netCash": 51144,
+
+  "fcfGrowthRate": 0.25,
+  "discountRate": 0.105,
+  "terminalGrowthRate": 0.040,
+
+  "sensitivityDiscountRates": [0.095, 0.100, 0.105, 0.110, 0.115],
+  "sensitivityGrowthRates": [0.030, 0.035, 0.040, 0.045, 0.050],
+
+  "thesisTitle": "The AI Thesis: Defining the Next Computation Era",
+  "thesisParagraphs": [
+    "NVIDIA Corporation is currently executing at a level previously unseen in the semiconductor industry, fundamentally reshaping the economics of computation. The rapid adoption of Generative AI across thousands of enterprises is not a transient trend, but a structural platform shift. NVIDIA's full-stack approach—combining world-class silicon architectures (Hopper, Blackwell, Rubin) with its ubiquitous CUDA software ecosystem—has created a nearly impenetrable moat.",
+    "While some analysts argue that massive capital expenditures from cloud service providers (CSPs) cannot continue indefinitely, they underestimate the ROI these investments generate in software, reasoning systems, and autonomous robotics. My valuation model heavily factors in the sustained, high-margin cash flows stemming from NVIDIA's undisputed leadership in accelerated computing, projecting robust growth as inference workloads scale alongside model training."
+  ],
+
+  "assumptions": {
+    "fcfGrowth": {
+      "title": "FCF Growth Rate (Y1-Y5)",
+      "rate": 0.25,
+      "rationale": "A 25% growth rate is extraordinary for a company of this scale, yet justified. NVIDIA's datacenter revenue is supported by continuous, multi-billion dollar capex plans from Microsoft, Meta, Google, and Amazon. The transition from Hopper to Blackwell architectures alone represents a massive upgrade cycle, sustaining high margins and expanding free cash flow aggressively."
+    },
+    "discountRate": {
+      "title": "Discount Rate (WACC)",
+      "rate": 0.105,
+      "rationale": "The 10.5% discount rate accounts for the inherent cyclicality of the semiconductor industry. While the 10-year treasury rate sits at 4.18%, NVIDIA's historical beta remains above the market average. Furthermore, the reliance on TSMC introduces geopolitical risk (Taiwan exposure), warranting a higher risk premium to discount future cash flows."
+    },
+    "terminalGrowth": {
+      "title": "Terminal Growth Rate",
+      "rate": 0.040,
+      "rationale": "4.0% sits slightly above long-term global GDP forecasts. This assumes that AI computing transitions from a hyper-growth phase into a foundational utility—similar to electricity or cloud storage—with deeply embedded structural growth outperforming the broader economy indefinitely."
+    }
+  },
+
+  "risks": {
+    "introText": "While my valuation is bullish, a balanced analysis requires identifying the key vectors that could disrupt these assumptions:",
+    "items": [
+      {
+        "title": "1. Hyperscaler CapEx Digestion",
+        "description": "The primary risk is a slowdown in spending by major cloud providers. If the economic return on AI inference fails to materialize as rapidly as projected, tech giants may temporarily pause infrastructure orders to digest existing capacity, severely impacting NVIDIA's revenue growth."
+      },
+      {
+        "title": "2. Geopolitical & Supply Chain Disruption",
+        "description": "NVIDIA relies heavily on TSMC for manufacturing its most advanced chips. Any escalation of tensions in the Taiwan Strait or disruptions to the complex global semiconductor supply chain would immediately jeopardize NVIDIA's ability to fulfill its massive backlog."
+      },
+      {
+        "title": "3. Emergence of Custom Silicon (ASICs)",
+        "description": "While CUDA provides a massive software advantage, major customers like Google (TPU), Amazon (Trainium/Inferentia), and Meta (MTIA) are aggressively investing in their own custom AI accelerators. A shift away from general-purpose GPUs toward specialized ASICs for inference could compress NVIDIA's margins over the long term."
+      }
+    ]
+  },
+
+  "faq": [
+    {
+      "question": "Why did Gemini project a 25% FCF growth rate for NVIDIA?",
+      "answer": "Gemini projects 25% growth because NVIDIA dominates the AI hardware and software ecosystem. Ongoing multi-billion dollar capex plans from major hyperscalers (Microsoft, Meta, Google, Amazon) ensure robust demand for next-generation architectures like Blackwell and Rubin."
+    },
+    {
+      "question": "What discount rate was used for NVIDIA's valuation?",
+      "answer": "A 10.5% discount rate was used. This balances the 4.18% 10-year treasury rate with NVIDIA's relatively high beta, factoring in cyclical semiconductor demand and geopolitical risks surrounding Taiwan semiconductor manufacturing."
+    },
+    {
+      "question": "What is the terminal growth rate assumption for NVDA?",
+      "answer": "The model uses a 4% terminal growth rate, slightly above standard historical GDP growth. This reflects the premise that AI computation will become an underlying, permanently growing utility for the broader digital economy."
+    }
+  ],
+
+  "verdictFooter": "Based on most recent financials. Data via S&P Global (Mar 18, 2026)."
+}

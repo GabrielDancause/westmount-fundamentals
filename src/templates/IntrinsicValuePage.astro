@@ -1,0 +1,812 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import type { IVData } from '../types/iv-data';
+
+interface Props {
+  data: IVData;
+}
+
+const { data } = Astro.props;
+
+// --- COMPUTED VALUES ---
+const {
+  baseFCF, sharesOut, currentPrice, netCash,
+  fcfGrowthRate, discountRate, terminalGrowthRate,
+  sensitivityDiscountRates, sensitivityGrowthRates,
+} = data;
+
+// --- YEAR 1 TO 5 PROJECTIONS ---
+const projections: { year: string; fcf: number; pv: number }[] = [];
+let prevFCF = baseFCF;
+
+for (let i = 1; i <= 5; i++) {
+  const projectedFCF = prevFCF * (1 + fcfGrowthRate);
+  const discountFactor = Math.pow(1 + discountRate, i);
+  const pvOfFCF = projectedFCF / discountFactor;
+
+  projections.push({
+    year: `Year ${i}`,
+    fcf: projectedFCF,
+    pv: pvOfFCF
+  });
+
+  prevFCF = projectedFCF;
+}
+
+const sumPvFcf = projections.reduce((sum, p) => sum + p.pv, 0);
+
+// --- TERMINAL VALUE ---
+const year5FCF = projections[4].fcf;
+const terminalValue = (year5FCF * (1 + terminalGrowthRate)) / (discountRate - terminalGrowthRate);
+const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, 5);
+
+// --- INTRINSIC VALUE CALCULATION ---
+const enterpriseValue = sumPvFcf + pvTerminalValue;
+const totalEquityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = totalEquityValue / sharesOut;
+
+// Value vs Current Price
+const marginOfSafety = ((intrinsicValuePerShare - currentPrice) / currentPrice) * 100;
+const isUndervalued = intrinsicValuePerShare > currentPrice;
+
+// --- SENSITIVITY MATRIX ---
+const sensitivityMatrix = sensitivityGrowthRates.map(g => {
+  return {
+    growthRate: g,
+    values: sensitivityDiscountRates.map(d => {
+      const currentTerminalValue = (year5FCF * (1 + g)) / (d - g);
+      const currentPvTerminalValue = currentTerminalValue / Math.pow(1 + d, 5);
+
+      let currentSumPvFcf = 0;
+      let tempFcf = baseFCF;
+      for (let i = 1; i <= 5; i++) {
+        tempFcf = tempFcf * (1 + fcfGrowthRate);
+        currentSumPvFcf += tempFcf / Math.pow(1 + d, i);
+      }
+
+      const currentEV = currentSumPvFcf + currentPvTerminalValue;
+      const currentEquity = currentEV + netCash;
+      const currentIV = currentEquity / sharesOut;
+
+      return currentIV;
+    })
+  };
+});
+
+// Formatting helpers
+const formatMoney = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+const formatMillions = (val: number) => '$' + new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(val) + 'M';
+const formatPercent = (val: number) => (val * 100).toFixed(1) + '%';
+
+// --- METADATA ---
+const meta = {
+  title: data.title,
+  description: data.description,
+  category: "study",
+  published: data.published,
+};
+
+// --- SCHEMA ---
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "author": {
+        "@type": "Organization",
+        "name": "Gemini 3.1"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `https://westmountfundamentals.com/${data.slug}`
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": data.faq.map(f => ({
+        "@type": "Question",
+        "name": f.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.answer
+        }
+      }))
+    }
+  ]
+};
+
+// Default text values
+const dcfIntro = data.dcfIntroText
+  ? data.dcfIntroText
+      .replace('{baseFCF}', formatMillions(baseFCF))
+      .replace('{discountRate}', formatPercent(discountRate))
+  : `Starting with the FY2025 base FCF of ${formatMillions(baseFCF)}, the table below outlines the 5-year projection discounted back to Present Value (PV) using the ${formatPercent(discountRate)} WACC.`;
+
+const terminalIntro = data.terminalIntroText || "The Terminal Value accounts for all cash flows from Year 6 into perpetuity, calculated using the Gordon Growth Model.";
+
+const consolidationText = data.consolidationText || "Adding it all together with Net Cash:";
+
+const sensitivityIntro = data.sensitivityIntroText || "A single intrinsic value relies on rigid assumptions. The sensitivity matrix below demonstrates how the intrinsic value changes when we adjust the Discount Rate (WACC) and the Terminal Growth Rate.";
+---
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical={`https://westmountfundamentals.com/${data.slug}`} schema={schema}>
+  <div class="page-content">
+    <div class="container">
+
+      <div class="gemini-header">
+        <div class="gemini-badge">COMPILED BY GEMINI 3.1</div>
+        <h1>{data.title}</h1>
+        <p class="subtitle">{data.subtitle || "An independent two-stage DCF analysis by a frontier AI model."}</p>
+      </div>
+
+      <div class="verdict-card">
+        <div class="verdict-header">
+          <h2>Fair Value Estimate</h2>
+        </div>
+        <div class="verdict-body">
+          <div class="verdict-main">
+            <span class="iv-value">{formatMoney(intrinsicValuePerShare)}</span>
+            <span class="iv-label">per share</span>
+          </div>
+          <div class="verdict-stats">
+            <div class="stat">
+              <span class="stat-label">Current Price</span>
+              <span class="stat-value">{formatMoney(currentPrice)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Margin of Safety</span>
+              <span class={`stat-value ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? '+' : ''}{marginOfSafety.toFixed(2)}%
+              </span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Verdict</span>
+              <span class={`badge ${isUndervalued ? 'positive' : 'negative'}`}>
+                {isUndervalued ? 'UNDERVALUED' : 'OVERVALUED'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="verdict-footer">
+          <p>{data.verdictFooter}</p>
+        </div>
+      </div>
+
+      <section class="content-section">
+        <h2>{data.thesisTitle}</h2>
+        {data.thesisParagraphs.map(p => <p set:html={p} />)}
+      </section>
+
+      <section class="content-section">
+        <h2>My Assumptions & Rationale</h2>
+
+        <div class="assumption-grid">
+          {[data.assumptions.fcfGrowth, data.assumptions.discountRate, data.assumptions.terminalGrowth].map(a => (
+            <div class="assumption-card">
+              <div class="card-title">{a.title}</div>
+              <div class="card-value">{formatPercent(a.rate)}</div>
+              <p><strong>Rationale:</strong> {a.rationale}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Discounted Cash Flow (DCF) Projections</h2>
+        <p>{dcfIntro}</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th>Projected FCF</th>
+                <th>PV Factor ({formatPercent(discountRate)})</th>
+                <th>Present Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projections.map((p, index) => (
+                <tr>
+                  <td>{p.year}</td>
+                  <td>{formatMillions(p.fcf)}</td>
+                  <td>{(1 / Math.pow(1 + discountRate, index + 1)).toFixed(4)}</td>
+                  <td>{formatMillions(p.pv)}</td>
+                </tr>
+              ))}
+              <tr class="highlight-row">
+                <td colspan="3"><strong>Sum of PV of FCFs (Years 1-5)</strong></td>
+                <td><strong>{formatMillions(sumPvFcf)}</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Terminal & Final Valuation Math</h2>
+        <p>{terminalIntro}</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Year 5 FCF</span>
+            <span>{formatMillions(year5FCF)}</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value (TV) Calculation</span>
+            <span>({formatMillions(year5FCF)} * {1 + terminalGrowthRate}) / ({discountRate} - {terminalGrowthRate})</span>
+          </div>
+          <div class="math-row">
+            <span>Terminal Value</span>
+            <span>{formatMillions(terminalValue)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span>PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+        </div>
+
+        <p style="margin-top: 2rem;">{consolidationText}</p>
+
+        <div class="math-card">
+          <div class="math-row">
+            <span>Sum of PV of FCFs (Years 1-5)</span>
+            <span>{formatMillions(sumPvFcf)}</span>
+          </div>
+          <div class="math-row">
+            <span>+ PV of Terminal Value</span>
+            <span>{formatMillions(pvTerminalValue)}</span>
+          </div>
+          <div class="math-row">
+            <span><strong>= Enterprise Value</strong></span>
+            <span><strong>{formatMillions(enterpriseValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>+ Net Cash (Cash - Debt)</span>
+            <span>{formatMillions(netCash)}</span>
+          </div>
+          <div class="math-row highlight">
+            <span><strong>= Total Equity Value</strong></span>
+            <span><strong>{formatMillions(totalEquityValue)}</strong></span>
+          </div>
+          <div class="math-row">
+            <span>&divide; Shares Outstanding</span>
+            <span>{sharesOut.toLocaleString()}M</span>
+          </div>
+          <div class="math-row result">
+            <span><strong>Intrinsic Value Per Share</strong></span>
+            <span><strong>{formatMoney(intrinsicValuePerShare)}</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <h2>Sensitivity Matrix</h2>
+        <p>{sensitivityIntro}</p>
+
+        <div class="table-container sensitivity-table">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" class="corner-cell">Terminal<br/>Growth</th>
+                <th colspan="5" class="header-cell">Discount Rate (WACC)</th>
+              </tr>
+              <tr>
+                {sensitivityDiscountRates.map(d => <th>{formatPercent(d)}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sensitivityMatrix.map(row => (
+                <tr>
+                  <th class="row-header">{formatPercent(row.growthRate)}</th>
+                  {row.values.map(val => (
+                    <td class={
+                      val > currentPrice * 1.15 ? "cell-undervalued" :
+                      val < currentPrice * 0.85 ? "cell-overvalued" :
+                      "cell-neutral"
+                    }>
+                      {formatMoney(val)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div class="matrix-legend">
+            <span class="legend-item"><span class="color-box cell-undervalued"></span> Undervalued (&gt;15% Margin)</span>
+            <span class="legend-item"><span class="color-box cell-neutral"></span> Fair Value</span>
+            <span class="legend-item"><span class="color-box cell-overvalued"></span> Overvalued (&lt;-15% Margin)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section risks-section">
+        <h2>Risks & Bear Case</h2>
+        <p>{data.risks.introText}</p>
+        <div class="risk-grid">
+          {data.risks.items.map(risk => (
+            <div class="risk-card">
+              <h3>{risk.title}</h3>
+              <p>{risk.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="content-section faq-section">
+        <h2>Frequently Asked Questions</h2>
+
+        {data.faq.map(f => (
+          <div class="faq-item">
+            <h3>{f.question}</h3>
+            <p>{f.answer}</p>
+          </div>
+        ))}
+      </section>
+
+      <div class="disclaimer-box">
+        <p><strong>Disclaimer:</strong> The numbers presented on this page are for educational and entertainment purposes only. They are the result of a deterministic mathematical model fed with assumptions generated by an Artificial Intelligence (Gemini 3.1). This does not constitute investment advice. Always conduct your own due diligence before investing in the stock market.</p>
+      </div>
+
+    </div>
+  </div>
+</SiteLayout>
+<style>
+  .page-content {
+    background-color: #060a12;
+    color: #c8d0de;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 4rem;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .gemini-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .gemini-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1e3a8a, #4a8fe7);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .gemini-header h1 {
+    font-size: 2.5rem;
+    color: #4a8fe7;
+    margin-bottom: 1rem;
+  }
+
+  .gemini-header .subtitle {
+    font-size: 1.2rem;
+    color: #c8d0de;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+  }
+
+  .verdict-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .verdict-header {
+    background-color: rgba(74, 143, 231, 0.1);
+    padding: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    text-align: center;
+  }
+
+  .verdict-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #4a8fe7;
+  }
+
+  .verdict-body {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .verdict-main {
+    margin-bottom: 2rem;
+  }
+
+  .iv-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #4a8fe7;
+    display: block;
+  }
+
+  .iv-label {
+    font-size: 1rem;
+    color: #8899b6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    border-top: 1px solid #1e293b;
+    padding-top: 1.5rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: #8899b6;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .stat-value.positive, .badge.positive {
+    color: #22c55e;
+  }
+
+  .stat-value.negative, .badge.negative {
+    color: #ef4444;
+  }
+
+  .badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .badge.positive {
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+
+  .badge.negative {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  .verdict-footer {
+    background-color: #0a1018;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .content-section {
+    margin-bottom: 3rem;
+  }
+
+  .content-section h2 {
+    font-size: 1.75rem;
+    color: #4a8fe7;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 0.5rem;
+  }
+
+  .content-section p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #c8d0de;
+    margin-bottom: 1.5rem;
+  }
+
+  .content-section strong {
+    color: #fff;
+  }
+
+  .assumption-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .assumption-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .assumption-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a8fe7;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .assumption-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #8899b6;
+    margin: 0;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #0d1522;
+  }
+
+  th, td {
+    padding: 1rem;
+    text-align: right;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  th:first-child, td:first-child {
+    text-align: left;
+  }
+
+  th {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  td {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #c8d0de;
+  }
+
+  .highlight-row {
+    background-color: rgba(74, 143, 231, 0.1);
+  }
+
+  .highlight-row td {
+    color: #4a8fe7;
+    font-weight: 700;
+  }
+
+  .math-card {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .math-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px dashed #1e293b;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+  }
+
+  .math-row:last-child {
+    border-bottom: none;
+  }
+
+  .math-row.highlight {
+    background-color: rgba(74, 143, 231, 0.05);
+    color: #4a8fe7;
+    font-weight: 700;
+    padding: 0.75rem 0.5rem;
+    margin: 0 -0.5rem;
+    border-radius: 4px;
+  }
+
+  .math-row.result {
+    border-top: 2px solid #4a8fe7;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #4a8fe7;
+  }
+
+  .sensitivity-table table {
+    text-align: center;
+  }
+
+  .sensitivity-table th, .sensitivity-table td {
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  .sensitivity-table .header-cell {
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .corner-cell {
+    background-color: #060a12;
+    border-right: 2px solid #1e293b;
+    border-bottom: 2px solid #1e293b;
+  }
+
+  .sensitivity-table .row-header {
+    background-color: rgba(74, 143, 231, 0.05);
+    border-right: 2px solid #1e293b;
+  }
+
+  .cell-undervalued {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+  }
+
+  .cell-overvalued {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+  }
+
+  .cell-neutral {
+    background-color: #0d1522;
+    color: #c8d0de;
+  }
+
+  .matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    background-color: #0a1018;
+    border-top: 1px solid #1e293b;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #8899b6;
+  }
+
+  .color-box {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .risk-card {
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-left: 4px solid #ef4444;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .risk-card h3 {
+    margin-top: 0;
+    color: #f87171;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .risk-card p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #c8d0de;
+  }
+
+  .faq-item {
+    background-color: #0d1522;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #4a8fe7;
+    font-size: 1.1rem;
+  }
+
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .disclaimer-box {
+    background-color: #0a1018;
+    border-left: 4px solid #4a8fe7;
+    padding: 1.5rem;
+    margin-top: 4rem;
+  }
+
+  .disclaimer-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8899b6;
+  }
+
+  .disclaimer-box strong {
+    color: #4a8fe7;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-stats {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .iv-value {
+      font-size: 2.5rem;
+    }
+    .gemini-header h1 {
+      font-size: 2rem;
+    }
+    .math-row {
+      flex-direction: column;
+      text-align: left;
+      gap: 0.25rem;
+    }
+    .math-row span:last-child {
+      text-align: right;
+    }
+    .matrix-legend {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>

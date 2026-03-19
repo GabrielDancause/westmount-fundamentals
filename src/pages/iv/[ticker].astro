@@ -1,0 +1,26 @@
+---
+import IntrinsicValuePage from '../../templates/IntrinsicValuePage.astro';
+import type { IVData } from '../../types/iv-data';
+
+const ivDataFiles = import.meta.glob<IVData>('../../data/iv/*.json', { eager: true });
+
+export function getStaticPaths() {
+  const ivDataFiles = import.meta.glob('../../data/iv/*.json', { eager: true });
+  const paths = [];
+
+  for (const [path, data] of Object.entries(ivDataFiles)) {
+    const raw = data as any;
+    const ivData = raw.default ?? raw;
+    const ticker = ivData.ticker.toLowerCase();
+    paths.push({
+      params: { ticker },
+      props: { data: ivData },
+    });
+  }
+
+  return paths;
+}
+
+const { data } = Astro.props;
+---
+<IntrinsicValuePage data={data} />
