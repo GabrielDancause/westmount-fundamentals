@@ -4,7 +4,7 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 // --- METADATA ---
 export const meta = {
   title: "The Procter & Gamble Company (PG) Intrinsic Value",
-  description: "An independent discounted cash flow (DCF) intrinsic value analysis of The Procter & Gamble Company (PG) compiled entirely by Gemini 2.5 Pro.",
+  description: "An independent discounted cash flow (DCF) intrinsic value analysis of The Procter & Gamble Company (PG) compiled entirely by Gemini 3.1.",
   category: "study",
   published: "2026-03-18",
 };
@@ -17,12 +17,12 @@ const schema = {
   "datePublished": meta.published,
   "author": {
     "@type": "Organization",
-    "name": "Gemini 2.5 Pro"
+    "name": "Gemini 3.1"
   }
 };
 
 // --- DATA & ASSUMPTIONS (FY2025 Actuals) ---
-// I am Gemini 2.5 Pro, acting as an independent equity analyst.
+// I am Gemini 3.1, acting as an independent equity analyst.
 // FCF Growth (Y1-Y5): 5.5%. PG is a defensive consumer staple giant with incredible pricing power. Steady, reliable, low single-digit volume growth plus pricing and margin expansion.
 // Discount Rate (WACC): 6.8%. PG has exceptionally stable cash flows and a very low beta (~0.4). Given the 4.18% 10-year Treasury, a 6.8% WACC reflects the low equity risk premium required for such a fortress stock.
 // Terminal Growth: 2.5%. Matching long-term global inflation targets. PG will grow with the world's population.
@@ -96,9 +96,9 @@ const sensitivityMatrix = terminalOptions.map(tRate => {
 <SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/procter-gamble-intrinsic-value" schema={schema}>
   <main class="page-container">
     <header class="gemini-header">
-      <div class="badge">Compiled by Gemini 2.5 Pro</div>
+      <div class="badge">Compiled by Gemini 3.1</div>
       <h1>The Procter & Gamble Company (PG) Intrinsic Value Estimate</h1>
-      <p>An independent two-stage DCF valuation by Gemini 2.5 Pro based on FY25 financials.</p>
+      <p>An independent two-stage DCF valuation by Gemini 3.1 based on FY25 financials.</p>
     </header>
 
     <section class="verdict-section">
@@ -320,7 +320,7 @@ const sensitivityMatrix = terminalOptions.map(tRate => {
     </section>
 
     <div class="disclaimer-box">
-      <p><strong>Disclaimer:</strong> This intrinsic value calculation is compiled exclusively by an AI (Gemini 2.5 Pro) for educational and illustrative purposes only. It is not financial advice, an investment recommendation, or an endorsement to buy or sell securities. Discounted Cash Flow models are highly sensitive to assumptions, and small tweaks to growth or discount rates can result in drastically different valuations. Always conduct your own due diligence or consult a licensed financial advisor.</p>
+      <p><strong>Disclaimer:</strong> This intrinsic value calculation is compiled exclusively by an AI (Gemini 3.1) for educational and illustrative purposes only. It is not financial advice, an investment recommendation, or an endorsement to buy or sell securities. Discounted Cash Flow models are highly sensitive to assumptions, and small tweaks to growth or discount rates can result in drastically different valuations. Always conduct your own due diligence or consult a licensed financial advisor.</p>
     </div>
   </main>
 </SiteLayout>
