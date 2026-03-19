@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-market-cycles"];
+export const meta = { title: "Understanding Market Cycles: When to Be Greedy and When to Be Fearful", description: "What signals does the stock market send before a major turn? Discover the hidden indicators of expansion and contraction that separate top investors from...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Understanding Market Cycles: When to Be Greedy and When to Be Fearful",
-  description: "What signals does the stock market send before a major turn? Discover the hidden indicators of expansion and contraction that separate top investors from...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Understanding Market Cycles: When to Be Greedy and When to Be Fearful"
-  description="What signals does the stock market send before a major turn? Discover the hidden indicators of expansion and contraction that separate top investors from."
-  canonical="https://westmountfundamentals.com/guide-market-cycles" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -318,7 +316,7 @@ export const meta = {
   </div>
 
         <section>
-    <h1>Understanding Market Cycles: When to Be Greedy and When to Be Fearful</h1>
+    <h1>{page.h1}</h1>
             <h2>The Anatomy of a Market Cycle</h2>
             <p>Financial markets don't move in a straight line. They breathe in and out through continuous cycles driven by economic data, corporate earnings, central bank policies, and human psychology. Understanding these cycles is the foundation of macro investing.</p>
 

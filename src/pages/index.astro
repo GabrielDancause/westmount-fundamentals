@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const pageMeta = (registry as any)["index"];
+export const meta = { title: "Westmount Fundamentals — Free Equity Research & Investing Tools", description: "Free equity research tools, market data, and investing guides. Short interest rankings, dividend data, ETF comparisons, and 340+ financial tools. No sign-ups.", category: "", published: "2026-03-18" };
 import { sites } from "../config/sites";
 
 const SITE_ID = 'westmount';
@@ -89,8 +93,8 @@ function truncate(text: string, max: number): string {
 
 <SiteLayout
   site={SITE_ID}
-  title="Westmount Fundamentals — Free Equity Research & Investing Tools"
-  description="Free equity research tools, market data, and investing guides. Short interest rankings, dividend data, ETF comparisons, and 340+ financial tools. No sign-ups."
+  title={pageMeta.title}
+  description={pageMeta.description}
   canonical={`https://${siteConfig.domain}/`}
   schema={schema}
 >

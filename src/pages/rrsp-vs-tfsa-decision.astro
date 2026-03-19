@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["rrsp-vs-tfsa-decision"];
+export const meta = { title: "RRSP vs TFSA: How to Choose", description: "Income-based decision tool and marginal rate analysis. Original research with data analysis, methodology, key findings, and interactive visualizations.", category: "study", published: "2026-03-15" };
 const schema = [
   {
     "@context": "https://schema.org",
@@ -43,20 +47,14 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "RRSP vs TFSA: How to Choose",
-  description: "Income-based decision tool and marginal rate analysis. Original research with data analysis, methodology, key findings, and interactive visualizations.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
-<SiteLayout site="westmount" title="RRSP vs TFSA: How to Choose" description="Income-based decision tool and marginal rate analysis." canonical="https://westmountfundamentals.com/rrsp-vs-tfsa-decision" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">RRSP vs TFSA: How to Choose</span></nav>
     <span>3 min read</span>
   </div>
   <div class="page-content">
-    <div class="hero"><h1>RRSP vs TFSA: How to Choose</h1><p>Income-based decision tool and marginal rate analysis.</p></div>
+    <div class="hero"><h1>{page.h1}</h1><p>Income-based decision tool and marginal rate analysis.</p></div>
     <div class="card">
       <h2>Related Guides</h2>
       <ul>

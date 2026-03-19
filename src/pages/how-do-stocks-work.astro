@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["how-do-stocks-work"];
+export const meta = { title: "How Do Stocks Work? A Beginner", description: "Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function.", category: "guide", published: "2026-03-15" };
 
 const schema = [
   {
@@ -72,19 +76,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "How Do Stocks Work? A Beginner's Guide to the Market",
-  description: "Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="How Do Stocks Work? A Beginner's Guide to the Market"
-  description="Ever wondered what drives stock prices up and down? Discover the underlying mechanics of supply and demand that make the stock market function."
-  canonical="https://westmountfundamentals.com/how-do-stocks-work"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -93,7 +91,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>How Do Stocks Work?</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">The Mechanics Behind Market Movements</p>
     </div>
 

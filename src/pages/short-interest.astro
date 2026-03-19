@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["short-interest"];
+export const meta = { title: "76 Most Shorted Stocks in 2026 — Short Squeeze Candidates", description: "76 stocks where bears have bet big — some with over 40% of float sold short. Find squeeze candidates, see who is sinking, and track short interest rankings.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -20,19 +24,13 @@ const schema = {
   "mainEntityOfPage": "https://westmountfundamentals.com/short-interest"
 };
 
-export const meta = {
-  title: "76 Most Shorted Stocks in 2026 — Short Squeeze Candidates",
-  description: "76 stocks where bears have bet big — some with over 40% of float sold short. Find squeeze candidates, see who is sinking, and track short interest rankings.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="76 Most Shorted Stocks in 2026 — Short Squeeze Candidates"
-  description="76 stocks where bears have bet big — some with over 40% of float sold short. Find squeeze candidates, see who is sinking, and track short interest rankings."
-  canonical="https://westmountfundamentals.com/short-interest" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -290,7 +288,7 @@ footer {
   </div>
   <section class="hero">
     <div class="tag">Original Research</div>
-    <h1>Most Shorted Stocks 2026</h1>
+    <h1>{page.h1}</h1>
     <p class="subtitle">Complete short interest rankings — 76 stocks sorted by short interest as percentage of float, with market cap, performance, and squeeze potential indicators.</p>
     <p class="meta">Published March 9, 2026 · Data from FINRA/Exchange reports · 76 stocks analyzed</p>
   </section>

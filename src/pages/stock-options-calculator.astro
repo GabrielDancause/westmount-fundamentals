@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stock Options Calculator: Uncover Your Real Profit Potential",
-  description: "Calculating your exact break-even point and maximum profit isn't as simple as checking the strike price. Here's how to reveal the true value of your trades.",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["stock-options-calculator"];
+export const meta = { title: "Stock Options Calculator: Uncover Your Real Profit Potential", description: "Calculating your exact break-even point and maximum profit isn", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -72,9 +69,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/stock-options-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -82,7 +79,7 @@ const schema = {
     <span>11 min read</span>
   </div>
   <div class="page-content">
-    <h1>Stock Options Calculator: Uncover Your Real Profit Potential</h1>
+    <h1>{page.h1}</h1>
 
     <p>Navigating the world of derivatives can be incredibly complex. A reliable stock options calculator removes the guesswork from your trading strategy, allowing you to instantly determine your break-even points, maximum profit potential, and maximum downside risk. Before you execute your next trade, use the interactive calculator below to model your exact position.</p>
 

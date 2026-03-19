@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Free Capital Gains Tax Calculator & Estimator (2024-2025 Rates)",
-  description: "Calculate your estimated short-term and long-term capital gains taxes with our free calculator. Understand how filing status and income affect your tax bill.",
-  category: "tool"
-};
+const page = (registry as any)["capital-gains-tax-calculator"];
+export const meta = { title: "Free Capital Gains Tax Calculator & Estimator (2024-2025 Rates)", description: "Calculate your estimated short-term and long-term capital gains taxes with our free calculator. Understand how filing status and income affect your tax bill.", category: "tool", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/capital-gains-tax-calculator" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Free Capital Gains Tax Calculator & Estimator (...</span></nav>
     <span>4 min read</span>
   </div>
-      <h1>Capital Gains Tax Calculator</h1>
+      <h1>{page.h1}</h1>
       <p>Estimate your short-term or long-term capital gains tax based on current tax brackets and holding periods.</p>
 
       <div class="calculator-card">

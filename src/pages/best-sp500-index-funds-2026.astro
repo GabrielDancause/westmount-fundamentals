@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-sp500-index-funds-2026"];
+export const meta = { title: "Best S&P 500 Index Funds 2026: VOO vs IVV vs SPLG vs SPY", description: "We analyzed 7 major S&P 500 funds and ETFs. The absolute cheapest S&P 500 ETF isn", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Best S&P 500 Index Funds 2026: VOO vs IVV vs SPLG vs SPY",
-  description: "We analyzed 7 major S&P 500 funds and ETFs. The absolute cheapest S&P 500 ETF isn't VOO or SPY. See our definitive breakdown of hidden costs and fees.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Best S&P 500 Index Funds 2026: VOO vs IVV vs SPLG vs SPY"
-  description="We analyzed 7 major S&P 500 funds and ETFs. The absolute cheapest S&P 500 ETF isn't VOO or SPY. See our definitive breakdown of hidden costs and fees."
-  canonical="https://westmountfundamentals.com/best-sp500-index-funds-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -160,7 +158,7 @@ export const meta = {
   </div>
 
         <section>
-    <h1>Best S&P 500 Index Funds 2026: VOO vs IVV vs SPLG vs SPY</h1>
+    <h1>{page.h1}</h1>
 
             <h2>S&P 500 Funds Interactive Comparison</h2>
             <div class="interactive-container">

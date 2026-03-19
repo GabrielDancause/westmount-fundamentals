@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Choose Between ETFs and Mutual Funds",
-  description: "Both bundle stocks together, but one might be quietly eating your returns with hidden fees. Discover the key differences before you invest.",
-  category: "guide",
-  published: "2026-03-15",
-};
+const page = (registry as any)["how-to-choose-between-etfs-and-mutual-funds"];
+export const meta = { title: "How to Choose Between ETFs and Mutual Funds", description: "Both bundle stocks together, but one might be quietly eating your returns with hidden fees. Discover the key differences before you invest.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -70,14 +67,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-choose-between-etfs-and-mutual-funds" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Choose Between ETFs and Mutual Funds</span></nav>
     <span>5 min read</span>
   </div>
   <div class="page-content container">
     <div class="hero">
-      <h1>How to Choose Between ETFs and Mutual Funds</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Two popular ways to buy baskets of stocks. One could be silently draining your wealth.</p>
     </div>
 

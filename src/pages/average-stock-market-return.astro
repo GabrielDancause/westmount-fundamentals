@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["average-stock-market-return"];
+export const meta = { title: "Average Stock Market Return — Real Numbers (Not the Myth)", description: "The S&P 500 averages 10.3% per year — but after inflation it is 7.0%. See actual 1Y, 5Y, 10Y, 20Y, and 30Y average returns with and without dividends.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Average Stock Market Return — Real Numbers (Not the Myth)",
-  description: "The S&P 500 averages 10.3% per year — but after inflation it is 7.0%. See actual 1Y, 5Y, 10Y, 20Y, and 30Y average returns with and without dividends.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Average Stock Market Return — Real Numbers (Not the Myth)"
-  description="The S&P 500 averages 10.3% per year — but after inflation it is 7.0%. See actual 1Y, 5Y, 10Y, 20Y, and 30Y average returns with and without dividends."
-  canonical="https://westmountfundamentals.com/average-stock-market-return" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -120,7 +118,7 @@ export const meta = {
     <span>4 min read</span>
   </div>
     <div class="hero">
-      <h1>Historical Average Stock Market Return</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Complete S&P 500 returns since 1928, including dividends and inflation (real returns). Filter, sort, and analyze trailing historical market performance.</p>
     </div>
 

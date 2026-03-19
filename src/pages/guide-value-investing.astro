@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-value-investing"];
+export const meta = { title: "Value Investing Fundamentals | Westmount Research", description: "Buffett evolved past Graham — and most value investors haven", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -25,19 +29,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Value Investing Fundamentals | Westmount Research",
-  description: "Buffett evolved past Graham — and most value investors haven't caught up. The modern framework for finding undervalued stocks without falling into value traps.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Value Investing Fundamentals | Westmount Research"
-  description="Buffett evolved past Graham — and most value investors haven't caught up. The modern framework for finding undervalued stocks without falling into value traps."
-  canonical="https://westmountfundamentals.com/guide-value-investing" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -240,7 +238,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Value Investing Fundamentals</span></nav>
     <span>8 min read</span>
   </div>
-    <h1>Value Investing Fundamentals | Westmount Research</h1>
+    <h1>{page.h1}</h1>
 
     <h2>1. Origins: Benjamin Graham, Margin of Safety, Mr. Market</h2>
     <p>Value investing traces its origins to the 1920s and 1930s when Benjamin Graham and David Dodd began teaching at Columbia Business School. Their seminal work, <em>Security Analysis</em> (1934), laid the intellectual groundwork for what we now consider modern value investing. The core of their philosophy is the idea that a stock represents an ownership interest in a real business, not merely a ticker symbol that wiggles on a screen.</p>

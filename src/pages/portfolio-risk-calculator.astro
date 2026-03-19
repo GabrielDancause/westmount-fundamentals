@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["portfolio-risk-calculator"];
+export const meta = { title: "Advanced Portfolio Risk Calculator | Westmount Research", description: "How much could your portfolio drop in a crash? Run a Monte Carlo simulation on your actual holdings to see your real risk exposure.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -15,19 +19,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Advanced Portfolio Risk Calculator | Westmount Research",
-  description: "How much could your portfolio drop in a crash? Run a Monte Carlo simulation on your actual holdings to see your real risk exposure.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Advanced Portfolio Risk Calculator | Westmount Research"
-  description="How much could your portfolio drop in a crash? Run a Monte Carlo simulation on your actual holdings to see your real risk exposure."
-  canonical="https://westmountfundamentals.com/portfolio-risk-calculator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -290,7 +288,7 @@ td input[type="number"] {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Advanced Portfolio Risk Calculator</span></nav>
     <span>4 min read</span>
   </div>
-  <h1>Advanced Portfolio Risk Calculator</h1>
+  <h1>{page.h1}</h1>
   <p>Calculate portfolio volatility, beta, Sharpe ratio, maximum drawdown, and Value at Risk (VaR). Analyze sector allocation, correlation matrix, and run Monte Carlo simulations using real historical market data.</p>
 
   <div class="card">

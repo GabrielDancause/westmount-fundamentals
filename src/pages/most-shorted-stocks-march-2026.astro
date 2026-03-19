@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["most-shorted-stocks-march-2026"];
+export const meta = { title: "Most Shorted Stocks Right Now (March 2026) — Top 100 List", description: "Live list of the 100 most shorted stocks in March 2026. See exact short interest %, days to cover, and squeeze candidates. Updated with latest data.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Most Shorted Stocks Right Now (March 2026) — Top 100 List",
-  description: "Live list of the 100 most shorted stocks in March 2026. See exact short interest %, days to cover, and squeeze candidates. Updated with latest data.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Most Shorted Stocks Right Now (March 2026) — Top 100 List"
-  description="Discover the top 100 most shorted stocks for March 2026. See which companies have the highest short interest right now and what it means for their upcoming."
-  canonical="https://westmountfundamentals.com/most-shorted-stocks-march-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -228,7 +226,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Most Shorted Stocks Right Now (March 2026)</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>Most Shorted Stocks Right Now (March 2026) — Top 100 List</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="stats-grid" id="summary-stats">

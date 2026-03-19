@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-dividend-etfs-canada-2026"];
+export const meta = { title: "Best Dividend ETFs in Canada 2026: XDV, VDY, CDZ Compared", description: "Compare the best Canadian dividend ETFs in 2026 including XDV, VDY, CDZ, and ZDV. Analyze yields, MERs, and holdings for TSX dividend investors.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Best Dividend ETFs in Canada 2026: XDV, VDY, CDZ Compared",
-  description: "Compare the best Canadian dividend ETFs in 2026 including XDV, VDY, CDZ, and ZDV. Analyze yields, MERs, and holdings for TSX dividend investors.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Best Dividend ETFs in Canada 2026: XDV, VDY, CDZ Compared"
-  description="Compare the best Canadian dividend ETFs in 2026 including XDV, VDY, CDZ, and ZDV. Analyze yields, MERs, and holdings for TSX dividend investors."
-  canonical="https://westmountfundamentals.com/best-dividend-etfs-canada-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -241,7 +239,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best Dividend ETFs in Canada 2026: XDV, VDY, CD...</span></nav>
     <span>5 min read</span>
   </div>
-        <h1>Best Dividend ETFs in Canada 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Comparing XDV, VDY, CDZ, and other top TSX dividend ETFs by yield, MER, and return.</p>
 
         <div class="stats-grid" id="statsGrid">

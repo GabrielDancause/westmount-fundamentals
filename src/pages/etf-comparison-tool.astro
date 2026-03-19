@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["etf-comparison-tool"];
+export const meta = { title: "ETF Comparison Tool: Side-by-Side Analysis | Westmount", description: "Compare 30+ popular ETFs side by side. Analyze expense ratios, AUM, dividend yield, historical returns, sector weights, and top holdings overlap.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "ETF Comparison Tool: Side-by-Side Analysis | Westmount",
-  description: "Compare 30+ popular ETFs side by side. Analyze expense ratios, AUM, dividend yield, historical returns, sector weights, and top holdings overlap.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="ETF Comparison Tool: Side-by-Side Analysis | Westmount"
-  description="Compare 30+ popular ETFs side by side. Analyze expense ratios, AUM, dividend yield, historical returns, sector weights, and top holdings overlap."
-  canonical="https://westmountfundamentals.com/etf-comparison-tool" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -313,7 +311,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">ETF Comparison Tool: Side-by-Side Analysis</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>ETF Comparison Tool: Side-by-Side Analysis</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="selector-container">

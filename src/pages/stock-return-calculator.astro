@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-return-calculator"];
+export const meta = { title: "Stock Return Calculator: True Annualized Profit Simulator", description: "Made a profit but not sure your actual percentage yield? Calculate your true stock market returns, total profit, and annualized growth rate (CAGR) instantly.", category: "tool", published: "2026-03-24" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -65,19 +69,13 @@ const schema = JSON.stringify({
   ]
 });
 
-export const meta = {
-  title: "Stock Return Calculator: True Annualized Profit Simulator",
-  description: "Made a profit but not sure your actual percentage yield? Calculate your true stock market returns, total profit, and annualized growth rate (CAGR) instantly.",
-  category: "tool",
-  published: "2026-03-24"
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/stock-return-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -87,7 +85,7 @@ export const meta = {
   <div class="page-content">
     <div class="calculator-container">
       <div class="calc-header">
-        <h1>Stock Return Calculator</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Calculate your total profit, nominal percentage return, and true annualized rate (CAGR).</p>
       </div>
 

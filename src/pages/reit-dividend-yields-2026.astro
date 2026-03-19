@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["reit-dividend-yields-2026"];
+export const meta = { title: "REIT Dividend Yields 2026: Highest Yielding REITs Ranked", description: "Discover which real estate sector is surprisingly offering the highest payouts right now. Explore our list of 50+ publicly traded real estate investment...", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "REIT Dividend Yields 2026: Highest Yielding REITs Ranked",
-  description: "Discover which real estate sector is surprisingly offering the highest payouts right now. Explore our list of 50+ publicly traded real estate investment...",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="REIT Dividend Yields 2026: Highest Yielding REITs Ranked"
-  description="Discover which real estate sector is surprisingly offering the highest payouts right now. Explore our list of 50+ publicly traded real estate investment."
-  canonical="https://westmountfundamentals.com/reit-dividend-yields-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -261,7 +259,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">REIT Dividend Yields 2026: Highest Yielding REI...</span></nav>
     <span>3 min read</span>
   </div>
-    <h1>REIT Dividend Yields 2026: Highest Yielding REITs Ranked</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="card">

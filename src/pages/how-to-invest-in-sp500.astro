@@ -1,20 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Invest in the S&P 500: A Complete Guide",
-  description: "Everyone says to buy the S&P 500, but they rarely tell you the exact buttons to click or the hidden fees that eat your returns.",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["how-to-invest-in-sp500"];
+export const meta = { title: "How to Invest in the S&P 500: A Complete Guide", description: "Everyone says to buy the S&P 500, but they rarely tell you the exact buttons to click or the hidden fees that eat your returns.", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -27,7 +24,7 @@ const schema = {
           "url": "https://westmountfundamentals.com/logo.png"
         }
       },
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://westmountfundamentals.com/how-to-invest-in-sp500"
@@ -82,14 +79,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-invest-in-sp500" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Invest in the S&P 500: A Complete Guide</span></nav>
     <span>9 min read</span>
   </div>
   <div class="page-content">
     <header class="hero-section">
-      <h1>How to Invest in the S&P 500</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">The definitive guide to understanding, buying, and holding the world's most popular index.</p>
     </header>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-rebalancing-strategies"];
+export const meta = { title: "Portfolio Rebalancing Strategy: When & How Often to Rebal...", description: "Think rebalancing your portfolio every year is the smart move? Discover when sticking to a calendar actually hurts your returns and the threshold strategy...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Portfolio Rebalancing Strategy: When & How Often to Rebal...",
-  description: "Think rebalancing your portfolio every year is the smart move? Discover when sticking to a calendar actually hurts your returns and the threshold strategy...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Portfolio Rebalancing Strategy: When & How Often to Rebal..."
-  description="Think rebalancing your portfolio every year is the smart move? Discover when sticking to a calendar actually hurts your returns and the threshold strategy."
-  canonical="https://westmountfundamentals.com/guide-rebalancing-strategies" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -317,7 +315,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Portfolio Rebalancing Strategy: When & How Ofte...</span></nav>
     <span>5 min read</span>
   </div>
-        <h1>Portfolio Rebalancing: When, How Often, and Which Method Works Best</h1>
+        <h1>{page.h1}</h1>
 
         <p>If you set your asset allocation to 60% stocks and 40% bonds, a strong stock market rally might push your portfolio to 70% stocks and 30% bonds. That shift increases your risk profile beyond what you originally intended. To fix this, investors use a <strong>portfolio rebalancing strategy</strong>—selling some of the high-performing assets and buying more of the underperforming ones.</p>
 

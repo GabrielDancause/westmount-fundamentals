@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Options Calculator | Black-Scholes Pricing & Greeks",
-  description: "Want to know the true fair value of an option before you trade? Most beginners overpay because they ignore one critical pricing factor.",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["options-calculator"];
+export const meta = { title: "Options Calculator | Black-Scholes Pricing & Greeks", description: "Want to know the true fair value of an option before you trade? Most beginners overpay because they ignore one critical pricing factor.", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -82,14 +79,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/options-calculator" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Options Calculator</span></nav>
     <span>14 min read</span>
   </div>
   <div class="page-content">
     <header class="hero-section">
-      <h1>Options Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Calculate the theoretical fair value of European call and put options using the Black-Scholes model.</p>
     </header>
 

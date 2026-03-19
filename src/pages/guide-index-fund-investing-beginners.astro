@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-index-fund-investing-beginners"];
+export const meta = { title: "Index Fund Investing for Beginners", description: "A complete guide to index fund investing. Learn what index funds are, passive investing, and the best funds for beginners.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Index Fund Investing for Beginners",
-  description: "A complete guide to index fund investing. Learn what index funds are, passive investing, and the best funds for beginners.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Index Fund Investing for Beginners"
-  description="A complete guide to index fund investing. Learn what index funds are, passive investing, and the best funds for beginners."
-  canonical="https://westmountfundamentals.com/guide-index-fund-investing-beginners" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -270,7 +268,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Index Fund Investing for Beginners</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>Index Fund Investing for Beginners</h1>
+    <h1>{page.h1}</h1>
     <p>The smartest way to build wealth in the stock market is often the simplest. Index funds offer a low-cost, hands-off approach to investing that historically beats most professional stock pickers. This guide will help you understand what they are, how they work, and how to get started.</p>
 
     <div class="stats-row">

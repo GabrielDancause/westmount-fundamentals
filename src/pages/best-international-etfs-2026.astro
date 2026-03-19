@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-international-etfs-2026"];
+export const meta = { title: "Best International ETFs 2026: Top Foreign Funds Ranked", description: "Compare top international ETFs like VXUS, VEA, and VWO. Ranked by returns, expense ratio, and region to find the best foreign stock fund for 2026.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Best International ETFs 2026: Top Foreign Funds Ranked",
-  description: "Compare top international ETFs like VXUS, VEA, and VWO. Ranked by returns, expense ratio, and region to find the best foreign stock fund for 2026.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best International ETFs 2026: Top Foreign Funds Ranked"
-  description="Compare top international ETFs like VXUS, VEA, and VWO. Ranked by returns, expense ratio, and region to find the best foreign stock fund for 2026."
-  canonical="https://westmountfundamentals.com/best-international-etfs-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -284,7 +282,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best International ETFs 2026: Top Foreign Funds...</span></nav>
     <span>7 min read</span>
   </div>
-    <h1>Best International ETFs 2026: Top Foreign Funds Ranked</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="stats-grid">

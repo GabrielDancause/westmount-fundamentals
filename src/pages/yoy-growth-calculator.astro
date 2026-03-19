@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["yoy-growth-calculator"];
+export const meta = { title: "YoY Growth Calculator | Westmount Fundamentals", description: "Calculate your Year-over-Year (YoY) growth rate quickly. Discover how much your revenue, users, or stock portfolio has grown from the previous period.", category: "tool", published: "2024-03-15" };
 
 const schema = [
   {
@@ -67,19 +71,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "YoY Growth Calculator | Westmount Fundamentals",
-  description: "Calculate your Year-over-Year (YoY) growth rate quickly. Discover how much your revenue, users, or stock portfolio has grown from the previous period.",
-  category: "tool",
-  published: "2024-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/yoy-growth-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -358,7 +356,7 @@ export const meta = {
   </style>
 
   <div class="hero">
-    <h1>YoY Growth Calculator</h1>
+    <h1>{page.h1}</h1>
     <p>Calculate your Year-over-Year (YoY) growth rate instantly. Compare current and previous periods to find out exactly how much your metrics have expanded or contracted.</p>
   </div>
 

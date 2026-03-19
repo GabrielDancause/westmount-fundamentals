@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-etf-investing-complete"];
+export const meta = { title: "The Complete Guide to ETF Investing (2026)", description: "Everything you need to know about ETF investing: how ETFs work, how to choose them, portfolio strategies, tax efficiency, and common mistakes.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -75,19 +79,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "The Complete Guide to ETF Investing (2026)",
-  description: "Everything you need to know about ETF investing: how ETFs work, how to choose them, portfolio strategies, tax efficiency, and common mistakes.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="The Complete Guide to ETF Investing (2026)"
-  description="Everything you need to know about ETF investing: how ETFs work, how to choose them, portfolio strategies, tax efficiency, and common mistakes."
-  canonical="https://westmountfundamentals.com/guide-etf-investing-complete"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">

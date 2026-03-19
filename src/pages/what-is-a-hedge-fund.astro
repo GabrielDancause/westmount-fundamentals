@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What Is a Hedge Fund? The Ultimate Guide",
-  description: "Discover what a hedge fund is, how these exclusive vehicles operate, and why they matter in the financial world. Learn about their strategies and risks.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-a-hedge-fund"];
+export const meta = { title: "What Is a Hedge Fund? The Ultimate Guide", description: "Discover what a hedge fund is, how these exclusive vehicles operate, and why they matter in the financial world. Learn about their strategies and risks.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-a-hedge-fund" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What Is a Hedge Fund? The Ultimate Guide</span></nav>
     <span>13 min read</span>
   </div>
   <div class="page-content">
 
-    <h1>What Is a Hedge Fund? The Ultimate Guide for Beginners and Beyond</h1>
+    <h1>{page.h1}</h1>
 
     <p>The term "hedge fund" often conjures images of ultra-wealthy investors, complex financial maneuvers, and exclusive Wall Street clubs. While there is a grain of truth to these stereotypes, at its core, a hedge fund is simply a type of alternative investment vehicle designed to pool capital from accredited individuals or institutional investors. Its primary goal is to generate high returns, often using sophisticated strategies that go beyond simply buying and holding stocks or bonds.</p>
 

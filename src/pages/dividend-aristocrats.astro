@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["dividend-aristocrats"];
+export const meta = { title: "All 67 Dividend Aristocrats (2026) — Yields, Payouts & Streaks", description: "Complete list of all 67 S&P 500 Dividend Aristocrats with current yields up to 5.8%, payout ratios, growth rates, and 25+ year streak data.", category: "guide", published: "2026-03-15" };
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -37,19 +41,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "All 67 Dividend Aristocrats (2026) — Yields, Payouts & Streaks",
-  description: "Complete list of all 67 S&P 500 Dividend Aristocrats with current yields up to 5.8%, payout ratios, growth rates, and 25+ year streak data.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="All 67 Dividend Aristocrats (2026) — Yields, Payouts & Streaks Sorted by Yield"
-  description="Complete 2026 list of all 67 S&P 500 Dividend Aristocrats sorted by highest yield. Current dividend yields, payout ratios, growth rates, P/E ratios, and."
-  canonical="https://westmountfundamentals.com/dividend-aristocrats" schema={[schema, faqSchema]}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={[schema, faqSchema]}
 >
   <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -191,7 +189,7 @@ tr:hover { background: rgba(74,143,231,0.04); }
 <div class="header-content">
     <a href="/" class="back-link">← Westmount Research</a>
     <div><span class="tag">ORIGINAL RESEARCH</span></div>
-    <h1>All 67 Dividend Aristocrats \u2014 Complete List (2026)</h1>
+    <h1>{page.h1}</h1>
     <p class="subtitle">The complete list of all 67 S&P 500 Dividend Aristocrats sorted by highest dividend yield. Current yields, payout ratios, growth rates, valuations, and sector breakdown.</p>
     <p class="date">Last Updated: March 16, 2026 · Data as of March 2026</p>
 </div>

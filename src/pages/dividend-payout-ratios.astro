@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["dividend-payout-ratios"];
+export const meta = { title: "Dividend Payout Ratio Analysis 2026 | Westmount Fundamentals", description: "Some high-yield stocks are paying out more than they earn — a dividend cut may be coming. See which S&amp;P 500 dividends are safe and which are at risk.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -22,19 +26,13 @@ const schema = {
   "dateModified": "2026-01-01"
 };
 
-export const meta = {
-  title: "Dividend Payout Ratio Analysis 2026 | Westmount Fundamentals",
-  description: "Some high-yield stocks are paying out more than they earn — a dividend cut may be coming. See which S&amp;P 500 dividends are safe and which are at risk.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Dividend Payout Ratio Analysis 2026 | Westmount Fundamentals"
-  description="Some high-yield stocks are paying out more than they earn — a dividend cut may be coming. See which S&amp;P 500 dividends are safe and which are at risk."
-  canonical="https://westmountfundamentals.com/dividend-payout-ratios" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -116,7 +114,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Dividend Payout Ratio Analysis 2026</span></nav>
     <span>25 min read</span>
   </div>
-    <h1>Dividend Payout Ratio Analysis 2026</h1>
+    <h1>{page.h1}</h1>
 
     <div class="card">
         <div class="table-container">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["msty-dividend-calculator"];
+export const meta = { title: "MSTY Dividend Calculator | Estimate Your YieldMax MSTR Income", description: "Calculate your estimated monthly and annual income from the YieldMax MSTR Option Income Strategy ETF (MSTY) based on your shares or investment amount.", category: "tool", published: "2026-03-15" };
 
 
 const schema = [
@@ -68,19 +72,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "MSTY Dividend Calculator | Estimate Your YieldMax MSTR Income",
-  description: "Calculate your estimated monthly and annual income from the YieldMax MSTR Option Income Strategy ETF (MSTY) based on your shares or investment amount.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/msty-dividend-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -89,7 +87,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>MSTY Dividend Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Estimate Your YieldMax MSTR Option Income Strategy ETF Returns</p>
     </div>
 

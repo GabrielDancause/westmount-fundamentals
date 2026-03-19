@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-sp500-index-funds"];
+export const meta = { title: "How to Choose an S&P 500 Index Fund (2026 Guide)", description: "Complete guide to choosing the best S&P 500 index fund or ETF. Compare VOO, SPY, IVV, SPLG, and FXAIX fees, minimums, and tax efficiency.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "How to Choose an S&P 500 Index Fund (2026 Guide)",
-  description: "Complete guide to choosing the best S&P 500 index fund or ETF. Compare VOO, SPY, IVV, SPLG, and FXAIX fees, minimums, and tax efficiency.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="How to Choose an S&P 500 Index Fund (2026 Guide)"
-  description="Complete guide to choosing the best S&P 500 index fund or ETF. Compare VOO, SPY, IVV, SPLG, and FXAIX fees, minimums, and tax efficiency."
-  canonical="https://westmountfundamentals.com/guide-sp500-index-funds" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -257,7 +255,7 @@ export const meta = {
     <span>4 min read</span>
   </div>
         <div class="hero">
-            <h1>How to Choose an S&P 500 Index Fund</h1>
+            <h1>{page.h1}</h1>
             <p class="hero-desc">A comprehensive comparison of VOO, SPY, IVV, SPLG, and FXAIX to help you find the best low-cost vehicle for the market.</p>
         </div>
 

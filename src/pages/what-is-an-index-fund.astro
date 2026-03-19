@@ -1,23 +1,20 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is an Index Fund? The Complete Beginner's Guide",
-  description: "What is an index fund? Discover the simple investment strategy championed by Warren Buffett to effortlessly build wealth without picking individual stocks.",
-  category: "guide",
-  published: "2023-10-27"
-};
+const page = (registry as any)["what-is-an-index-fund"];
+export const meta = { title: "What is an Index Fund? The Complete Beginner", description: "What is an index fund? Discover the simple investment strategy championed by Warren Buffett to effortlessly build wealth without picking individual stocks.", category: "guide", published: "2023-10-27" };
 
 const schema = JSON.stringify({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is an index fund in simple terms?", "acceptedAnswer": {"@type": "Answer", "text": "An index fund is a type of mutual fund or exchange-traded fund (ETF) that holds all (or a representative sample) of the securities in a specific index, with the goal of matching the performance of that benchmark as closely as possible."}}, {"@type": "Question", "name": "How does an index fund differ from a mutual fund?", "acceptedAnswer": {"@type": "Answer", "text": "While an index fund can technically be a mutual fund, it differs from actively managed mutual funds because it passively tracks an index rather than having a manager actively pick stocks to try and beat the market."}}, {"@type": "Question", "name": "Can you lose money in an index fund?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, if the overall stock market or the specific index the fund tracks goes down, the value of your investment will also decrease. Index funds are subject to market risk."}}, {"@type": "Question", "name": "Do index funds pay dividends?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, if the underlying companies within the index pay dividends, the index fund will aggregate those payments and distribute them to shareholders, usually on a quarterly basis."}}, {"@type": "Question", "name": "Why do experts recommend index funds for beginners?", "acceptedAnswer": {"@type": "Answer", "text": "Experts recommend them because they offer instant diversification, extremely low fees, and historical evidence shows they consistently outperform the vast majority of actively managed funds over long periods."}}]});
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-an-index-fund" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is an Index Fund? The Complete Beginner's ...</span></nav>
     <span>11 min read</span>
   </div>
   <div class="page-content">
-    <h1>What is an Index Fund? The Complete Beginner's Guide</h1>
+    <h1>{page.h1}</h1>
 
     <div class="content-section">
       <p>Imagine you want to bet on the success of the American economy, but you have no idea whether Apple will out-innovate Microsoft, or if Tesla will sell more cars than Ford over the next decade. Choosing the right horse in the race of capitalism is notoriously difficult. But what if you didn't have to choose the winning horse? What if you could just buy the entire racetrack?</p>

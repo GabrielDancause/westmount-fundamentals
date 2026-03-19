@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sector-pe-ratios"];
+export const meta = { title: "Sector P/E Ratios 2026 — Which Sectors Are Overvalued?", description: "Half the GICS sectors trade above their 10-year average P/E. See every sector compared to its historical norm and find where value still exists.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "mainEntityOfPage": "https://westmountfundamentals.com/sector-pe-ratios"
 };
 
-export const meta = {
-  title: "Sector P/E Ratios 2026 — Which Sectors Are Overvalued?",
-  description: "Half the GICS sectors trade above their 10-year average P/E. See every sector compared to its historical norm and find where value still exists.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Sector P/E Ratios 2026 — Which Sectors Are Overvalued?"
-  description="Half the GICS sectors trade above their 10-year average P/E. See every sector compared to its historical norm and find where value still exists."
-  canonical="https://westmountfundamentals.com/sector-pe-ratios" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -140,7 +138,7 @@ export const meta = {
 <div class="header">
   <div class="header-brand"><a href="/">Westmount Research</a></div>
   <span class="research-tag">ORIGINAL RESEARCH</span>
-  <h1>GICS Sector P/E Ratios 2026</h1>
+  <h1>{page.h1}</h1>
   <p class="subtitle">Which sectors are overvalued? Current vs 10-year historical P/E for all 11 sectors.</p>
   <p class="date">Data as of March 9, 2026 · Source: Finviz, Multpl.com, S&P Global</p>
 </div>

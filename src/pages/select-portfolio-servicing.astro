@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["select-portfolio-servicing"];
+export const meta = { title: "Select Portfolio Servicing (SPS): The Mortgage Engine", description: "Who actually manages your mortgage after you close on your house? Uncover the massive, hidden industry of loan servicing.", category: "study", published: "2026-03-15" };
 
 const schema = [
   {
@@ -31,21 +35,15 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Select Portfolio Servicing (SPS): The Mortgage Engine",
-  description: "Who actually manages your mortgage after you close on your house? Uncover the massive, hidden industry of loan servicing.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
-<SiteLayout site="westmount" title="Select Portfolio Servicing (SPS): The Mortgage Engine" description="Who actually manages your mortgage after you close on your house? Uncover the massive, hidden industry of loan servicing." canonical="https://westmountfundamentals.com/select-portfolio-servicing" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Select Portfolio Servicing (SPS): The Mortgage ...</span></nav>
     <span>6 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Select Portfolio Servicing (SPS): The Mortgage Engine</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Who actually manages your mortgage after you close on your house? Uncover the massive, hidden industry of loan servicing.</p>
     </div>
 

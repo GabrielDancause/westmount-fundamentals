@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-technical-analysis-basics"];
+export const meta = { title: "Technical Analysis for Fundamental Investors: What Actually Works", description: "A skeptical value investor", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Technical Analysis for Fundamental Investors: What Actually Works",
-  description: "A skeptical value investor's guide to technical analysis. Discover which chart signals actually work and which indicators you are better off ignoring...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Technical Analysis for Fundamental Investors: What Actually Works"
-  description="A skeptical value investor's guide to technical analysis. Discover which chart signals actually work and which indicators you are better off ignoring..."
-  canonical="https://westmountfundamentals.com/guide-technical-analysis-basics" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -283,7 +281,7 @@ export const meta = {
   </div>
     <div class="header-section">
       <div class="tag">GUIDE</div>
-      <h1>Technical Analysis for Fundamental Investors</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">A skeptical guide to what actually works (and what to ignore) when timing your entries and exits.</p>
     </div>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-earnings-growth-rankings"];
+export const meta = { title: "S&P 500 Earnings Growth Rankings 2026: Fastest Growing Co...", description: "Looking for the next big movers? We analyzed the top 50 S&P 500 companies poised for massive earnings growth through 2026. What you", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "S&P 500 Earnings Growth Rankings 2026: Fastest Growing Co...",
-  description: "Looking for the next big movers? We analyzed the top 50 S&P 500 companies poised for massive earnings growth through 2026. What you'll find may surprise you.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 Earnings Growth Rankings 2026: Fastest Growing Co..."
-  description="Looking for the next big movers? We analyzed the top 50 S&P 500 companies poised for massive earnings growth through 2026. What you'll find may surprise you."
-  canonical="https://westmountfundamentals.com/sp500-earnings-growth-rankings" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -271,7 +269,7 @@ export const meta = {
         </div>
 
         <section class="methodology">
-    <h1>S&P 500 Earnings Growth Rankings 2026: Fastest Growing Co...</h1>
+    <h1>{page.h1}</h1>
 
             <h2>Methodology</h2>
             <p style="color: var(--text-muted);">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["options-trading-strategy-guide"];
+export const meta = { title: "Options Trading Strategy Guide | Westmount Fundamentals", description: "A comprehensive guide to options trading strategies from basic to advanced. Learn about covered calls, straddles, iron condors, risk/reward profiles, and...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,18 +52,12 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Options Trading Strategy Guide | Westmount Fundamentals",
-  description: "A comprehensive guide to options trading strategies from basic to advanced. Learn about covered calls, straddles, iron condors, risk/reward profiles, and...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Options Trading Strategy Guide | Westmount Fundamentals"
-  description="A comprehensive guide to options trading strategies from basic to advanced. Learn about covered calls, straddles, iron condors, risk/reward profiles, and."
+  title={page.title}
+  description={page.description}
   canonical="" schema={schema}
 >
   <style>
@@ -264,7 +262,7 @@ export const meta = {
 
 <div class="header">
     <span class="tag">Educational Guide</span>
-    <h1>Options Trading Strategy Guide</h1>
+    <h1>{page.h1}</h1>
     <p style="color: #6a7a90; max-width: 600px; margin: 0 auto;">From Covered Calls to Iron Condors: Mastering risk, reward, and market outlooks.</p>
   </div>
 

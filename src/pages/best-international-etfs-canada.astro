@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-international-etfs-canada"];
+export const meta = { title: "Best International ETFs in Canada 2026: VIU, XEF, ZEA", description: "Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio.", category: "list", published: "2026-03-15" };
 
 const schema = [
   {
@@ -44,19 +48,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Best International ETFs in Canada 2026: VIU, XEF, ZEA",
-  description: "Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best International ETFs in Canada 2026: VIU, XEF, ZEA"
-  description="Discover the best international and emerging market ETFs for Canadians. Compare top picks like VIU, XEF, and ZEA to complete your global portfolio."
-  canonical="https://westmountfundamentals.com/best-international-etfs-canada"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -65,7 +63,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Best International ETFs in Canada</h1>
+      <h1>{page.h1}</h1>
       <p>Expand your portfolio beyond North America with the top developed and emerging market ETFs.</p>
     </div>
 

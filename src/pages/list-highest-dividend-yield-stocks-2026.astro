@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["list-highest-dividend-yield-stocks-2026"];
+export const meta = { title: "50 Highest Dividend Yield Stocks in S&P 500 (2026)", description: "Discover the 50 highest dividend yield stocks in the S&P 500 for 2026. Complete list ranked by yield, payout ratio, sector, and consecutive years.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "50 Highest Dividend Yield Stocks in S&P 500 (2026)",
-  description: "Discover the 50 highest dividend yield stocks in the S&P 500 for 2026. Complete list ranked by yield, payout ratio, sector, and consecutive years.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="50 Highest Dividend Yield Stocks in S&P 500 (2026)"
-  description="Discover the 50 highest dividend yield stocks in the S&P 500 for 2026. Complete list ranked by yield, payout ratio, sector, and consecutive years."
-  canonical="https://westmountfundamentals.com/list-highest-dividend-yield-stocks-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
@@ -306,7 +304,7 @@ export const meta = {
   </div>
     <div class="hero">
       <span class="tag">ORIGINAL RESEARCH</span>
-      <h1>50 Highest Dividend Yield Stocks in the S&P 500</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Complete rankings of the top 50 dividend-paying companies in the S&P 500 index for 2026. Data includes yield, payout ratio sustainability, and consecutive years of dividend payments.</p>
     </div>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-returns-by-month"];
+export const meta = { title: "S&P 500 Returns by Month — Which Month Is Best to Invest?", description: "Historical S&P 500 returns for every month since 1950. January averages +1.2%, September is the worst. See the data and plan your entries.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "S&P 500 Returns by Month — Which Month Is Best to Invest?",
-  description: "Historical S&P 500 returns for every month since 1950. January averages +1.2%, September is the worst. See the data and plan your entries.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="S&P 500 Returns by Month — Which Month Is Best to Invest?"
-  description="Historical S&P 500 returns for every month since 1950. January averages +1.2%, September is the worst. See the data and plan your entries."
-  canonical="https://westmountfundamentals.com/sp500-returns-by-month" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -331,7 +329,7 @@ export const meta = {
     </div>
 
     <section>
-    <h1>S&P 500 Returns by Month — Which Month Is Best to Invest?</h1>
+    <h1>{page.h1}</h1>
 
       <h2>Average Monthly Returns (1950-2026)</h2>
       <div class="chart-container">

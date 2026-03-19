@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-pe-ratio-history"];
+export const meta = { title: "S&P 500 P/E Ratio History: Is the Market Overvalued in 2026?", description: "A shocking look at the S&P 500 P/E ratio history from 1950 to 2026. See exactly where current valuations sit compared to historic bubble peaks and bottoms.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "S&P 500 P/E Ratio History: Is the Market Overvalued in 2026?",
-  description: "A shocking look at the S&P 500 P/E ratio history from 1950 to 2026. See exactly where current valuations sit compared to historic bubble peaks and bottoms.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 P/E Ratio History: Is the Market Overvalued in 2026?"
-  description="A shocking look at the S&P 500 P/E ratio history from 1950 to 2026. See exactly where current valuations sit compared to historic bubble peaks and bottoms."
-  canonical="https://westmountfundamentals.com/sp500-pe-ratio-history" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -245,7 +243,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 P/E Ratio History: Is the Market Overva...</span></nav>
     <span>9 min read</span>
   </div>
-    <h1>S&P 500 P/E Ratio History: Is the Market Overvalued in 2026?</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="stats-grid">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["equity-risk-premium"];
+export const meta = { title: "Earnings Yield vs Bond Yield: Is the Stock Market Fairly ...", description: "For the first time in years, bonds yield more than stocks. We break down all 11 sectors to show which ones still justify the risk.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -16,19 +20,13 @@ const schema = {
   "datePublished": "2026-03-09"
 };
 
-export const meta = {
-  title: "Earnings Yield vs Bond Yield: Is the Stock Market Fairly ...",
-  description: "For the first time in years, bonds yield more than stocks. We break down all 11 sectors to show which ones still justify the risk.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Earnings Yield vs Bond Yield: Is the Stock Market Fairly ..."
-  description="For the first time in years, bonds yield more than stocks. We break down all 11 sectors to show which ones still justify the risk."
-  canonical="https://westmountfundamentals.com/equity-risk-premium" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -183,7 +181,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Earnings Yield vs Bond Yield: Is the Stock Mark...</span></nav>
     <span>3 min read</span>
   </div>
-    <h1>Earnings Yield vs Bond Yield: Is the Stock Market Fairly ...</h1>
+    <h1>{page.h1}</h1>
 
     <div class="grid-3">
       <div class="card">

@@ -1,20 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Start Investing in Stocks: A Beginner's Guide",
-  description: "Want to start investing in stocks but don't know where to begin? We break down the exact steps, how it actually works, and the one mistake that costs.",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["how-to-start-investing"];
+export const meta = { title: "How to Start Investing in Stocks: A Beginner", description: "Want to start investing in stocks but don", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -27,7 +24,7 @@ const schema = {
           "url": "https://westmountfundamentals.com/logo.png"
         }
       },
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://westmountfundamentals.com/how-to-start-investing"
@@ -82,14 +79,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-start-investing" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Start Investing in Stocks: A Beginner's ...</span></nav>
     <span>11 min read</span>
   </div>
   <div class="page-content">
     <div class="max-w-4xl mx-auto py-12 px-6 text-[var(--text-primary)]">
-      <h1 class="text-4xl md:text-5xl font-extrabold mb-6 text-[var(--text-primary)]">How to Start Investing in Stocks: The Ultimate Beginner's Guide</h1>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-6 text-[var(--text-primary)]">{page.h1}</h1>
       <p class="text-xl mb-12 text-[var(--text-secondary)] leading-relaxed">
         If you are wondering how to start investing in stocks, you are already taking the first step toward financial independence.
         Investing isn't a get-rich-quick scheme reserved for Wall Street insiders; it is a methodical, mathematically proven process for

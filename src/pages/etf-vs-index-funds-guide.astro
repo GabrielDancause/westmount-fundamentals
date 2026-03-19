@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["etf-vs-index-funds-guide"];
+export const meta = { title: "ETF vs Index Fund Comparison Guide | Westmount Fundamentals", description: "ETFs and index funds track the same benchmarks — so why does one cost you more in taxes? The differences that actually matter for your portfolio.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -26,19 +30,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "ETF vs Index Fund Comparison Guide | Westmount Fundamentals",
-  description: "ETFs and index funds track the same benchmarks — so why does one cost you more in taxes? The differences that actually matter for your portfolio.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="ETF vs Index Fund Comparison Guide | Westmount Fundamentals"
-  description="ETFs and index funds track the same benchmarks — so why does one cost you more in taxes? The differences that actually matter for your portfolio."
-  canonical="https://westmountfundamentals.com/etf-vs-index-funds-guide" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -454,7 +452,7 @@ export const meta = {
   </div>
     <div class="guide-header">
         <span class="tag">Educational Guide</span>
-        <h1>ETF vs Index Fund: The Ultimate Comparison</h1>
+        <h1>{page.h1}</h1>
         <div class="guide-meta">
             <span>By Westmount Research</span>
             <span>·</span>

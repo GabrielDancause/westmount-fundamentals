@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-companies-complete-list-2026"];
+export const meta = { title: "S&P 500 Companies Complete List (2026 Updated)", description: "Complete, searchable list of all 503 S&P 500 companies in 2026. Includes market cap, P/E ratio, dividend yield, sector, and YTD return data.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "S&P 500 Companies Complete List (2026 Updated)",
-  description: "Complete, searchable list of all 503 S&P 500 companies in 2026. Includes market cap, P/E ratio, dividend yield, sector, and YTD return data.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="S&P 500 Companies Complete List (2026 Updated)"
-  description="Complete, searchable list of all 503 S&P 500 companies in 2026. Includes market cap, P/E ratio, dividend yield, sector, and YTD return data."
-  canonical="https://westmountfundamentals.com/sp500-companies-complete-list-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -282,7 +280,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Companies Complete List (2026 Updated)</span></nav>
     <span>6 min read</span>
   </div>
-        <h1>S&P 500 Companies: Complete List 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Search, filter, and analyze all 503 constituents of the S&P 500 index.</p>
 
         <div class="stats-grid">

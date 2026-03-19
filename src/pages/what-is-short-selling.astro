@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is Short Selling? A Complete Guide to Shorting Stocks",
-  description: "Learn what short selling is and how investors profit from falling stock prices. Discover the mechanics, risks like short squeezes, and real-world examples.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-short-selling"];
+export const meta = { title: "What is Short Selling? A Complete Guide to Shorting Stocks", description: "Learn what short selling is and how investors profit from falling stock prices. Discover the mechanics, risks like short squeezes, and real-world examples.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -54,13 +52,13 @@ const schema = JSON.stringify({
   ]
 });
 ---
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-short-selling" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is Short Selling? A Complete Guide to Shor...</span></nav>
     <span>15 min read</span>
   </div>
   <div class="page-content">
-    <h1>What is Short Selling? A Comprehensive Guide for Investors</h1>
+    <h1>{page.h1}</h1>
 
     <p>When most people think about investing in the stock market, they imagine buying a stock, holding it while the company grows, and eventually selling it for a profit. This traditional approach—buying low and selling high—is known as going "long" on a stock. It is built on the fundamental optimism that over time, the value of good companies will increase.</p>
 

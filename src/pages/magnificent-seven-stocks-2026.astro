@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["magnificent-seven-stocks-2026"];
+export const meta = { title: "Magnificent 7 Stocks 2026: Performance, Valuations, and W...", description: "Is the stock market dangerously top-heavy? We analyze the Magnificent 7", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Magnificent 7 Stocks 2026: Performance, Valuations, and W...",
-  description: "Is the stock market dangerously top-heavy? We analyze the Magnificent 7's staggering combined weight and valuations.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Magnificent 7 Stocks 2026: Performance, Valuations, and W..."
-  description="Is the stock market dangerously top-heavy? We analyze the Magnificent 7's staggering combined weight and valuations."
-  canonical="https://westmountfundamentals.com/magnificent-seven-stocks-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -305,7 +303,7 @@ export const meta = {
   </div>
 
         <section class="summary-cards">
-    <h1>Magnificent 7 Stocks 2026: Performance, Valuations, and W...</h1>
+    <h1>{page.h1}</h1>
 
             <div class="card">
                 <div class="card-label">Combined Market Cap</div>

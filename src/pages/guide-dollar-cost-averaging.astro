@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-dollar-cost-averaging"];
+export const meta = { title: "Dollar-Cost Averaging: Does It Actually Beat Lump Sum Inv...", description: "A Vanguard study analyzed decades of data to find which strategy wins 68% of the time. Discover the surprising math that dictates your portfolio outcomes.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -25,19 +29,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Dollar-Cost Averaging: Does It Actually Beat Lump Sum Inv...",
-  description: "A Vanguard study analyzed decades of data to find which strategy wins 68% of the time. Discover the surprising math that dictates your portfolio outcomes.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Dollar-Cost Averaging: Does It Actually Beat Lump Sum Inv..."
-  description="A Vanguard study analyzed decades of data to find which strategy wins 68% of the time. Discover the surprising math that dictates your portfolio outcomes."
-  canonical="https://westmountfundamentals.com/guide-dollar-cost-averaging" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -342,7 +340,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Dollar-Cost Averaging: Does It Actually Beat Lu...</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>Dollar-Cost Averaging: Does It Actually Beat Lump Sum Inv...</h1>
+    <h1>{page.h1}</h1>
 
     <p>When you suddenly find yourself with a pile of cash to invest—whether from a bonus, an inheritance, or the sale of a business—you are immediately faced with one of investing's oldest dilemmas: Do you push all the chips into the center of the table at once (Lump Sum), or do you wade in slowly over several months (Dollar-Cost Averaging)?</p>
 

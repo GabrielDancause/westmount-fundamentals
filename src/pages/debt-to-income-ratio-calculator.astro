@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["debt-to-income-ratio-calculator"];
+export const meta = { title: "Debt-to-Income Ratio Calculator | Westmount", description: "Interactive debt-to-income (DTI) ratio calculator. Calculate front-end and back-end DTI to check if you meet mortgage requirements for your next loan.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Debt-to-Income Ratio Calculator | Westmount",
-  description: "Interactive debt-to-income (DTI) ratio calculator. Calculate front-end and back-end DTI to check if you meet mortgage requirements for your next loan.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Debt-to-Income Ratio Calculator | Westmount"
-  description="Interactive debt-to-income (DTI) ratio calculator. Calculate front-end and back-end DTI to check if you meet mortgage requirements for your next loan."
-  canonical="https://westmountfundamentals.com/debt-to-income-ratio-calculator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -365,7 +363,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Debt-to-Income Ratio Calculator</span></nav>
     <span>5 min read</span>
   </div>
-        <h1>Debt-to-Income (DTI) Ratio Calculator</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Calculate your front-end and back-end DTI to see if you qualify for a mortgage.</p>
 
         <!-- Stats Grid -->

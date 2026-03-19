@@ -1,23 +1,20 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stock Profit Calculator | Westmount Fundamentals",
-  description: "Calculate your true stock profit, return on investment (ROI), and break-even price. What are hidden fees costing you?",
-  category: "tool",
-  published: "2026-03-15",
-};
+const page = (registry as any)["stock-profit-calculator"];
+export const meta = { title: "Stock Profit Calculator | Westmount Fundamentals", description: "Calculate your true stock profit, return on investment (ROI), and break-even price. What are hidden fees costing you?", category: "tool", published: "2026-03-15" };
 
 const schema = [{"@context": "https://schema.org", "@type": "Article", "headline": "Stock Profit Calculator", "description": "Calculate your true stock profit, return on investment (ROI), and break-even price. What are hidden fees costing you?", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}, "publisher": {"@type": "Organization", "name": "Westmount Fundamentals"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://westmountfundamentals.com/stock-profit-calculator"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do you calculate profit on a stock?", "acceptedAnswer": {"@type": "Answer", "text": "Stock profit is calculated by finding the total revenue from selling shares (shares \u00d7 sell price) and subtracting the total cost to acquire them (shares \u00d7 buy price). You must also subtract any commissions or fees paid when buying and selling."}}, {"@type": "Question", "name": "How do stock commissions affect my profit?", "acceptedAnswer": {"@type": "Answer", "text": "Commissions directly reduce your net profit. Buying commissions increase your initial total investment cost, while selling commissions decrease your final revenue. Both must be factored into your calculation to find your true return on investment (ROI)."}}, {"@type": "Question", "name": "What is a good ROI for stocks?", "acceptedAnswer": {"@type": "Answer", "text": "A 'good' ROI depends on your goals, but historically, the S&P 500 has returned an average of about 7% to 10% annually, adjusted for inflation. Individual stock returns can be much higher or lower depending on market conditions and the company's performance."}}, {"@type": "Question", "name": "Does this calculator account for capital gains taxes?", "acceptedAnswer": {"@type": "Answer", "text": "No, this calculator determines your pre-tax net profit. Capital gains taxes vary based on your country, income tax bracket, and whether the investment was held short-term or long-term. You should consult a tax professional for precise tax liabilities."}}, {"@type": "Question", "name": "How do I calculate my break-even price?", "acceptedAnswer": {"@type": "Answer", "text": "To calculate your break-even price, add your total buying costs (including commissions) to your expected selling commissions, then divide that total by the number of shares. This gives the exact share price required to sell without losing money."}}]}];
 ---
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stock-profit-calculator" schema={JSON.stringify(schema)}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stock Profit Calculator</span></nav>
     <span>8 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Stock Profit Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Calculate your net profit, ROI, and break-even price.</p>
     </div>
 

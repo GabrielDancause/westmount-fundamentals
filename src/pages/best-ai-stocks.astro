@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Best AI Stocks 2026: Top Artificial Intelligence Companies",
-  description: "Which companies are truly leading the AI revolution, and which are just riding the hype? We analyze the data behind the top artificial intelligence stocks.",
-  category: "list",
-  published: "2026-03-15",
-};
+const page = (registry as any)["best-ai-stocks"];
+export const meta = { title: "Best AI Stocks 2026: Top Artificial Intelligence Companies", description: "Which companies are truly leading the AI revolution, and which are just riding the hype? We analyze the data behind the top artificial intelligence stocks.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -57,14 +54,14 @@ const schema = {
 };
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/best-ai-stocks" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best AI Stocks 2026: Top Artificial Intelligenc...</span></nav>
     <span>15 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Best AI Stocks 2026: Top Artificial Intelligence Companies</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Separating the real innovators from the hype.</p>
     </div>
 

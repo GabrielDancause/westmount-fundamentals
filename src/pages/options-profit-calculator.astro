@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Options Profit Calculator",
-  description: "Stop guessing your breakeven. Enter your options trade to instantly see exact maximum profit, loss limits, and a payoff chart matrix before you risk a dollar.",
-  category: "tool",
-  published: "2026-03-17",
-};
+const page = (registry as any)["options-profit-calculator"];
+export const meta = { title: "Options Profit Calculator", description: "Stop guessing your breakeven. Enter your options trade to instantly see exact maximum profit, loss limits, and a payoff chart matrix before you risk a dollar.", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -79,7 +76,7 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/options-profit-calculator" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Options Profit Calculator</span></nav>
     <span>18 min read</span>
@@ -87,7 +84,7 @@ const schema = {
   <div class="page-content">
 
     <div class="hero">
-      <h1>Options Profit Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Instantly calculate exact profit limits, max risk bounds, and your definitive breakeven point. Enter your single-leg option trade below.</p>
     </div>
 

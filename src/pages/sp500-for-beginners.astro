@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Invest in S&P 500 for Beginners (2026 Guide)",
-  description: "Want to start investing but confused by the jargon? See exactly how a single index fund could turn a small monthly habit into serious wealth...",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["sp500-for-beginners"];
+export const meta = { title: "How to Invest in S&P 500 for Beginners (2026 Guide)", description: "Want to start investing but confused by the jargon? See exactly how a single index fund could turn a small monthly habit into serious wealth...", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals",
@@ -83,7 +80,7 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/sp500-for-beginners" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
 
     <div class="container">
@@ -91,7 +88,7 @@ const schema = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Invest in S&P 500 for Beginners (2026 Gu...</span></nav>
     <span>9 min read</span>
   </div>
-      <h1>How to Invest in S&P 500 for Beginners</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle" style="text-align: center; color: var(--text-secondary); margin-top: -1rem; margin-bottom: 3rem;">A complete, jargon-free guide to building wealth with America's 500 largest companies.</p>
 
       <div class="highlight-box" style="margin-bottom: 3rem;">

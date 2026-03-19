@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["etf-expense-ratios"];
+export const meta = { title: "ETF Expense Ratios Compared — 86 ETFs Ranked (2026)", description: "SPLG charges 0.02%. SPY charges 0.0945%. Same index, 4.7x the cost. Compare expense ratios across 86 major ETFs and stop overpaying.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -19,19 +23,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "ETF Expense Ratios Compared — 86 ETFs Ranked (2026)",
-  description: "SPLG charges 0.02%. SPY charges 0.0945%. Same index, 4.7x the cost. Compare expense ratios across 86 major ETFs and stop overpaying.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="ETF Expense Ratios Compared — 86 ETFs Ranked (2026)"
-  description="SPLG charges 0.02%. SPY charges 0.0945%. Same index, 4.7x the cost. Compare expense ratios across 86 major ETFs and stop overpaying."
-  canonical="https://westmountfundamentals.com/etf-expense-ratios" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style is:inline>
 .container{max-width:1200px;margin:0 auto;padding:0 20px}
@@ -149,7 +147,7 @@ footer{border-top:1px solid var(--border-color);padding:24px 0;text-align:center
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">ETF Expense Ratios Compared</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>ETF Expense Ratios 2026: Compare VOO, SPY, IVV & 86 ETFs —</h1>
+    <h1>{page.h1}</h1>
 
 
 <div class="updated-badge">Last Updated: March 2026</div>

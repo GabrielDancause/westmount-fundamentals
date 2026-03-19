@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-comparison-tool"];
+export const meta = { title: "Stock Comparison Tool: Compare Any Two Stocks", description: "Compare any two stocks side-by-side. Analyze P/E, dividend yield, market cap, ROE, revenue growth, and more with our interactive stock comparison tool.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Stock Comparison Tool: Compare Any Two Stocks",
-  description: "Compare any two stocks side-by-side. Analyze P/E, dividend yield, market cap, ROE, revenue growth, and more with our interactive stock comparison tool.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Stock Comparison Tool: Compare Any Two Stocks"
-  description="Compare any two stocks side-by-side. Analyze P/E, dividend yield, market cap, ROE, revenue growth, and more with our interactive stock comparison tool."
-  canonical="https://westmountfundamentals.com/stock-comparison-tool" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -289,7 +287,7 @@ export const meta = {
     <span>8 min read</span>
   </div>
     <div class="header">
-      <h1>Stock Comparison Tool</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Instantly compare any two stocks side-by-side. Analyze valuation, profitability, growth, and risk metrics to make data-driven investment decisions.</p>
     </div>
 

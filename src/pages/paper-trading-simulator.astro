@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["paper-trading-simulator"];
+export const meta = { title: "Free Paper Trading Simulator & Virtual Portfolio Manager", description: "Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track...", category: "tool", published: "2026-03-24" };
 
 const schema = [
   {
@@ -57,19 +61,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Free Paper Trading Simulator & Virtual Portfolio Manager",
-  description: "Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track...",
-  category: "tool",
-  published: "2026-03-24",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Free Paper Trading Simulator & Virtual Portfolio Manager"
-  description="Practice trading risk-free with our paper trading simulator. Start with a $100K virtual portfolio, buy and sell top stocks like AAPL and MSFT, and track."
-  canonical="https://westmountfundamentals.com/paper-trading-simulator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -78,7 +76,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Paper Trading Simulator</h1>
+      <h1>{page.h1}</h1>
       <p>Practice building a portfolio with $100,000 in virtual cash.</p>
     </div>
 

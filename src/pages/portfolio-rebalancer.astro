@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["portfolio-rebalancer"];
+export const meta = { title: "Portfolio Rebalancing Tool | Westmount Research", description: "Enter your holdings and target allocations — we", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -15,19 +19,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Portfolio Rebalancing Tool | Westmount Research",
-  description: "Enter your holdings and target allocations — we'll tell you the exact dollar amounts to buy and sell to get back on track.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Portfolio Rebalancing Tool | Westmount Research"
-  description="Enter your holdings and target allocations — we'll tell you the exact dollar amounts to buy and sell to get back on track."
-  canonical="https://westmountfundamentals.com/portfolio-rebalancer" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -266,7 +264,7 @@ td input:focus {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Portfolio Rebalancing Tool</span></nav>
     <span>2 min read</span>
   </div>
-  <h1>Portfolio Rebalancing Tool</h1>
+  <h1>{page.h1}</h1>
   <p>Enter your current holdings and target asset allocation percentages. We'll calculate exactly how much of each asset you need to buy or sell to reach your ideal balance.</p>
 
   <div class="rebalancer-card">

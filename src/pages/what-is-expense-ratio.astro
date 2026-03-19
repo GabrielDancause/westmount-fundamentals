@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is an Expense Ratio? The Hidden Cost of Investing Explained",
-  description: "Learn what an expense ratio is, how it works, and why it matters for your investments. A complete guide with real-world examples and practical takeaways.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-expense-ratio"];
+export const meta = { title: "What is an Expense Ratio? The Hidden Cost of Investing Explained", description: "Learn what an expense ratio is, how it works, and why it matters for your investments. A complete guide with real-world examples and practical takeaways.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-expense-ratio" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is an Expense Ratio? The Hidden Cost of In...</span></nav>
     <span>13 min read</span>
   </div>
-      <h1>What is an Expense Ratio? The Hidden Cost of Investing Explained</h1>
+      <h1>{page.h1}</h1>
 
       <p class="intro-text">
         When you invest in mutual funds, exchange-traded funds (ETFs), or index funds, you're buying a professionally managed basket of investments. But that management isn't free. The cost of running the fund is passed on to you, the investor, in the form of an <strong>expense ratio</strong>. Understanding this seemingly small percentage is crucial because over time, it can significantly impact your investment returns.

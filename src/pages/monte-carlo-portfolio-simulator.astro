@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["monte-carlo-portfolio-simulator"];
+export const meta = { title: "Monte Carlo Portfolio Simulator | Westmount Fundamentals", description: "Run 1000+ Monte Carlo simulations on your retirement portfolio. Calculate the probability of success for your investment strategy and expected returns.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Monte Carlo Portfolio Simulator | Westmount Fundamentals",
-  description: "Run 1000+ Monte Carlo simulations on your retirement portfolio. Calculate the probability of success for your investment strategy and expected returns.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Monte Carlo Portfolio Simulator | Westmount Fundamentals"
-  description="Run 1000+ Monte Carlo simulations on your retirement portfolio. Calculate the probability of success for your investment strategy and expected returns."
-  canonical="https://westmountfundamentals.com/monte-carlo-portfolio-simulator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 /* Reset & Base Settings */
@@ -306,7 +304,7 @@ export const meta = {
     <span>5 min read</span>
   </div>
     <div class="header-section">
-      <h1>Monte Carlo Portfolio Simulator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Run thousands of simulations to calculate the probability of success for your retirement portfolio based on historical market volatility and drift.</p>
     </div>
 

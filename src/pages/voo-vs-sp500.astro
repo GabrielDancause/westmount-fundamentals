@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["voo-vs-sp500"];
+export const meta = { title: "VOO vs S&P 500: What", description: "Are you confused by the difference between VOO and the S&P 500? One is a fund, the other is a benchmark.", category: "tool", published: "2026-03-15" };
 
 const schema = [
   {
@@ -62,19 +66,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "VOO vs S&P 500: What's the Real Difference?",
-  description: "Are you confused by the difference between VOO and the S&P 500? One is a fund, the other is a benchmark.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="VOO vs S&P 500: What's the Real Difference?"
-  description="Are you confused by the difference between VOO and the S&P 500? One is a fund, the other is a benchmark."
-  canonical="https://westmountfundamentals.com/voo-vs-sp500"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -243,7 +241,7 @@ export const meta = {
 
   <div class="page-content">
     <div class="hero">
-      <h1>VOO vs S&P 500</h1>
+      <h1>{page.h1}</h1>
       <p>Understanding the fundamental difference between an index and an index fund.</p>
     </div>
 

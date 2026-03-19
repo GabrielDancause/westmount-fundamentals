@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-reading-financial-statements"];
+export const meta = { title: "How to Read Financial Statements - Westmount Fundamentals", description: "Revenue is vanity, profit is sanity, cash flow is reality. Learn to read all three financial statements and spot what companies try to hide.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -66,19 +70,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "How to Read Financial Statements - Westmount Fundamentals",
-  description: "Revenue is vanity, profit is sanity, cash flow is reality. Learn to read all three financial statements and spot what companies try to hide.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="How to Read Financial Statements - Westmount Fundamentals"
-  description="Revenue is vanity, profit is sanity, cash flow is reality. Learn to read all three financial statements and spot what companies try to hide."
-  canonical="https://westmountfundamentals.com/guide-reading-financial-statements" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -190,7 +188,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Read Financial Statements - Westmount Fu...</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>How to Read Financial Statements -</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="content">

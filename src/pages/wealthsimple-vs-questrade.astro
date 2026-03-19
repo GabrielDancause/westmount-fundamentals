@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["wealthsimple-vs-questrade"];
+export const meta = { title: "Wealthsimple vs Questrade (2026): The Ultimate Comparison", description: "A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style.", category: "study", published: "2026-03-15" };
 
 const schema = [
   {
@@ -41,19 +45,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Wealthsimple vs Questrade (2026): The Ultimate Comparison",
-  description: "A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Wealthsimple vs Questrade (2026): The Ultimate Comparison"
-  description="A deep dive comparing Wealthsimple and Questrade. We analyze their fee structures, USD accounts, features, and which platform suits your investing style."
-  canonical="https://westmountfundamentals.com/wealthsimple-vs-questrade"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -62,7 +60,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Wealthsimple vs Questrade: The 2026 Showdown</h1>
+      <h1>{page.h1}</h1>
       <p>Comparing Canada's two most popular independent brokerages across fees, features, and USD handling.</p>
     </div>
 

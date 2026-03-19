@@ -1,23 +1,20 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Portfolio Allocation Calculator | Westmount Fundamentals",
-  description: "Visualize your asset distribution across stocks, bonds, cash, and crypto. Is your portfolio exposed to hidden risks?",
-  category: "tool",
-  published: "2026-03-15",
-};
+const page = (registry as any)["portfolio-allocation-calculator"];
+export const meta = { title: "Portfolio Allocation Calculator | Westmount Fundamentals", description: "Visualize your asset distribution across stocks, bonds, cash, and crypto. Is your portfolio exposed to hidden risks?", category: "tool", published: "2026-03-15" };
 
 const schema = [{"@context": "https://schema.org", "@type": "Article", "headline": "Portfolio Allocation Calculator", "description": "Visualize your asset distribution across stocks, bonds, cash, and crypto. Is your portfolio exposed to hidden risks?", "author": {"@type": "Organization", "name": "Westmount Fundamentals"}, "publisher": {"@type": "Organization", "name": "Westmount Fundamentals"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://westmountfundamentals.com/portfolio-allocation-calculator"}}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is portfolio allocation?", "acceptedAnswer": {"@type": "Answer", "text": "Portfolio allocation is the process of dividing your investment portfolio across different asset categories, such as stocks, bonds, cash, and real estate. This strategy helps balance risk and reward based on your financial goals, risk tolerance, and investment horizon."}}, {"@type": "Question", "name": "How do I calculate my asset allocation percentage?", "acceptedAnswer": {"@type": "Answer", "text": "To calculate your asset allocation percentage, take the total value of a specific asset class (e.g., $10,000 in stocks) and divide it by the total value of your entire portfolio (e.g., $50,000). Multiply the result by 100 to get the percentage (20%)."}}, {"@type": "Question", "name": "What is the 60/40 portfolio rule?", "acceptedAnswer": {"@type": "Answer", "text": "The 60/40 rule is a traditional investment strategy that suggests allocating 60% of your portfolio to equities (stocks) for growth, and 40% to fixed-income assets (bonds) for income and risk mitigation. While popular, it may need adjustment based on modern market conditions and personal age."}}, {"@type": "Question", "name": "Why is portfolio rebalancing important?", "acceptedAnswer": {"@type": "Answer", "text": "Over time, some investments will grow faster than others, causing your portfolio to drift away from its original target allocation. Rebalancing involves buying or selling assets to return your portfolio to its intended risk level, preventing you from becoming accidentally overexposed to volatile assets."}}, {"@type": "Question", "name": "How often should I rebalance my portfolio?", "acceptedAnswer": {"@type": "Answer", "text": "Many investors rebalance their portfolios on a set schedule, such as quarterly or annually. Others use a threshold approach, rebalancing only when a specific asset class drifts by a certain percentage (e.g., 5%) from its target allocation."}}]}];
 ---
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/portfolio-allocation-calculator" schema={JSON.stringify(schema)}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Portfolio Allocation Calculator</span></nav>
     <span>7 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Portfolio Allocation Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Visualize your asset distribution and balance your risk.</p>
     </div>
 

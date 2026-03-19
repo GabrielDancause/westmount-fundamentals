@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-sector-weights"];
+export const meta = { title: "S&P 500 Sector Weights: The 25-Year Rotation (2000-2026)", description: "Tech crashed from 25% to 15% after the dot-com bust — then climbed back above 30%. A 25-year time-lapse of how the S&P 500 reshuffled itself.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -22,19 +26,13 @@ const schema = {
   "dateModified": "2026-03-09T17:04:44.767Z"
 };
 
-export const meta = {
-  title: "S&P 500 Sector Weights: The 25-Year Rotation (2000-2026)",
-  description: "Tech crashed from 25% to 15% after the dot-com bust — then climbed back above 30%. A 25-year time-lapse of how the S&P 500 reshuffled itself.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 Sector Weights: The 25-Year Rotation (2000-2026)"
-  description="Tech crashed from 25% to 15% after the dot-com bust — then climbed back above 30%. A 25-year time-lapse of how the S&P 500 reshuffled itself."
-  canonical="https://westmountfundamentals.com/sp500-sector-weights" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -92,7 +90,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Sector Weights: The 25-Year Rotation (2...</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>S&P 500 Sector Weights: The 25-Year Rotation (2000-2026)</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="charts-grid">

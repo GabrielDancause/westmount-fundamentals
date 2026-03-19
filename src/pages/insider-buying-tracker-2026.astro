@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["insider-buying-tracker-2026"];
+export const meta = { title: "S&P 500 Insider Buying Tracker (2026)", description: "Track the latest insider buying activity across S&P 500 companies. See which CEOs, CFOs, and Directors are buying their own stock.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "S&P 500 Insider Buying Tracker (2026)",
-  description: "Track the latest insider buying activity across S&P 500 companies. See which CEOs, CFOs, and Directors are buying their own stock.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="S&P 500 Insider Buying Tracker (2026)"
-  description="Track the latest insider buying activity across S&P 500 companies. See which CEOs, CFOs, and Directors are buying their own stock."
-  canonical="https://westmountfundamentals.com/insider-buying-tracker-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -322,7 +320,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Insider Buying Tracker (2026)</span></nav>
     <span>7 min read</span>
   </div>
-        <h1>Insider Buying Tracker: SEC Form 4 Filings (2026)</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Monitor the latest open-market stock purchases by CEOs, CFOs, and Directors across the S&P 500. See where corporate insiders are putting their own money.</p>
 
         <div class="stats-grid">

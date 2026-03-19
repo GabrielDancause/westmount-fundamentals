@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-portfolio-diversification"];
+export const meta = { title: "Portfolio Diversification Guide: How Many Stocks Do You A...", description: "Adding more stocks isn", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Portfolio Diversification Guide: How Many Stocks Do You A...",
-  description: "Adding more stocks isn't always safer. This comprehensive portfolio diversification guide reveals the exact threshold where risk reduction stalls.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Portfolio Diversification Guide: How Many Stocks Do You A..."
-  description="How many stocks do you need for proper diversification? Discover the exact threshold where adding more holdings stops reducing risk."
-  canonical="https://westmountfundamentals.com/guide-portfolio-diversification" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -278,7 +276,7 @@ export const meta = {
   </div>
 
         <section>
-    <h1>Portfolio Diversification Guide: How Many Stocks Do You A...</h1>
+    <h1>{page.h1}</h1>
 
             <p>One of the most persistent myths in investing is that more is always better. As you add positions to your portfolio, risk decreases—but only up to a point. Understanding the mathematical reality behind this dynamic is the cornerstone of effective portfolio construction.</p>
 

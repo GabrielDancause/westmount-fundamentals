@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["value-vs-growth-stocks-2026"];
+export const meta = { title: "Value vs Growth Stocks: Performance Comparison (2026)", description: "Value vs growth stock performance comparison for 2026. See historical returns, valuations, and an ETF comparison to decide which strategy wins.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Value vs Growth Stocks: Performance Comparison (2026)",
-  description: "Value vs growth stock performance comparison for 2026. See historical returns, valuations, and an ETF comparison to decide which strategy wins.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Value vs Growth Stocks: Performance Comparison (2026)"
-  description="Value vs growth stock performance comparison for 2026. See historical returns, valuations, and an ETF comparison to decide which strategy wins."
-  canonical="https://westmountfundamentals.com/value-vs-growth-stocks-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -339,7 +337,7 @@ export const meta = {
     <div class="stats-row" id="etf-stats"></div>
 
     <section>
-    <h1>Value vs Growth Stocks: Performance Comparison (2026)</h1>
+    <h1>{page.h1}</h1>
 
       <h2>Performance Comparison (Since 2016)</h2>
       <div class="chart-container">

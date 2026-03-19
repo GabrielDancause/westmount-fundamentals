@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stock Calculator: Project Your Investment Growth",
-  description: "Calculate the future value of your investments with our stock calculator. See how initial deposits and monthly contributions grow over time with compound...",
-  category: "tool",
-};
+const page = (registry as any)["stock-calculator"];
+export const meta = { title: "Stock Calculator: Project Your Investment Growth", description: "Calculate the future value of your investments with our stock calculator. See how initial deposits and monthly contributions grow over time with compound...", category: "tool", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,7 +53,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stock-calculator" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
 
     <div class="container">
@@ -63,7 +61,7 @@ const schema = JSON.stringify({
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stock Calculator: Project Your Investment Growth</span></nav>
     <span>4 min read</span>
   </div>
-      <h1>Stock Calculator</h1>
+      <h1>{page.h1}</h1>
       <p style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">Project the potential future growth of your investments using compound interest and consistent contributions.</p>
 
       <div class="calculator-card">

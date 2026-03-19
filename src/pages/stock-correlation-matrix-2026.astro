@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-correlation-matrix-2026"];
+export const meta = { title: "Stock Correlation Matrix 2026: What Actually Diversifies?", description: "Discover the surprising truth about which sectors are uncorrelated right now. A deep dive into the stock correlation matrix of 2026 reveals what actually...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Stock Correlation Matrix 2026: What Actually Diversifies?",
-  description: "Discover the surprising truth about which sectors are uncorrelated right now. A deep dive into the stock correlation matrix of 2026 reveals what actually...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Stock Correlation Matrix 2026: What Actually Diversifies?"
-  description="Discover the surprising truth about which sectors are uncorrelated right now. A deep dive into the stock correlation matrix of 2026 reveals what actually."
-  canonical="https://westmountfundamentals.com/stock-correlation-matrix-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -309,7 +307,7 @@ export const meta = {
     <span>4 min read</span>
   </div>
         <div class="hero">
-            <h1>Stock Correlation Matrix 2026: What Actually Diversifies?</h1>
+            <h1>{page.h1}</h1>
             <p>A data-driven look at how the 11 GICS sectors and major asset classes move together over the trailing 3-year period (2023-03-11 to 2026-03-11). Discover which sectors are uncorrelated when it matters most.</p>
         </div>
 

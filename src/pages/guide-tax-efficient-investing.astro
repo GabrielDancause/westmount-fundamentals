@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-tax-efficient-investing"];
+export const meta = { title: "Tax-Efficient Investing: Complete Strategy Guide", description: "Discover proven tax-efficient investing strategies, asset location rules, and ways to minimize investment taxes in your portfolio.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Tax-Efficient Investing: Complete Strategy Guide",
-  description: "Discover proven tax-efficient investing strategies, asset location rules, and ways to minimize investment taxes in your portfolio.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Tax-Efficient Investing: Complete Strategy Guide"
-  description="Discover proven tax-efficient investing strategies, asset location rules, and ways to minimize investment taxes in your portfolio."
-  canonical="https://westmountfundamentals.com/guide-tax-efficient-investing" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -319,7 +317,7 @@ export const meta = {
         </div>
 
         <section>
-    <h1>Tax-Efficient Investing: Complete Strategy Guide</h1>
+    <h1>{page.h1}</h1>
 
             <h2>The Principles of Tax-Efficient Investing</h2>
             <div class="card">

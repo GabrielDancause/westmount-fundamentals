@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Options Trading Simulator: Free Practice Calculator",
-  description: "Curious how much that call or put could actually make? Our interactive options trading simulator reveals the true risk and reward of your next trade before...",
-  category: "tool",
-  published: "2026-03-17",
-};
+const page = (registry as any)["options-trading-simulator"];
+export const meta = { title: "Options Trading Simulator: Free Practice Calculator", description: "Curious how much that call or put could actually make? Our interactive options trading simulator reveals the true risk and reward of your next trade before...", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -79,7 +76,7 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/options-trading-simulator" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Options Trading Simulator: Free Practice Calcul...</span></nav>
     <span>12 min read</span>
@@ -87,7 +84,7 @@ const schema = {
   <div class="page-content">
 
     <div class="hero">
-      <h1>Options Trading Simulator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Simulate real options trades. Calculate potential profit, maximum loss, and capital impact before risking real money.</p>
     </div>
 

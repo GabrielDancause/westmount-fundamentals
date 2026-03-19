@@ -1,20 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Mutual Fund Calculator: Project Your Investment Growth",
-  description: "Use our interactive mutual fund calculator to project long-term growth and discover exactly how expense ratios and fees impact your true returns over time.",
-  category: "tool",
-  published: "2026-03-20"
-};
+const page = (registry as any)["mutual-fund-calculator"];
+export const meta = { title: "Mutual Fund Calculator: Project Your Investment Growth", description: "Use our interactive mutual fund calculator to project long-term growth and discover exactly how expense ratios and fees impact your true returns over time.", category: "tool", published: "2026-03-20" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals",
@@ -28,7 +25,7 @@ const schema = JSON.stringify({
           "url": "https://westmountfundamentals.com/logo.png"
         }
       },
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://westmountfundamentals.com/mutual-fund-calculator"
@@ -85,9 +82,9 @@ const schema = JSON.stringify({
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/mutual-fund-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -97,7 +94,7 @@ const schema = JSON.stringify({
   <div class="page-content">
 
     <div style="text-align: center; margin-bottom: 2rem;">
-      <h1>Mutual Fund Calculator</h1>
+      <h1>{page.h1}</h1>
       <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Project your investment growth and see exactly how expense ratios impact your total returns over time.</p>
     </div>
 

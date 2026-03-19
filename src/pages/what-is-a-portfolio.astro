@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is a Portfolio? A Complete Guide for Beginners & Investors",
-  description: "Learn what a portfolio is, how it works, and why it matters. Discover how to build and manage an investment portfolio tailored to your financial goals.",
-  category: "guide"
-};
+const page = (registry as any)["what-is-a-portfolio"];
+export const meta = { title: "What is a Portfolio? A Complete Guide for Beginners & Investors", description: "Learn what a portfolio is, how it works, and why it matters. Discover how to build and manage an investment portfolio tailored to your financial goals.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -14,8 +12,8 @@ const schema = JSON.stringify({
     "@type": "WebPage",
     "@id": "https://westmountfundamentals.com/what-is-a-portfolio"
   },
-  "headline": meta.title,
-  "description": meta.description,
+  "headline": page.title,
+  "description": page.description,
   "publisher": {
     "@type": "Organization",
     "name": "Westmount Fundamentals",
@@ -74,7 +72,7 @@ const faqSchema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-a-portfolio" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <!-- Inject FAQ Schema as well -->
   <script type="application/ld+json" set:html={faqSchema} />
 
@@ -84,7 +82,7 @@ const faqSchema = JSON.stringify({
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is a Portfolio? A Complete Guide for Begin...</span></nav>
     <span>11 min read</span>
   </div>
-      <h1>What is a Portfolio? The Complete Guide for Investors</h1>
+      <h1>{page.h1}</h1>
 
       <div class="highlight-box intro">
         <p><strong>At a glance:</strong> A portfolio is a collection of financial investments like stocks, bonds, commodities, cash, and cash equivalents. Whether you realize it or not, if you have a retirement account, a brokerage account, or even just savings in the bank, you already have a portfolio. The key to successful wealth building is moving from having a random assortment of assets to an intentionally designed portfolio that aligns with your specific goals.</p>

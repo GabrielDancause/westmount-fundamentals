@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["institutional-ownership"];
+export const meta = { title: "Institutional Ownership: Most & Least Owned Stocks 2026", description: "Some stocks are 95% institutionally owned — others are almost entirely ignored by Wall Street. Both extremes create opportunities.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -22,19 +26,13 @@ const schema = {
   "dateModified": "2026-01-01"
 };
 
-export const meta = {
-  title: "Institutional Ownership: Most & Least Owned Stocks 2026",
-  description: "Some stocks are 95% institutionally owned — others are almost entirely ignored by Wall Street. Both extremes create opportunities.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Institutional Ownership: Most & Least Owned Stocks 2026"
-  description="Some stocks are 95% institutionally owned — others are almost entirely ignored by Wall Street. Both extremes create opportunities."
-  canonical="https://westmountfundamentals.com/institutional-ownership" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 body {
@@ -119,7 +117,7 @@ body {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Institutional Ownership: Most & Least Owned Sto...</span></nav>
     <span>9 min read</span>
   </div>
-    <h1>Institutional Ownership: Most & Least Owned Stocks 2026</h1>
+    <h1>{page.h1}</h1>
 
     <p>Which stocks do institutions love? Which do they avoid? High institutional ownership indicates smart money conviction, whereas low ownership may signal potential overlooked opportunities. Our 2026 study breaks down the data.</p>
 

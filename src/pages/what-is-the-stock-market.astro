@@ -1,20 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What Is the Stock Market? A Beginner's Guide",
-  description: "Demystify the stock market with this comprehensive guide. Learn what it is, how trading works, why it matters for wealth building, and actionable strategies.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-the-stock-market"];
+export const meta = { title: "What Is the Stock Market? A Beginner", description: "Demystify the stock market with this comprehensive guide. Learn what it is, how trading works, why it matters for wealth building, and actionable strategies.", category: "guide", published: "2026-03-18" };
 
 const schema = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What exactly is the stock market?", "acceptedAnswer": {"@type": "Answer", "text": "The stock market is a centralized network of exchanges where buyers and sellers meet to trade shares of ownership in public companies. When you buy a stock, you are purchasing a fractional piece of a real-world business, giving you a claim on a portion of its assets and future profits."}}, {"@type": "Question", "name": "What is the difference between the primary and secondary stock markets?", "acceptedAnswer": {"@type": "Answer", "text": "The primary market is where a company issues new shares to the public for the first time (like in an IPO) to raise capital directly. The secondary market is where investors buy and sell these existing shares among themselves, without the company being directly involved in the transaction."}}, {"@type": "Question", "name": "Why do stock prices go up and down?", "acceptedAnswer": {"@type": "Answer", "text": "Stock prices are driven by the continuous auction of supply and demand. If a company announces good news (like high profits), demand increases and supply decreases, pushing the price up. Conversely, bad news increases supply and decreases demand, driving the price down."}}, {"@type": "Question", "name": "How does investing in the stock market help beat inflation?", "acceptedAnswer": {"@type": "Answer", "text": "Over time, inflation eroding the purchasing power of cash. Historically, the stock market has generated returns that significantly outpace inflation because you are investing in productive businesses that can grow and raise their own prices as the cost of living increases."}}, {"@type": "Question", "name": "What is the difference between active and passive investing?", "acceptedAnswer": {"@type": "Answer", "text": "Active investing involves researching and picking individual stocks in an attempt to beat the market. Passive investing involves buying broad index funds or ETFs that track the entire market (like the S&P 500), offering instant diversification and generally requiring less effort while historically outperforming most active strategies."}}]};
 ---
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-the-stock-market"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -22,7 +20,7 @@ const schema = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntit
     <span>12 min read</span>
   </div>
   <div class="page-content">
-    <h1>What Is the Stock Market? A Beginner's Guide</h1>
+    <h1>{page.h1}</h1>
 
 <p>For many people, the term "stock market" conjures images of chaotic trading floors, scrolling tickers with green and red numbers, and news anchors frantically discussing the economy. While these images capture the excitement of investing, the fundamental reality of the stock market is much simpler and more accessible.</p>
 

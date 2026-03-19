@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["market-concentration"];
+export const meta = { title: "S&P 500 Market Cap Concentration 2026 — Westmount Research", description: "Just 10 stocks now control over a third of the entire S&P 500. See the full weight rankings and how concentrated your index fund really is.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "mainEntityOfPage": "https://westmountfundamentals.com/market-concentration"
 };
 
-export const meta = {
-  title: "S&P 500 Market Cap Concentration 2026 — Westmount Research",
-  description: "Just 10 stocks now control over a third of the entire S&P 500. See the full weight rankings and how concentrated your index fund really is.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 Market Cap Concentration 2026 — Westmount Research"
-  description="Just 10 stocks now control over a third of the entire S&P 500. See the full weight rankings and how concentrated your index fund really is."
-  canonical="https://westmountfundamentals.com/market-concentration" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -154,7 +152,7 @@ tbody td { padding: 10px 14px; white-space: nowrap; }
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Market Cap Concentration 2026</span></nav>
     <span>7 min read</span>
   </div>
-    <h1>S&P 500 Market Cap Concentration 2026 — Westmount Research</h1>
+    <h1>{page.h1}</h1>
 
   <!-- Big Stats -->
   <div class="stats-row" id="stats-row"></div>

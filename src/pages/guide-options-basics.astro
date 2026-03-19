@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-options-basics"];
+export const meta = { title: "Options Trading for Beginners: A Complete Guide", description: "Options can hedge your portfolio or blow it up — the difference is understanding the Greeks. A jargon-free guide from calls and puts to real strategies.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "datePublished": "2026-01-01"
 };
 
-export const meta = {
-  title: "Options Trading for Beginners: A Complete Guide",
-  description: "Options can hedge your portfolio or blow it up — the difference is understanding the Greeks. A jargon-free guide from calls and puts to real strategies.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Options Trading for Beginners: A Complete Guide"
-  description="Options can hedge your portfolio or blow it up — the difference is understanding the Greeks. A jargon-free guide from calls and puts to real strategies."
-  canonical="https://westmountfundamentals.com/guide-options-basics" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -180,7 +178,7 @@ export const meta = {
 
 <div class="header">
     <span class="tag">Educational Guide</span>
-    <h1>Options Trading for Beginners</h1>
+    <h1>{page.h1}</h1>
     <p style="color: #6a7a90; max-width: 600px; margin: 0 auto;">A clear, jargon-free introduction to calls, puts, strategies, the Greeks, and how to manage risk.</p>
   </div>
 

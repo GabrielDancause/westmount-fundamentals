@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Highest Dividend Stocks 2026: Top Yields Ranked",
-  description: "Discover the top companies offering the highest dividend yields right now. We analyze payouts, stability, and risks. Which stock tops our list?",
-  category: "list",
-  published: "2026-03-15",
-};
+const page = (registry as any)["highest-dividend-stocks"];
+export const meta = { title: "Highest Dividend Stocks 2026: Top Yields Ranked", description: "Discover the top companies offering the highest dividend yields right now. We analyze payouts, stability, and risks. Which stock tops our list?", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -57,14 +54,14 @@ const schema = {
 };
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/highest-dividend-stocks" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Highest Dividend Stocks 2026: Top Yields Ranked</span></nav>
     <span>16 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Highest Dividend Stocks 2026: Top Yields Ranked</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">An data-driven analysis of the market's biggest dividend payers.</p>
     </div>
 

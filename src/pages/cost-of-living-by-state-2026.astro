@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["cost-of-living-by-state-2026"];
+export const meta = { title: "Cost of Living by State 2026: Affordability Ranked", description: "Discover the complete 2026 cost of living by state ranking. Compare all 50 US states by housing, groceries, effective tax burden, and true affordability.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Cost of Living by State 2026: Affordability Ranked",
-  description: "Discover the complete 2026 cost of living by state ranking. Compare all 50 US states by housing, groceries, effective tax burden, and true affordability.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Cost of Living by State 2026: Affordability Ranked"
-  description="Discover the complete 2026 cost of living by state ranking. Compare all 50 US states by housing, groceries, effective tax burden, and true affordability."
-  canonical="https://westmountfundamentals.com/cost-of-living-by-state-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -276,7 +274,7 @@ export const meta = {
         </div>
 
         <section id="methodology" style="margin-top: 4rem;">
-    <h1>Cost of Living by State 2026: Affordability Ranked</h1>
+    <h1>{page.h1}</h1>
 
             <h2>Data & Methodology</h2>
             <p>

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-market-fundamentals-guide"];
+export const meta = { title: "Stock Market Fundamentals: A Complete Guide", description: "Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies.", category: "guide", published: "2026-03-20" };
 
 const schema = [
   {
@@ -72,19 +76,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Stock Market Fundamentals: A Complete Guide",
-  description: "Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies.",
-  category: "guide",
-  published: "2026-03-20",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Stock Market Fundamentals: A Complete Guide"
-  description="Learn the fundamentals of the stock market. Understand what stocks are, how to start investing, and essential metrics to evaluate companies."
-  canonical="https://westmountfundamentals.com/stock-market-fundamentals-guide"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -93,7 +91,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Stock Market Fundamentals: A Complete Guide</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Everything you need to know to start investing with confidence</p>
     </div>
 

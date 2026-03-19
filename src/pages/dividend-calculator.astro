@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Dividend Calculator: Project Your Income and Reinvestment Returns",
-  description: "Free dividend calculator to estimate your future portfolio value, dividend income, and the power of dividend reinvestment (DRIP) over time.",
-  category: "tool"
-};
+const page = (registry as any)["dividend-calculator"];
+export const meta = { title: "Dividend Calculator: Project Your Income and Reinvestment Returns", description: "Free dividend calculator to estimate your future portfolio value, dividend income, and the power of dividend reinvestment (DRIP) over time.", category: "tool", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,7 +53,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/dividend-calculator" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
 
     <div class="container">
@@ -63,7 +61,7 @@ const schema = JSON.stringify({
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Dividend Calculator: Project Your Income and Re...</span></nav>
     <span>3 min read</span>
   </div>
-      <h1>Dividend Calculator</h1>
+      <h1>{page.h1}</h1>
       <p>Estimate the future value of your dividend portfolio, total dividend income, and the long-term impact of DRIP (Dividend Reinvestment Plans).</p>
 
       <div class="calculator-card">

@@ -1,20 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Investment Calculator: See How Your Money Grows",
-  description: "Find out exactly how much your money could grow with this interactive investment calculator. What happens if you invest $500 a month? See the math.",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["investment-calculator"];
+export const meta = { title: "Investment Calculator: See How Your Money Grows", description: "Find out exactly how much your money could grow with this interactive investment calculator. What happens if you invest $500 a month? See the math.", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals",
@@ -28,7 +25,7 @@ const schema = {
           "url": "https://westmountfundamentals.com/logo.png"
         }
       },
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://westmountfundamentals.com/investment-calculator"
@@ -85,9 +82,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/investment-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -97,7 +94,7 @@ const schema = {
   <div class="page-content">
 
     <div style="text-align: center; margin-bottom: 2rem;">
-      <h1>Investment Calculator</h1>
+      <h1>{page.h1}</h1>
       <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">See exactly how your money can grow over time with compound interest.</p>
     </div>
 

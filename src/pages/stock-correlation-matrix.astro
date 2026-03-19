@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-correlation-matrix"];
+export const meta = { title: "Stock Correlation Matrix | Westmount Fundamentals", description: "Calculate real-time stock correlations across any mix of tickers. See how assets move together to optimize portfolio diversification and lower risk.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Stock Correlation Matrix | Westmount Fundamentals",
-  description: "Calculate real-time stock correlations across any mix of tickers. See how assets move together to optimize portfolio diversification and lower risk.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Stock Correlation Matrix | Westmount Fundamentals"
-  description="Calculate real-time stock correlations across any mix of tickers. See how assets move together to optimize portfolio diversification and lower risk."
-  canonical="https://westmountfundamentals.com/stock-correlation-matrix" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -287,7 +285,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stock Correlation Matrix</span></nav>
     <span>3 min read</span>
   </div>
-    <h1>Stock Correlation Matrix</h1>
+    <h1>{page.h1}</h1>
         <!-- Tool Section -->
         <div class="tool-card">
             <div class="input-group">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["list-safest-dividend-stocks-2026"];
+export const meta = { title: "20 Safest Dividend Stocks for Income Investors (2026)", description: "Discover the 20 safest dividend stocks for 2026. Low payout ratios, consistent increases, and strong financials ranked by safety score.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,22 +25,16 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "20 Safest Dividend Stocks for Income Investors (2026)",
-  description: "Discover the 20 safest dividend stocks for 2026. Low payout ratios, consistent increases, and strong financials ranked by safety score.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="20 Safest Dividend Stocks for Income Investors (2026)"
-  description="Discover the 20 safest dividend stocks for 2026. Low payout ratios, consistent increases, and strong financials ranked by safety score."
-  canonical="https://westmountfundamentals.com/list-safest-dividend-stocks-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <div class="page-content">
-    <h1>20 Safest Dividend Stocks for Income Investors (2026)</h1>
+    <h1>{page.h1}</h1>
 
   <style>
 

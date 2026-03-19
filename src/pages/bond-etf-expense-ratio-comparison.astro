@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["bond-etf-expense-ratio-comparison"];
+export const meta = { title: "Bond ETF Expense Ratios Compared: BND vs IUSB vs AGG vs SCHZ", description: "Comparing 2026 expense ratios for total bond market ETFs, government bond ETFs, and corporate bond ETFs.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Bond ETF Expense Ratios Compared: BND vs IUSB vs AGG vs SCHZ",
-  description: "Comparing 2026 expense ratios for total bond market ETFs, government bond ETFs, and corporate bond ETFs.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Bond ETF Expense Ratios Compared: BND vs IUSB vs AGG vs SCHZ"
-  description="Comparing 2026 expense ratios for total bond market ETFs, government bond ETFs, and corporate bond ETFs."
-  canonical="https://westmountfundamentals.com/bond-etf-expense-ratio-comparison" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -240,7 +238,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Bond ETF Expense Ratios Compared: BND vs IUSB v...</span></nav>
     <span>3 min read</span>
   </div>
-        <h1>Bond ETF Expense Ratios Compared</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">BND vs IUSB vs AGG vs SCHZ and other major bond ETFs in 2026.</p>
 
         <div class="calculator-card">

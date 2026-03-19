@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-growth-etfs-2026"];
+export const meta = { title: "Best Growth ETFs 2026: VUG, QQQ & Top Funds Compared", description: "Compare the best growth ETFs of 2026 including VUG, QQQ, SCHG, and more. Analyze 3-year returns, expense ratios, and risk to find the top growth funds.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Best Growth ETFs 2026: VUG, QQQ & Top Funds Compared",
-  description: "Compare the best growth ETFs of 2026 including VUG, QQQ, SCHG, and more. Analyze 3-year returns, expense ratios, and risk to find the top growth funds.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best Growth ETFs 2026: VUG, QQQ & Top Funds Compared"
-  description="Compare the best growth ETFs of 2026 including VUG, QQQ, SCHG, and more. Analyze 3-year returns, expense ratios, and risk to find the top growth funds."
-  canonical="https://westmountfundamentals.com/best-growth-etfs-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -335,7 +333,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best Growth ETFs 2026: VUG, QQQ & Top Funds Com...</span></nav>
     <span>3 min read</span>
   </div>
-        <h1>Best Growth ETFs 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">A ranked comparison of top U.S. growth-focused ETFs. Analyze historical total returns, expense ratios, and fund scale to make informed investment decisions.</p>
 
         <div class="stats-grid">

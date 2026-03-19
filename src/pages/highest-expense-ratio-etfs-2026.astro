@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["highest-expense-ratio-etfs-2026"];
+export const meta = { title: "The Most Expensive ETFs in 2026: Are You Overpaying?", description: "We ranked the highest expense ratio ETFs of 2026. Discover which funds are quietly draining your portfolio and the low-cost alternatives you should consider...", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,22 +52,16 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "The Most Expensive ETFs in 2026: Are You Overpaying?",
-  description: "We ranked the highest expense ratio ETFs of 2026. Discover which funds are quietly draining your portfolio and the low-cost alternatives you should consider...",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="The Most Expensive ETFs in 2026: Are You Overpaying?"
-  description="We ranked the highest expense ratio ETFs of 2026. Discover which funds are quietly draining your portfolio and the low-cost alternatives you should consider."
-  canonical="https://westmountfundamentals.com/highest-expense-ratio-etfs-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <div class="page-content">
-    <h1>The Most Expensive ETFs in 2026: Are You Overpaying?</h1>
+    <h1>{page.h1}</h1>
 
   <style>
 :root {

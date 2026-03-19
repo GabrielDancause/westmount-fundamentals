@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["rrsp-season-checklist"];
+export const meta = { title: "Complete RRSP Season Checklist", description: "Your complete RRSP season checklist: contribution room calculations, deadline reminders, tax optimization strategies, and step-by-step planning for maximum.", category: "list", published: "2026-03-15" };
 const schema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -47,20 +51,14 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Complete RRSP Season Checklist",
-  description: "Your complete RRSP season checklist: contribution room calculations, deadline reminders, tax optimization strategies, and step-by-step planning for maximum.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
-<SiteLayout site="westmount" title="Complete RRSP Season Checklist" description="Contribution room, deadline, strategies, tax optimization." canonical="https://westmountfundamentals.com/rrsp-season-checklist" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Complete RRSP Season Checklist</span></nav>
     <span>9 min read</span>
   </div>
   <div class="page-content">
-    <div class="hero"><h1>Complete RRSP Season Checklist</h1><p>Contribution room, deadline, strategies, tax optimization.</p></div>
+    <div class="hero"><h1>{page.h1}</h1><p>Contribution room, deadline, strategies, tax optimization.</p></div>
     <div class="card">
       <h2>Related Guides</h2>
       <ul>

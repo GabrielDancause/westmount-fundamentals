@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-us-equity-etfs-canada"];
+export const meta = { title: "Best US Equity ETFs for Canadians in 2026: VFV vs ZSP", description: "Discover the best US equity ETFs available to Canadians. Compare VFV, ZSP, XUU, and learn the difference between hedged and unhedged funds.", category: "list", published: "2026-03-15" };
 
 const schema = [
   {
@@ -44,19 +48,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Best US Equity ETFs for Canadians in 2026: VFV vs ZSP",
-  description: "Discover the best US equity ETFs available to Canadians. Compare VFV, ZSP, XUU, and learn the difference between hedged and unhedged funds.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best US Equity ETFs for Canadians in 2026: VFV vs ZSP"
-  description="Discover the best US equity ETFs available to Canadians. Compare VFV, ZSP, XUU, and learn the difference between hedged and unhedged funds."
-  canonical="https://westmountfundamentals.com/best-us-equity-etfs-canada"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -65,7 +63,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Best US Equity ETFs for Canadians</h1>
+      <h1>{page.h1}</h1>
       <p>How to capture the growth of the American economy from your Canadian brokerage account.</p>
     </div>
 

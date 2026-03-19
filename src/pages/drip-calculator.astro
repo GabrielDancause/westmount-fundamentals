@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "DRIP Calculator: Dividend Reinvestment Plan Calculator",
-  description: "How much will your dividends grow when reinvested? Calculate your future portfolio value and passive income using this DRIP calculator.",
-  category: "tool",
-  published: "2026-03-20"
-};
+const page = (registry as any)["drip-calculator"];
+export const meta = { title: "DRIP Calculator: Dividend Reinvestment Plan Calculator", description: "How much will your dividends grow when reinvested? Calculate your future portfolio value and passive income using this DRIP calculator.", category: "tool", published: "2026-03-20" };
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -58,9 +55,9 @@ const faqSchema = {
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": meta.title,
-  "description": meta.description,
-  "datePublished": meta.published,
+  "headline": page.title,
+  "description": page.description,
+  "datePublished": page.published,
   "author": {
     "@type": "Organization",
     "name": "Westmount Fundamentals",
@@ -70,14 +67,14 @@ const articleSchema = {
 
 const schema = [faqSchema, articleSchema];
 ---
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/drip-calculator" schema={JSON.stringify(schema)}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">DRIP Calculator: Dividend Reinvestment Plan Cal...</span></nav>
     <span>9 min read</span>
   </div>
   <div class="container page-content">
     <div class="hero">
-      <h1>DRIP Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">See how reinvested dividends accelerate your portfolio growth.</p>
     </div>
 

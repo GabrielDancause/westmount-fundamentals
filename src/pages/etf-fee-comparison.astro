@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["etf-fee-comparison"];
+export const meta = { title: "ETF Fee Comparison Calculator: The Hidden Cost of Investing", description: "Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns.", category: "tool", published: "2026-03-15" };
 
 const schema = [
   {
@@ -44,19 +48,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "ETF Fee Comparison Calculator: The Hidden Cost of Investing",
-  description: "Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="ETF Fee Comparison Calculator: The Hidden Cost of Investing"
-  description="Compare ETF fees across categories and use our interactive calculator to see how Management Expense Ratios (MER) impact your long-term returns."
-  canonical="https://westmountfundamentals.com/etf-fee-comparison"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -65,7 +63,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>ETF Fee Comparison & Calculator</h1>
+      <h1>{page.h1}</h1>
       <p>Discover exactly how much of your wealth is being silently consumed by Management Expense Ratios (MER).</p>
     </div>
 

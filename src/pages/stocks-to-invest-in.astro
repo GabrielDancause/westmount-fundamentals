@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stocks-to-invest-in"];
+export const meta = { title: "Stocks to Invest In: A Comprehensive Guide for 2025 and 2026", description: "Are you looking for the next big market driver? Uncover the emerging sectors, resilient blue-chips, and thematic stocks to invest in for the coming years.", category: "guide", published: "2026-03-15" };
 
 const schema = [
   {
@@ -72,18 +76,12 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Stocks to Invest In: A Comprehensive Guide for 2025 and 2026",
-  description: "Are you looking for the next big market driver? Uncover the emerging sectors, resilient blue-chips, and thematic stocks to invest in for the coming years.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 <SiteLayout
   site="westmount"
-  title="Stocks to Invest In: A Comprehensive Guide for 2025 and 2026"
-  description="Are you looking for the next big market driver? Uncover the emerging sectors, resilient blue-chips, and thematic stocks to invest in for the coming years."
-  canonical="https://westmountfundamentals.com/stocks-to-invest-in"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -92,7 +90,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Stocks to Invest In: A Comprehensive Guide for 2025 and 2026</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Navigating Market Shifts, Emerging Megatrends, and Finding Resilient Value</p>
     </div>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-split-calculator"];
+export const meta = { title: "Stock Split Calculator & Guide: How Forward and Reverse Splits Work", description: "Calculate your new share count and price after a stock split. See how forward and reverse splits impact your portfolio value—and why companies do them.", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -55,19 +59,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Stock Split Calculator & Guide: How Forward and Reverse Splits Work",
-  description: "Calculate your new share count and price after a stock split. See how forward and reverse splits impact your portfolio value—and why companies do them.",
-  category: "tool",
-  published: "2026-03-17",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/stock-split-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <style>
@@ -419,7 +417,7 @@ export const meta = {
   </div>
 
     <div style="text-align: center; margin-bottom: 40px;">
-      <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">Stock Split Calculator</h1>
+      <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">{page.h1}</h1>
       <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Calculate your new share count, new share price, and total portfolio value after a forward or reverse stock split.</p>
     </div>
 

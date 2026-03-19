@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is Inflation? The Silent Thief of Your Purchasing Power",
-  description: "Everyone talks about inflation, but do you know how it actually drains your savings? Discover the mechanics behind rising prices and how to protect your money.",
-  category: "guide",
-  published: new Date().toISOString().split('T')[0]
-};
+const page = (registry as any)["what-is-inflation"];
+export const meta = { title: "What is Inflation? The Silent Thief of Your Purchasing Power", description: "Everyone talks about inflation, but do you know how it actually drains your savings? Discover the mechanics behind rising prices and how to protect your money.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -58,9 +55,9 @@ const schema = JSON.stringify({
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-inflation"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -68,7 +65,7 @@ const schema = JSON.stringify({
     <span>15 min read</span>
   </div>
   <div class="page-content">
-    <h1>What is Inflation? The Silent Thief of Your Purchasing Power</h1>
+    <h1>{page.h1}</h1>
 
     <h2>The Definition: What Exactly Is Inflation?</h2>
     <p>At its core, inflation is the rate at which the general level of prices for goods and services is rising. When inflation goes up, the purchasing power of your money goes down. This means that a dollar today buys less than it did a year ago, and significantly less than it did a decade ago. It is a fundamental economic concept that touches every aspect of our lives, from the price of a gallon of milk to the cost of purchasing a home.</p>

@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Growth vs Value Stocks: Which Investing Strategy Wins?",
-  description: "Growth and value stocks represent two radically different paths to wealth. But history reveals a surprising truth about which strategy actually performs...",
-  category: "guide"
-};
+const page = (registry as any)["growth-vs-value-stocks"];
+export const meta = { title: "Growth vs Value Stocks: Which Investing Strategy Wins?", description: "Growth and value stocks represent two radically different paths to wealth. But history reveals a surprising truth about which strategy actually performs...", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -52,8 +50,8 @@ const schema = JSON.stringify({
       }
     }
   ],
-  "headline": meta.title,
-  "description": meta.description,
+  "headline": page.title,
+  "description": page.description,
   "author": {
     "@type": "Organization",
     "name": "Westmount Fundamentals"
@@ -61,7 +59,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/growth-vs-value-stocks" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Growth vs Value Stocks: Which Investing Strateg...</span></nav>
     <span>11 min read</span>
@@ -69,7 +67,7 @@ const schema = JSON.stringify({
   <div class="page-content">
 
     <header class="content-header">
-      <h1>Growth vs Value Stocks: The Ultimate Guide</h1>
+      <h1>{page.h1}</h1>
       <p class="lead-text">Two distinct paths to wealth building. One emphasizes future potential, the other focuses on present bargains. Understanding the mechanics behind growth and value investing is arguably the most crucial step in constructing a resilient portfolio.</p>
     </header>
 

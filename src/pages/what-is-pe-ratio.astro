@@ -1,19 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is the P/E Ratio in Stocks? A Complete Guide to Price-to-Earnings",
-  description: "Learn what the P/E ratio is in stocks, how to calculate it, and why it matters. Discover trailing vs forward P/E and value companies.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-pe-ratio"];
+export const meta = { title: "What is the P/E Ratio in Stocks? A Complete Guide to Price-to-Earnings", description: "Learn what the P/E ratio is in stocks, how to calculate it, and why it matters. Discover trailing vs forward P/E and value companies.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -80,7 +78,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-pe-ratio" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
 
     <div class="container">
@@ -88,7 +86,7 @@ const schema = JSON.stringify({
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is the P/E Ratio in Stocks? A Complete Gui...</span></nav>
     <span>11 min read</span>
   </div>
-      <h1>What is the P/E Ratio in Stocks?</h1>
+      <h1>{page.h1}</h1>
       <p>If you've spent any time looking at stock charts, financial news, or brokerage apps, you've likely seen the term <strong>P/E ratio</strong> (Price-to-Earnings ratio). It's one of the most widely cited metrics in finance, often acting as a quick gauge for how "expensive" or "cheap" a stock is.</p>
 
       <p>But what does it actually mean? At its core, the P/E ratio is the financial market's way of answering a simple question: <strong>How much are you paying for $1 of this company's earnings?</strong></p>

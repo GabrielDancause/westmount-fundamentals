@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stocks 101: The Definitive Guide to How the Stock Market Works",
-  description: "Everyone talks about buying stocks, but few understand what they actually own. Discover the underlying mechanics of shares, how they generate value, and the...",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["stocks-101"];
+export const meta = { title: "Stocks 101: The Definitive Guide to How the Stock Market Works", description: "Everyone talks about buying stocks, but few understand what they actually own. Discover the underlying mechanics of shares, how they generate value, and the...", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -84,9 +81,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/stocks-101"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -95,7 +92,7 @@ const schema = {
   </div>
   <div class="page-content container">
     <header style="margin-bottom: 3rem; text-align: center;">
-      <h1>Stocks 101: The Definitive Guide to How the Stock Market Works</h1>
+      <h1>{page.h1}</h1>
       <p style="font-size: 1.25rem; color: var(--text-secondary);">Everything you need to know about stocks, how they generate wealth, and how to get started on the right foot.</p>
     </header>
 

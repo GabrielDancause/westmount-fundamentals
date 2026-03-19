@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["roe-rankings"];
+export const meta = { title: "Return on Equity Rankings: Most Efficient S&P 500 Compani...", description: "Which companies squeeze the most profit from every dollar of shareholder capital? ROE rankings reveal the S&P 500", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "dateModified": "2026-03-09"
 };
 
-export const meta = {
-  title: "Return on Equity Rankings: Most Efficient S&P 500 Compani...",
-  description: "Which companies squeeze the most profit from every dollar of shareholder capital? ROE rankings reveal the S&P 500's most efficient businesses.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Return on Equity Rankings: Most Efficient S&P 500 Compani..."
-  description="Which companies squeeze the most profit from every dollar of shareholder capital? ROE rankings reveal the S&P 500's most efficient businesses."
-  canonical="https://westmountfundamentals.com/roe-rankings" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -353,7 +351,7 @@ export const meta = {
 
         <main>
             <section class="content-section">
-    <h1>Return on Equity Rankings: Most Efficient S&P 500 Compani...</h1>
+    <h1>{page.h1}</h1>
 
                 <h2>Sector Averages</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 24px;">Comparing average Return on Equity across different GICS sectors. Technology and Consumer Discretionary typically lead, while Capital Intensive sectors like Utilities and Real Estate run lower.</p>

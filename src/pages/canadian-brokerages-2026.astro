@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["canadian-brokerages-2026"];
+export const meta = { title: "Best Canadian Brokerages (2026): Complete Comparison & Guide", description: "The ultimate comparison of Canadian online brokerages in 2026. We review Wealthsimple, Questrade, IBKR, TD Direct, BMO, National Bank, and Qtrade.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Best Canadian Brokerages (2026): Complete Comparison & Guide",
-  description: "The ultimate comparison of Canadian online brokerages in 2026. We review Wealthsimple, Questrade, IBKR, TD Direct, BMO, National Bank, and Qtrade.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best Canadian Brokerages (2026): Complete Comparison & Guide"
-  description="The ultimate comparison of Canadian online brokerages in 2026. We review Wealthsimple, Questrade, IBKR, TD Direct, BMO, National Bank, and Qtrade."
-  canonical="https://westmountfundamentals.com/canadian-brokerages-2026"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -69,7 +67,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>The Best Canadian Brokerages for 2026</h1>
+      <h1>{page.h1}</h1>
       <p>A comprehensive analysis of Wealthsimple, Questrade, IBKR, Big Bank Brokerages, and more.</p>
     </div>
 

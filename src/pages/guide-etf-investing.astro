@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-etf-investing"];
+export const meta = { title: "The Complete Guide to ETF Investing | Westmount Fundamentals", description: "Most investors pick ETFs by name recognition alone. Learn the metrics that actually matter — expense ratios, tracking error, tax efficiency — and build a...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -26,19 +30,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "The Complete Guide to ETF Investing | Westmount Fundamentals",
-  description: "Most investors pick ETFs by name recognition alone. Learn the metrics that actually matter — expense ratios, tracking error, tax efficiency — and build a...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="The Complete Guide to ETF Investing | Westmount Fundamentals"
-  description="Most investors pick ETFs by name recognition alone. Learn the metrics that actually matter — expense ratios, tracking error, tax efficiency — and build a."
-  canonical="https://westmountfundamentals.com/guide-etf-investing" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -316,7 +314,7 @@ export const meta = {
   </div>
     <div class="guide-header">
         <span class="tag">Educational Guide</span>
-        <h1>The Complete Guide to ETF Investing</h1>
+        <h1>{page.h1}</h1>
         <div class="guide-meta">
             <span>By Westmount Research</span>
             <span>·</span>

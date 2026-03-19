@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-screener"];
+export const meta = { title: "S&P 500 Stock Screener Tool | Westmount Research", description: "Free interactive stock screener for the S&P 500. Filter stocks by P/E ratio, dividend yield, market cap, sector, beta, ROE, debt, and revenue growth.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "S&P 500 Stock Screener Tool | Westmount Research",
-  description: "Free interactive stock screener for the S&P 500. Filter stocks by P/E ratio, dividend yield, market cap, sector, beta, ROE, debt, and revenue growth.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 Stock Screener Tool | Westmount Research"
-  description="Free interactive stock screener for the S&P 500. Filter stocks by P/E ratio, dividend yield, market cap, sector, beta, ROE, debt, and revenue growth."
-  canonical="https://westmountfundamentals.com/stock-screener" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -371,7 +369,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Stock Screener Tool</span></nav>
     <span>4 min read</span>
   </div>
-        <h1>S&P 500 Stock Screener</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Filter and analyze top US stocks by fundamentals, valuation, and dividend yield.</p>
 
         <div class="stats-grid">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["short-squeeze-candidates-march-2026"];
+export const meta = { title: "Short Squeeze Candidates March 2026: Stocks Most Likely t...", description: "Discover which stocks have the highest short interest in March 2026. Is a short squeeze brewing? We analyze the data, catalysts, and historical examples.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Short Squeeze Candidates March 2026: Stocks Most Likely t...",
-  description: "Discover which stocks have the highest short interest in March 2026. Is a short squeeze brewing? We analyze the data, catalysts, and historical examples.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Short Squeeze Candidates March 2026: Stocks Most Likely t..."
-  description="Discover which stocks have the highest short interest in March 2026. Is a short squeeze brewing? We analyze the data, catalysts, and historical examples."
-  canonical="https://westmountfundamentals.com/short-squeeze-candidates-march-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -287,7 +285,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Short Squeeze Candidates March 2026: Stocks Mos...</span></nav>
     <span>5 min read</span>
   </div>
-    <h1>Short Squeeze Candidates March 2026: Stocks Most Likely t...</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="warning-box">

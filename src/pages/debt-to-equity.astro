@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["debt-to-equity"];
+export const meta = { title: "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...", description: "Some S&P 500 companies have debt ratios above 90x equity — and a few have negative equity entirely. See where your holdings rank.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "dateModified": "2026-03-08"
 };
 
-export const meta = {
-  title: "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...",
-  description: "Some S&P 500 companies have debt ratios above 90x equity — and a few have negative equity entirely. See where your holdings rank.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C..."
-  description="Some S&P 500 companies have debt ratios above 90x equity — and a few have negative equity entirely. See where your holdings rank."
-  canonical="https://westmountfundamentals.com/debt-to-equity" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -292,7 +290,7 @@ export const meta = {
 
         <main>
             <section class="content-section">
-    <h1>Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...</h1>
+    <h1>{page.h1}</h1>
 
                 <h2>Top 150 Most Leveraged Companies</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">Companies are ranked by their Debt-to-Equity ratio. Companies flagged with "Negative Equity" have liabilities exceeding their assets, making the traditional D/E ratio less meaningful.</p>

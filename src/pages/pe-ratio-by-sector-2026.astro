@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["pe-ratio-by-sector-2026"];
+export const meta = { title: "P/E Ratio by Sector: S&P 500 Valuations 2026", description: "Current and forward P/E ratios for all 11 S&P 500 sectors. Compare trailing earnings multiples, valuations, and market expectations across the index.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "P/E Ratio by Sector: S&P 500 Valuations 2026",
-  description: "Current and forward P/E ratios for all 11 S&P 500 sectors. Compare trailing earnings multiples, valuations, and market expectations across the index.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="P/E Ratio by Sector: S&P 500 Valuations 2026"
-  description="Current and forward P/E ratios for all 11 S&P 500 sectors. Compare trailing earnings multiples, valuations, and market expectations across the index."
-  canonical="https://westmountfundamentals.com/pe-ratio-by-sector-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -322,7 +320,7 @@ export const meta = {
     <span>4 min read</span>
   </div>
       <div class="hero">
-        <h1>P/E Ratio by Sector: S&P 500 Valuations 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Current and forward price-to-earnings multiples across all 11 GICS sectors. A data-driven snapshot of market expectations.</p>
       </div>
 

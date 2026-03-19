@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["retirement-withdrawal-calculator"];
+export const meta = { title: "Retirement Withdrawal Calculator: 4% Rule & Beyond", description: "Calculate how long your retirement savings will last. Compare 3%, 4%, and 5% safe withdrawal rules using Monte Carlo simulation. Plan your retirement.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Retirement Withdrawal Calculator: 4% Rule & Beyond",
-  description: "Calculate how long your retirement savings will last. Compare 3%, 4%, and 5% safe withdrawal rules using Monte Carlo simulation. Plan your retirement.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Retirement Withdrawal Calculator: 4% Rule & Beyond"
-  description="Calculate how long your retirement savings will last. Compare 3%, 4%, and 5% safe withdrawal rules using Monte Carlo simulation. Plan your retirement."
-  canonical="https://westmountfundamentals.com/retirement-withdrawal-calculator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -351,7 +349,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Retirement Withdrawal Calculator: 4% Rule & Beyond</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>Retirement Withdrawal Calculator: 4% Rule & Beyond</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="dashboard-grid">

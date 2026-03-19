@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["russell-3000-vs-sp500"];
+export const meta = { title: "Russell 3000 vs S&P 500: Total Market Comparison Tool", description: "Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark.", category: "tool", published: "2026-03-15" };
 
 const schema = [
   {
@@ -72,19 +76,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Russell 3000 vs S&P 500: Total Market Comparison Tool",
-  description: "Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Russell 3000 vs S&P 500: Total Market Comparison Tool"
-  description="Compare the Russell 3000 index, representing the total US investable market, against the S&P 500 large-cap benchmark."
-  canonical="https://westmountfundamentals.com/russell-3000-vs-sp500"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -93,7 +91,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Russell 3000 vs S&P 500</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Comparing the Total Investable Market to the Large-Cap Standard</p>
     </div>
 

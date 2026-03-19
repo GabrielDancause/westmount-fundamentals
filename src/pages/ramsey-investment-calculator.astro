@@ -1,20 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Dave Ramsey Investment Calculator: Will 12% Returns Make You Rich?",
-  description: "Dave Ramsey often cites a 12% average annual return for mutual funds. See what happens to your money when you run the actual numbers in this interactive...",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["ramsey-investment-calculator"];
+export const meta = { title: "Dave Ramsey Investment Calculator: Will 12% Returns Make You Rich?", description: "Dave Ramsey often cites a 12% average annual return for mutual funds. See what happens to your money when you run the actual numbers in this interactive...", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -27,7 +24,7 @@ const schema = {
           "url": "https://westmountfundamentals.com/logo.png"
         }
       },
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://westmountfundamentals.com/ramsey-investment-calculator"
@@ -84,9 +81,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/ramsey-investment-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -95,7 +92,7 @@ const schema = {
   </div>
   <div class="page-content">
     <header class="page-header">
-      <h1>Dave Ramsey Investment Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="lead">Project your portfolio growth using the widely debated 12% mutual fund return assumption—and see how it compares to standard market expectations.</p>
     </header>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["dividend-yield-vs-growth"];
+export const meta = { title: "Dividend Yield vs Growth Rate: S&P 500 Analysis 2026", description: "High yield or fast growth — which dividend strategy wins? We mapped every S&P 500 payer to find the rare stocks that deliver both.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -18,19 +22,13 @@ const schema = {
   "datePublished": "2026-03-09"
 };
 
-export const meta = {
-  title: "Dividend Yield vs Growth Rate: S&P 500 Analysis 2026",
-  description: "High yield or fast growth — which dividend strategy wins? We mapped every S&P 500 payer to find the rare stocks that deliver both.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Dividend Yield vs Growth Rate: S&P 500 Analysis 2026"
-  description="High yield or fast growth — which dividend strategy wins? We mapped every S&P 500 payer to find the rare stocks that deliver both."
-  canonical="https://westmountfundamentals.com/dividend-yield-vs-growth" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -121,7 +119,7 @@ export const meta = {
     <span>6 min read</span>
   </div>
       <span class="tag">Original Research</span>
-      <h1>Dividend Yield vs Growth Rate</h1>
+      <h1>{page.h1}</h1>
       <p>Finding the sweet spot in the S&P 500. We analyzed 407 dividend-paying stocks to separate the compounding growth engines from the yield traps.</p>
     </div>
   </section>

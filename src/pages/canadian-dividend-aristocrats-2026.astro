@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["canadian-dividend-aristocrats-2026"];
+export const meta = { title: "Canadian Dividend Aristocrats Complete List (2026)", description: "Complete 2026 list of Canadian Dividend Aristocrats. See the TSX dividend stocks with 5+ years of consecutive dividend increases. Filter by yield.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "datePublished": "2026-03-13"
 };
 
-export const meta = {
-  title: "Canadian Dividend Aristocrats Complete List (2026)",
-  description: "Complete 2026 list of Canadian Dividend Aristocrats. See the TSX dividend stocks with 5+ years of consecutive dividend increases. Filter by yield.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Canadian Dividend Aristocrats Complete List (2026)"
-  description="Complete 2026 list of Canadian Dividend Aristocrats. See the TSX dividend stocks with 5+ years of consecutive dividend increases. Filter by yield."
-  canonical="https://westmountfundamentals.com/canadian-dividend-aristocrats-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -255,7 +253,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Canadian Dividend Aristocrats Complete List (2026)</span></nav>
     <span>3 min read</span>
   </div>
-        <h1>Canadian Dividend Aristocrats (2026)</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">The complete list of S&P/TSX constituents with 5+ consecutive years of dividend increases. Updated daily with real-time yields and 5-year growth rates.</p>
 
         <div class="stats-grid">

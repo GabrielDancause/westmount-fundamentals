@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["wealthsimple-vs-questrade-vs-ibkr-2026"];
+export const meta = { title: "Wealthsimple vs Questrade vs IBKR (2026 Comparison)", description: "Ultimate 2026 broker showdown: Wealthsimple vs Questrade vs Interactive Brokers. Compare commissions, FX fees, margin rates, and TFSA/RRSP support.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,22 +21,16 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Wealthsimple vs Questrade vs IBKR (2026 Comparison)",
-  description: "Ultimate 2026 broker showdown: Wealthsimple vs Questrade vs Interactive Brokers. Compare commissions, FX fees, margin rates, and TFSA/RRSP support.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Wealthsimple vs Questrade vs IBKR (2026 Comparison)"
-  description="Ultimate 2026 broker showdown: Wealthsimple vs Questrade vs Interactive Brokers. Compare commissions, FX fees, margin rates, and TFSA/RRSP support."
-  canonical="https://westmountfundamentals.com/wealthsimple-vs-questrade-vs-ibkr-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <div class="page-content">
-    <h1>Wealthsimple vs Questrade vs IBKR (2026 Comparison)</h1>
+    <h1>{page.h1}</h1>
 
   <style>
 :root {

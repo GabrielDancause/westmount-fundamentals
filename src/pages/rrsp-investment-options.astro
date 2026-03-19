@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["rrsp-investment-options"];
+export const meta = { title: "What to Hold in Your RRSP", description: "Asset location strategies, US dividends, and bonds. A complete, practical guide with examples, tips, and actionable steps you can follow today.", category: "guide", published: "2026-03-15" };
 const schema = [
   {
     "@context": "https://schema.org",
@@ -43,20 +47,14 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "What to Hold in Your RRSP",
-  description: "Asset location strategies, US dividends, and bonds. A complete, practical guide with examples, tips, and actionable steps you can follow today.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
-<SiteLayout site="westmount" title="What to Hold in Your RRSP" description="Asset location strategies, US dividends, and bonds." canonical="https://westmountfundamentals.com/rrsp-investment-options" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What to Hold in Your RRSP</span></nav>
     <span>3 min read</span>
   </div>
   <div class="page-content">
-    <div class="hero"><h1>What to Hold in Your RRSP</h1><p>Asset location strategies, US dividends, and bonds.</p></div>
+    <div class="hero"><h1>{page.h1}</h1><p>Asset location strategies, US dividends, and bonds.</p></div>
     <div class="card">
       <h2>Related Guides</h2>
       <ul>

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["interactive-brokers-canada"];
+export const meta = { title: "Interactive Brokers Canada (IBKR) Review 2026", description: "An in-depth review of Interactive Brokers Canada. Discover why it", category: "guide", published: "2026-03-15" };
 
 const schema = [
   {
@@ -41,19 +45,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Interactive Brokers Canada (IBKR) Review 2026",
-  description: "An in-depth review of Interactive Brokers Canada. Discover why it's the top choice for active traders, margin users, and those converting CAD to USD.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Interactive Brokers Canada (IBKR) Review 2026"
-  description="An in-depth review of Interactive Brokers Canada. Discover why it's the top choice for active traders, margin users, and those converting CAD to USD."
-  canonical="https://westmountfundamentals.com/interactive-brokers-canada"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -62,7 +60,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Interactive Brokers Canada (IBKR): The Professional's Choice</h1>
+      <h1>{page.h1}</h1>
       <p>A deep dive into IBKR's fee structure, unbeatable forex handling, and industry-leading margin rates.</p>
     </div>
 

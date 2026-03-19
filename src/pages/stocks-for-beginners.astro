@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stocks for Beginners: The Ultimate Guide to Investing",
-  description: "They tell you to invest, but what does that actually mean? The simple truth about what stocks really are and why 90% of beginners get them wrong...",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["stocks-for-beginners"];
+export const meta = { title: "Stocks for Beginners: The Ultimate Guide to Investing", description: "They tell you to invest, but what does that actually mean? The simple truth about what stocks really are and why 90% of beginners get them wrong...", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -80,9 +77,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/stocks-for-beginners"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div class="container">
@@ -92,7 +89,7 @@ const schema = {
   </div>
     <div class="page-content">
 
-      <h1>Stocks for Beginners: The Ultimate Guide to Investing</h1>
+      <h1>{page.h1}</h1>
 
       <p class="lead">They tell you to invest, but what does that actually mean? You've heard the terms "bull market", "dividends", and "Dow Jones", but if you're like most beginners, the stock market can seem like a confusing, exclusive club. It's not. It's simply a mechanism for buying small pieces of real businesses.</p>
 

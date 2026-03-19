@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["gold-vs-stocks-historical"];
+export const meta = { title: "Gold vs Stocks: 50-Year Performance Comparison (1975-2026)", description: "What truly happens when you pit gold against the S&P 500 over 50 years? The long-term performance data reveals a shocking reality about inflation and crises.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Gold vs Stocks: 50-Year Performance Comparison (1975-2026)",
-  description: "What truly happens when you pit gold against the S&P 500 over 50 years? The long-term performance data reveals a shocking reality about inflation and crises.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Gold vs Stocks: 50-Year Performance Comparison (1975-2026)"
-  description="What truly happens when you pit gold against the S&P 500 over 50 years? The long-term performance data reveals a shocking reality about inflation and crises."
-  canonical="https://westmountfundamentals.com/gold-vs-stocks-historical" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -288,7 +286,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Gold vs Stocks: 50-Year Performance Comparison ...</span></nav>
     <span>8 min read</span>
   </div>
-        <h1>Gold vs Stocks: 50-Year Performance Comparison</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">An interactive historical analysis of the S&P 500 total return versus gold prices since 1975, including inflation-adjusted real returns and rolling decade performance.</p>
 
         <div class="stats-grid" id="stats-grid">

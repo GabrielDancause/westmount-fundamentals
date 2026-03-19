@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "CoreWeave vs NVIDIA vs Palantir Stocks",
-  description: "Comparing three AI powerhouses: Who truly dominates the next generation of compute and data? Discover which stock aligns with your portfolio strategy before.",
-  category: "guide",
-  published: "2026-03-15",
-};
+const page = (registry as any)["coreweave-vs-nvidia-palantir-stocks"];
+export const meta = { title: "CoreWeave vs NVIDIA vs Palantir Stocks", description: "Comparing three AI powerhouses: Who truly dominates the next generation of compute and data? Discover which stock aligns with your portfolio strategy before.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -68,14 +65,14 @@ const schema = {
     }
   ]
 };
---- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/coreweave-vs-nvidia-palantir-stocks" schema={schema}>
+--- · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">CoreWeave vs NVIDIA vs Palantir Stocks</span></nav>
     <span>8 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>CoreWeave vs NVIDIA vs Palantir Stocks</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Comparing the Titans of the Next-Generation AI Ecosystem</p>
     </div>
 

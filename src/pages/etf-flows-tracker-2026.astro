@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["etf-flows-tracker-2026"];
+export const meta = { title: "ETF Fund Flows Tracker: Inflows & Outflows (2026)", description: "Track 2026 ETF fund flows, inflows, and outflows across major categories. See where institutional money is moving with biggest weekly and monthly rankings.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "ETF Fund Flows Tracker: Inflows & Outflows (2026)",
-  description: "Track 2026 ETF fund flows, inflows, and outflows across major categories. See where institutional money is moving with biggest weekly and monthly rankings.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="ETF Fund Flows Tracker: Inflows & Outflows (2026)"
-  description="Track 2026 ETF fund flows, inflows, and outflows across major categories. See where institutional money is moving with biggest weekly and monthly rankings."
-  canonical="https://westmountfundamentals.com/etf-flows-tracker-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -364,7 +362,7 @@ export const meta = {
     <span>4 min read</span>
   </div>
         <div class="header-section">
-            <h1>ETF Fund Flows Tracker</h1>
+            <h1>{page.h1}</h1>
             <p class="subtitle">Track 1-Month and 3-Month ETF inflows and outflows across major categories to see where institutional money is moving in 2026.</p>
         </div>
 

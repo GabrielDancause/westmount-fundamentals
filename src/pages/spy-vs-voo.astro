@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["spy-vs-voo"];
+export const meta = { title: "SPY vs VOO: Which S&P 500 ETF is Better? | Westmount", description: "A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your...", category: "tool", published: "2026-03-15" };
 
 const schema = [
   {
@@ -62,19 +66,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "SPY vs VOO: Which S&P 500 ETF is Better? | Westmount",
-  description: "A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your...",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="SPY vs VOO: Which S&P 500 ETF is Better? | Westmount"
-  description="A head-to-head comparison of SPY and VOO. Uncover the differences in expense ratios, structures, options liquidity, and which index fund is right for your."
-  canonical="https://westmountfundamentals.com/spy-vs-voo"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <style is:inline>
@@ -277,7 +275,7 @@ export const meta = {
 
   <div class="page-content">
     <div class="hero">
-      <h1>SPY vs VOO: The Ultimate S&P 500 Showdown</h1>
+      <h1>{page.h1}</h1>
       <p>Compare the oldest S&P 500 ETF (SPY) against Vanguard's low-cost juggernaut (VOO) to see which fits your investment strategy.</p>
     </div>
 

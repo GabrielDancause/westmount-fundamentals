@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "ETF vs Mutual Fund: Which is Right for You? (Complete Guide)",
-  description: "Compare ETFs and Mutual Funds side-by-side. Learn the key differences in costs, tax efficiency, trading flexibility, and which is best for your portfolio...",
-  category: "guide",
-};
+const page = (registry as any)["etf-vs-mutual-fund"];
+export const meta = { title: "ETF vs Mutual Fund: Which is Right for You? (Complete Guide)", description: "Compare ETFs and Mutual Funds side-by-side. Learn the key differences in costs, tax efficiency, trading flexibility, and which is best for your portfolio...", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -58,14 +56,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/etf-vs-mutual-fund" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">ETF vs Mutual Fund: Which is Right for You? (Co...</span></nav>
     <span>13 min read</span>
   </div>
-      <h1>ETF vs Mutual Fund: The Definitive Comparison</h1>
+      <h1>{page.h1}</h1>
 
       <p>When you decide to start investing, you quickly encounter a persistent debate: <strong>ETF vs Mutual Fund</strong>. Both are investment vehicles that pool money from thousands of investors to buy a diversified portfolio of stocks, bonds, or other assets. They are the cornerstones of modern retirement accounts and wealth-building strategies.</p>
 

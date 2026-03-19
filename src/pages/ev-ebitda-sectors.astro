@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["ev-ebitda-sectors"];
+export const meta = { title: "EV/EBITDA by Sector: Enterprise Value Multiples 2026", description: "One sector trades at 5x EBITDA while another demands 20x. We mapped the valuation gap across all 11 GICS sectors to spot the opportunities.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -22,19 +26,13 @@ const schema = {
   "dateModified": "2026-03-09"
 };
 
-export const meta = {
-  title: "EV/EBITDA by Sector: Enterprise Value Multiples 2026",
-  description: "One sector trades at 5x EBITDA while another demands 20x. We mapped the valuation gap across all 11 GICS sectors to spot the opportunities.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="EV/EBITDA by Sector: Enterprise Value Multiples 2026"
-  description="One sector trades at 5x EBITDA while another demands 20x. We mapped the valuation gap across all 11 GICS sectors to spot the opportunities."
-  canonical="https://westmountfundamentals.com/ev-ebitda-sectors" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -214,7 +212,7 @@ export const meta = {
     <span>3 min read</span>
   </div>
         <span class="tag">VALUATION MULTIPLES</span>
-        <h1>EV/EBITDA by Sector: Enterprise Value Multiples 2026</h1>
+        <h1>{page.h1}</h1>
         <p>Compare enterprise value to EBITDA multiples across all GICS sectors. EV/EBITDA is a capital-structure-neutral valuation metric preferred by M&A analysts, as it accounts for debt while normalizing for differing taxation and depreciation schedules.</p>
 
         <h2>Sector Medians (Bar Chart)</h2>

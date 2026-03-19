@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-read-balance-sheet"];
+export const meta = { title: "How to Read a Balance Sheet | Westmount Fundamentals", description: "A comprehensive guide on how to read and analyze a company", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "How to Read a Balance Sheet | Westmount Fundamentals",
-  description: "A comprehensive guide on how to read and analyze a company's balance sheet, including assets, liabilities, and shareholders' equity.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="How to Read a Balance Sheet | Westmount Fundamentals"
-  description="A comprehensive guide on how to read and analyze a company's balance sheet, including assets, liabilities, and shareholders' equity."
-  canonical="https://westmountfundamentals.com/guide-read-balance-sheet" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -171,7 +169,7 @@ export const meta = {
     <span>3 min read</span>
   </div>
     <span class="tag">EDUCATIONAL GUIDE</span>
-    <h1>How to Read a Balance Sheet</h1>
+    <h1>{page.h1}</h1>
     <p style="font-size: 1.1rem; color: #8a9bb0;">A step-by-step guide to understanding assets, liabilities, and shareholders' equity to evaluate a company's financial health.</p>
 
     <div class="card" style="margin-top: 30px;">

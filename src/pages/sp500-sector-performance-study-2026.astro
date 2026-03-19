@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-sector-performance-study-2026"];
+export const meta = { title: "S&P 500 Sector Performance 2026 | Westmount Fundamentals", description: "A comprehensive analysis of S&P 500 sector performance for 2026. Track YTD, 1-Year, 3-Year, and 5-Year returns across all 11 GICS sectors.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "S&P 500 Sector Performance 2026 | Westmount Fundamentals",
-  description: "A comprehensive analysis of S&P 500 sector performance for 2026. Track YTD, 1-Year, 3-Year, and 5-Year returns across all 11 GICS sectors.",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="S&P 500 Sector Performance 2026 | Westmount Fundamentals"
-  description="A comprehensive analysis of S&P 500 sector performance for 2026. Track YTD, 1-Year, 3-Year, and 5-Year returns across all 11 GICS sectors."
-  canonical="https://westmountfundamentals.com/sp500-sector-performance-study-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -249,7 +247,7 @@ export const meta = {
   </div>
     <div class="header">
       <span class="header-tag">📊 ORIGINAL STUDY</span>
-      <h1>S&P 500 Sector Performance 2026</h1>
+      <h1>{page.h1}</h1>
       <p>Tracking the year-to-date and historical returns across all 11 Global Industry Classification Standard (GICS) sectors, represented by their respective SPDR ETFs. Compare against the baseline S&P 500 index (SPY).</p>
     </div>
 

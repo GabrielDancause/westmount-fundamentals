@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-market-returns-by-year"];
+export const meta = { title: "Stock Market Returns by Year (1928–2026) — Every Year Charted", description: "97 years of S&P 500 annual returns in one chart. The best year: +52.6%. The worst: -43.8%. See every year and the real average after inflation.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   "datePublished": "2026-03-11"
 };
 
-export const meta = {
-  title: "Stock Market Returns by Year (1928–2026) — Every Year Charted",
-  description: "97 years of S&P 500 annual returns in one chart. The best year: +52.6%. The worst: -43.8%. See every year and the real average after inflation.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Stock Market Returns by Year (1928–2026) — Every Year Charted"
-  description="Discover the complete, shocking history of the stock market. We compiled 97 years of S&P 500 annual returns — see the highest highs, lowest lows, and."
-  canonical="https://westmountfundamentals.com/stock-market-returns-by-year" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -194,7 +192,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stock Market Returns by Year (1928–2026)</span></nav>
     <span>5 min read</span>
   </div>
-    <h1>Stock Market Returns by Year</h1>
+    <h1>{page.h1}</h1>
     <p>A complete look at the S&P 500's annual performance history from 1928 through 2026. Data includes both price appreciation and reinvested dividends (total return).</p>
 
     <div class="stats-grid">

@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Buy Stocks: The Definitive Guide for Beginners",
-  description: "Want to invest but don't know where to start? Discover the exact steps to open an account, choose investments, and execute your first trade without the jargon.",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["how-to-buy-stocks"];
+export const meta = { title: "How to Buy Stocks: The Definitive Guide for Beginners", description: "Want to invest but don", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -70,13 +67,13 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-buy-stocks" schema={JSON.stringify(schema)}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Buy Stocks: The Definitive Guide for Beg...</span></nav>
     <span>23 min read</span>
   </div>
   <div class="page-content">
-    <h1>How to Buy Stocks: The Definitive Beginner's Guide to Investing in the Stock Market</h1>
+    <h1>{page.h1}</h1>
 
     <p>Taking the first step into the stock market can feel like trying to decipher a foreign language. With terms like "bid-ask spreads," "market capitalization," and "P/E ratios" thrown around, the fundamental mechanics of investing are often obscured by unnecessary complexity. But at its core, the process of buying a stock is remarkably straightforward. It is no longer an exclusive club requiring physical certificates, phone calls to expensive brokers, or thousands of dollars to get started. Today, purchasing an ownership stake in some of the most profitable companies on the planet can be done from a smartphone in less time than it takes to order a cup of coffee.</p>
 

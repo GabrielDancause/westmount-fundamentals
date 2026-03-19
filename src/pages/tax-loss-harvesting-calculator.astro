@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["tax-loss-harvesting-calculator"];
+export const meta = { title: "Tax-Loss Harvesting Calculator", description: "Optimize your tax-loss harvesting strategies with our comprehensive calculator. Track portfolio losses, wash sale rule warnings, tax brackets, and...", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Tax-Loss Harvesting Calculator",
-  description: "Optimize your tax-loss harvesting strategies with our comprehensive calculator. Track portfolio losses, wash sale rule warnings, tax brackets, and...",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Tax-Loss Harvesting Calculator & Strategy Guide"
-  description="Optimize your tax-loss harvesting strategies with our comprehensive calculator. Track portfolio losses, wash sale rule warnings, tax brackets, and."
-  canonical="https://westmountfundamentals.com/tax-loss-harvesting-calculator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -311,7 +309,7 @@ td {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Tax-Loss Harvesting Calculator</span></nav>
     <span>4 min read</span>
   </div>
-  <h1>Tax-Loss Harvesting Calculator</h1>
+  <h1>{page.h1}</h1>
   <p>Optimize your portfolio by strategically selling losing positions to offset taxes on gains and income. Track wash sale warnings, calculate tax savings, and manage loss carryforwards.</p>
 
   <div class="card">

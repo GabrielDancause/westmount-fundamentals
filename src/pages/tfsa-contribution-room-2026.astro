@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["tfsa-contribution-room-2026"];
+export const meta = { title: "TFSA Contribution Room & Limits (2026 Calculator)", description: "Interactive 2026 TFSA contribution room calculator. Find your exact limit, see the history of changes from 2009-2026, and track your cumulative room.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "TFSA Contribution Room & Limits (2026 Calculator)",
-  description: "Interactive 2026 TFSA contribution room calculator. Find your exact limit, see the history of changes from 2009-2026, and track your cumulative room.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="TFSA Contribution Room & Limits (2026 Calculator)"
-  description="Interactive 2026 TFSA contribution room calculator. Find your exact limit, see the history of changes from 2009-2026, and track your cumulative room."
-  canonical="https://westmountfundamentals.com/tfsa-contribution-room-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -306,7 +304,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">TFSA Contribution Room & Limits (2026 Calculator)</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>TFSA Contribution Room & Limits (2026 Calculator)</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="stats-grid">

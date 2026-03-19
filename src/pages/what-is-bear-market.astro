@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is a Bear Market? Definition, Causes, and How to Navigate It",
-  description: "Learn what a bear market is, how it works, and its historical context. Discover strategies for navigating market downturns to protect and grow your portfolio.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-bear-market"];
+export const meta = { title: "What is a Bear Market? Definition, Causes, and How to Navigate It", description: "Learn what a bear market is, how it works, and its historical context. Discover strategies for navigating market downturns to protect and grow your portfolio.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-bear-market" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is a Bear Market? Definition, Causes, and ...</span></nav>
     <span>10 min read</span>
   </div>
-      <h1>What is a Bear Market?</h1>
+      <h1>{page.h1}</h1>
 
       <p>A phrase that strikes fear into the hearts of many investors, a "bear market" is a fundamental concept in finance that every market participant must eventually understand and endure. While the term conjures images of plummeting portfolios and economic turmoil, viewing a bear market solely as a catastrophe is a mistake. It is a natural, albeit painful, phase of the economic cycle.</p>
 

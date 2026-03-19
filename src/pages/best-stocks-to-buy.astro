@@ -1,23 +1,20 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Best Stocks to Buy Now: Top Picks for 2025 and 2026",
-  description: "Looking for the best growth and value plays in today's market? Discover which companies are showing the strongest fundamentals for the years ahead.",
-  category: "list",
-  published: "2025-02-15",
-};
+const page = (registry as any)["best-stocks-to-buy"];
+export const meta = { title: "Best Stocks to Buy Now: Top Picks for 2025 and 2026", description: "Looking for the best growth and value plays in today", category: "list", published: "2025-02-15" };
 
 const schema = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are the best stocks to buy right now?", "acceptedAnswer": {"@type": "Answer", "text": "The best stocks to buy depend on your investment goals. For growth, technology leaders like Microsoft and NVIDIA often lead the pack. For value and income, Dividend Kings and defensive sector staples are generally considered safer long-term bets."}}, {"@type": "Question", "name": "What are the best growth stocks to buy in 2025?", "acceptedAnswer": {"@type": "Answer", "text": "Top growth stocks in 2025 typically include companies at the forefront of artificial intelligence, cloud computing, and cybersecurity, such as Alphabet, Meta Platforms, and CrowdStrike, which continue to show strong year-over-year revenue expansion."}}, {"@type": "Question", "name": "How to pick the best stocks to buy for 2026?", "acceptedAnswer": {"@type": "Answer", "text": "Looking ahead to 2026, investors should focus on companies with strong balance sheets, consistent free cash flow generation, and structural tailwinds in their industries, rather than chasing short-term market fads."}}, {"@type": "Question", "name": "Are dividend stocks better than growth stocks?", "acceptedAnswer": {"@type": "Answer", "text": "Neither is objectively better; they serve different purposes. Dividend stocks provide steady income and downside protection during bear markets, while growth stocks offer higher capital appreciation potential during bull markets."}}, {"@type": "Question", "name": "Should I buy individual stocks or ETFs?", "acceptedAnswer": {"@type": "Answer", "text": "For most investors, a core portfolio of broad-market ETFs (like those tracking the S&P 500) combined with a smaller allocation to individual high-conviction stocks offers the best balance of diversification and upside potential."}}]};
 ---
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/best-stocks-to-buy" schema={JSON.stringify(schema)}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best Stocks to Buy Now: Top Picks for 2025 and ...</span></nav>
     <span>7 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Best Stocks to Buy for 2025 and Beyond</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">A curated, fundamental analysis of top-performing companies across growth, value, and income sectors.</p>
     </div>
 

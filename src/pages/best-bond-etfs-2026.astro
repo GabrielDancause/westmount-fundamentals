@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-bond-etfs-2026"];
+export const meta = { title: "Best Bond ETFs 2026: Compare Yields & Performance", description: "Discover the best bond ETFs for 2026. Compare yields, expense ratios, and historical returns across Treasury, Corporate, Municipal, and Total Bond funds.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Best Bond ETFs 2026: Compare Yields & Performance",
-  description: "Discover the best bond ETFs for 2026. Compare yields, expense ratios, and historical returns across Treasury, Corporate, Municipal, and Total Bond funds.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Best Bond ETFs 2026: Compare Yields & Performance"
-  description="Discover the best bond ETFs for 2026. Compare yields, expense ratios, and historical returns across Treasury, Corporate, Municipal, and Total Bond funds."
-  canonical="https://westmountfundamentals.com/best-bond-etfs-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -246,7 +244,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best Bond ETFs 2026: Compare Yields & Performance</span></nav>
     <span>3 min read</span>
   </div>
-        <h1>Best Bond ETFs 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Comprehensive comparison of yields, expenses, and historical performance across top bond funds.</p>
 
         <div class="stats-grid">

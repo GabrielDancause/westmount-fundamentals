@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["average-etf-expense-ratio-2026"];
+export const meta = { title: "Average ETF Expense Ratio (2026): What You Should Actuall...", description: "Discover the real average ETF expense ratio in 2026. Compare Vanguard, Schwab, and active vs passive funds to see if you are overpaying in fees.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Average ETF Expense Ratio (2026): What You Should Actuall...",
-  description: "Discover the real average ETF expense ratio in 2026. Compare Vanguard, Schwab, and active vs passive funds to see if you are overpaying in fees.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Average ETF Expense Ratio (2026): What You Should Actuall..."
-  description="Discover the real average ETF expense ratio in 2026. Compare Vanguard, Schwab, and active vs passive funds to see if you are overpaying in fees."
-  canonical="https://westmountfundamentals.com/average-etf-expense-ratio-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -338,7 +336,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Average ETF Expense Ratio (2026): What You Shou...</span></nav>
     <span>6 min read</span>
   </div>
-    <h1>Average ETF Expense Ratio (2026): What You Should Actuall...</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="content">

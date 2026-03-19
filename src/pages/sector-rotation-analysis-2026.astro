@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sector-rotation-analysis-2026"];
+export const meta = { title: "Sector Rotation Analysis & Predictions 2026 | Westmount Fundamentals", description: "Interactive sector rotation analysis tool. Track economic cycles, leading/lagging sectors, and future market phase predictions based on real ETF performance...", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,18 +52,12 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Sector Rotation Analysis & Predictions 2026 | Westmount Fundamentals",
-  description: "Interactive sector rotation analysis tool. Track economic cycles, leading/lagging sectors, and future market phase predictions based on real ETF performance...",
-  category: "study",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Sector Rotation Analysis & Predictions 2026 | Westmount Fundamentals"
-  description="Interactive sector rotation analysis tool. Track economic cycles, leading/lagging sectors, and future market phase predictions based on real ETF performance."
+  title={page.title}
+  description={page.description}
   canonical="" schema={schema}
 >
   <style>
@@ -210,7 +208,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Sector Rotation Analysis & Predictions 2026</span></nav>
     <span>3 min read</span>
   </div>
-    <h1>Sector Rotation Analysis & Predictions 2026</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="dashboard-grid">

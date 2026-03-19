@@ -1,19 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is Dollar Cost Averaging (DCA)? The Ultimate Guide",
-  description: "Trying to time the stock market is a fool's errand. Discover how dollar cost averaging (DCA) removes emotion from investing and builds long-term wealth.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-dollar-cost-averaging"];
+export const meta = { title: "What is Dollar Cost Averaging (DCA)? The Ultimate Guide", description: "Trying to time the stock market is a fool", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -78,9 +76,9 @@ const schema = JSON.stringify({
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-dollar-cost-averaging"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -89,7 +87,7 @@ const schema = JSON.stringify({
   </div>
   <div class="page-content">
 
-    <h1>What is Dollar Cost Averaging? The Ultimate Guide</h1>
+    <h1>{page.h1}</h1>
 
     <p>Trying to time the stock market is a fool's errand. Countless investors have lost vast sums of money waiting for the "perfect moment" to invest, only to watch the market soar without them. Conversely, others have poured their life savings into the market at its absolute peak, only to panic and sell at the bottom of a crash.</p>
 

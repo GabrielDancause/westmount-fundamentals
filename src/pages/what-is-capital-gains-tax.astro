@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is Capital Gains Tax? A Complete Guide for Investors",
-  description: "Learn what capital gains tax is, the difference between short-term and long-term rates, and strategies to minimize your tax burden when investing.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-capital-gains-tax"];
+export const meta = { title: "What is Capital Gains Tax? A Complete Guide for Investors", description: "Learn what capital gains tax is, the difference between short-term and long-term rates, and strategies to minimize your tax burden when investing.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-capital-gains-tax" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is Capital Gains Tax? A Complete Guide for...</span></nav>
     <span>13 min read</span>
   </div>
-      <h1>What is Capital Gains Tax?</h1>
+      <h1>{page.h1}</h1>
       <p>Understanding capital gains tax is one of the most important concepts for any investor looking to build long-term wealth. When you buy an asset and sell it for a profit, the government wants a piece of that profit. But how much they take depends entirely on your strategy, your income, and how long you held the asset.</p>
 
       <h2>The Basics: What Exactly is a Capital Gains Tax?</h2>

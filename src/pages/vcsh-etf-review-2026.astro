@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["vcsh-etf-review-2026"];
+export const meta = { title: "VCSH ETF Review: Vanguard Short-Term Corp Bond", description: "Complete review of Vanguard Short-Term Corporate Bond ETF (VCSH). Covers expense ratio, yield, duration, vs IGSB & SPSB. Best for fixed-income allocations.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "VCSH ETF Review: Vanguard Short-Term Corp Bond",
-  description: "Complete review of Vanguard Short-Term Corporate Bond ETF (VCSH). Covers expense ratio, yield, duration, vs IGSB & SPSB. Best for fixed-income allocations.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="VCSH ETF Review: Vanguard Short-Term Corp Bond"
-  description="Complete review of Vanguard Short-Term Corporate Bond ETF (VCSH). Covers expense ratio, yield, duration, vs IGSB & SPSB. Best for fixed-income allocations."
-  canonical="https://westmountfundamentals.com/vcsh-etf-review-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -177,7 +175,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">VCSH ETF Review: Vanguard Short-Term Corp Bond</span></nav>
     <span>2 min read</span>
   </div>
-    <h1>VCSH ETF Review: Vanguard Short-Term Corporate Bond</h1>
+    <h1>{page.h1}</h1>
     <p class="intro">An in-depth review of the Vanguard Short-Term Corporate Bond ETF (VCSH). We analyze its yield, duration, expense ratio, and see how it stacks up against competitors like IGSB and SPSB.</p>
 
     <div class="stats-grid">

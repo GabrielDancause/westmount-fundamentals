@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What Are Dividend Stocks? A Complete Beginner's Guide",
-  description: "They pay you just for owning them, but how do they really work? Discover the mechanics of dividend stocks and why they are a portfolio staple.",
-  category: "guide",
-  published: "2026-03-15",
-};
+const page = (registry as any)["what-are-dividend-stocks"];
+export const meta = { title: "What Are Dividend Stocks? A Complete Beginner", description: "They pay you just for owning them, but how do they really work? Discover the mechanics of dividend stocks and why they are a portfolio staple.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -70,14 +67,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-are-dividend-stocks" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What Are Dividend Stocks? A Complete Beginner's...</span></nav>
     <span>4 min read</span>
   </div>
   <div class="page-content container">
     <div class="hero">
-      <h1>What Are Dividend Stocks?</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">A complete beginner's guide to the mechanics of companies that pay you just for owning their shares.</p>
     </div>
 

@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Investment Planner & Calculator",
-  description: "Stop guessing your financial future. Discover exactly how much you need to save and what your money could be worth with this free investment planner.",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["investment-planner"];
+export const meta = { title: "Investment Planner & Calculator", description: "Stop guessing your financial future. Discover exactly how much you need to save and what your money could be worth with this free investment planner.", category: "tool", published: "2026-03-17" };
 
 const canonical = "https://westmountfundamentals.com/investment-planner";
 
@@ -15,10 +12,10 @@ const schema = {
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "url": canonical,
-      "datePublished": meta.published,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -73,14 +70,14 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical={canonical} schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={canonical} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Investment Planner & Calculator</span></nav>
     <span>9 min read</span>
   </div>
-      <h1>Investment Planner</h1>
+      <h1>{page.h1}</h1>
       <p>Use this interactive investment planner to model your financial future. See how your initial investment, monthly contributions, and expected rate of return interact over time to build wealth through compound interest.</p>
 
       <div class="calculator-card">

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["list-best-money-market-funds-2026"];
+export const meta = { title: "Best Money Market Funds 2026: Top Yields Ranked", description: "Compare the best money market funds of 2026. Ranked by 7-day SEC yield, expense ratio, and minimum investment. Including Vanguard, Fidelity, and Schwab.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -18,19 +22,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Best Money Market Funds 2026: Top Yields Ranked",
-  description: "Compare the best money market funds of 2026. Ranked by 7-day SEC yield, expense ratio, and minimum investment. Including Vanguard, Fidelity, and Schwab.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Best Money Market Funds 2026: Top Yields Ranked"
-  description="Compare the best money market funds of 2026. Ranked by 7-day SEC yield, expense ratio, and minimum investment. Including Vanguard, Fidelity, and Schwab."
-  canonical="https://westmountfundamentals.com/list-best-money-market-funds-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -319,7 +317,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best Money Market Funds 2026: Top Yields Ranked</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>Best Money Market Funds 2026: Top Yields Ranked</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="stats-grid" id="stats-container">

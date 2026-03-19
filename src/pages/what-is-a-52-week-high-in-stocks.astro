@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is a 52-Week High in Stocks?",
-  description: "Does a record high mean it's time to sell, or is it a signal to buy more? Discover how traders use the 52-week high metric to decode market momentum.",
-  category: "guide",
-  published: "2026-03-15",
-};
+const page = (registry as any)["what-is-a-52-week-high-in-stocks"];
+export const meta = { title: "What is a 52-Week High in Stocks?", description: "Does a record high mean it", category: "guide", published: "2026-03-15" };
 
 const schema = [
   {
@@ -76,14 +73,14 @@ const schema = [
   }
 ];
 ---
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-a-52-week-high-in-stocks" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is a 52-Week High in Stocks?</span></nav>
     <span>9 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>What is a 52-Week High in Stocks?</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Understanding Momentum, Breakouts, and Market Psychology</p>
     </div>
 

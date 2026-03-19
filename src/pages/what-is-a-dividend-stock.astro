@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What Is a Dividend Stock? | Complete Guide to Dividend Investing",
-  description: "They pay you just for owning them, but where does the cash actually come from? The mechanics of dividend stocks most beginners completely miss.",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["what-is-a-dividend-stock"];
+export const meta = { title: "What Is a Dividend Stock? | Complete Guide to Dividend Investing", description: "They pay you just for owning them, but where does the cash actually come from? The mechanics of dividend stocks most beginners completely miss.", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -84,9 +81,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-a-dividend-stock"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -361,7 +358,7 @@ const schema = {
   </style>
 
   <div class="page-content">
-    <h1>What Is a Dividend Stock? The Complete Guide for Beginners</h1>
+    <h1>{page.h1}</h1>
 
     <p>Imagine buying a house, renting it out, and receiving a check every single month. You still own the house, and ideally, it goes up in value over time—but you also get paid cold, hard cash just for holding onto it.</p>
 

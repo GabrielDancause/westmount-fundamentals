@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["beta-volatility"];
+export const meta = { title: "Stock Beta Rankings — S&P 500 Most & Least Volatile Stocks", description: "Some S&P 500 stocks swing 3x more than the market. See every stock ranked by beta — find the aggressive movers and the defensive anchors.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   "dateModified": "2026-03-09"
 };
 
-export const meta = {
-  title: "Stock Beta Rankings — S&P 500 Most & Least Volatile Stocks",
-  description: "Some S&P 500 stocks swing 3x more than the market. See every stock ranked by beta — find the aggressive movers and the defensive anchors.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Stock Beta Rankings — S&P 500 Most & Least Volatile Stocks"
-  description="Some S&P 500 stocks swing 3x more than the market. See every stock ranked by beta — find the aggressive movers and the defensive anchors."
-  canonical="https://westmountfundamentals.com/beta-volatility" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -285,7 +283,7 @@ export const meta = {
 
         <main>
             <section class="content-section">
-    <h1>Stock Beta Rankings — S&P 500 Most & Least Volatile Stocks</h1>
+    <h1>{page.h1}</h1>
 
                 <h2>Beta vs. YTD Return</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">A scatter plot showing the relationship between a stock's sensitivity to the market (Beta) and its Year-to-Date return.</p>

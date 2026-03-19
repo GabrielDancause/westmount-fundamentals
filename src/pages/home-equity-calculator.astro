@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Home Equity Calculator | Calculate Your Borrowing Power",
-  description: "Calculate your home equity and loan-to-value (LTV) ratio instantly. See how much you can borrow with a HELOC or home equity loan based on real formulas.",
-  category: "tool",
-  published: "2026-03-24",
-};
+const page = (registry as any)["home-equity-calculator"];
+export const meta = { title: "Home Equity Calculator | Calculate Your Borrowing Power", description: "Calculate your home equity and loan-to-value (LTV) ratio instantly. See how much you can borrow with a HELOC or home equity loan based on real formulas.", category: "tool", published: "2026-03-24" };
 
 const schema = JSON.stringify([
   {
@@ -68,7 +65,7 @@ const schema = JSON.stringify([
 ]);
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/home-equity-calculator" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Home Equity Calculator</span></nav>
     <span>5 min read</span>
@@ -76,7 +73,7 @@ const schema = JSON.stringify([
   <div class="page-content">
 
     <div class="hero">
-      <h1>Home Equity Calculator</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Calculate your home's equity, loan-to-value (LTV) ratio, and how much you can potentially borrow.</p>
     </div>
 

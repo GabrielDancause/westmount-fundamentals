@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is a CD? A Complete Guide to Certificates of Deposit",
-  description: "Learn what a Certificate of Deposit (CD) is, how these low-risk accounts work, why they matter for your savings strategy, and how to use them effectively.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-a-cd"];
+export const meta = { title: "What is a CD? A Complete Guide to Certificates of Deposit", description: "Learn what a Certificate of Deposit (CD) is, how these low-risk accounts work, why they matter for your savings strategy, and how to use them effectively.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,13 +53,13 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-a-cd" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is a CD? A Complete Guide to Certificates ...</span></nav>
     <span>13 min read</span>
   </div>
   <div class="page-content">
-    <h1>What is a CD? A Complete Guide to Certificates of Deposit</h1>
+    <h1>{page.h1}</h1>
 
     <p>Navigating the world of personal finance can often feel like learning a new language. You hear terms like "liquidity," "compound interest," and "maturity dates" tossed around, making simple savings strategies seem unnecessarily complex. Among these fundamental concepts is a financial tool that has been a cornerstone of conservative saving for decades: the <strong>Certificate of Deposit (CD)</strong>.</p>
 

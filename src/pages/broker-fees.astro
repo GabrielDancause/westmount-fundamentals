@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["broker-fees"];
+export const meta = { title: "Online Broker Fee Comparison 2026 — Westmount Research", description: "One broker charges 65¢ per options contract while another charges nothing — but hides it in the spread. We compared 22 brokers side by side.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -19,19 +23,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Online Broker Fee Comparison 2026 — Westmount Research",
-  description: "One broker charges 65¢ per options contract while another charges nothing — but hides it in the spread. We compared 22 brokers side by side.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Online Broker Fee Comparison 2026 — Westmount Research"
-  description="One broker charges 65¢ per options contract while another charges nothing — but hides it in the spread. We compared 22 brokers side by side."
-  canonical="https://westmountfundamentals.com/broker-fees" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -135,7 +133,7 @@ tr:hover td{background:rgba(74,143,231,0.04)}
 <div class="header-inner">
   <a href="/" class="back">← Westmount Research</a>
   <div><span class="tag">ORIGINAL RESEARCH</span></div>
-  <h1>Online Broker Fee Comparison 2026</h1>
+  <h1>{page.h1}</h1>
   <p class="subtitle">Commissions, margin rates, options fees, and features across 22 brokers — US and Canada.</p>
   <p class="meta">Updated March 9, 2026 · Data from broker websites, NerdWallet, Investopedia, StockBrokers.com</p>
   <div class="stats-row">

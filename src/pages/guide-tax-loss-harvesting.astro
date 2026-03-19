@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["guide-tax-loss-harvesting"];
+export const meta = { title: "Tax Loss Harvesting Explained: Turn Losing Stocks Into Ta...", description: "Think selling stocks in the red is a complete failure? In this comprehensive guide, discover how elite investors utilize this specific strategy to convert...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -21,19 +25,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Tax Loss Harvesting Explained: Turn Losing Stocks Into Ta...",
-  description: "Think selling stocks in the red is a complete failure? In this comprehensive guide, discover how elite investors utilize this specific strategy to convert...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Tax Loss Harvesting Explained: Turn Losing Stocks Into Ta..."
-  description="Think selling stocks in the red is a complete failure? In this comprehensive guide, discover how elite investors utilize this specific strategy to convert."
-  canonical="https://westmountfundamentals.com/guide-tax-loss-harvesting" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -290,7 +288,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Tax Loss Harvesting Explained: Turn Losing Stoc...</span></nav>
     <span>7 min read</span>
   </div>
-        <h1>Tax Loss Harvesting Explained: Turn Losing Stocks Into Tax Savings</h1>
+        <h1>{page.h1}</h1>
 
         <p>No one likes seeing red in their portfolio. But what if those losing investments could actively save you money when tax season rolls around? That's the power of tax-loss harvesting.</p>
 

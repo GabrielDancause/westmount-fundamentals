@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["qqq-vs-sp500"];
+export const meta = { title: "QQQ vs S&P 500: Compare Index Funds & Performance", description: "Compare the tech-heavy Nasdaq-100 (QQQ) against the broader S&P 500. Analyze historical returns, volatility, and sector concentration risk with our...", category: "tool", published: "2024-03-24" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "QQQ vs S&P 500: Compare Index Funds & Performance",
-  description: "Compare the tech-heavy Nasdaq-100 (QQQ) against the broader S&P 500. Analyze historical returns, volatility, and sector concentration risk with our...",
-  category: "tool",
-  published: "2024-03-24",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="QQQ vs S&P 500: Compare Index Funds & Performance"
-  description="Compare the tech-heavy Nasdaq-100 (QQQ) against the broader S&P 500. Analyze historical returns, volatility, and sector concentration risk with our."
-  canonical="https://westmountfundamentals.com/qqq-vs-sp500"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -114,7 +112,7 @@ export const meta = {
   </style>
 
   <div class="hero">
-    <h1>QQQ vs S&P 500</h1>
+    <h1>{page.h1}</h1>
     <p>Compare the tech-heavy Nasdaq-100 against the broad market S&P 500. Analyze historical returns, volatility, and sector risk.</p>
   </div>
 

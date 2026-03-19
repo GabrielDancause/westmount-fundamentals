@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["average-institutional-ownership-2026"];
+export const meta = { title: "Average Institutional Ownership of US Public Companies", description: "Discover the average institutional ownership percentage across US public companies in 2026. See market cap breakdowns, sector trends, and the most crowded...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,22 +52,16 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Average Institutional Ownership of US Public Companies",
-  description: "Discover the average institutional ownership percentage across US public companies in 2026. See market cap breakdowns, sector trends, and the most crowded...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Average Institutional Ownership of US Public Companies"
-  description="Discover the average institutional ownership percentage across US public companies in 2026. See market cap breakdowns, sector trends, and the most crowded."
-  canonical="https://westmountfundamentals.com/average-institutional-ownership-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <div class="page-content">
-    <h1>Average Institutional Ownership of US Public Companies</h1>
+    <h1>{page.h1}</h1>
 
   <style>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["warren-buffett-portfolio-2026"];
+export const meta = { title: "Warren Buffett", description: "See every stock Warren Buffett owns in 2026. One surprising sector makes up a massive chunk of Berkshire Hathaway", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Warren Buffett's Portfolio 2026: Every Berkshire Hathaway...",
-  description: "See every stock Warren Buffett owns in 2026. One surprising sector makes up a massive chunk of Berkshire Hathaway's portfolio. Discover what he bought and sold.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Warren Buffett's Portfolio 2026: Every Berkshire Hathaway..."
-  description="See every stock Warren Buffett owns in 2026. One surprising sector makes up a massive chunk of Berkshire Hathaway's portfolio. Discover what he bought and sold."
-  canonical="https://westmountfundamentals.com/warren-buffett-portfolio-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -320,7 +318,7 @@ export const meta = {
   </div>
 
         <section class="grid">
-    <h1>Warren Buffett</h1>
+    <h1>{page.h1}</h1>
 
             <div class="card">
                 <h3>Top 10 Holdings</h3>

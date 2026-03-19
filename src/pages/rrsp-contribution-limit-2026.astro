@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["rrsp-contribution-limit-2026"];
+export const meta = { title: "RRSP Contribution Limit & Deduction Calculator 2026", description: "Calculate your 2026 RRSP contribution limit and deduction room. Learn how the 18% rule and $32,490 max apply to your income with our interactive tool.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "RRSP Contribution Limit & Deduction Calculator 2026",
-  description: "Calculate your 2026 RRSP contribution limit and deduction room. Learn how the 18% rule and $32,490 max apply to your income with our interactive tool.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="RRSP Contribution Limit & Deduction Calculator 2026"
-  description="Calculate your 2026 RRSP contribution limit and deduction room. Learn how the 18% rule and $32,490 max apply to your income with our interactive tool."
-  canonical="https://westmountfundamentals.com/rrsp-contribution-limit-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -230,7 +228,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">RRSP Contribution Limit & Deduction Calculator ...</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>RRSP Contribution Limit & Deduction Calculator 2026</h1>
+    <h1>{page.h1}</h1>
 
 
     <div class="stats-grid">

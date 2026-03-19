@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["what-are-the-most-volatile-stocks"];
+export const meta = { title: "What Are the Most Volatile Stocks? Navigating Market Turbulence", description: "Understand stock market volatility. Discover which sectors and types of stocks experience the wildest price swings and how to manage the risk.", category: "guide", published: "2026-03-20" };
 
 const schema = [
   {
@@ -72,19 +76,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "What Are the Most Volatile Stocks? Navigating Market Turbulence",
-  description: "Understand stock market volatility. Discover which sectors and types of stocks experience the wildest price swings and how to manage the risk.",
-  category: "guide",
-  published: "2026-03-20",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="What Are the Most Volatile Stocks? Navigating Market Turbulence"
-  description="Understand stock market volatility. Discover which sectors and types of stocks experience the wildest price swings and how to manage the risk."
-  canonical="https://westmountfundamentals.com/what-are-the-most-volatile-stocks"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -93,7 +91,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>What Are the Most Volatile Stocks?</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Understanding and managing risk in turbulent markets</p>
     </div>
 

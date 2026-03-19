@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["inflation-adjusted-stock-returns"];
+export const meta = { title: "Inflation-Adjusted Stock Returns: Real S&P 500 Returns 19...", description: "Think the stock market always goes up? See how inflation secretly devours S&P 500 gains—and why the 1970s is a warning for today", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Inflation-Adjusted Stock Returns: Real S&P 500 Returns 19...",
-  description: "Think the stock market always goes up? See how inflation secretly devours S&P 500 gains—and why the 1970s is a warning for today's investors.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Inflation-Adjusted Stock Returns: Real S&P 500 Returns 19..."
-  description="Think the stock market always goes up? See how inflation secretly devours S&P 500 gains—and why the 1970s is a warning for today's investors."
-  canonical="https://westmountfundamentals.com/inflation-adjusted-stock-returns" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,7 +104,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Inflation-Adjusted Stock Returns: Real S&P 500 ...</span></nav>
     <span>5 min read</span>
   </div>
-    <h1>Inflation-Adjusted Stock Returns: Real S&P 500 Returns 19...</h1>
+    <h1>{page.h1}</h1>
 
 
         <div class="prose">

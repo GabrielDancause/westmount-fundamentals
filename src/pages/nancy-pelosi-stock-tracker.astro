@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Nancy Pelosi Stock Tracker: Congressional Copy-Trade Calculator",
-  description: "Curious if mirroring the most famous Congressional portfolio actually pays off? Calculate the real-time returns of notable political trades.",
-  category: "tool",
-  published: "2026-03-15",
-};
+const page = (registry as any)["nancy-pelosi-stock-tracker"];
+export const meta = { title: "Nancy Pelosi Stock Tracker: Congressional Copy-Trade Calculator", description: "Curious if mirroring the most famous Congressional portfolio actually pays off? Calculate the real-time returns of notable political trades.", category: "tool", published: "2026-03-15" };
 
 // Fetch real-time stock prices for notable Pelosi trades
 const tickers = ['NVDA', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'PANW', 'AVGO'];
@@ -33,8 +30,8 @@ const schema = [
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": meta.title,
-    "description": meta.description,
+    "headline": page.title,
+    "description": page.description,
     "author": {
       "@type": "Organization",
       "name": "SiliconBased",
@@ -48,7 +45,7 @@ const schema = [
         "url": "https://westmountfundamentals.com/logo.png"
       }
     },
-    "datePublished": meta.published,
+    "datePublished": page.published,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://westmountfundamentals.com/nancy-pelosi-stock-tracker"
@@ -102,14 +99,14 @@ const schema = [
   }
 ];
 ---
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/nancy-pelosi-stock-tracker" schema={schema}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Nancy Pelosi Stock Tracker: Congressional Copy-...</span></nav>
     <span>6 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Nancy Pelosi Stock Tracker</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">Calculate the real-time hypothetical returns of notable Congressional copy-trades.</p>
     </div>
 

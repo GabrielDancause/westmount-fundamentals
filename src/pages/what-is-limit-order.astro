@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is a Limit Order in Stocks? A Complete Guide for Investors",
-  description: "Learn what a limit order in stocks is, how buy and sell limit orders work, real-world examples, and strategic advantages over market orders for better entry...",
-  category: "guide",
-};
+const page = (registry as any)["what-is-limit-order"];
+export const meta = { title: "What is a Limit Order in Stocks? A Complete Guide for Investors", description: "Learn what a limit order in stocks is, how buy and sell limit orders work, real-world examples, and strategic advantages over market orders for better entry...", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,7 +53,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/what-is-limit-order" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">What is a Limit Order in Stocks? A Complete Gui...</span></nav>
     <span>15 min read</span>
@@ -63,7 +61,7 @@ const schema = JSON.stringify({
   <div class="page-content">
 
     <header class="content-section">
-      <h1>What is a Limit Order in Stocks? A Complete Guide for Investors</h1>
+      <h1>{page.h1}</h1>
       <p class="intro-text">
         Every time you buy or sell a stock, you must tell your brokerage exactly <em>how</em> you want the trade executed. While beginners often click "buy" and accept whatever price the market offers at that precise second, experienced investors use a specific tool to maintain absolute control over their entry and exit prices. That tool is the <strong>limit order</strong>.
       </p>

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["real-return-calculator"];
+export const meta = { title: "Real Return Calculator: Inflation-Adjusted Returns", description: "Calculate your true investment return after inflation. See how purchasing power erodes over time with our real vs nominal return calculator.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Real Return Calculator: Inflation-Adjusted Returns",
-  description: "Calculate your true investment return after inflation. See how purchasing power erodes over time with our real vs nominal return calculator.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Real Return Calculator: Inflation-Adjusted Returns"
-  description="Calculate your true investment return after inflation. See how purchasing power erodes over time with our real vs nominal return calculator."
-  canonical="https://westmountfundamentals.com/real-return-calculator" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -350,7 +348,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Real Return Calculator: Inflation-Adjusted Returns</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>Real Return Calculator: Inflation-Adjusted Returns</h1>
+    <h1>{page.h1}</h1>
 
     <div class="grid-2">
         <!-- Input Form -->

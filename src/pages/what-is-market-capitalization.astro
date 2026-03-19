@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What Is Market Capitalization? A Complete Guide",
-  description: "Discover what market capitalization is and why it matters more than stock price. Learn how to use market cap categories to build a smarter investment portfolio.",
-  category: "guide",
-};
+const page = (registry as any)["what-is-market-capitalization"];
+export const meta = { title: "What Is Market Capitalization? A Complete Guide", description: "Discover what market capitalization is and why it matters more than stock price. Learn how to use market cap categories to build a smarter investment portfolio.", category: "guide", published: "2026-03-18" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -59,9 +57,9 @@ const schemaString = JSON.stringify(schema);
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-market-capitalization"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schemaString}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -69,7 +67,7 @@ const schemaString = JSON.stringify(schema);
     <span>12 min read</span>
   </div>
   <div class="page-content">
-    <h1>What Is Market Capitalization?</h1>
+    <h1>{page.h1}</h1>
 
 
     <h2>What Is Market Capitalization? A Complete Guide</h2>

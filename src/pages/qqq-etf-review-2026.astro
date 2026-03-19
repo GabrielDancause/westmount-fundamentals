@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["qqq-etf-review-2026"];
+export const meta = { title: "QQQ ETF Review (2026): Invesco Nasdaq 100 Holdings", description: "Complete 2026 review of the Invesco QQQ Trust ETF. Analyze its Nasdaq-100 holdings, performance history, and head-to-head vs SPY and QQQM.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "QQQ ETF Review (2026): Invesco Nasdaq 100 Holdings",
-  description: "Complete 2026 review of the Invesco QQQ Trust ETF. Analyze its Nasdaq-100 holdings, performance history, and head-to-head vs SPY and QQQM.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="QQQ ETF Review (2026): Invesco Nasdaq 100 Holdings"
-  description="Complete 2026 review of the Invesco QQQ Trust ETF. Analyze its Nasdaq-100 holdings, performance history, and head-to-head vs SPY and QQQM."
-  canonical="https://westmountfundamentals.com/qqq-etf-review-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -367,7 +365,7 @@ export const meta = {
   </div>
     <div class="hero">
       <div class="tagline">ETF Review 2026</div>
-      <h1>Invesco QQQ Trust (Nasdaq-100)</h1>
+      <h1>{page.h1}</h1>
       <p class="hero-desc">An in-depth review of the QQQ ETF. We analyze its heavily concentrated tech holdings, performance history, and compare it head-to-head with SPY and its cheaper twin, QQQM.</p>
     </div>
 

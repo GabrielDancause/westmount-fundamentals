@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["buyback-leaders"];
+export const meta = { title: "Top Stock Buyback Leaders 2026 — 106 Companies Ranked", description: "One tech giant spent $94B on buybacks alone. See which 106 companies are repurchasing the most stock in 2026, ranked by buyback yield.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -20,19 +24,13 @@ const schema = {
   "mainEntityOfPage": "https://westmountfundamentals.com/buyback-leaders"
 };
 
-export const meta = {
-  title: "Top Stock Buyback Leaders 2026 — 106 Companies Ranked",
-  description: "One tech giant spent $94B on buybacks alone. See which 106 companies are repurchasing the most stock in 2026, ranked by buyback yield.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Top Stock Buyback Leaders 2026 — 106 Companies Ranked"
-  description="One tech giant spent $94B on buybacks alone. See which 106 companies are repurchasing the most stock in 2026, ranked by buyback yield."
-  canonical="https://westmountfundamentals.com/buyback-leaders" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -254,7 +252,7 @@ footer {
   </div>
   <section class="hero">
     <div class="tag">Original Research</div>
-    <h1>Stock Buyback Leaders 2026</h1>
+    <h1>{page.h1}</h1>
     <p class="subtitle">Who is repurchasing the most shares? 106 companies ranked by buyback volume, buyback yield, and share count reduction — $709.5 billion in total repurchases tracked.</p>
     <p class="meta">Published March 9, 2026 · SEC filings & earnings reports · 106 companies analyzed</p>
   </section>

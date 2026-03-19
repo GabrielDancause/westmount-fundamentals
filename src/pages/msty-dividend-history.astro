@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["msty-dividend-history"];
+export const meta = { title: "MSTY Dividend Analysis & History", description: "Uncover the staggering yield numbers behind MSTY", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -67,21 +71,15 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "MSTY Dividend Analysis & History",
-  description: "Uncover the staggering yield numbers behind MSTY's recent distributions. Is this high-income strategy sustainable for the upcoming quarters? Read our breakdown.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
-<SiteLayout site="westmount" title="MSTY Dividend Analysis & History" description="Uncover the staggering yield numbers behind MSTY's recent distributions. Is this high-income strategy sustainable for the upcoming quarters? Read our breakdown." canonical="https://westmountfundamentals.com/msty-dividend-history" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">MSTY Dividend Analysis & History</span></nav>
     <span>8 min read</span>
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>MSTY Dividend Analysis & History</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">A Deep Dive into Yield, Growth, and Payout Stability</p>
     </div>
 

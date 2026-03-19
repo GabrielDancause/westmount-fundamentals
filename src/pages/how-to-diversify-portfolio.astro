@@ -1,19 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Diversify a Portfolio: A Complete Guide to Asset Allocation",
-  description: "Learn exactly how to diversify your portfolio to minimize risk. Discover asset classes, sector balancing, and historical examples of effective diversification.",
-  category: "guide",
-};
+const page = (registry as any)["how-to-diversify-portfolio"];
+export const meta = { title: "How to Diversify a Portfolio: A Complete Guide to Asset Allocation", description: "Learn exactly how to diversify your portfolio to minimize risk. Discover asset classes, sector balancing, and historical examples of effective diversification.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -76,14 +74,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-diversify-portfolio" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
     <div class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Diversify a Portfolio: A Complete Guide ...</span></nav>
     <span>11 min read</span>
   </div>
-      <h1>How to Diversify a Portfolio: The Complete Guide</h1>
+      <h1>{page.h1}</h1>
 
       <p>Investing inherently carries risk, but how you construct your portfolio determines whether you are taking calculated risks or merely gambling. Understanding <strong>how to diversify a portfolio</strong> is perhaps the single most critical concept in personal finance. Nobel laureate Harry Markowitz famously described diversification as the only "free lunch" in investing—the mathematical mechanism through which you can simultaneously lower your overall risk and potentially improve your expected returns.</p>
 

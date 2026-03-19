@@ -1,19 +1,17 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Pay Off Debt Fast: Proven Strategies and The Math Behind Them",
-  description: "Learn exactly how to pay off debt fast using proven frameworks. Discover the hidden math behind accelerated debt reduction and which strategy is optimal.",
-  category: "guide",
-};
+const page = (registry as any)["how-to-pay-off-debt"];
+export const meta = { title: "How to Pay Off Debt Fast: Proven Strategies and The Math Behind Them", description: "Learn exactly how to pay off debt fast using proven frameworks. Discover the hidden math behind accelerated debt reduction and which strategy is optimal.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
+      "headline": page.title,
+      "description": page.description,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -68,14 +66,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-pay-off-debt" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Pay Off Debt Fast: Proven Strategies and...</span></nav>
     <span>12 min read</span>
   </div>
   <div class="page-content">
 
-    <h1>How to Pay Off Debt Fast: Proven Strategies and The Math Behind Them</h1>
+    <h1>{page.h1}</h1>
 
     <p>Debt is often seen as an invisible burden—a number on a screen that somehow dictates what you can and cannot do with your future. Whether it’s a lingering student loan, a high-interest credit card balance, or a mortgage you want to crush early, knowing <strong>how to pay off debt fast</strong> is one of the most critical financial skills you can develop.</p>
 

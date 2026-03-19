@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Stocks vs Bonds: The Complete Guide for Modern Investors",
-  description: "Learn the core differences between stocks and bonds, how they balance risk, and how to build a resilient portfolio. Comprehensive guide for all investors.",
-  category: "guide",
-  published: "2026-03-22",
-};
+const page = (registry as any)["stocks-vs-bonds"];
+export const meta = { title: "Stocks vs Bonds: The Complete Guide for Modern Investors", description: "Learn the core differences between stocks and bonds, how they balance risk, and how to build a resilient portfolio. Comprehensive guide for all investors.", category: "guide", published: "2026-03-22" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -56,7 +53,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/stocks-vs-bonds" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stocks vs Bonds: The Complete Guide for Modern ...</span></nav>
     <span>13 min read</span>
@@ -64,7 +61,7 @@ const schema = JSON.stringify({
   <div class="page-content">
 
     <div class="hero">
-      <h1>Stocks vs. Bonds: The Complete Guide for Modern Investors</h1>
+      <h1>{page.h1}</h1>
       <p class="subtitle">A comprehensive breakdown of the two most important asset classes in your portfolio, how they differ, and why you need both to build lasting wealth.</p>
     </div>
 

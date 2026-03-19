@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["list-best-monthly-dividend-stocks"];
+export const meta = { title: "Best Monthly Dividend Stocks & ETFs (2026)", description: "Complete 2026 list of the best monthly dividend stocks, REITs, BDCs, and ETFs ranked by yield. View tickers, dividend payouts, and performance metrics.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Best Monthly Dividend Stocks & ETFs (2026)",
-  description: "Complete 2026 list of the best monthly dividend stocks, REITs, BDCs, and ETFs ranked by yield. View tickers, dividend payouts, and performance metrics.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Best Monthly Dividend Stocks & ETFs (2026)"
-  description="Complete 2026 list of the best monthly dividend stocks, REITs, BDCs, and ETFs ranked by yield. View tickers, dividend payouts, and performance metrics."
-  canonical="https://westmountfundamentals.com/list-best-monthly-dividend-stocks" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -357,7 +355,7 @@ export const meta = {
   </div>
 
     <div class="header">
-      <h1>Best Monthly Dividend Stocks & ETFs (2026)</h1>
+      <h1>{page.h1}</h1>
       <p class="header-desc">A complete ranking of stocks, Real Estate Investment Trusts (REITs), Business Development Companies (BDCs), and ETFs that pay dividends every month. Data updated dynamically.</p>
     </div>
 

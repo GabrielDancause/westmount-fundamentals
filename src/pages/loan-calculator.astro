@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Simple Loan Calculator | Real-time Monthly Payments",
-  description: "Calculate your estimated monthly loan payments, total interest, and amortization schedule instantly with our free, real-time loan calculator.",
-  category: "tool",
-};
+const page = (registry as any)["loan-calculator"];
+export const meta = { title: "Simple Loan Calculator | Real-time Monthly Payments", description: "Calculate your estimated monthly loan payments, total interest, and amortization schedule instantly with our free, real-time loan calculator.", category: "tool", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,7 +53,7 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/loan-calculator" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div class="page-content">
 
     <div class="container">
@@ -63,7 +61,7 @@ const schema = JSON.stringify({
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Simple Loan Calculator</span></nav>
     <span>4 min read</span>
   </div>
-      <h1>Loan Calculator</h1>
+      <h1>{page.h1}</h1>
       <p style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">
         Calculate estimated monthly payments and total interest for mortgages, auto loans, or personal loans.
       </p>

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["price-to-book"];
+export const meta = { title: "Price-to-Book Ratio Rankings by Sector 2026", description: "Some S&P 500 stocks trade below the value of their own assets. We mapped P/B ratios across every sector to find the deepest value.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   "datePublished": "2026-03-09"
 };
 
-export const meta = {
-  title: "Price-to-Book Ratio Rankings by Sector 2026",
-  description: "Some S&P 500 stocks trade below the value of their own assets. We mapped P/B ratios across every sector to find the deepest value.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Price-to-Book Ratio Rankings by Sector 2026"
-  description="Some S&P 500 stocks trade below the value of their own assets. We mapped P/B ratios across every sector to find the deepest value."
-  canonical="https://westmountfundamentals.com/price-to-book" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -217,7 +215,7 @@ export const meta = {
         
 
         <section class="card">
-    <h1>Price-to-Book Ratio Rankings by Sector 2026</h1>
+    <h1>{page.h1}</h1>
 
             <h2>Sector Medians Comparison</h2>
             <p>Comparing median Price-to-Book ratios across all GICS sectors. A lower P/B generally indicates a sector may be undervalued relative to its assets.</p>

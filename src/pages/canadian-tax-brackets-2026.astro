@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["canadian-tax-brackets-2026"];
+export const meta = { title: "2026 Canadian Tax Brackets & Income Calculator", description: "Complete 2026 Canadian federal and provincial tax brackets. Interactive calculator: see your marginal rate, total tax, and take-home pay instantly.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "2026 Canadian Tax Brackets & Income Calculator",
-  description: "Complete 2026 Canadian federal and provincial tax brackets. Interactive calculator: see your marginal rate, total tax, and take-home pay instantly.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="2026 Canadian Tax Brackets & Income Calculator"
-  description="Complete 2026 Canadian federal and provincial tax brackets. Interactive calculator: see your marginal rate, total tax, and take-home pay instantly."
-  canonical="https://westmountfundamentals.com/canadian-tax-brackets-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -360,7 +358,7 @@ export const meta = {
     <span>5 min read</span>
   </div>
     <div class="hero">
-        <h1>2026 Canadian Tax Calculator</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">Complete federal and provincial income tax rates, CPP/EI deductions, and take-home pay analysis.</p>
     </div>
 

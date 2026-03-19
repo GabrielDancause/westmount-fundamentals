@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "What is Dividend Income? A Complete Guide with Real Examples",
-  description: "Discover the truth about dividend income, how it actually works, and the surprising math behind top-paying companies. The answer might change how you invest.",
-  category: "guide",
-  published: "2026-03-17"
-};
+const page = (registry as any)["what-is-dividend-income"];
+export const meta = { title: "What is Dividend Income? A Complete Guide with Real Examples", description: "Discover the truth about dividend income, how it actually works, and the surprising math behind top-paying companies. The answer might change how you invest.", category: "guide", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -76,9 +73,9 @@ const schema = {
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/what-is-dividend-income"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -87,7 +84,7 @@ const schema = {
   </div>
 
   <div class="page-content container">
-    <h1>What is Dividend Income? The Definitive Guide</h1>
+    <h1>{page.h1}</h1>
 
     <div class="highlight-box">
       <strong>Key Takeaways:</strong>

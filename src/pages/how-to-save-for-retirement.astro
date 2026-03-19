@@ -1,11 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "How to Save for Retirement: The Complete Guide",
-  description: "Learn how to save for retirement with this comprehensive guide. We cover accounts, strategies, asset allocation, and common mistakes to avoid.",
-  category: "guide",
-};
+const page = (registry as any)["how-to-save-for-retirement"];
+export const meta = { title: "How to Save for Retirement: The Complete Guide", description: "Learn how to save for retirement with this comprehensive guide. We cover accounts, strategies, asset allocation, and common mistakes to avoid.", category: "guide", published: "2026-03-18" };
 
 const schema = JSON.stringify({
   "@context": "https://schema.org",
@@ -55,14 +53,14 @@ const schema = JSON.stringify({
 });
 ---
 
-<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/how-to-save-for-retirement" schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">How to Save for Retirement: The Complete Guide</span></nav>
     <span>14 min read</span>
   </div>
   <div class="page-content">
 
-    <h1>How to Save for Retirement: The Complete Guide</h1>
+    <h1>{page.h1}</h1>
 
     <p class="guide-intro">
       Saving for retirement is one of the most critical financial goals you will ever face. Unlike buying a car or funding an education, you cannot take out a loan for your retirement. It requires foresight, discipline, and a solid understanding of how compounding interest and tax-advantaged accounts work together to build wealth over decades. This guide breaks down exactly how to save for retirement, whether you are just starting your career or trying to catch up later in life.

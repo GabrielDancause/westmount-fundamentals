@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["schb-etf-review-2026"];
+export const meta = { title: "SCHB ETF Review: Schwab US Broad Market (2026)", description: "Complete review of SCHB ETF. Discover its 0.03% expense ratio, top holdings, performance vs VTI, and if it", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -14,19 +18,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "SCHB ETF Review: Schwab US Broad Market (2026)",
-  description: "Complete review of SCHB ETF. Discover its 0.03% expense ratio, top holdings, performance vs VTI, and if it's the best total market fund for Schwab users.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="SCHB ETF Review: Schwab US Broad Market (2026)"
-  description="Complete review of SCHB ETF. Discover its 0.03% expense ratio, top holdings, performance vs VTI, and if it's the best total market fund for Schwab users."
-  canonical="https://westmountfundamentals.com/schb-etf-review-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -174,7 +172,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">SCHB ETF Review: Schwab US Broad Market (2026)</span></nav>
     <span>4 min read</span>
   </div>
-        <h1>SCHB ETF Review: Schwab US Broad Market (2026)</h1>
+        <h1>{page.h1}</h1>
         <p class="intro">A comprehensive analysis of Schwab's total market ETF, including expense ratio, holdings, and performance comparison against Vanguard's VTI.</p>
 
         <div class="stats-grid" id="stats-grid">

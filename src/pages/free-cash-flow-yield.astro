@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["free-cash-flow-yield"];
+export const meta = { title: "Free Cash Flow Yield: Top 50 S&P 500 Companies 2026", description: "These 50 S&P 500 companies generate the most free cash relative to their stock price — the ultimate value screen for cash-rich businesses.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -27,19 +31,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Free Cash Flow Yield: Top 50 S&P 500 Companies 2026",
-  description: "These 50 S&P 500 companies generate the most free cash relative to their stock price — the ultimate value screen for cash-rich businesses.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Free Cash Flow Yield: Top 50 S&P 500 Companies 2026"
-  description="These 50 S&P 500 companies generate the most free cash relative to their stock price — the ultimate value screen for cash-rich businesses."
-  canonical="https://westmountfundamentals.com/free-cash-flow-yield" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -101,7 +99,7 @@ export const meta = {
   </div>
         <!-- Sector Chart -->
         <section class="chart-section">
-    <h1>Free Cash Flow Yield: Top 50 S&P 500 Companies 2026</h1>
+    <h1>{page.h1}</h1>
 
             <h2>Top Sectors by FCF Yield Representation</h2>
             <div class="chart-container">

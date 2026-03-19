@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["stock-splits-history"];
+export const meta = { title: "Stock Split History & Post-Split Performance (2020-2026)", description: "Do stocks actually outperform after a split? We tracked every major split since 2020 and measured the 1-year returns. The data tells a clear story.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -17,19 +21,13 @@ const schema = {
   "datePublished": "2026-03-09"
 };
 
-export const meta = {
-  title: "Stock Split History & Post-Split Performance (2020-2026)",
-  description: "Do stocks actually outperform after a split? We tracked every major split since 2020 and measured the 1-year returns. The data tells a clear story.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Stock Split History & Post-Split Performance (2020-2026)"
-  description="Do stocks actually outperform after a split? We tracked every major split since 2020 and measured the 1-year returns. The data tells a clear story."
-  canonical="https://westmountfundamentals.com/stock-splits-history" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -79,7 +77,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Stock Split History & Post-Split Performance (2...</span></nav>
     <span>3 min read</span>
   </div>
-    <h1>Stock Split History & Post-Split Performance (2020-2026)</h1>
+    <h1>{page.h1}</h1>
 
         <div class="stat-banner">
             <div class="stat-card">

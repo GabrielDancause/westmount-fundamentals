@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-top-10-holdings-weight-2026"];
+export const meta = { title: "S&P 500 Top 10 Stocks by Weight 2026", description: "Detailed breakdown of the 10 largest S&P 500 stocks by index weight. Track concentration levels over time.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "S&P 500 Top 10 Stocks by Weight 2026",
-  description: "Detailed breakdown of the 10 largest S&P 500 stocks by index weight. Track concentration levels over time.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="S&P 500 Top 10 Stocks by Weight 2026"
-  description="Detailed breakdown of the 10 largest S&P 500 stocks by index weight. Track concentration levels over time."
-  canonical="https://westmountfundamentals.com/sp500-top-10-holdings-weight-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -307,7 +305,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Top 10 Stocks by Weight 2026</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>S&P 500 Top 10 Stocks by Weight 2026</h1>
+    <h1>{page.h1}</h1>
 
     
 

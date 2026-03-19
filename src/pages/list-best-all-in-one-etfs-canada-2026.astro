@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["list-best-all-in-one-etfs-canada-2026"];
+export const meta = { title: "Best All-in-One ETFs in Canada 2026", description: "Discover the best all-in-one ETFs in Canada for 2026. Compare top asset allocation funds like VGRO, VEQT, XGRO, and XEQT by returns, MER, and risk profile.", category: "list", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Best All-in-One ETFs in Canada 2026",
-  description: "Discover the best all-in-one ETFs in Canada for 2026. Compare top asset allocation funds like VGRO, VEQT, XGRO, and XEQT by returns, MER, and risk profile.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best All-in-One ETFs in Canada 2026"
-  description="Discover the best all-in-one ETFs in Canada for 2026. Compare top asset allocation funds like VGRO, VEQT, XGRO, and XEQT by returns, MER, and risk profile."
-  canonical="https://westmountfundamentals.com/list-best-all-in-one-etfs-canada-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -306,7 +304,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/lists/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Lists</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Best All-in-One ETFs in Canada 2026</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>Best All-in-One ETFs in Canada 2026</h1>
+    <h1>{page.h1}</h1>
     <p class="subtitle">Ranked comparison of top Canadian asset allocation ETFs</p>
 
     <div class="stats-row">

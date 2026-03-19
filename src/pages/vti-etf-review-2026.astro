@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["vti-etf-review-2026"];
+export const meta = { title: "VTI ETF Review 2026: Vanguard Total Stock Market Analysis", description: "Complete 2026 review of the Vanguard Total Stock Market ETF (VTI). Compare holdings, sector weights, performance vs VOO, and tax efficiency.", category: "tool", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "VTI ETF Review 2026: Vanguard Total Stock Market Analysis",
-  description: "Complete 2026 review of the Vanguard Total Stock Market ETF (VTI). Compare holdings, sector weights, performance vs VOO, and tax efficiency.",
-  category: "tool",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="VTI ETF Review 2026: Vanguard Total Stock Market Analysis"
-  description="Complete 2026 review of the Vanguard Total Stock Market ETF (VTI). Compare holdings, sector weights, performance vs VOO, and tax efficiency."
-  canonical="https://westmountfundamentals.com/vti-etf-review-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -278,7 +276,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">VTI ETF Review 2026: Vanguard Total Stock Marke...</span></nav>
     <span>4 min read</span>
   </div>
-        <h1>VTI ETF Review 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="subtitle">An in-depth analysis of the Vanguard Total Stock Market ETF, including holdings, performance comparison, and sector weights.</p>
 
         <div class="stats-grid">

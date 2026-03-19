@@ -1,12 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Cost Basis Calculator: Track Stock & Crypto Purchase Lots (2026)",
-  description: "Calculate your average cost basis for stocks, crypto, and ETFs. Free interactive calculator supporting multiple purchase lots, dividends, and real-time...",
-  category: "tool",
-  published: "2026-03-20",
-};
+const page = (registry as any)["cost-basis-calculator"];
+export const meta = { title: "Cost Basis Calculator: Track Stock & Crypto Purchase Lots (2026)", description: "Calculate your average cost basis for stocks, crypto, and ETFs. Free interactive calculator supporting multiple purchase lots, dividends, and real-time...", category: "tool", published: "2026-03-20" };
 
 const schema = JSON.stringify([
   {
@@ -67,9 +64,9 @@ const schema = JSON.stringify([
 
 <SiteLayout
   site="westmount"
-  title={meta.title}
-  description={meta.description}
-  canonical="https://westmountfundamentals.com/cost-basis-calculator"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -79,7 +76,7 @@ const schema = JSON.stringify([
   <div class="page-content">
 
     <div class="hero">
-      <h1>Cost Basis Calculator</h1>
+      <h1>{page.h1}</h1>
       <p>Calculate your exact average cost per share across multiple purchase lots for stocks, ETFs, and crypto.</p>
     </div>
 

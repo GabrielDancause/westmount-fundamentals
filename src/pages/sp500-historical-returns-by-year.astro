@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["sp500-historical-returns-by-year"];
+export const meta = { title: "S&P 500 Annual Returns by Year (1928-2026)", description: "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "S&P 500 Annual Returns by Year (1928-2026)",
-  description: "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="S&P 500 Annual Returns by Year (1928-2026)"
-  description="Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages."
-  canonical="https://westmountfundamentals.com/sp500-historical-returns-by-year" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 :root {
@@ -115,7 +113,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">S&P 500 Annual Returns by Year (1928-2026)</span></nav>
     <span>4 min read</span>
   </div>
-    <h1>S&P 500 Annual Returns by Year</h1>
+    <h1>{page.h1}</h1>
     <p class="subtitle">Comprehensive historical performance data including total returns, price returns, and inflation adjustments since 1928.</p>
 
     <div class="stats-grid">

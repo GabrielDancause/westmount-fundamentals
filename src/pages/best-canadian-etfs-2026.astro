@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["best-canadian-etfs-2026"];
+export const meta = { title: "Best Canadian ETFs in 2026: Complete Guide", description: "The ultimate guide to the best Canadian ETFs in 2026. Compare equity, bond, dividend, international, and REIT ETFs.", category: "list", published: "2026-03-15" };
 
 const schema = [
   {
@@ -50,19 +54,13 @@ const schema = [
   }
 ];
 
-export const meta = {
-  title: "Best Canadian ETFs in 2026: Complete Guide",
-  description: "The ultimate guide to the best Canadian ETFs in 2026. Compare equity, bond, dividend, international, and REIT ETFs.",
-  category: "list",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Best Canadian ETFs in 2026: Complete Guide"
-  description="The ultimate guide to the best Canadian ETFs in 2026. Compare equity, bond, dividend, international, and REIT ETFs."
-  canonical="https://westmountfundamentals.com/best-canadian-etfs-2026"
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -71,7 +69,7 @@ export const meta = {
   </div>
   <div class="page-content">
     <div class="hero">
-      <h1>Best Canadian ETFs in 2026</h1>
+      <h1>{page.h1}</h1>
       <p>The comprehensive guide to building a winning portfolio with top Canadian exchange-traded funds.</p>
     </div>
 

@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["bond-yield-curve-2026"];
+export const meta = { title: "Treasury Yield Curve 2026: Current Rates and Inversion An...", description: "Is the yield curve predicting a recession right now? Compare the current US Treasury yield curve to 1 and 2 years ago to uncover what it signals about the...", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -13,19 +17,13 @@ const schema = {
   }
 };
 
-export const meta = {
-  title: "Treasury Yield Curve 2026: Current Rates and Inversion An...",
-  description: "Is the yield curve predicting a recession right now? Compare the current US Treasury yield curve to 1 and 2 years ago to uncover what it signals about the...",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
  · Updated March 2026<SiteLayout
   site="westmount"
-  title="Treasury Yield Curve 2026: Current Rates and Inversion An..."
-  description="Is the yield curve predicting a recession right now? Compare the current US Treasury yield curve to 1 and 2 years ago to uncover what it signals about the."
-  canonical="https://westmountfundamentals.com/bond-yield-curve-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -234,7 +232,7 @@ export const meta = {
   </div>
 
         <section>
-    <h1>Treasury Yield Curve 2026: Current Rates and Inversion An...</h1>
+    <h1>{page.h1}</h1>
 
             <div class="card">
                 <h2>Key Metrics (As of 01/30/2026)</h2>

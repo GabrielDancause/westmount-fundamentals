@@ -1,5 +1,9 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["housing-affordability-index-2026"];
+export const meta = { title: "Housing Affordability Index 2026: US vs Canada", description: "Compare 2026 housing affordability across 30 US and Canadian cities. See price-to-income ratios and find the most affordable cities to buy a house.", category: "guide", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -48,19 +52,13 @@ const schema = {
   ]
 };
 
-export const meta = {
-  title: "Housing Affordability Index 2026: US vs Canada",
-  description: "Compare 2026 housing affordability across 30 US and Canadian cities. See price-to-income ratios and find the most affordable cities to buy a house.",
-  category: "guide",
-  published: "2026-03-15",
-};
 ---
 
 <SiteLayout
   site="westmount"
-  title="Housing Affordability Index 2026: US vs Canada"
-  description="Compare 2026 housing affordability across 30 US and Canadian cities. See price-to-income ratios and find the most affordable cities to buy a house."
-  canonical="https://westmountfundamentals.com/housing-affordability-index-2026" schema={schema}
+  title={page.title}
+  description={page.description}
+  canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}
 >
   <style>
 
@@ -268,7 +266,7 @@ export const meta = {
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Housing Affordability Index 2026: US vs Canada</span></nav>
     <span>3 min read</span>
   </div>
-        <h1>Housing Affordability Index: US & Canada 2026</h1>
+        <h1>{page.h1}</h1>
         <p class="intro">A comprehensive comparison of housing affordability across major North American cities. Track home price-to-income ratios, mortgage burdens, and discover the most affordable cities to buy a house in 2026.</p>
 
         <div class="stats-grid" id="statsGrid">

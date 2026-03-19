@@ -1,21 +1,18 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
 
-export const meta = {
-  title: "Dividend Reinvestment Calculator: Visualize the Power of Compounding",
-  description: "Want to see the real impact of reinvesting dividends over time? Discover how DRIP strategies can dramatically transform your portfolio returns in our.",
-  category: "tool",
-  published: "2026-03-17"
-};
+const page = (registry as any)["dividend-reinvestment-calculator"];
+export const meta = { title: "Dividend Reinvestment Calculator: Visualize the Power of Compounding", description: "Want to see the real impact of reinvesting dividends over time? Discover how DRIP strategies can dramatically transform your portfolio returns in our.", category: "tool", published: "2026-03-17" };
 
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Article",
-      "headline": meta.title,
-      "description": meta.description,
-      "datePublished": meta.published,
+      "headline": page.title,
+      "description": page.description,
+      "datePublished": page.published,
       "author": {
         "@type": "Organization",
         "name": "Westmount Fundamentals"
@@ -70,13 +67,13 @@ const schema = {
 };
 ---
 
- · Updated March 2026<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/dividend-reinvestment-calculator" schema={JSON.stringify(schema)}>
+ · Updated March 2026<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={JSON.stringify(schema)}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Dividend Reinvestment Calculator: Visualize the...</span></nav>
     <span>12 min read</span>
   </div>
   <div class="page-content">
-    <h1>Dividend Reinvestment Calculator</h1>
+    <h1>{page.h1}</h1>
     <p>
       Understanding how your investments grow over time is crucial for long-term financial success. One of the most powerful mechanisms for wealth creation in the stock market is the compounding effect of reinvested dividends. Our interactive <strong>dividend reinvestment calculator</strong> allows you to model different scenarios, adjust your expected yields and growth rates, and visualize exactly how much of your total return comes from capital appreciation versus reinvested cash flow.
     </p>
