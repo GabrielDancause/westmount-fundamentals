@@ -1,21 +1,11 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 
-// Top 60 companies by market cap (as of March 2026)
-const TOP_60 = new Set([
-  'AAPL','MSFT','NVDA','AMZN','GOOGL','META','BRK.B','TSLA','AVGO','LLY',
-  'JPM','V','MA','UNH','COST','HD','NFLX','JNJ','ABBV','WMT',
-  'ORCL','PG','BAC','SAP','CRM','XOM','TSMC','MRK','AMD','ASML',
-  'KO','PEP','TMO','ACN','CSCO','LIN','ABT','NOW','MCD','ISRG',
-  'IBM','ADBE','GE','INTU','QCOM','TXN','PM','CAT','AXP','BKNG',
-  'AMGN','PFE','CMCSA','DHR','BLK','LOW','HON','AMAT','GS','T',
-]);
-
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Intrinsic Value Dashboard: 60 Largest Companies by Market Cap",
-  "description": "Gemini 3.1 ran a two-stage DCF on the 60 biggest publicly traded companies. Every assumption disclosed. Every number computed. See which stocks are overvalued and undervalued.",
+  "headline": "S&P 500 Intrinsic Value: Every Company Valued by DCF",
+  "description": "Gemini 3.1 ran a two-stage DCF on S&P 500 companies. Every assumption disclosed. Every number computed. See which stocks are overvalued and undervalued.",
   "datePublished": "2026-03-18",
   "dateModified": "2026-03-18",
   "author": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
@@ -24,8 +14,8 @@ const schema = {
 };
 
 export const meta = {
-  title: "Intrinsic Value Dashboard: 60 Largest Companies",
-  description: "DCF-based intrinsic value estimates for the 60 biggest companies by market cap. Compiled by Gemini 3.1 with full transparency on assumptions.",
+  title: "S&P 500 Intrinsic Value Dashboard — Every Company Valued",
+  description: "DCF-based intrinsic value estimates for all S&P 500 companies we've analyzed. Compiled by Gemini 3.1 with full transparency on assumptions.",
   category: "study",
   published: "2026-03-18",
 };
@@ -41,7 +31,7 @@ const companies = Object.values(ivDataFiles).map((raw: any) => {
     iv: d.computedIV || 0,
     price: d.currentPrice || 0,
   };
-}).filter(c => c.iv > 0 && c.price > 0 && TOP_60.has(c.ticker));
+}).filter(c => c.iv > 0 && c.price > 0);
 
 // Compute derived fields
 const enriched = companies.map(c => {
@@ -57,9 +47,9 @@ const totalCompanies = enriched.length;
 
 <SiteLayout
   site="westmount"
-  title="Intrinsic Value Dashboard: 60 Largest Companies"
-  description="DCF-based intrinsic value estimates for the 60 biggest companies by market cap. Compiled by Gemini 3.1 with full transparency on assumptions."
-  canonical="https://westmountfundamentals.com/intrinsic-value-dashboard"
+  title="S&P 500 Intrinsic Value Dashboard — Every Company Valued"
+  description="DCF-based intrinsic value estimates for all S&P 500 companies we've analyzed. Compiled by Gemini 3.1 with full transparency on assumptions."
+  canonical="https://westmountfundamentals.com/intrinsic-value-sp500"
   schema={schema}
 >
 <style>
@@ -127,8 +117,8 @@ tr:hover td { background: rgba(74,143,231,0.03); }
   <div class="header-content">
     <div class="tag">Original Research</div>
     <h1>Intrinsic Value Dashboard</h1>
-    <p class="subtitle">Two-stage DCF valuations for the {totalCompanies} largest companies by market cap — each compiled independently by Gemini 3.1 with every assumption disclosed.</p>
-    <p style="color: #5a6a80; font-size: 0.85rem; margin-top: 8px;">Looking for more? See the <a href="/intrinsic-value-sp500/" style="color: #4a8fe7;">full S&P 500 dashboard →</a></p>
+    <p class="subtitle">Two-stage DCF valuations for {totalCompanies} S&P 500 companies — each compiled independently by Gemini 3.1 with every assumption disclosed.</p>
+    <p style="color: #5a6a80; font-size: 0.85rem; margin-top: 8px;">See also: <a href="/intrinsic-value-dashboard/" style="color: #4a8fe7;">Top 60 by Market Cap →</a></p>
     <p class="date">Updated March 18, 2026 · Data: FY2025 10-K filings via S&P Global</p>
   </div>
 </div>
