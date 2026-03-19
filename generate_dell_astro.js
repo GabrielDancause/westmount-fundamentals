@@ -1,0 +1,675 @@
+const fs = require('fs');
+
+const fcfTTM = 8552;
+const sharesOutstanding = 684;
+const cashAndInvestments = 11528;
+const totalDebt = 31503;
+const netCash = cashAndInvestments - totalDebt; // -19975
+
+const currentPrice = 151.75;
+const growthRatePhase1 = 0.10; // 10%
+const discountRate = 0.10; // 10%
+const growthRateTerminal = 0.03; // 3%
+
+// Math logic to check assumptions and build the string template for Astro file
+let fcf = fcfTTM;
+const projectedFCF = [];
+for (let yr = 1; yr <= 5; yr++) {
+  fcf = fcf * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+const equityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+console.log({ roundedIV, enterpriseValue, equityValue, netCash, pvPhase1, pvTerminalValue });
+
+const content = `---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Dell Technologies (DELL) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Dell Technologies. Using recent TTM financials to arrive at a single fair value estimate for DELL shares.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/dell-intrinsic-value"
+  }
+};
+
+export const meta = {
+  title: "Dell Technologies (DELL) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on Dell Technologies using TTM actuals. One number. Every assumption disclosed. Here's what Dell is really worth.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   Every number is sourced from Dell's financials.
+   We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
+   ═══════════════════════════════════════════════════════════════ */
+
+// --- INPUTS (all in millions USD unless noted) ---
+const fcfTTM = 8552;                   // TTM Free Cash Flow ($M)
+const sharesOutstanding = 684;         // Diluted shares outstanding ($M)
+const cashAndInvestments = 11528;      // Cash + short-term investments ($M)
+const totalDebt = 31503;               // Total debt ($M)
+const netCash = cashAndInvestments - totalDebt; // -$19,975M
+
+// --- ASSUMPTIONS (fully disclosed below) ---
+const growthRatePhase1 = 0.10;         // 10% FCF growth, Years 1-5
+const growthRateTerminal = 0.03;       // 3% perpetuity growth (terminal)
+const discountRate = 0.10;             // 10% WACC / required return
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+let fcf = fcfTTM;
+for (let yr = 1; yr <= 5; yr++) {
+  fcf = fcf * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+// --- ENTERPRISE VALUE ---
+const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+// --- EQUITY VALUE ---
+const equityValue = enterpriseValue + netCash;
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+// Market comparison
+const currentPrice = 151.75;
+const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+
+// --- HISTORICAL DATA for charts ---
+const revenueHistory = [
+  { year: 2021, value: 101197 },
+  { year: 2022, value: 102301 },
+  { year: 2023, value: 88425 },
+  { year: 2024, value: 95567 },
+  { year: 'TTM', value: 113538 },
+];
+const fcfHistory = [
+  { year: 2021, value: 7511 },
+  { year: 2022, value: 562 },
+  { year: 2023, value: 5920 },
+  { year: 2024, value: 1869 },
+  { year: 'TTM', value: 8552 },
+];
+const epsHistory = [
+  { year: 2021, value: 6.26 },
+  { year: 2022, value: 3.24 },
+  { year: 2023, value: 4.60 },
+  { year: 2024, value: 6.38 },
+  { year: 'TTM', value: 8.68 },
+];
+const marginHistory = [
+  { year: 2021, operating: 4.60, profit: 4.88, fcfMargin: 7.42 },
+  { year: 2022, operating: 5.64, profit: 2.37, fcfMargin: 0.55 },
+  { year: 2023, operating: 6.12, profit: 3.81, fcfMargin: 6.69 },
+  { year: 2024, operating: 6.53, profit: 4.79, fcfMargin: 1.96 },
+  { year: 'TTM', operating: 7.18, profit: 5.23, fcfMargin: 7.53 },
+];
+
+// Sensitivity analysis
+const sensitivityRates = [0.08, 0.09, 0.10, 0.11, 0.12];
+const sensitivityGrowth = [0.06, 0.08, 0.10, 0.12, 0.14];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      let f = fcfTTM;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="Dell Technologies (DELL) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on Dell Technologies using TTM actuals. One number. Every assumption disclosed. Here's what Dell is really worth."
+  canonical="https://westmountfundamentals.com/dell-intrinsic-value"
+  schema={schema}
+>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* Sources */
+.sources { margin: 40px 0 60px; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.sources h4 { color: #e0e6f0; margin-bottom: 12px; }
+.sources ul { list-style: none; padding: 0; }
+.sources li { font-size: 0.85rem; color: #5a6a80; margin-bottom: 6px; padding-left: 16px; position: relative; }
+.sources li::before { content: '→'; position: absolute; left: 0; color: #4a8fe7; }
+
+/* Cite */
+.cite-block { margin: 40px 0; padding: 20px 24px; background: #0a1020; border-left: 3px solid #4a8fe7; border-radius: 0 14px 14px 0; }
+.cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
+.cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 60px; }
+.related-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 20px; display: block; color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); text-decoration: none; }
+.related-card .rc-title { color: #e0e6f0; font-weight: 700; margin-bottom: 6px; }
+.related-card .rc-desc { font-size: 0.85rem; color: #5a6a80; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Compiled by Gemini 3.1</div>
+    <h1>Dell Technologies (DELL)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Dell Technologies — using TTM actuals, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated March 18, 2026 · Data: StockAnalysis TTM</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- ═══ THE VERDICT ═══ -->
+  <div class="verdict-card">
+    <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+    <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+    <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
+    <div class="verdict-badge" style={\`background: \${verdictColor}22; color: \${verdictColor}; border: 1px solid \${verdictColor}44;\`}>
+      {verdictText}
+    </div>
+  </div>
+
+  <!-- ═══ KEY METRICS ═══ -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">$113.5B</div>
+      <div class="stat-label">TTM Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$8.6B</div>
+      <div class="stat-label">Free Cash Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$8.68</div>
+      <div class="stat-label">EPS (Diluted)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">7.18%</div>
+      <div class="stat-label">Operating Margin</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">-$20.0B</div>
+      <div class="stat-label">Net Cash</div>
+    </div>
+  </div>
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <h2>Methodology: Two-Stage DCF</h2>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
+
+  <div class="method-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Start with actual Free Cash Flow</h4>
+      <p>Dell generated <strong>$8.55 billion</strong> in free cash flow over the trailing twelve months. This is operating cash flow ($10.3B) minus capital expenditures. This is real cash the business produces after paying for everything, including its supply chain and capex commitments for AI server demand.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Project FCF growth for 5 years (Phase 1)</h4>
+      <p>We grow FCF at <strong>10% per year</strong> for 5 years. This assumes Dell continues to benefit from robust AI server deployments and enterprise PC refresh cycles, though tempered by hardware cycles and working capital needs.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Calculate terminal value (Phase 2)</h4>
+      <p>After Year 5, we assume FCF grows at <strong>3% forever</strong> — matching long-term GDP growth. Hardware is cyclical, but Dell's footprint in IT infrastructure provides a durable base. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate).</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Discount everything to present value</h4>
+      <p>All future cash flows are discounted at <strong>10%</strong> — our required rate of return. This is the cost of equity for a mature tech hardware company, well above the 10Y Treasury (4.18%) plus a standard equity risk premium.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Add net cash, divide by shares</h4>
+      <p>Enterprise Value + Net Cash (-$19.98B) = Equity Value. Dell carries significant debt. Divide by shares outstanding (684M) for the per-share intrinsic value.</p>
+    </div>
+  </div>
+
+  <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+  <h2>The Three Assumptions That Drive Everything</h2>
+  <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
+
+  <div class="assumption-grid">
+    <div class="assumption-card">
+      <div class="label">FCF Growth Rate (Years 1-5)</div>
+      <div class="value">10%</div>
+      <div class="rationale">
+        Dell is seeing explosive demand for AI servers, but standard PC and storage markets remain cyclical. A 10% FCF growth rate balances the AI supercycle with potential headwinds in core legacy infrastructure.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Discount Rate (WACC)</div>
+      <div class="value">10%</div>
+      <div class="rationale">
+        10Y Treasury: 4.18%. Given Dell's debt load and cyclicality, a 10% discount rate represents a solid required return for an IT hardware vendor transitioning to a modern services and AI infrastructure player.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Terminal Growth Rate</div>
+      <div class="value">3%</div>
+      <div class="rationale">
+        Matches nominal global GDP growth. Hardware becomes commoditized over time, but Dell's direct sales model and enterprise relationships justify keeping pace with the overall economy.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+  <h2>Projected Free Cash Flows</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>FCF ($M)</th>
+          <th>PV Factor</th>
+          <th>Present Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Base (TTM)</td>
+          <td>\${fcfTTM.toLocaleString()}</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        {projectedFCF.map(p => (
+          <tr>
+            <td>Year {p.year} ({2025 + p.year})</td>
+            <td>\${p.fcf.toLocaleString()}</td>
+            <td>{p.pvFactor.toFixed(4)}</td>
+            <td>\${p.pvFCF.toLocaleString()}</td>
+          </tr>
+        ))}
+        <tr class="row-total">
+          <td colspan="3">Sum of Phase 1 PV</td>
+          <td class="highlight-cell">\${pvPhase1.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ TERMINAL VALUE ═══ -->
+  <h3>Terminal Value</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Year 6 FCF (Year 5 × 1.03)</td>
+          <td>\${Math.round(fcfYear6).toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>Terminal Value (FCF₆ ÷ (10% − 3%))</td>
+          <td>\${terminalValue.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td>PV of Terminal Value</td>
+          <td class="highlight-cell">\${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ FINAL CALCULATION ═══ -->
+  <h3>Final Valuation</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PV of Phase 1 Cash Flows</td>
+          <td>\${pvPhase1.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>PV of Terminal Value</td>
+          <td>\${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>= Enterprise Value</td>
+          <td>\${enterpriseValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>+ Net Cash (Cash − Debt)</td>
+          <td>\${netCash.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>= Equity Value</td>
+          <td>\${equityValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>÷ Shares Outstanding</td>
+          <td>{sharesOutstanding.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td>Intrinsic Value Per Share</td>
+          <td class="highlight-cell">\${roundedIV.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ HISTORICAL CHARTS ═══ -->
+  <h2>Financial Track Record</h2>
+  <p>Before trusting a forward projection, look at where the company has been. Here's Dell's 5-year performance.</p>
+
+  <h3>Revenue ($B)</h3>
+  <div class="bar-chart">
+    {revenueHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill revenue" style={\`width: \${(r.value / 113538) * 100}%\`}>
+            \${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Free Cash Flow ($B)</h3>
+  <div class="bar-chart">
+    {fcfHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill fcf" style={\`width: \${(r.value / 8552) * 100}%\`}>
+            \${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Earnings Per Share (Diluted)</h3>
+  <div class="bar-chart">
+    {epsHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill eps" style={\`width: \${(r.value / 8.68) * 100}%\`}>
+            \${r.value.toFixed(2)}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- ═══ MARGIN TRENDS ═══ -->
+  <h3>Margin Trends</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Operating Margin</th>
+          <th>Profit Margin</th>
+          <th>FCF Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {marginHistory.map(m => (
+          <tr>
+            <td>{m.year}</td>
+            <td>{m.operating}%</td>
+            <td>{m.profit}%</td>
+            <td>{m.fcfMargin}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Our base case uses 10% growth and 10% discount rate. But reasonable people disagree on these numbers. Here's what the intrinsic value looks like under different assumptions.</p>
+
+  <div class="table-wrap">
+    <table class="sensitivity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+          {sensitivityGrowth.map(g => (
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityTable.map(row => (
+          <tr>
+            <td>{(row.dr * 100).toFixed(0)}%</td>
+            {row.values.map((v, i) => (
+              <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                \${v}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>What This Model Doesn't Capture</h2>
+
+  <h3>Upside risks (our number could be too low)</h3>
+  <ul>
+    <li><strong>AI Server Supercycle:</strong> If enterprise adoption of on-prem AI infrastructure accelerates far beyond current projections, 10% FCF growth could prove highly conservative.</li>
+    <li><strong>PC Refresh:</strong> A massive Windows 11 and AI PC refresh cycle could dramatically boost margins and volume simultaneously.</li>
+    <li><strong>Margin Expansion:</strong> Dell has been effective at pricing and reducing structural costs. Further operating margin expansion translates quickly to free cash flow.</li>
+  </ul>
+
+  <h3>Downside risks (our number could be too high)</h3>
+  <ul>
+    <li><strong>Debt Burden:</strong> With substantial debt, rising interest rates or a credit downgrade could compress valuation multiples and equity value.</li>
+    <li><strong>Commoditization:</strong> AI servers may face intense price competition as supply normalizes, compressing margins significantly.</li>
+    <li><strong>Macro Weakness:</strong> A severe recession would cripple enterprise IT spending across both servers and client solutions.</li>
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>Why use DCF instead of a P/E multiple?</summary>
+      <div class="faq-answer">Multiples depend entirely on market sentiment, which can be euphoric for AI stocks or deeply depressed during hardware downcycles. A DCF grounds the valuation in the actual cash the business can produce, minus its significant debt obligations.</div>
+    </details>
+    <details>
+      <summary>How does Dell's debt impact the intrinsic value?</summary>
+      <div class="faq-answer">Dell carries around $31.5B in debt against $11.5B in cash. This net debt of ~$20B is subtracted directly from the Enterprise Value to arrive at Equity Value, which significantly reduces the per-share value.</div>
+    </details>
+    <details>
+      <summary>Is Dell a software or a hardware company?</summary>
+      <div class="faq-answer">Dell is primarily an IT infrastructure and hardware company, although its services division adds some recurring, higher-margin revenue. The cyclical nature of its core products is why we limit terminal growth to 3%.</div>
+    </details>
+  </div>
+
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+    <p>Westmount Research. "Dell Technologies (DELL) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
+  </div>
+
+  <!-- ═══ DATA SOURCES ═══ -->
+  <div class="sources">
+    <h4>Data Sources & Methodology</h4>
+    <ul>
+      <li>Dell Technologies Financials (TTM), via StockAnalysis</li>
+      <li>U.S. 10-Year Treasury yield (4.18%)</li>
+      <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+    </ul>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>
+`;
+
+fs.writeFileSync('src/pages/dell-intrinsic-value.astro', content);
+console.log('File created.');
