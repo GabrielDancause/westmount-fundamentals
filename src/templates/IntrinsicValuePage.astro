@@ -63,7 +63,7 @@ const schema = {
   "dateModified": data.published || "2026-03-18",
   "author": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
   "publisher": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
-  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://westmountfundamentals.com/${data.slug}` }
+  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://westmountfundamentals.com/${data.slug}/` }
 };
 
 const faqSchema = data.faq?.length ? {
@@ -86,7 +86,7 @@ const thesisTitle = data.thesisTitle || '';
   site="westmount"
   title={data.title}
   description={data.description}
-  canonical={`https://westmountfundamentals.com/${data.slug}`}
+  canonical={`https://westmountfundamentals.com/${data.slug}/`}
   schema={faqSchema ? [schema, faqSchema] : schema}
 >
 <div class="iv-page">

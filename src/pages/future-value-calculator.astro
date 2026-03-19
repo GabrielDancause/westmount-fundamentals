@@ -65,7 +65,7 @@ const schema = [
 ];
 ---
 
-<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}`} schema={schema}>
+<SiteLayout site="westmount" title={page.title} description={page.description} canonical={`https://westmountfundamentals.com/${page.slug}/`} schema={schema}>
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
     <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Future Value Calculator</span></nav>
     <span>12 min read</span>
@@ -177,7 +177,7 @@ const schema = [
         Investors predominantly use the future value calculation to mathematically determine if a proposed investment will yield a sufficient return to justify the inherent risks involved. For instance, if you are considering locking your money into a 10-year illiquid asset, you need to know exactly what that money could have earned if left in a standard, risk-free savings account or a broad market index fund. By calculating the future value of both options, you can quantify the "opportunity cost" of your capital. Essentially, it tells you how much a given amount of money today will transform into at a specific time in the future, assuming a certain interest rate.
       </p>
       <p>
-        Of course, the math works in both directions. Sometimes you know exactly how much money you need in the future (perhaps a down payment for a house or a target retirement nest egg), and you need to figure out what that future sum is worth right now. To understand this inverse relationship—what future cash flows are worth in today's money—you must calculate the present value. Check out our comprehensive <a href="/present-value-calculator">present value calculator</a> to run these reverse calculations and discover if inflation is secretly eating away at your purchasing power.
+        Of course, the math works in both directions. Sometimes you know exactly how much money you need in the future (perhaps a down payment for a house or a target retirement nest egg), and you need to figure out what that future sum is worth right now. To understand this inverse relationship—what future cash flows are worth in today's money—you must calculate the present value. Check out our comprehensive <a href="/present-value-calculator/">present value calculator</a> to run these reverse calculations and discover if inflation is secretly eating away at your purchasing power.
       </p>
 
       <h2>The Future Value Formula and Mathematics</h2>
@@ -214,7 +214,7 @@ const schema = [
         The results of this calculation perfectly illustrate the magical power of compound interest. Over a 10-year period, your initial $10,000 investment has more than doubled to $21,589.25. You did not have to work for or contribute a single additional dollar; the $11,589.25 profit was generated entirely by your money working relentlessly on your behalf.
       </p>
       <p>
-        However, it is important to note that this formula assumes a perfectly static return. In reality, your portfolio might return 20% one year and lose 10% the next. To accurately figure out the required, smoothed annual growth rate needed to get from a specific starting balance to a target ending balance over a set number of years, you would use a <a href="/cagr-calculator">CAGR (Compound Annual Growth Rate) calculator</a> instead. CAGR provides a standardized way to measure growth regardless of volatility.
+        However, it is important to note that this formula assumes a perfectly static return. In reality, your portfolio might return 20% one year and lose 10% the next. To accurately figure out the required, smoothed annual growth rate needed to get from a specific starting balance to a target ending balance over a set number of years, you would use a <a href="/cagr-calculator/">CAGR (Compound Annual Growth Rate) calculator</a> instead. CAGR provides a standardized way to measure growth regardless of volatility.
       </p>
 
       <h2>The Profound Impact of Regular Monthly Contributions</h2>
@@ -232,7 +232,7 @@ const schema = [
       <p>While the math itself is objective, the assumptions you plug into the formula are highly subjective and prone to human error. Here are the most dangerous mistakes investors make when projecting their future wealth:</p>
       <ul>
         <li><strong>Ignoring the Devastating Effects of Inflation:</strong> The number you calculate on this page is a "nominal" figure—meaning it does not account for the changing value of currency. Simply put, $1,000,000 in 30 years will absolutely not buy what $1,000,000 buys today. Over a 30-year horizon, even a modest 3% inflation rate will cut your purchasing power in half. When projecting long-term returns for retirement planning, professional financial advisors often subtract the expected rate of inflation from the expected market return to find the "real return". For example, an optimistic 10% market return minus 3% average inflation yields a 7% real return. Always project your wealth using real returns to ensure you can actually afford your future lifestyle.</li>
-        <li><strong>Overestimating Future Market Returns:</strong> It is incredibly tempting to plug a 15% or 20% annual return into the calculator just to see the numbers go up. However, assuming an abnormally high rate of return drastically skews the outcome due to the exponential nature of compounding. If you assume 15% and the market only delivers 7%, you will fall hundreds of thousands of dollars short of your goal. It is much safer, and significantly more realistic, to assume the historical <a href="/average-stock-market-return">average stock market return</a> over long investment horizons, which generally hovers around 9-10% nominally (or 6-7% adjusted for inflation).</li>
+        <li><strong>Overestimating Future Market Returns:</strong> It is incredibly tempting to plug a 15% or 20% annual return into the calculator just to see the numbers go up. However, assuming an abnormally high rate of return drastically skews the outcome due to the exponential nature of compounding. If you assume 15% and the market only delivers 7%, you will fall hundreds of thousands of dollars short of your goal. It is much safer, and significantly more realistic, to assume the historical <a href="/average-stock-market-return/">average stock market return</a> over long investment horizons, which generally hovers around 9-10% nominally (or 6-7% adjusted for inflation).</li>
         <li><strong>Ignoring the Drag of Taxes and Fees:</strong> In the real world, investing is not free. Mutual fund expense ratios, financial advisor management fees, trading commissions, and taxes on capital gains or dividends all act as persistent friction, dragging down your actual net return. A 1% management fee might sound small and inconsequential, but over a 30-year investing lifespan, that tiny 1% fee can consume nearly a third of your total potential compounding gains. Always use net returns (after fees) when projecting future wealth.</li>
         <li><strong>Miscalculating the Compounding Frequency:</strong> Assuming an annual compounding frequency when an account actually compounds daily or monthly can lead to slightly inaccurate projections. While the difference might seem small in the short term, over several decades, the more frequent the compounding, the higher the ultimate yield. A high-yield savings account typically compounds daily and pays monthly, while a bond might only compound semi-annually.</li>
         <li><strong>Forgetting About Sequence of Returns Risk:</strong> Future value calculators assume a straight, smooth line of growth. In reality, the stock market is volatile. If you experience a severe market crash right at the beginning of your investment journey (or worse, right as you retire and begin withdrawing funds), your actual ending balance could be drastically lower than what a simple average return calculator predicts.</li>
@@ -249,7 +249,7 @@ const schema = [
         For instance, if you anticipate earning an 8% annual return on your portfolio: 72 ÷ 8 = 9 years. Every 9 years, your money will double. If you are a more aggressive investor aiming for a 10% average return: 72 ÷ 10 = 7.2 years. At a highly conservative 4% return, it would take 18 long years (72 ÷ 4) to achieve the same doubling effect. This simple rule highlights why chasing higher yields, even by a few percentage points, has such a massive impact on your timeline to financial independence.
       </p>
       <p>
-        Furthermore, remember that as an equity investor, you will occasionally encounter corporate actions that fundamentally change the number of shares you hold in a company, even if the underlying total value of your investment remains exactly the same. When a company executes a stock split, your share count increases while the share price drops proportionally. You can easily calculate the exact post-split metrics and adjusted cost basis using our dedicated <a href="/stock-split-calculator">stock split calculator</a>.
+        Furthermore, remember that as an equity investor, you will occasionally encounter corporate actions that fundamentally change the number of shares you hold in a company, even if the underlying total value of your investment remains exactly the same. When a company executes a stock split, your share count increases while the share price drops proportionally. You can easily calculate the exact post-split metrics and adjusted cost basis using our dedicated <a href="/stock-split-calculator/">stock split calculator</a>.
       </p>
       <p>
         Ultimately, mastering the concept of future value allows you to transition from hoping you will have enough money to mathematically engineering a plan to guarantee it. Play with the calculator, adjust the variables, and visualize the true, long-term potential of your capital.
@@ -287,10 +287,10 @@ const schema = [
       <div class="related-links">
         <h3>Related Tools & Guides</h3>
         <ul>
-          <li><a href="/present-value-calculator">Present Value (PV) Calculator</a></li>
-          <li><a href="/cagr-calculator">Compound Annual Growth Rate (CAGR) Calculator</a></li>
-          <li><a href="/stock-split-calculator">Stock Split Calculator</a></li>
-          <li><a href="/average-stock-market-return">Average Stock Market Return Guide</a></li>
+          <li><a href="/present-value-calculator/">Present Value (PV) Calculator</a></li>
+          <li><a href="/cagr-calculator/">Compound Annual Growth Rate (CAGR) Calculator</a></li>
+          <li><a href="/stock-split-calculator/">Stock Split Calculator</a></li>
+          <li><a href="/average-stock-market-return/">Average Stock Market Return Guide</a></li>
         </ul>
       </div>
     </div>

@@ -71,7 +71,7 @@ const schema = {
   site="westmount"
   title={page.title}
   description={page.description}
-  canonical={`https://westmountfundamentals.com/${page.slug}`}
+  canonical={`https://westmountfundamentals.com/${page.slug}/`}
   schema={schema}
 >
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
@@ -162,7 +162,7 @@ const schema = {
     <p>A stock options calculator is an essential quantitative tool that helps traders visualize their risk and reward parameters. Without performing these calculations, it is incredibly easy to make a trade where the underlying stock moves in your anticipated direction, but you still lose money because the stock did not surpass the critical break-even threshold.</p>
 
     <h3>The Mechanics: How Options Pricing and Profits Work</h3>
-    <p>To use an <a href="/options-calculator">options calculator</a> effectively, you must understand the four primary pillars of any options contract: the type (call or put), the stance (long or short), the strike price, and the premium.</p>
+    <p>To use an <a href="/options-calculator/">options calculator</a> effectively, you must understand the four primary pillars of any options contract: the type (call or put), the stance (long or short), the strike price, and the premium.</p>
     <ul>
       <li><strong>Call Options:</strong> Give the buyer the right (but not the obligation) to purchase 100 shares of the underlying stock at the strike price on or before the expiration date.</li>
       <li><strong>Put Options:</strong> Give the buyer the right to sell 100 shares of the underlying stock at the strike price.</li>
@@ -173,7 +173,7 @@ const schema = {
     <p>In standard U.S. equity markets, one options contract represents 100 shares of the underlying stock. This is a crucial multiplier. If you see a premium listed at $3.50 on your brokerage platform, the actual cash outlay required to secure that contract is $350. This leverage is what makes options attractive, but it also magnifies the speed at which capital can be lost.</p>
 
     <h2>The Core Formulas and Mathematics</h2>
-    <p>A high-quality <a href="/options-profit-calculator">options profit calculator</a> relies on fundamental arithmetic to determine your position at expiration. While pricing models like Black-Scholes are required to determine an option's theoretical value <em>prior</em> to expiration, the profit and loss at expiration is purely a measure of intrinsic value versus the premium paid.</p>
+    <p>A high-quality <a href="/options-profit-calculator/">options profit calculator</a> relies on fundamental arithmetic to determine your position at expiration. While pricing models like Black-Scholes are required to determine an option's theoretical value <em>prior</em> to expiration, the profit and loss at expiration is purely a measure of intrinsic value versus the premium paid.</p>
 
     <h3>Long Call Math</h3>
     <p>When you buy a call option, you are bullish on the underlying stock.</p>
@@ -214,12 +214,12 @@ const schema = {
     <p>You select a strike price of $150. The premium for this out-of-the-money contract expiring in one month is $4.00. You buy 5 contracts.</p>
     <p>First, calculate your initial cost. Because each contract represents 100 shares, the cost per contract is $400 ($4.00 × 100). For 5 contracts, your total initial cash outlay (and maximum loss) is $2,000.</p>
     <p>Next, determine your break-even point. Simply add the strike price ($150) and the premium ($4.00) to get $154. This is the critical threshold. Even if the stock jumps from $145 to $152, you will still lose money on the trade if you hold it to expiration, because the $2 intrinsic value of the option is less than the $4 premium you paid. Your net loss would be $1,000.</p>
-    <p>However, if the stock rockets to $165, the calculation shifts in your favor. The intrinsic value of the option is now $15 ($165 - $150). Subtracting your $4 premium, your net profit is $11 per share. Multiplied by 500 shares (5 contracts), your total profit is $5,500. A strong understanding of <a href="/options-vs-stocks">options vs stocks</a> dynamics clearly illustrates how leverage amplified a roughly 13% stock movement into a 275% gain on capital at risk.</p>
+    <p>However, if the stock rockets to $165, the calculation shifts in your favor. The intrinsic value of the option is now $15 ($165 - $150). Subtracting your $4 premium, your net profit is $11 per share. Multiplied by 500 shares (5 contracts), your total profit is $5,500. A strong understanding of <a href="/options-vs-stocks/">options vs stocks</a> dynamics clearly illustrates how leverage amplified a roughly 13% stock movement into a 275% gain on capital at risk.</p>
 
     <h2>The Role of Options in a Broader Portfolio</h2>
     <p>Options are not merely speculative instruments; they are powerful tools for risk management, hedging, and income generation. Institutional investors routinely use options to protect their downside risk while maintaining exposure to long-term equity growth.</p>
-    <p>For example, if you hold a significant equity position and are concerned about short-term market volatility, you might purchase protective puts. This acts as an insurance policy. If the market crashes, the surge in the value of your put options will offset the depreciation in your stock portfolio. It is important to compare your expected <a href="/average-stock-market-return">average stock market return</a> against the cost of this options insurance to ensure you aren't severely hindering your compound growth.</p>
-    <p>Similarly, options can be utilized during corporate events. When evaluating a potential stock split using a <a href="/stock-split-calculator">stock split calculator</a>, traders often adjust their options positions to account for the incoming change in share structure and potential implied volatility crushes that frequently follow the actual split execution.</p>
+    <p>For example, if you hold a significant equity position and are concerned about short-term market volatility, you might purchase protective puts. This acts as an insurance policy. If the market crashes, the surge in the value of your put options will offset the depreciation in your stock portfolio. It is important to compare your expected <a href="/average-stock-market-return/">average stock market return</a> against the cost of this options insurance to ensure you aren't severely hindering your compound growth.</p>
+    <p>Similarly, options can be utilized during corporate events. When evaluating a potential stock split using a <a href="/stock-split-calculator/">stock split calculator</a>, traders often adjust their options positions to account for the incoming change in share structure and potential implied volatility crushes that frequently follow the actual split execution.</p>
 
     <h2>5 Common Mistakes Beginners Make With Options</h2>
     <p>Even with an accurate stock options calculator, human error and emotional biases often derail new traders. Here are the most prevalent mistakes to avoid:</p>
@@ -228,7 +228,7 @@ const schema = {
       <li><strong>Trading Illiquid Contracts:</strong> Some options have incredibly wide bid-ask spreads due to low trading volume. Entering these positions means you instantly lose a significant percentage of your capital just to cross the spread, making profitability exceedingly difficult. Always look for tight spreads and open interest.</li>
       <li><strong>Failing to Understand Time Decay (Theta):</strong> Options are wasting assets. Every single day that passes, the extrinsic value of the option decays. This decay accelerates rapidly in the final 30 days before expiration. Buying short-dated, out-of-the-money options is mathematically similar to buying lottery tickets.</li>
       <li><strong>Risking Too Much Capital:</strong> Due to the leverage inherent in options, it is possible to wipe out an entire account rapidly. Experienced traders rarely risk more than 1% to 2% of their total account equity on a single directional options trade.</li>
-      <li><strong>Not Having an Exit Plan:</strong> Knowing your break-even at expiration is only half the battle. You must have predefined exit criteria for both taking profits and cutting losses before you even enter the trade. You can practice developing these exit criteria safely using an <a href="/options-trading-simulator">options trading simulator</a> before risking real capital.</li>
+      <li><strong>Not Having an Exit Plan:</strong> Knowing your break-even at expiration is only half the battle. You must have predefined exit criteria for both taking profits and cutting losses before you even enter the trade. You can practice developing these exit criteria safely using an <a href="/options-trading-simulator/">options trading simulator</a> before risking real capital.</li>
     </ol>
 
     <h2>Professional Rules of Thumb for Options Trading</h2>

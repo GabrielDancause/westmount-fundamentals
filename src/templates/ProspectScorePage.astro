@@ -44,14 +44,14 @@ const schema = {
   "dateModified": data.published || "2026-03-19",
   "author": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
   "publisher": { "@type": "Organization", "name": "Westmount Research", "url": "https://westmountfundamentals.com" },
-  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://westmountfundamentals.com/${data.slug}` }
+  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://westmountfundamentals.com/${data.slug}/` }
 };
 ---
 <SiteLayout
   site="westmount"
   title={data.title}
   description={data.description}
-  canonical={`https://westmountfundamentals.com/${data.slug}`}
+  canonical={`https://westmountfundamentals.com/${data.slug}/`}
   schema={schema}
 >
 <div class="ps-page">
