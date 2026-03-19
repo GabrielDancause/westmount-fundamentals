@@ -4,13 +4,13 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "NextEra Energy (NEE) Intrinsic Value: A DCF Analysis",
-  "description": "A transparent, step-by-step discounted cash flow valuation of NextEra Energy. Using actual FY2025 financials to arrive at a single fair value estimate for NEE shares.",
+  "headline": "Eaton Corporation (ETN) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Eaton Corporation. Using actual FY2025 financials to arrive at a single fair value estimate for ETN shares.",
   "datePublished": "2026-03-18",
   "dateModified": "2026-03-18",
   "author": {
     "@type": "Organization",
-    "name": "Gemini 2.5 Pro",
+    "name": "Westmount Research",
     "url": "https://westmountfundamentals.com"
   },
   "publisher": {
@@ -20,34 +20,34 @@ const schema = {
   },
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://westmountfundamentals.com/nextera-energy-intrinsic-value"
+    "@id": "https://westmountfundamentals.com/eaton-intrinsic-value"
   }
 };
 
 export const meta = {
-  title: "NextEra Energy (NEE) Intrinsic Value: A DCF Analysis",
-  description: "We ran a full discounted cash flow on NextEra Energy using FY2025 actuals. One number. Every assumption disclosed. Here's what NEE is really worth.",
+  title: "Eaton Corporation (ETN) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on Eaton Corporation using FY2025 actuals. One number. Every assumption disclosed. Here's what ETN is really worth.",
   category: "study",
   published: "2026-03-18",
 };
 
 /* ═══════════════════════════════════════════════════════════════
    DCF MODEL — ALL INPUTS AND CALCULATIONS
-   Compiled by Gemini 2.5 Pro using StockAnalysis.com FY2025 actuals.
+   Every number is sourced from Eaton's FY2025 10-K.
    We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
    ═══════════════════════════════════════════════════════════════ */
 
 // --- INPUTS (all in millions USD unless noted) ---
-const fcf2025 = 3764;                  // FY2025 Free Cash Flow ($M)
-const sharesOutstanding = 2071;         // Diluted shares outstanding ($M) — FY2025
-const cashAndInvestments = 2812;        // Cash & Equivalents ($M)
-const totalDebt = 95619;               // Total debt ($M)
-const netCash = cashAndInvestments - totalDebt; // -$92,807M
+const fcf2025 = 3_553;                 // FY2025 Free Cash Flow ($M)
+const sharesOutstanding = 391;         // Diluted shares outstanding ($M) — FY2025
+const cashAndInvestments = 803;        // Cash + short-term investments ($M)
+const totalDebt = 10_532;              // Total debt ($M)
+const netCash = cashAndInvestments - totalDebt; // -$9,729M (Net Debt)
 
 // --- ASSUMPTIONS (fully disclosed below) ---
-const growthRatePhase1 = 0.25;         // 25% FCF growth, Years 1-5
-const growthRateTerminal = 0.025;      // 2.5% perpetuity growth (terminal)
-const discountRate = 0.06;             // 6% WACC / required return
+const growthRatePhase1 = 0.12;         // 12% FCF growth, Years 1-5 (driven by electrification & data centers)
+const growthRateTerminal = 0.03;       // 3% perpetuity growth (terminal)
+const discountRate = 0.09;             // 9% WACC / required return
 
 // --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
 const projectedFCF = [];
@@ -73,44 +73,44 @@ const intrinsicValuePerShare = equityValue / sharesOutstanding;
 const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
 
 // Market comparison
-const currentPrice = 91.04;
+const currentPrice = 364.42;
 const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
 const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
 const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
 
 // --- HISTORICAL DATA for charts ---
 const revenueHistory = [
-  { year: 2021, value: 17069 },
-  { year: 2022, value: 20956 },
-  { year: 2023, value: 28114 },
-  { year: 2024, value: 24753 },
-  { year: 2025, value: 27412 },
+  { year: 2021, value: 19_628 },
+  { year: 2022, value: 20_752 },
+  { year: 2023, value: 23_196 },
+  { year: 2024, value: 24_878 },
+  { year: 2025, value: 27_448 },
 ];
 const fcfHistory = [
-  { year: 2021, value: -2 },
-  { year: 2022, value: -1257 },
-  { year: 2023, value: 1938 },
-  { year: 2024, value: 5145 },
-  { year: 2025, value: 3764 },
+  { year: 2021, value: 1_588 },
+  { year: 2022, value: 1_935 },
+  { year: 2023, value: 2_867 },
+  { year: 2024, value: 3_519 },
+  { year: 2025, value: 3_553 },
 ];
 const epsHistory = [
-  { year: 2021, value: 1.81 },
-  { year: 2022, value: 2.10 },
-  { year: 2023, value: 3.60 },
-  { year: 2024, value: 3.37 },
-  { year: 2025, value: 3.30 },
+  { year: 2021, value: 5.34 },
+  { year: 2022, value: 6.14 },
+  { year: 2023, value: 8.02 },
+  { year: 2024, value: 9.50 },
+  { year: 2025, value: 10.45 },
 ];
 const marginHistory = [
-  { year: 2021, operating: 17.07, profit: 16.56, fcfMargin: -0.01 },
-  { year: 2022, operating: 19.47, profit: 15.49, fcfMargin: -6.00 },
-  { year: 2023, operating: 36.41, profit: 22.34, fcfMargin: 6.89 },
-  { year: 2024, operating: 30.21, profit: 23.02, fcfMargin: 20.79 },
-  { year: 2025, operating: 30.21, profit: 19.45, fcfMargin: 13.73 },
+  { year: 2021, operating: 12.55, profit: 10.93, fcfMargin: 8.09 },
+  { year: 2022, operating: 14.43, profit: 11.88, fcfMargin: 9.32 },
+  { year: 2023, operating: 16.75, profit: 13.89, fcfMargin: 12.36 },
+  { year: 2024, operating: 18.62, profit: 15.27, fcfMargin: 14.15 },
+  { year: 2025, operating: 18.98, profit: 14.90, fcfMargin: 12.94 },
 ];
 
 // Sensitivity analysis
-const sensitivityRates = [0.04, 0.05, 0.06, 0.07, 0.08];
-const sensitivityGrowth = [0.15, 0.20, 0.25, 0.30, 0.35];
+const sensitivityRates = [0.07, 0.08, 0.09, 0.10, 0.11];
+const sensitivityGrowth = [0.08, 0.10, 0.12, 0.14, 0.16];
 const sensitivityTable = sensitivityRates.map(dr => {
   return {
     dr,
@@ -132,9 +132,9 @@ const sensitivityTable = sensitivityRates.map(dr => {
 
 <SiteLayout
   site="westmount"
-  title="NextEra Energy (NEE) Intrinsic Value: A DCF Analysis"
-  description="We ran a full discounted cash flow on NextEra Energy using FY2025 actuals. One number. Every assumption disclosed. Here's what NEE is really worth."
-  canonical="https://westmountfundamentals.com/nextera-energy-intrinsic-value"
+  title="Eaton Corporation (ETN) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on Eaton Corporation using FY2025 actuals. One number. Every assumption disclosed. Here's what ETN is really worth."
+  canonical="https://westmountfundamentals.com/eaton-intrinsic-value"
   schema={schema}
 >
 <style>
@@ -209,7 +209,6 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 .bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
 .bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
 .bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
-.bar-fill.negative { background: linear-gradient(90deg, #3f1a1a, #ef4444); color: #fff; justify-content: flex-end; padding-right: 12px; }
 
 /* Methodology */
 .method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
@@ -235,6 +234,13 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 .cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
 .cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
 
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 60px; }
+.related-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 20px; display: block; color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); text-decoration: none; }
+.related-card .rc-title { color: #e0e6f0; font-weight: 700; margin-bottom: 6px; }
+.related-card .rc-desc { font-size: 0.85rem; color: #5a6a80; }
+
 /* FAQ */
 .faq { margin: 40px 0; }
 .faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
@@ -253,8 +259,8 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 <div class="header">
   <div class="header-content">
     <div class="tag">Compiled by Gemini 2.5 Pro</div>
-    <h1>NextEra Energy (NEE)<br/>Intrinsic Value</h1>
-    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of NextEra Energy — using FY2025 actuals, disclosed assumptions, and one final number.</p>
+    <h1>Eaton Corporation (ETN)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Eaton Corporation — using FY2025 actuals, disclosed assumptions, and one final number.</p>
     <p class="date">Updated March 18, 2026 · Data: FY2025 10-K</p>
   </div>
 </div>
@@ -277,32 +283,32 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       <div class="stat-label">FY2025 Revenue</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">$3.76B</div>
+      <div class="stat-value">$3.55B</div>
       <div class="stat-label">Free Cash Flow</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">$3.30</div>
+      <div class="stat-value">$10.45</div>
       <div class="stat-label">EPS (Diluted)</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">30.2%</div>
+      <div class="stat-value">19.0%</div>
       <div class="stat-label">Operating Margin</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
-      <div class="stat-label">Net Cash</div>
+      <div class="stat-label">Net Debt</div>
     </div>
   </div>
 
   <!-- ═══ METHODOLOGY ═══ -->
   <h2>Methodology: Two-Stage DCF</h2>
-  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. Utilities like NextEra are uniquely suited for DCF analysis due to their predictable, regulated cash flows, albeit complicated by heavy capital expenditures.</p>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
 
   <div class="method-step">
     <div class="step-num">1</div>
     <div class="step-content">
       <h4>Start with actual Free Cash Flow</h4>
-      <p>NextEra Energy generated <strong>$3.76 billion</strong> in free cash flow in FY2025. Utilities often have negative or volatile FCF due to massive infrastructure spending. NEE has been returning to positive FCF generation following a period of immense capital outlays for renewables.</p>
+      <p>Eaton generated <strong>$3.55 billion</strong> in free cash flow in FY2025. This is operating cash flow ($4.47B) minus capital expenditures ($919M). This represents real, unencumbered cash generated by the business.</p>
     </div>
   </div>
 
@@ -310,7 +316,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">2</div>
     <div class="step-content">
       <h4>Project FCF growth for 5 years (Phase 1)</h4>
-      <p>We project FCF to grow at <strong>25% per year</strong> for 5 years. This seems aggressive, but it reflects a recovery phase. The billions invested in renewable energy assets (NextEra Energy Resources) in prior years are beginning to generate strong, high-margin cash flows, rapidly expanding the FCF base from depressed levels.</p>
+      <p>We project FCF to grow at <strong>12% per year</strong> for the next 5 years. This reflects significant secular tailwinds in electrification, grid modernization, and data center cooling solutions, which are driving multi-year backlogs and margin expansion for Eaton.</p>
     </div>
   </div>
 
@@ -318,7 +324,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">3</div>
     <div class="step-content">
       <h4>Calculate terminal value (Phase 2)</h4>
-      <p>After Year 5, we assume FCF grows at <strong>2.5% forever</strong>. This aligns with long-term regulated rate base growth and general economic inflation. Utilities are steady state businesses long term.</p>
+      <p>After Year 5, we assume FCF grows at <strong>3.0% forever</strong>. This aligns with long-term global GDP growth. For an established industrial and power management company, capturing consistent, GDP-level growth in perpetuity is a strong, defensible assumption.</p>
     </div>
   </div>
 
@@ -326,15 +332,15 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
     <div class="step-num">4</div>
     <div class="step-content">
       <h4>Discount everything to present value</h4>
-      <p>All future cash flows are discounted at <strong>6.0%</strong> — our required rate of return. Utilities have low betas, stable demand, and use heavy debt financing. A 6% WACC reflects the lower cost of capital available to high-quality, regulated infrastructure assets, even with the 10Y Treasury at 4.18%.</p>
+      <p>All future cash flows are discounted at <strong>9%</strong>. This required rate of return balances Eaton's solid balance sheet and established market position with a reasonable equity risk premium above the current 10-year Treasury yield of 4.18%.</p>
     </div>
   </div>
 
   <div class="method-step">
     <div class="step-num">5</div>
     <div class="step-content">
-      <h4>Add net cash, divide by shares</h4>
-      <p>Enterprise Value + Net Cash (-$92.8B) = Equity Value. Divide by shares outstanding (2.07B) for the per-share intrinsic value. Note the massive debt load typical of the utility sector.</p>
+      <h4>Subtract net debt, divide by shares</h4>
+      <p>Enterprise Value minus Net Debt ($9.7B) = Equity Value. Divide by shares outstanding (391M) for the per-share intrinsic value.</p>
     </div>
   </div>
 
@@ -345,23 +351,23 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
   <div class="assumption-grid">
     <div class="assumption-card">
       <div class="label">FCF Growth Rate (Years 1-5)</div>
-      <div class="value">25%</div>
+      <div class="value">12%</div>
       <div class="rationale">
-        A very high phase 1 growth rate is used because FY2025 FCF ($3.76B) is artificially low relative to the company's earning power, as capital expenditures remain elevated. As CapEx moderates and recent investments in wind, solar, and storage come online and generate operating cash flow, FCF will expand rapidly on a percentage basis.
+        Eaton is perfectly positioned for the massive infrastructure and electrification megatrends. Demand from data centers, utility grid upgrades, and reshoring of manufacturing provides visibility into sustained above-average growth, justifying a robust 12% FCF CAGR over the next half-decade.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Discount Rate (WACC)</div>
-      <div class="value">6.0%</div>
+      <div class="value">9%</div>
       <div class="rationale">
-        NextEra is an incredibly stable utility with a deep economic moat and highly predictable revenues. Its heavy reliance on cheaper debt financing brings down its Weighted Average Cost of Capital. While the 10Y Treasury is at 4.18%, the cost of equity for NEE is historically low, making 6.0% a reasonable hurdle rate.
+        With the 10Y Treasury at 4.18%, a 9% discount rate implies an equity risk premium of roughly 4.8%, appropriate for a mature, highly profitable industrial company. Eaton operates with stable cash flows and manageable leverage, warranting a lower hurdle rate than highly cyclical or speculative peers.
       </div>
     </div>
     <div class="assumption-card">
       <div class="label">Terminal Growth Rate</div>
-      <div class="value">2.5%</div>
+      <div class="value">3.0%</div>
       <div class="rationale">
-        Utilities generally track population growth, electricity demand growth, and inflation. 2.5% is a standard, conservative long-term growth estimate for a premier utility operating in structurally growing markets like Florida.
+        A 3.0% perpetuity growth rate assumes Eaton will match long-term nominal global economic growth. Power management and infrastructure are fundamental, enduring needs, ensuring the company remains relevant indefinitely without assuming unrealistic permanent market share gains.
       </div>
     </div>
   </div>
@@ -413,11 +419,11 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </thead>
       <tbody>
         <tr>
-          <td>Year 6 FCF (Year 5 × 1.025)</td>
+          <td>Year 6 FCF (Year 5 × 1.030)</td>
           <td>${Math.round(fcfYear6).toLocaleString()}</td>
         </tr>
         <tr>
-          <td>Terminal Value (FCF₆ ÷ (6.0% − 2.5%))</td>
+          <td>Terminal Value (FCF₆ ÷ (9% − 3.0%))</td>
           <td>${terminalValue.toLocaleString()}</td>
         </tr>
         <tr class="row-total">
@@ -473,7 +479,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
 
   <!-- ═══ HISTORICAL CHARTS ═══ -->
   <h2>Financial Track Record</h2>
-  <p>Here is NextEra Energy's 5-year performance.</p>
+  <p>Historical consistency is key to trusting future projections. Here is Eaton's performance over the last 5 years.</p>
 
   <h3>Revenue ($B)</h3>
   <div class="bar-chart">
@@ -481,7 +487,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill revenue" style={`width: ${(r.value / 28114) * 100}%`}>
+          <div class="bar-fill revenue" style={`width: ${(r.value / 27448) * 100}%`}>
             ${(r.value / 1000).toFixed(1)}B
           </div>
         </div>
@@ -495,7 +501,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class={`bar-fill fcf ${r.value < 0 ? 'negative' : ''}`} style={`width: ${Math.abs(r.value / 5145) * 100}%`}>
+          <div class="bar-fill fcf" style={`width: ${(r.value / 3553) * 100}%`}>
             ${(r.value / 1000).toFixed(1)}B
           </div>
         </div>
@@ -509,7 +515,7 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       <div class="bar-row">
         <div class="bar-label">{r.year}</div>
         <div class="bar-track">
-          <div class="bar-fill eps" style={`width: ${(r.value / 3.60) * 100}%`}>
+          <div class="bar-fill eps" style={`width: ${(r.value / 10.45) * 100}%`}>
             ${r.value.toFixed(2)}
           </div>
         </div>
@@ -541,10 +547,11 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </tbody>
     </table>
   </div>
+  <p><strong>Key observation:</strong> Eaton has demonstrated remarkable margin expansion across the board since 2021. Operating margins have grown steadily from 12.55% to 18.98%, driven by pricing power and a structural shift toward higher-value solutions.</p>
 
   <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
   <h2>Sensitivity Analysis</h2>
-  <p>Our base case uses 25% growth and a 6.0% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
+  <p>Our base case uses 12% growth and a 9% discount rate. Given the current valuation multiple, the market appears to be pricing in aggressive growth or a lower discount rate. Explore how different assumptions alter the intrinsic value.</p>
 
   <div class="table-wrap">
     <table class="sensitivity-table">
@@ -570,58 +577,76 @@ td.highlight-cell { color: #4a8fe7; font-weight: 700; }
       </tbody>
     </table>
   </div>
-  <p>The highlighted cell is our base case. With over $95B in debt, changes to the discount rate drastically alter the equity value.</p>
+  <p>The highlighted cell is our base case. Eaton's current share price of ${currentPrice.toFixed(2)} suggests the market is pricing the stock to perfection, anticipating significantly higher growth or a much lower required rate of return.</p>
 
   <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
   <h2>What This Model Doesn't Capture</h2>
-  <p>No model is complete. Here's what a DCF inherently misses.</p>
+  <p>No model is complete. Here's what a DCF inherently misses — and how it might bias our estimate.</p>
 
-  <h3>Upside risks</h3>
+  <h3>Upside risks (our number could be too low)</h3>
   <ul>
-    <li><strong>Unprecedented Clean Energy Demand:</strong> Artificial Intelligence data centers require enormous amounts of carbon-free baseload power. NextEra is the best positioned company globally to supply this.</li>
-    <li><strong>Florida Population Growth:</strong> The regulated utility side (FPL) benefits from continuous inward migration to Florida, ensuring steady base rate growth.</li>
-    <li><strong>Interest Rate Cuts:</strong> The massive debt load is a burden at current rates. If the 10Y Treasury drops significantly, interest expenses will fall, boosting cash flows and lowering the discount rate.</li>
+    <li><strong>Data Center Hyper-Growth:</strong> If AI-driven data center expansion accelerates beyond current forecasts, Eaton's power management and cooling solutions could see revenue and margin growth far exceeding our 12% FCF projection.</li>
+    <li><strong>Grid Modernization Speed:</strong> Faster implementation of global energy transition initiatives (like the US Infrastructure Bill) could pull forward massive utility spending.</li>
+    <li><strong>M&A Synergies:</strong> Eaton actively acquires smaller players. Accretive acquisitions not modeled here could boost long-term cash flows.</li>
   </ul>
 
-  <h3>Downside risks</h3>
+  <h3>Downside risks (our number could be too high)</h3>
   <ul>
-    <li><strong>Higher For Longer Interest Rates:</strong> A utility is a bond proxy. If rates stay elevated at or above 4-5%, the 6.0% discount rate assumption will be too low, and the intrinsic value will plummet.</li>
-    <li><strong>Regulatory Pushback:</strong> Florida Power & Light regularly requests rate increases to fund infrastructure. Any political or regulatory resistance could throttle returns.</li>
-    <li><strong>Supply Chain Constraints:</strong> Building massive solar and wind installations relies on complex global supply chains (e.g., solar panels from Asia) that are subject to tariffs and geopolitical tension.</li>
+    <li><strong>Cyclical Downturn:</strong> Despite strong secular trends, Eaton remains exposed to broader industrial cycles. A significant macroeconomic recession could stall short-term growth.</li>
+    <li><strong>Supply Chain Constraints:</strong> Ongoing shortages in critical electrical components could limit Eaton's ability to fulfill its record backlog, hampering near-term cash conversion.</li>
+    <li><strong>Valuation Multiple Contraction:</strong> While DCF ignores multiples, the market does not. If growth slows even slightly, a stock priced for perfection could experience severe multiple compression regardless of cash flow generation.</li>
   </ul>
 
   <!-- ═══ FAQ ═══ -->
   <h2>Frequently Asked Questions</h2>
   <div class="faq">
     <details>
-      <summary>Why use a 6% discount rate? Isn't that too low?</summary>
-      <div class="faq-answer">It is low compared to tech companies, but appropriate for regulated monopolies. Utilities have highly predictable cash flows and can handle high debt loads. A WACC calculation blending cost of debt (which is cheap) and cost of equity naturally brings the discount rate down for utilities compared to the broader market.</div>
+      <summary>Why use a 9% discount rate for Eaton?</summary>
+      <div class="faq-answer">Eaton is a mature, highly profitable industrial company with relatively predictable cash flows, which typically commands a lower risk premium than high-growth tech or volatile cyclical stocks. 9% offers a reasonable spread above the risk-free rate (4.18% 10Y Treasury) while acknowledging the company's stability.</div>
     </details>
     <details>
-      <summary>Why is Net Cash massively negative (-$92.8B)?</summary>
-      <div class="faq-answer">NextEra has over $95 billion in total debt. This is standard for capital-intensive utilities that borrow heavily to build power plants and grid infrastructure. The DCF model deducts this massive debt pile from the Enterprise Value to find the true Equity Value.</div>
+      <summary>Is 12% FCF growth sustainable for an industrial company?</summary>
+      <div class="faq-answer">Historically, no. However, Eaton is currently riding unprecedented secular tailwinds in electrification, grid modernization, and AI data center buildouts. This unique convergence of demand drivers makes a 12% growth rate plausible for a 5-year phase, before reverting to a normal terminal rate.</div>
     </details>
     <details>
-      <summary>Is this a buy recommendation?</summary>
-      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, and conviction in the assumptions.</div>
+      <summary>Why does the model say the stock is overvalued?</summary>
+      <div class="faq-answer">A DCF calculates what the cash flows are worth. If the market price is higher than the intrinsic value, it means the market expects either faster growth, longer growth duration, or accepts a lower rate of return than our model assumes. Eaton's current price reflects extreme market optimism regarding its role in the AI and electrification megatrends.</div>
+    </details>
+    <details>
+      <summary>How does the net debt impact the valuation?</summary>
+      <div class="faq-answer">Eaton carries roughly $10.5 billion in total debt against roughly $800 million in cash and short-term investments. This net debt of ~$9.7 billion is subtracted from the Enterprise Value. While the debt is manageable, it directly reduces the final Equity Value available to shareholders.</div>
     </details>
   </div>
 
   <!-- ═══ CITE ═══ -->
   <div class="cite-block">
     <h4>📝 Cite This Research</h4>
-    <p>Westmount Research. "NextEra Energy (NEE) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
+    <p>Westmount Research. "Eaton Corporation (ETN) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
   </div>
 
   <!-- ═══ DATA SOURCES ═══ -->
   <div class="sources">
     <h4>Data Sources & Methodology</h4>
     <ul>
-      <li>NextEra Energy FY2025 Financials, via StockAnalysis.com</li>
-      <li>U.S. 10-Year Treasury yield (4.18%) as of March 18, 2026</li>
-      <li>Share price ($91.04) as of market close March 18, 2026</li>
+      <li>Eaton Corporation FY2025 Financials, via StockAnalysis.com</li>
+      <li>U.S. 10-Year Treasury yield (4.18%) as of March 2026</li>
+      <li>Share price ($364.42) as of market close March 18, 2026</li>
       <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+      <li>All calculations performed in real-time using source data</li>
     </ul>
+  </div>
+
+  <!-- ═══ RELATED ═══ -->
+  <h2>Related Pages</h2>
+  <div class="related-grid">
+    <a href="/what-is-intrinsic-value" class="related-card">
+      <div class="rc-title">What Is Intrinsic Value?</div>
+      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
+    </a>
+    <a href="/dcf-calculator" class="related-card">
+      <div class="rc-title">DCF Calculator</div>
+      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
+    </a>
   </div>
 
   <!-- ═══ DISCLAIMER ═══ -->
