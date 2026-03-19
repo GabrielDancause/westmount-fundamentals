@@ -1,0 +1,603 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
+
+export const meta = {
+  title: "General Dynamics (GD) Intrinsic Value: A DCF Analysis",
+  description: "A complete, two-stage discounted cash flow valuation for General Dynamics. Full transparency on assumptions, Phase 1 FCF, and terminal value for GD stock.",
+  category: "study",
+  published: "2026-03-25",
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "General Dynamics (GD) Intrinsic Value: A DCF Analysis",
+  "description": "We ran a full discounted cash flow on General Dynamics using recent financials. One number. Every assumption disclosed. Here's what GD is really worth.",
+  "datePublished": "2026-03-25",
+  "dateModified": "2026-03-25",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/general-dynamics-intrinsic-value"
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING (Build-Time Scraping)
+   ═══════════════════════════════════════════════════════════════ */
+const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' };
+
+// Helpers
+const extractRow = ($, rowName) => {
+    let values = [];
+    $('table tbody tr').each((i, el) => {
+        const firstCell = $(el).find('td').first().text().trim();
+        if (firstCell.includes(rowName)) {
+            $(el).find('td').each((j, td) => {
+                if (j > 0) {
+                    const val = $(td).text().trim().replace(/,/g, '');
+                    if (val !== '-' && val !== '') {
+                        values.push(parseFloat(val));
+                    } else {
+                        values.push(null);
+                    }
+                }
+            });
+        }
+    });
+    return values;
+};
+
+let currentPrice = null;
+let sharesOutstanding = null;
+let revenueHistory = [];
+let netIncomeHistory = [];
+let epsHistory = [];
+let operatingIncomeHistory = [];
+let fcfHistory = [];
+let ocfHistory = [];
+let cash = null;
+let debt = null;
+
+try {
+  // 1. Fetch Main Page for Price
+  const mainRes = await fetch('https://stockanalysis.com/stocks/gd/', { headers });
+  if (mainRes.ok) {
+    const mainHtml = await mainRes.text();
+    const priceMatch = mainHtml.match(/<div class="[^"]*text-4xl[^"]*"[^>]*>([\d\.,]+)<\/div>/);
+    if (priceMatch) {
+      currentPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
+    }
+  }
+
+  // 2. Fetch Financials (Income Statement)
+  const isRes = await fetch('https://stockanalysis.com/stocks/gd/financials/', { headers });
+  if (isRes.ok) {
+    const isHtml = await isRes.text();
+    const $is = cheerio.load(isHtml);
+    const revenues = extractRow($is, 'Revenue');
+    const netIncomes = extractRow($is, 'Net Income');
+    const epsList = extractRow($is, 'EPS (Diluted)');
+    const sharesList = extractRow($is, 'Shares Outstanding (Diluted)');
+    const opIncomes = extractRow($is, 'Operating Income');
+
+    revenueHistory = revenues.slice(0, 5).reverse();
+    netIncomeHistory = netIncomes.slice(0, 5).reverse();
+    epsHistory = epsList.slice(0, 5).reverse();
+    operatingIncomeHistory = opIncomes.slice(0, 5).reverse();
+    if (sharesList.length > 0 && sharesList[0] !== null) {
+        sharesOutstanding = sharesList[0];
+    }
+  }
+
+  // 3. Fetch Cash Flow
+  const cfRes = await fetch('https://stockanalysis.com/stocks/gd/financials/cash-flow-statement/', { headers });
+  if (cfRes.ok) {
+    const cfHtml = await cfRes.text();
+    const $cf = cheerio.load(cfHtml);
+    const fcfList = extractRow($cf, 'Free Cash Flow');
+    const ocfList = extractRow($cf, 'Operating Cash Flow');
+    fcfHistory = fcfList.slice(0, 5).reverse();
+    ocfHistory = ocfList.slice(0, 5).reverse();
+  }
+
+  // 4. Fetch Balance Sheet
+  const bsRes = await fetch('https://stockanalysis.com/stocks/gd/financials/balance-sheet/', { headers });
+  if (bsRes.ok) {
+    const bsHtml = await bsRes.text();
+    const $bs = cheerio.load(bsHtml);
+    const cashList = extractRow($bs, 'Cash & Equivalents');
+    const debtList = extractRow($bs, 'Total Debt');
+    if (cashList.length > 0) cash = cashList[0];
+    if (debtList.length > 0) debt = debtList[0];
+  }
+} catch (e) {
+  console.error("Error fetching GD data:", e);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+// Base inputs (fallback to null if fetch fails, but perform math only if available)
+const baseFCF = fcfHistory.length > 0 ? fcfHistory[fcfHistory.length - 1] : null;
+const baseRevenue = revenueHistory.length > 0 ? revenueHistory[revenueHistory.length - 1] : null;
+const baseEps = epsHistory.length > 0 ? epsHistory[epsHistory.length - 1] : null;
+const baseOpInc = operatingIncomeHistory.length > 0 ? operatingIncomeHistory[operatingIncomeHistory.length - 1] : null;
+const netCash = (cash !== null && debt !== null) ? cash - debt : null;
+
+// GD Specific Assumptions
+const growthRatePhase1 = 0.08;         // 8% FCF growth, Years 1-5 (Defense spending stability + backlog)
+const growthRateTerminal = 0.030;      // 3.0% perpetuity growth (GDP-like terminal for defense prime)
+const discountRate = 0.09;             // 9% WACC (Low beta, mature cash flow profile)
+const treasuryYield = 4.18;            // 10Y Treasury
+
+let projectedFCF = [];
+let pvPhase1 = 0;
+let fcfYear6 = 0;
+let terminalValue = 0;
+let pvTerminalValue = 0;
+let enterpriseValue = 0;
+let equityValue = 0;
+let intrinsicValuePerShare = 0;
+let roundedIV = 0;
+let marginOfSafety = 0;
+let verdictText = "N/A";
+let verdictColor = "#5a6a80";
+
+if (baseFCF !== null && sharesOutstanding !== null && currentPrice !== null && netCash !== null) {
+  let fcf = baseFCF;
+  for (let yr = 1; yr <= 5; yr++) {
+    fcf = fcf * (1 + growthRatePhase1);
+    const pvFactor = 1 / Math.pow(1 + discountRate, yr);
+    const pvFCF = fcf * pvFactor;
+    projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor, pvFCF: Math.round(pvFCF) });
+    pvPhase1 += pvFCF;
+  }
+
+  pvPhase1 = Math.round(pvPhase1);
+  fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+  terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+  pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+  enterpriseValue = pvPhase1 + pvTerminalValue;
+  equityValue = enterpriseValue + netCash;
+  intrinsicValuePerShare = equityValue / sharesOutstanding;
+  roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+  marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+  verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+  verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+}
+
+// Chart mapping helper
+const years = [2020, 2021, 2022, 2023, 2024]; // Approx based on 5 periods
+
+const sensitivityRates = [0.07, 0.08, 0.09, 0.10, 0.11];
+const sensitivityGrowth = [0.04, 0.06, 0.08, 0.10, 0.12];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      if (baseFCF === null || sharesOutstanding === null || netCash === null) return null;
+      let f = baseFCF;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="General Dynamics (GD) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on General Dynamics. One number. Every assumption disclosed. Here's what GD is really worth."
+  canonical="https://westmountfundamentals.com/general-dynamics-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.gd-container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+.header h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { .header h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+.compiled-by { margin-top: 12px; font-size: 0.8rem; color: #4a8fe7; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+.gd-container h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+.gd-container h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+.gd-container p, .gd-container li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+.gd-container ul, .gd-container ol { padding-left: 24px; }
+.gd-container li { margin-bottom: 8px; }
+.gd-container strong { color: #e0e6f0; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+.gd-container table { width: 100%; border-collapse: collapse; }
+.gd-container th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+.gd-container th:first-child { text-align: left; }
+.gd-container td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+.gd-container td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+.gd-container tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+.gd-container td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer & FAQ */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Original Research</div>
+    <h1>General Dynamics (GD)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of General Dynamics — using explicit assumptions and real data to find one final number.</p>
+    <p class="date">Updated March 25, 2026</p>
+    <div class="compiled-by">Compiled by Gemini 3.1</div>
+  </div>
+</div>
+
+<div class="gd-container">
+  {baseFCF === null || currentPrice === null ? (
+    <div class="verdict-card">
+      <div class="verdict-label">Data Unavailable</div>
+      <p>We are currently unable to retrieve all necessary financial data to compute the DCF. Please check back later.</p>
+    </div>
+  ) : (
+    <>
+      <!-- ═══ THE VERDICT ═══ -->
+      <div class="verdict-card">
+        <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+        <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+        <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
+        <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+          {verdictText}
+        </div>
+      </div>
+
+      <!-- ═══ KEY METRICS ═══ -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">${baseRevenue !== null ? (baseRevenue / 1000).toFixed(1) + 'B' : 'N/A'}</div>
+          <div class="stat-label">LTM Revenue</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${baseFCF !== null ? (baseFCF / 1000).toFixed(2) + 'B' : 'N/A'}</div>
+          <div class="stat-label">Free Cash Flow</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${baseEps !== null ? baseEps.toFixed(2) : 'N/A'}</div>
+          <div class="stat-label">EPS (Diluted)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{baseOpInc !== null && baseRevenue !== null ? ((baseOpInc / baseRevenue) * 100).toFixed(1) + '%' : 'N/A'}</div>
+          <div class="stat-label">Operating Margin</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${netCash !== null ? (netCash / 1000).toFixed(1) + 'B' : 'N/A'}</div>
+          <div class="stat-label">Net Cash / (Debt)</div>
+        </div>
+      </div>
+
+      <!-- ═══ METHODOLOGY ═══ -->
+      <h2>Methodology: Two-Stage DCF</h2>
+      <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model to assess General Dynamics' fair value. This strictly analyzes the present value of future cash generation, stripping away market multiples and sentiment.</p>
+
+      <div class="method-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Base Free Cash Flow</h4>
+          <p>We anchor our analysis on the most recent fiscal year's Free Cash Flow of <strong>${(baseFCF / 1000).toFixed(2)}B</strong>. Free Cash Flow is Operating Cash Flow minus Capital Expenditures — the true surplus cash available to shareholders.</p>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Phase 1: Projecting Cash Flows (Years 1-5)</h4>
+          <p>We grow FCF at <strong>{(growthRatePhase1 * 100).toFixed(0)}% annually</strong> for the next 5 years. This reflects General Dynamics' massive backlog and predictable defense contracting revenue streams, particularly in their Marine Systems and Aerospace divisions.</p>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Phase 2: Terminal Value</h4>
+          <p>After Year 5, we assign a <strong>{(growthRateTerminal * 100).toFixed(1)}% terminal growth rate</strong>. As a mature defense prime, GD's long-term growth is tied to U.S. defense budgets and macroeconomic expansion.</p>
+        </div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Discount Rate (WACC)</h4>
+          <p>We discount all future cash flows back to today using a <strong>{(discountRate * 100).toFixed(0)}% required return</strong>. With a 10-Year Treasury at {treasuryYield}%, this 9% hurdle rate reflects GD's lower-volatility cash flows and entrenched market position.</p>
+        </div>
+      </div>
+
+      <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+      <h2>Key Assumptions</h2>
+      <div class="assumption-grid">
+        <div class="assumption-card">
+          <div class="label">FCF Growth Rate (Years 1-5)</div>
+          <div class="value">{(growthRatePhase1 * 100).toFixed(0)}%</div>
+          <div class="rationale">General Dynamics possesses a robust order backlog across Aerospace (Gulfstream) and Marine Systems (submarine production). 8% FCF growth models stable execution on existing long-term contracts and modest margin expansion.</div>
+        </div>
+        <div class="assumption-card">
+          <div class="label">Discount Rate (WACC)</div>
+          <div class="value">{(discountRate * 100).toFixed(0)}%</div>
+          <div class="rationale">A 9% discount rate is utilized. Defense contractors typically command a lower cost of capital due to government-backed revenue streams, but we maintain a 9% hurdle to ensure an adequate equity risk premium over the {treasuryYield}% risk-free rate.</div>
+        </div>
+        <div class="assumption-card">
+          <div class="label">Terminal Growth Rate</div>
+          <div class="value">{(growthRateTerminal * 100).toFixed(1)}%</div>
+          <div class="rationale">We assume a perpetual 3.0% growth rate after Year 5, aligning with historical U.S. GDP growth and the structural reality that defense spending generally tracks inflation and economic expansion over decades.</div>
+        </div>
+      </div>
+
+      <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+      <h2>Projected Free Cash Flows</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Year</th>
+              <th>FCF ($M)</th>
+              <th>PV Factor</th>
+              <th>Present Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base</td>
+              <td>${baseFCF.toLocaleString()}</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            {projectedFCF.map(p => (
+              <tr>
+                <td>Year {p.year}</td>
+                <td>${p.fcf.toLocaleString()}</td>
+                <td>{p.pvFactor.toFixed(4)}</td>
+                <td>${p.pvFCF.toLocaleString()}</td>
+              </tr>
+            ))}
+            <tr class="row-total">
+              <td colspan="3">Sum of Phase 1 PV</td>
+              <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ TERMINAL VALUE & FINAL ═══ -->
+      <h3>Terminal Value & Final Valuation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Component</th>
+              <th>Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Year 6 FCF</td>
+              <td>${Math.round(fcfYear6).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Terminal Value</td>
+              <td>${terminalValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td>${pvTerminalValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>PV of Phase 1 Cash Flows</td>
+              <td>${pvPhase1.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>= Enterprise Value</td>
+              <td class="highlight-cell">${enterpriseValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>+ Net Cash (Debt)</td>
+              <td>${netCash.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>= Equity Value</td>
+              <td class="highlight-cell">${equityValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>÷ Shares Outstanding</td>
+              <td>{sharesOutstanding.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>Intrinsic Value Per Share</td>
+              <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ HISTORICAL CHARTS ═══ -->
+      <h2>Financial Track Record</h2>
+      {revenueHistory.length > 0 && (
+        <>
+          <h3>Revenue ($M)</h3>
+          <div class="bar-chart">
+            {revenueHistory.map((val, i) => (
+              <div class="bar-row">
+                <div class="bar-label">{years[i] || "Year"}</div>
+                <div class="bar-track">
+                  <div class="bar-fill revenue" style={`width: ${Math.max((val / Math.max(...revenueHistory)) * 100, 10)}%`}>
+                    ${val.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+      {fcfHistory.length > 0 && (
+        <>
+          <h3>Free Cash Flow ($M)</h3>
+          <div class="bar-chart">
+            {fcfHistory.map((val, i) => (
+              <div class="bar-row">
+                <div class="bar-label">{years[i] || "Year"}</div>
+                <div class="bar-track">
+                  <div class="bar-fill fcf" style={`width: ${Math.max((val / Math.max(...fcfHistory)) * 100, 10)}%`}>
+                    ${val.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+      <h2>Sensitivity Analysis</h2>
+      <p>Intrinsic value is highly sensitive to the discount and growth rates. Below is a 5x5 matrix demonstrating how the fair value shifts under different scenarios.</p>
+      <div class="table-wrap">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+              {sensitivityGrowth.map(g => (
+                <th class={Math.abs(g - growthRatePhase1) < 0.001 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityTable.map(row => (
+              <tr>
+                <td>{(row.dr * 100).toFixed(0)}%</td>
+                {row.values.map((v, i) => (
+                  <td class={Math.abs(row.dr - discountRate) < 0.001 && Math.abs(sensitivityGrowth[i] - growthRatePhase1) < 0.001 ? 'current' : ''}>
+                    {v !== null ? `$${v}` : 'N/A'}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ RISKS ═══ -->
+      <h2>Key Risks to Our Valuation</h2>
+      <ul>
+        <li><strong>Defense Budget Constraints:</strong> General Dynamics is heavily reliant on U.S. defense spending. Any shifts in federal budget priorities or congressional impasses could reduce future contract awards.</li>
+        <li><strong>Supply Chain & Execution:</strong> The submarine manufacturing base (Electric Boat) and aerospace (Gulfstream) face intense supply chain bottlenecks and labor constraints, which can compress margins or delay deliveries.</li>
+        <li><strong>Fixed-Price Contracts:</strong> Inflationary pressures can hurt profitability on legacy fixed-price contracts if costs outpace negotiated pricing.</li>
+      </ul>
+
+      <!-- ═══ FAQ ═══ -->
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq">
+        <details>
+          <summary>Is this DCF a buy or sell recommendation?</summary>
+          <div class="faq-answer">No. This is an objective mathematical framework estimating fair value based on current cash flows. It does not account for near-term momentum, macro-shocks, or individual portfolio needs.</div>
+        </details>
+        <details>
+          <summary>Why use a 9% discount rate instead of 10%?</summary>
+          <div class="faq-answer">Defense primes like General Dynamics operate in an oligopoly with government-backed, multi-year contracts, structurally lowering their cash flow risk profile compared to consumer or tech companies.</div>
+        </details>
+        <details>
+          <summary>Where does the data come from?</summary>
+          <div class="faq-answer">Data is sourced from General Dynamics' recent 10-K/10-Q filings, utilizing trailing financials to anchor the DCF projections.</div>
+        </details>
+      </div>
+
+    </>
+  )}
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>

@@ -1,0 +1,714 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Amgen (AMGN) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Amgen Inc. Using actual financials to arrive at a single fair value estimate for AMGN shares.",
+  "datePublished": "2026-03-24",
+  "dateModified": "2026-03-24",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/amgen-intrinsic-value"
+  }
+};
+
+export const meta = {
+  title: "Amgen (AMGN) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on Amgen. One number. Every assumption disclosed. Here's what AMGN is really worth.",
+  category: "study",
+  published: "2026-03-24",
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING FROM STOCKANALYSIS.COM (Null over fake data)
+   ═══════════════════════════════════════════════════════════════ */
+const headers = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+};
+
+async function fetchPage(url) {
+  try {
+    const res = await fetch(url, { headers });
+    const html = await res.text();
+    const match = html.match(/financialData:(\{.*?\})/);
+    if (match) {
+      return eval('(' + match[1] + ')');
+    }
+  } catch (e) {
+    console.error(`Failed to fetch ${url}`, e);
+  }
+  return null;
+}
+
+const inc = await fetchPage('https://stockanalysis.com/stocks/amgn/financials/');
+const bs = await fetchPage('https://stockanalysis.com/stocks/amgn/financials/balance-sheet/');
+
+let currentPrice = null;
+try {
+  const priceRes = await fetch('https://stockanalysis.com/stocks/amgn/', { headers });
+  const priceHtml = await priceRes.text();
+  const m = priceHtml.match(/class="text-4xl font-bold[^>]*>([0-9.]+)</) || priceHtml.match(/class="text-5xl font-bold[^>]*>([0-9.]+)</) || priceHtml.match(/class="ts-5xl font-bold[^>]*>([0-9.]+)</);
+  if (m) {
+    currentPrice = parseFloat(m[1]);
+  }
+} catch (e) {
+  console.error("Failed to fetch price", e);
+}
+
+// Fallbacks (null over fake data)
+const fcf2025 = inc?.fcf?.[1] ? inc.fcf[1] / 1e6 : null; // FY2025 or TTM equivalent (index 1 is latest annual)
+const sharesOutstanding = inc?.sharesDiluted?.[1] ? inc.sharesDiluted[1] / 1e6 : null;
+const cashAndInvestments = bs?.cashneq?.[1] ? bs.cashneq[1] / 1e6 : null;
+const totalDebt = bs?.debt?.[1] ? bs.debt[1] / 1e6 : null;
+
+const netCash = (cashAndInvestments !== null && totalDebt !== null) ? cashAndInvestments - totalDebt : null;
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+// --- ASSUMPTIONS (fully disclosed below) ---
+const growthRatePhase1 = 0.05;         // 5% FCF growth, Years 1-5 (mature biotech)
+const growthRateTerminal = 0.02;       // 2% perpetuity growth (terminal)
+const discountRate = 0.08;             // 8% WACC / required return
+const treasury10Y = 4.18;              // 10Y Treasury
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+let pvPhase1 = 0;
+
+if (fcf2025 !== null) {
+  let fcf = fcf2025;
+  for (let yr = 1; yr <= 5; yr++) {
+    fcf = fcf * (1 + growthRatePhase1);
+    const pvFactor = 1 / Math.pow(1 + discountRate, yr);
+    const pvFCF = Math.round(fcf * pvFactor);
+    projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor, pvFCF });
+    pvPhase1 += pvFCF;
+  }
+}
+
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+let fcfYear6 = null;
+let terminalValue = null;
+let pvTerminalValue = null;
+let enterpriseValue = null;
+let equityValue = null;
+let intrinsicValuePerShare = null;
+let roundedIV = null;
+
+if (projectedFCF.length === 5) {
+  fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+  terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+  pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+  enterpriseValue = pvPhase1 + pvTerminalValue;
+
+  if (netCash !== null && sharesOutstanding !== null) {
+    equityValue = enterpriseValue + netCash;
+    intrinsicValuePerShare = equityValue / sharesOutstanding;
+    roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+  }
+}
+
+// Market comparison
+let marginOfSafety = null;
+let verdictText = "N/A";
+let verdictColor = "#7a8a9e";
+
+if (roundedIV !== null && currentPrice !== null) {
+  marginOfSafety = (((roundedIV - currentPrice) / currentPrice) * 100).toFixed(1);
+  verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+  verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+}
+
+// --- HISTORICAL DATA for charts ---
+// Map index 1-5 to years 2025 down to 2021
+const rev = inc?.revenue || [];
+const fcf_hist = inc?.fcf || [];
+const eps_hist = inc?.epsDiluted || [];
+const op_margin = inc?.operatingMargin || [];
+const prof_margin = inc?.profitMargin || [];
+const fcf_margin = inc?.fcfMargin || [];
+
+const years = [2025, 2024, 2023, 2022, 2021];
+const revenueHistory = [];
+const fcfHistory = [];
+const epsHistory = [];
+const marginHistory = [];
+
+for (let i = 0; i < 5; i++) {
+  const dataIdx = i + 1; // 1 to 5 (assuming 1 is 2025, 2 is 2024 etc based on stockanalysis)
+  if (rev[dataIdx]) revenueHistory.push({ year: years[i], value: rev[dataIdx] / 1e6 });
+  if (fcf_hist[dataIdx]) fcfHistory.push({ year: years[i], value: fcf_hist[dataIdx] / 1e6 });
+  if (eps_hist[dataIdx]) epsHistory.push({ year: years[i], value: eps_hist[dataIdx] });
+  if (op_margin[dataIdx] !== undefined) {
+    marginHistory.push({
+      year: years[i],
+      operating: (op_margin[dataIdx] * 100).toFixed(1),
+      profit: (prof_margin[dataIdx] * 100).toFixed(1),
+      fcfMargin: (fcf_margin[dataIdx] * 100).toFixed(1)
+    });
+  }
+}
+// Reverse to chronological
+revenueHistory.reverse();
+fcfHistory.reverse();
+epsHistory.reverse();
+marginHistory.reverse();
+
+const maxRev = Math.max(...revenueHistory.map(r => r.value), 1);
+const maxFcf = Math.max(...fcfHistory.map(r => r.value), 1);
+const maxEps = Math.max(...epsHistory.map(r => r.value), 1);
+
+// Sensitivity analysis
+const sensitivityRates = [0.06, 0.07, 0.08, 0.09, 0.10];
+const sensitivityGrowth = [0.03, 0.04, 0.05, 0.06, 0.07];
+const sensitivityTable = fcf2025 !== null && netCash !== null && sharesOutstanding !== null ? sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      let f = fcf2025;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+}) : [];
+
+---
+
+<SiteLayout
+  site="westmount"
+  title="Amgen (AMGN) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on Amgen. One number. Every assumption disclosed. Here's what AMGN is really worth."
+  canonical="https://westmountfundamentals.com/amgen-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* Sources */
+.sources { margin: 40px 0 60px; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.sources h4 { color: #e0e6f0; margin-bottom: 12px; }
+.sources ul { list-style: none; padding: 0; }
+.sources li { font-size: 0.85rem; color: #5a6a80; margin-bottom: 6px; padding-left: 16px; position: relative; }
+.sources li::before { content: '→'; position: absolute; left: 0; color: #4a8fe7; }
+
+/* Cite */
+.cite-block { margin: 40px 0; padding: 20px 24px; background: #0a1020; border-left: 3px solid #4a8fe7; border-radius: 0 14px 14px 0; }
+.cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
+.cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Compiled by Gemini 3.1</div>
+    <h1>Amgen (AMGN)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Amgen Inc. — using disclosed assumptions, and one final number.</p>
+    <p class="date">Updated March 24, 2026</p>
+  </div>
+</div>
+
+<div class="container">
+  {roundedIV !== null ? (
+    <>
+      <!-- ═══ THE VERDICT ═══ -->
+      <div class="verdict-card">
+        <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+        <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+        <div class="verdict-vs">
+          vs. market price of ${currentPrice !== null ? currentPrice.toFixed(2) : "N/A"}
+          {marginOfSafety !== null ? `(${marginOfSafety}%)` : ""}
+        </div>
+        <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+          {verdictText}
+        </div>
+      </div>
+
+      <!-- ═══ KEY METRICS ═══ -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">${(revenueHistory[revenueHistory.length - 1]?.value / 1000).toFixed(1)}B</div>
+          <div class="stat-label">FY Revenue</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${(fcf2025 / 1000).toFixed(1)}B</div>
+          <div class="stat-label">Free Cash Flow</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${epsHistory[epsHistory.length - 1]?.value.toFixed(2)}</div>
+          <div class="stat-label">EPS (Diluted)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{marginHistory[marginHistory.length - 1]?.operating}%</div>
+          <div class="stat-label">Operating Margin</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
+          <div class="stat-label">Net Cash</div>
+        </div>
+      </div>
+    </>
+  ) : (
+    <div class="verdict-card" style="margin-top: 60px;">
+      <h2 style="margin: 0; border: none;">Data Unavailable</h2>
+      <p>Could not fetch complete financial data for Amgen.</p>
+    </div>
+  )}
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <h2>Methodology: Two-Stage DCF</h2>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
+
+  <div class="method-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Start with actual Free Cash Flow</h4>
+      <p>Amgen generated <strong>${fcf2025 !== null ? (fcf2025 / 1000).toFixed(2) : 'N/A'} billion</strong> in free cash flow recently. This is real cash the business produces after paying for everything, including R&D and capital expenditures.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Project FCF growth for 5 years (Phase 1)</h4>
+      <p>We grow FCF at <strong>{(growthRatePhase1 * 100)}% per year</strong> for 5 years. This reflects Amgen's position as a mature biopharmaceutical company with an established product portfolio and pipeline.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Calculate terminal value (Phase 2)</h4>
+      <p>After Year 5, we assume FCF grows at <strong>{(growthRateTerminal * 100)}% forever</strong> — roughly in line with inflation and long-term economic growth. We use the <strong>Gordon Growth Model</strong>.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Discount everything to present value</h4>
+      <p>All future cash flows are discounted at <strong>{(discountRate * 100)}%</strong> — our required rate of return, based on a risk premium over the 10Y Treasury yield of {treasury10Y}%.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Add net cash, divide by shares</h4>
+      <p>Enterprise Value + Net Cash (${netCash !== null ? (netCash / 1000).toFixed(1) : 'N/A'}B) = Equity Value. Divide by shares outstanding ({sharesOutstanding !== null ? sharesOutstanding.toFixed(0) : 'N/A'}M) for the per-share intrinsic value.</p>
+    </div>
+  </div>
+
+  <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+  <h2>The Three Assumptions That Drive Everything</h2>
+  <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
+
+  <div class="assumption-grid">
+    <div class="assumption-card">
+      <div class="label">FCF Growth Rate (Years 1-5)</div>
+      <div class="value">{(growthRatePhase1 * 100)}%</div>
+      <div class="rationale">
+        Amgen is a mature biotech giant. While newer drugs (like Repatha and Evenity) show strong growth, older legacy drugs face biosimilar competition. A 5% growth rate represents steady mid-single-digit execution over the next 5 years.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Discount Rate (WACC)</div>
+      <div class="value">{(discountRate * 100)}%</div>
+      <div class="rationale">
+        10Y Treasury: {treasury10Y}%. We use 8% as our required rate of return. Healthcare and pharmaceuticals generally have more defensive cash flows compared to cyclical tech, justifying a slightly lower discount rate than the standard 10% hurdle.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Terminal Growth Rate</div>
+      <div class="value">{(growthRateTerminal * 100)}%</div>
+      <div class="rationale">
+        Long-term nominal GDP growth is ~3%. We use 2% for Amgen because patent cliffs eventually catch up to all pharma companies, and maintaining growth into perpetuity is structurally difficult without massive ongoing M&A.
+      </div>
+    </div>
+  </div>
+
+  {projectedFCF.length > 0 && (
+    <>
+      <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+      <h2>Projected Free Cash Flows</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Year</th>
+              <th>FCF ($M)</th>
+              <th>PV Factor</th>
+              <th>Present Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Base (Current)</td>
+              <td>${fcf2025.toLocaleString()}</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            {projectedFCF.map(p => (
+              <tr>
+                <td>Year {p.year}</td>
+                <td>${p.fcf.toLocaleString()}</td>
+                <td>{p.pvFactor.toFixed(4)}</td>
+                <td>${p.pvFCF.toLocaleString()}</td>
+              </tr>
+            ))}
+            <tr class="row-total">
+              <td colspan="3">Sum of Phase 1 PV</td>
+              <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ TERMINAL VALUE ═══ -->
+      <h3>Terminal Value</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Component</th>
+              <th>Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Year 6 FCF (Year 5 × {1 + growthRateTerminal})</td>
+              <td>${Math.round(fcfYear6).toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Terminal Value (FCF₆ ÷ ({(discountRate * 100)}% − {(growthRateTerminal * 100)}%))</td>
+              <td>${terminalValue.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>PV of Terminal Value</td>
+              <td class="highlight-cell">${pvTerminalValue.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ═══ FINAL CALCULATION ═══ -->
+      <h3>Final Valuation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Component</th>
+              <th>Value ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PV of Phase 1 Cash Flows</td>
+              <td>${pvPhase1.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>PV of Terminal Value</td>
+              <td>${pvTerminalValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>= Enterprise Value</td>
+              <td>${enterpriseValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>+ Net Cash (Cash − Debt)</td>
+              <td>${netCash.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>= Equity Value</td>
+              <td>${equityValue.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>÷ Shares Outstanding</td>
+              <td>{sharesOutstanding.toLocaleString()}</td>
+            </tr>
+            <tr class="row-total">
+              <td>Intrinsic Value Per Share</td>
+              <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </>
+  )}
+
+  <!-- ═══ HISTORICAL CHARTS ═══ -->
+  {revenueHistory.length > 0 && (
+    <>
+      <h2>Financial Track Record</h2>
+      <p>Before trusting a forward projection, look at where the company has been.</p>
+
+      <h3>Revenue ($B)</h3>
+      <div class="bar-chart">
+        {revenueHistory.map(r => (
+          <div class="bar-row">
+            <div class="bar-label">{r.year}</div>
+            <div class="bar-track">
+              <div class="bar-fill revenue" style={`width: ${(r.value / maxRev) * 100}%`}>
+                ${(r.value / 1000).toFixed(1)}B
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <h3>Free Cash Flow ($B)</h3>
+      <div class="bar-chart">
+        {fcfHistory.map(r => (
+          <div class="bar-row">
+            <div class="bar-label">{r.year}</div>
+            <div class="bar-track">
+              <div class="bar-fill fcf" style={`width: ${(r.value / maxFcf) * 100}%`}>
+                ${(r.value / 1000).toFixed(1)}B
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <h3>Earnings Per Share (Diluted)</h3>
+      <div class="bar-chart">
+        {epsHistory.map(r => (
+          <div class="bar-row">
+            <div class="bar-label">{r.year}</div>
+            <div class="bar-track">
+              <div class="bar-fill eps" style={`width: ${(r.value / maxEps) * 100}%`}>
+                ${r.value.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- ═══ MARGIN TRENDS ═══ -->
+      <h3>Margin Trends</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">Year</th>
+              <th>Operating Margin</th>
+              <th>Profit Margin</th>
+              <th>FCF Margin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {marginHistory.map(m => (
+              <tr>
+                <td>{m.year}</td>
+                <td>{m.operating}%</td>
+                <td>{m.profit}%</td>
+                <td>{m.fcfMargin}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )}
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  {sensitivityTable.length > 0 && (
+    <>
+      <h2>Sensitivity Analysis</h2>
+      <p>Our base case uses {(growthRatePhase1 * 100)}% growth and {(discountRate * 100)}% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
+
+      <div class="table-wrap">
+        <table class="sensitivity-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+              {sensitivityGrowth.map(g => (
+                <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100)}%</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {sensitivityTable.map(row => (
+              <tr>
+                <td>{(row.dr * 100)}%</td>
+                {row.values.map((v, i) => (
+                  <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                    ${v}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )}
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>What This Model Doesn't Capture</h2>
+  <p>No model is complete. Here's what a DCF inherently misses — and how it might bias our estimate.</p>
+
+  <h3>Upside risks (our number could be too low)</h3>
+  <ul>
+    <li><strong>Pipeline success:</strong> Blockbuster approvals in obesity/weight loss (MariTide) or oncology could significantly accelerate top-line growth beyond 5%.</li>
+    <li><strong>Acquisition synergies:</strong> The Horizon Therapeutics acquisition could yield better-than-expected cost synergies and revenue growth from Tepezza.</li>
+    <li><strong>Pricing power:</strong> Better-than-expected pricing environment for newer, highly specialized therapies.</li>
+  </ul>
+
+  <h3>Downside risks (our number could be too high)</h3>
+  <ul>
+    <li><strong>Patent cliffs:</strong> Biosimilar erosion on legacy blockbusters (like Enbrel, Prolia, or Xgeva) could accelerate faster than newer drugs can offset the revenue loss.</li>
+    <li><strong>Regulatory pressure:</strong> The Inflation Reduction Act (IRA) allows Medicare to negotiate drug prices, which could compress margins long-term.</li>
+    <li><strong>Pipeline failures:</strong> Late-stage clinical trial failures for highly anticipated drugs (e.g., in obesity) would crush sentiment and expected cash flows.</li>
+    <li><strong>High debt load:</strong> Amgen carries significant debt (partly from the Horizon acquisition), making it sensitive to sustained high interest rates.</li>
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>Why use DCF instead of a P/E or EV/EBITDA multiple?</summary>
+      <div class="faq-answer">Multiples tell you what the market <em>is</em> paying — not what a company is <em>worth</em>. A DCF forces you to state explicit assumptions about growth and risk, then lets math determine the price based on actual cash generation.</div>
+    </details>
+    <details>
+      <summary>Why an 8% discount rate instead of 10%?</summary>
+      <div class="faq-answer">Healthcare companies like Amgen generally produce more defensive, recession-resistant cash flows compared to cyclical technology companies. An 8% discount rate reflects this slightly lower risk profile relative to the broader market, while still providing a healthy premium over the 10Y Treasury yield ({treasury10Y}%).</div>
+    </details>
+    <details>
+      <summary>Why a 2% terminal growth rate?</summary>
+      <div class="faq-answer">2% aligns roughly with long-term inflation targets. Pharmaceutical companies constantly fight a "treadmill" effect due to patent expirations. Assuming they can grow significantly faster than the economy forever is aggressive.</div>
+    </details>
+    <details>
+      <summary>Is this a buy recommendation?</summary>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, and conviction in the assumptions.</div>
+    </details>
+  </div>
+
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+    <p>Westmount Research. "Amgen (AMGN) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 24, 2026.</p>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>

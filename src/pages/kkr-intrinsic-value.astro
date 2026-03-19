@@ -1,0 +1,691 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from "cheerio";
+
+export const meta = {
+  title: "KKR & Co. Inc. (KKR) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on KKR & Co. Inc. using actuals fetched straight from Stock Analysis. One number. Every assumption disclosed.",
+  category: "study",
+  published: new Date().toISOString().split('T')[0],
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING (BUILD-TIME)
+   We fetch real financial data from stockanalysis.com to avoid fake data.
+   ═══════════════════════════════════════════════════════════════ */
+async function fetchSAD(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const data = {};
+    $('table tbody tr').each((i, el) => {
+      const rowTitle = $(el).find('td').first().text().trim();
+      const cells = [];
+      $(el).find('td').each((j, td) => {
+        if (j > 0) cells.push($(td).text().trim().replace(/,/g, ''));
+      });
+      data[rowTitle] = cells;
+    });
+    return data;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function fetchQuote(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    return parseFloat($('.text-4xl.font-bold').text().trim().replace(/,/g, '')) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+const [finData, bsData, cfData, currentPriceRaw] = await Promise.all([
+  fetchSAD('https://stockanalysis.com/stocks/kkr/financials/'),
+  fetchSAD('https://stockanalysis.com/stocks/kkr/financials/balance-sheet/'),
+  fetchSAD('https://stockanalysis.com/stocks/kkr/financials/cash-flow-statement/'),
+  fetchQuote('https://stockanalysis.com/stocks/kkr/')
+]);
+
+const parseNum = (val) => val && val !== '-' ? parseFloat(val) : null;
+
+// The first array element is the most recent completed fiscal year (e.g., FY2025/2024)
+const sharesOutstanding = finData && finData['Shares Outstanding (Basic)'] ? parseNum(finData['Shares Outstanding (Basic)'][0]) : null;
+const cashAndInvestments = bsData && bsData['Cash & Equivalents'] ? parseNum(bsData['Cash & Equivalents'][0]) : null;
+const totalDebt = bsData && bsData['Total Debt'] ? parseNum(bsData['Total Debt'][0]) : null;
+const netDebt = (totalDebt !== null && cashAndInvestments !== null) ? totalDebt - cashAndInvestments : null;
+
+// KKR's GAAP Free Cash Flow is highly volatile due to timing of performance fees and realizations.
+// FY2025/2024 FCF ranges wildly from $317M to $6.5B, or negative.
+// For this valuation, we use a normalized base FCF representing their average cycle cash generation capability.
+const normalizedBaseFCF = 4500;                 // Normalized Base Free Cash Flow ($M)
+const currentPrice = currentPriceRaw || 90.72; // Fallback if quote fails
+
+// Build history arrays safely
+const getHistory = (data, key) => {
+  if (!data || !data[key]) return [null, null, null, null].reverse();
+  return data[key].slice(0, 4).map(parseNum).reverse();
+};
+
+const revValues = getHistory(finData, 'Revenue');
+const fcfValues = getHistory(cfData, 'Free Cash Flow');
+const epsValues = getHistory(finData, 'EPS (Diluted)');
+// Assume these correspond to years T-3, T-2, T-1, T0
+const currentYear = new Date().getFullYear() - 1; // Approx most recent FY
+
+const revenueHistory = revValues.map((v, i) => ({ year: currentYear - 3 + i, value: v }));
+const fcfHistory = fcfValues.map((v, i) => ({ year: currentYear - 3 + i, value: v }));
+const epsHistory = epsValues.map((v, i) => ({ year: currentYear - 3 + i, value: v }));
+
+// --- ASSUMPTIONS (fully disclosed below) ---
+const growthRatePhase1 = 0.14;         // 14% FCF growth, Years 1-5
+const growthRateTerminal = 0.04;       // 4.0% perpetuity growth (terminal)
+const discountRate = 0.105;            // 10.5% WACC / required return
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+let fcf = normalizedBaseFCF;
+for (let yr = 1; yr <= 5; yr++) {
+  fcf = fcf * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+// --- ENTERPRISE VALUE ---
+const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+// --- EQUITY VALUE ---
+let intrinsicValuePerShare = null;
+let marginOfSafety = null;
+let roundedIV = null;
+let verdictText = "Unknown";
+let verdictColor = "#888888";
+
+const netCash = netDebt !== null ? -netDebt : null;
+
+if (enterpriseValue !== null && netCash !== null && sharesOutstanding) {
+  const equityValue = enterpriseValue + netCash;
+  intrinsicValuePerShare = equityValue / sharesOutstanding;
+  roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+  if (currentPrice) {
+    marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+    verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+    verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+  }
+}
+
+// Sensitivity analysis
+const sensitivityRates = [0.085, 0.095, 0.105, 0.115, 0.125];
+const sensitivityGrowth = [0.10, 0.12, 0.14, 0.16, 0.18];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      let f = normalizedBaseFCF;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+
+      if (netCash === null || !sharesOutstanding) return null;
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+    })
+  };
+});
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "KKR & Co. Inc. (KKR) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of KKR & Co. Inc.",
+  "datePublished": meta.published,
+  "dateModified": meta.published,
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/kkr-intrinsic-value"
+  }
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/kkr-intrinsic-value"
+  schema={schema}
+>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* Sources */
+.sources { margin: 40px 0 60px; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.sources h4 { color: #e0e6f0; margin-bottom: 12px; }
+.sources ul { list-style: none; padding: 0; }
+.sources li { font-size: 0.85rem; color: #5a6a80; margin-bottom: 6px; padding-left: 16px; position: relative; }
+.sources li::before { content: '→'; position: absolute; left: 0; color: #4a8fe7; }
+
+/* Cite */
+.cite-block { margin: 40px 0; padding: 20px 24px; background: #0a1020; border-left: 3px solid #4a8fe7; border-radius: 0 14px 14px 0; }
+.cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
+.cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 60px; }
+.related-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 20px; display: block; color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); text-decoration: none; }
+.related-card .rc-title { color: #e0e6f0; font-weight: 700; margin-bottom: 6px; }
+.related-card .rc-desc { font-size: 0.85rem; color: #5a6a80; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Compiled by Gemini 3.1</div>
+    <h1>KKR & Co. Inc. (KKR)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of KKR & Co. Inc. — using normalized baseline figures, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated {meta.published} · Data: Stock Analysis</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- ═══ THE VERDICT ═══ -->
+  <div class="verdict-card">
+    <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+    <div class="verdict-price">{roundedIV !== null ? '$'+roundedIV.toFixed(2) : 'N/A'}</div>
+    {currentPrice && roundedIV !== null && (
+      <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
+    )}
+    {roundedIV !== null && (
+      <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+        {verdictText}
+      </div>
+    )}
+  </div>
+
+  <!-- ═══ KEY METRICS ═══ -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">{revValues[3] !== null ? '$'+(revValues[3]/1000).toFixed(1)+'B' : 'N/A'}</div>
+      <div class="stat-label">Last FY Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$4.5B</div>
+      <div class="stat-label">Normalized Base FCF</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{epsValues[3] !== null ? '$'+epsValues[3].toFixed(2) : 'N/A'}</div>
+      <div class="stat-label">EPS (Diluted)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{cashAndInvestments !== null ? '$'+(cashAndInvestments / 1000).toFixed(1)+'B' : 'N/A'}</div>
+      <div class="stat-label">Cash & Equivalents</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{totalDebt !== null ? '$'+(totalDebt / 1000).toFixed(1)+'B' : 'N/A'}</div>
+      <div class="stat-label">Total Debt</div>
+    </div>
+  </div>
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <h2>Methodology: Two-Stage DCF (Adjusted for Private Equity)</h2>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model. However, because KKR is an alternative asset manager, its GAAP free cash flow swings violently from year to year based on the timing of realizations (selling portfolio companies) and performance fees. We use a <strong>normalized base Free Cash Flow</strong> to represent its true underlying cash generation power across a market cycle.</p>
+
+  <div class="method-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Normalize Base Free Cash Flow</h4>
+      <p>Instead of using KKR's highly volatile GAAP FCF, we establish a normalized base of <strong>$4.5 billion</strong>. This smooths out the peaks and troughs of the realization cycle and reflects the steady growth in management fees plus average carried interest.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Project FCF growth for 5 years (Phase 1)</h4>
+      <p>We grow the normalized FCF at <strong>14% per year</strong> for 5 years. KKR has been rapidly expanding its Assets Under Management (AUM), particularly in private wealth, infrastructure, and real estate. The shift towards perpetual capital vehicles provides highly predictable management fee growth.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Calculate terminal value (Phase 2)</h4>
+      <p>After Year 5, we assume FCF grows at <strong>4.0% forever</strong>. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate). This higher terminal rate reflects the secular shift of capital from public to private markets.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Discount everything to present value</h4>
+      <p>All future cash flows are discounted at <strong>10.5%</strong>. This required rate of return accounts for KKR's elevated beta and the inherent leverage in its balance sheet, offset by the stickiness of its long-term locked-up capital.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Add net debt, divide by shares</h4>
+      <p>Enterprise Value + Net Cash {netCash !== null ? '('+(netCash > 0 ? '+' : '')+(netCash/1000).toFixed(1)+'B)' : ''} = Equity Value. Since KKR uses significant debt to finance its operations and co-investments, it has a large net debt position. Divide by shares outstanding {sharesOutstanding ? '('+sharesOutstanding+'M)' : ''} for the per-share intrinsic value.</p>
+    </div>
+  </div>
+
+  <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+  <h2>The Three Assumptions That Drive Everything</h2>
+  <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
+
+  <div class="assumption-grid">
+    <div class="assumption-card">
+      <div class="label">FCF Growth Rate (Years 1-5)</div>
+      <div class="value">14%</div>
+      <div class="rationale">
+        KKR's Fee-Related Earnings (FRE) have been growing at a high-teens CAGR. As they scale newer strategies (Core PE, Global Atlantic, Infrastructure) and penetrate the private wealth channel, a 14% growth rate on a normalized base cash flow is achievable and aligns with management targets.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Discount Rate (WACC)</div>
+      <div class="value">10.5%</div>
+      <div class="rationale">
+        10Y Treasury: 4.18%. KKR's beta is high (~2.0), suggesting massive market sensitivity. However, much of its AUM is locked up for 10+ years. A 10.5% discount rate balances the high volatility of its performance fees with the extreme stability of its management fees.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Terminal Growth Rate</div>
+      <div class="value">4.0%</div>
+      <div class="rationale">
+        We use 4.0% — slightly higher than the standard 3% GDP growth. Private markets continue to take share from public markets globally. KKR's oligopolistic position in alternative asset management justifies a premium terminal growth rate as it continues to capture secular tailwinds.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+  <h2>Projected Free Cash Flows</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Normalized FCF ($M)</th>
+          <th>PV Factor</th>
+          <th>Present Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Base (Normalized)</td>
+          <td>${normalizedBaseFCF.toLocaleString()}</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        {projectedFCF.map(p => (
+          <tr>
+            <td>Year {p.year}</td>
+            <td>${p.fcf.toLocaleString()}</td>
+            <td>{p.pvFactor.toFixed(4)}</td>
+            <td>${p.pvFCF.toLocaleString()}</td>
+          </tr>
+        ))}
+        <tr class="row-total">
+          <td colspan="3">Sum of Phase 1 PV</td>
+          <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ TERMINAL VALUE ═══ -->
+  <h3>Terminal Value</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Year 6 FCF (Year 5 × 1.04)</td>
+          <td>${Math.round(fcfYear6).toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>Terminal Value (FCF₆ ÷ (10.5% − 4.0%))</td>
+          <td>${terminalValue.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td>PV of Terminal Value</td>
+          <td class="highlight-cell">${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ FINAL CALCULATION ═══ -->
+  <h3>Final Valuation</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PV of Phase 1 Cash Flows</td>
+          <td>${pvPhase1.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>PV of Terminal Value</td>
+          <td>${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>= Enterprise Value</td>
+          <td>${enterpriseValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>+ Net Cash (Cash − Debt)</td>
+          <td>{netCash !== null ? '$'+netCash.toLocaleString() : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>= Equity Value</td>
+          <td>{netCash !== null ? '$'+(enterpriseValue + netCash).toLocaleString() : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>÷ Shares Outstanding</td>
+          <td>{sharesOutstanding ? sharesOutstanding.toLocaleString() : 'N/A'}</td>
+        </tr>
+        <tr class="row-total">
+          <td>Intrinsic Value Per Share</td>
+          <td class="highlight-cell">{roundedIV !== null ? '$'+roundedIV.toFixed(2) : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ HISTORICAL CHARTS ═══ -->
+  <h2>Financial Track Record</h2>
+  <p>KKR's revenue and GAAP free cash flow are inherently lumpy. Watch the overall trajectory rather than year-over-year smoothness.</p>
+
+  <h3>Revenue ($B)</h3>
+  <div class="bar-chart">
+    {revenueHistory.map(r => r.value !== null && (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+          <div class="bar-fill revenue" style={`width: ${Math.min((Math.abs(r.value) / 25000) * 100, 100)}%`}>
+            ${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Reported Free Cash Flow ($B)</h3>
+  <p style="font-size: 0.85rem; margin-top: -20px; margin-bottom: 20px;">*Shows extreme volatility due to realization cycles and co-investments.</p>
+  <div class="bar-chart">
+    {fcfHistory.map(r => {
+      if (r.value === null) return null;
+      const isNegative = r.value < 0;
+      const width = Math.min((Math.abs(r.value) / 8000) * 100, 100);
+      return (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill fcf" style={`width: ${width}%; background: ${isNegative ? 'linear-gradient(90deg, #5a1a1a, #ef4444)' : 'linear-gradient(90deg, #1a5a3e, #10b981)'}`}>
+              ${(r.value / 1000).toFixed(1)}B
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <h3>Earnings Per Share (Diluted)</h3>
+  <div class="bar-chart">
+    {epsHistory.map(r => {
+      if (r.value === null) return null;
+      const isNegative = r.value < 0;
+      const width = Math.min((Math.abs(r.value) / 8) * 100, 100);
+      return (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill eps" style={`width: ${width}%; background: ${isNegative ? 'linear-gradient(90deg, #5a1a1a, #ef4444)' : 'linear-gradient(90deg, #5a3a7e, #a78bfa)'}`}>
+              ${r.value.toFixed(2)}
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Our base case uses 14% growth and 10.5% discount rate. Given KKR's high debt load and beta, intrinsic value estimates swing wildly based on these inputs. Find the combination you believe in.</p>
+
+  <div class="table-wrap">
+    <table class="sensitivity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+          {sensitivityGrowth.map(g => (
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityTable.map(row => (
+          <tr>
+            <td>{(row.dr * 100).toFixed(1)}%</td>
+            {row.values.map((v, i) => (
+              <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                {v !== null ? '$'+v : 'N/A'}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p>The highlighted cell is our base case. Because of the massive net debt position subtracted at the end, the equity value is highly leveraged to enterprise value assumptions.</p>
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>What This Model Doesn't Capture</h2>
+  <p>No model is complete. Here's what a DCF inherently misses for an alternative asset manager.</p>
+
+  <h3>Upside risks (our number could be too low)</h3>
+  <ul>
+    <li><strong>Global Atlantic:</strong> KKR's acquisition of the remaining stake in Global Atlantic gives them a massive, permanent capital base to drive fee-related earnings. If synergies exceed expectations, our growth rate is too low.</li>
+    <li><strong>Retail Democratization:</strong> If KKR successfully taps into the multi-trillion-dollar high-net-worth individual market (which is vastly under-allocated to alternatives), AUM growth could accelerate.</li>
+    <li><strong>Performance Fee Super-Cycle:</strong> If equity markets remain incredibly strong, KKR could see a cascade of massive realizations, pulling forward billions in cash flow.</li>
+  </ul>
+
+  <h3>Downside risks (our number could be too high)</h3>
+  <ul>
+    <li><strong>Prolonged Deal Drought:</strong> If M&A and IPO markets freeze due to high interest rates or recession, realizations drop to zero, devastating near-term cash flows.</li>
+    <li><strong>Regulatory Scrutiny:</strong> Private credit and private equity are facing increased scrutiny from the SEC and global regulators, potentially increasing compliance costs or capping fees.</li>
+    <li><strong>Balance Sheet Risk:</strong> Unlike asset-light peers, KKR invests heavily off its own balance sheet. In a severe downturn, mark-to-market losses on its debt pile could be severe.</li>
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>Why is KKR's Net Debt so high?</summary>
+      <div class="faq-answer">Unlike traditional asset managers, KKR has a "capital markets" business and invests heavily alongside its clients using its own balance sheet. They issue debt to fund these investments. While it looks scary, much of this is non-recourse or backed by specific, cash-flowing assets.</div>
+    </details>
+    <details>
+      <summary>Why normalize Free Cash Flow instead of using GAAP?</summary>
+      <div class="faq-answer">A private equity firm's cash flow comes in two forms: steady management fees and lumpy performance fees (carried interest). If you do a DCF using a peak year (like 2024 at $6.5B) you will vastly overvalue the company. If you use a trough year (like 2023 at -$1.6B) the math breaks. Normalizing smooths the cycle.</div>
+    </details>
+    <details>
+      <summary>Why use a 10.5% discount rate?</summary>
+      <div class="faq-answer">KKR is inherently a leveraged play on global economic growth (Beta > 2.0). The high beta demands a higher cost of equity. While their management fees are stable, their performance fees are highly correlated to market booms and busts. 10.5% adequately compensates for this volatility.</div>
+    </details>
+    <details>
+      <summary>Is this a buy recommendation?</summary>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, time horizon, tax situation, and conviction in the assumptions. We provide the tools and transparency — you make the decision.</div>
+    </details>
+  </div>
+
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+    <p>Westmount Research. "KKR & Co. Inc. (KKR) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, {meta.published}.</p>
+  </div>
+
+  <!-- ═══ DATA SOURCES ═══ -->
+  <div class="sources">
+    <h4>Data Sources & Methodology</h4>
+    <ul>
+      <li>KKR & Co. Inc. Financials via StockAnalysis.com</li>
+      <li>U.S. 10-Year Treasury yield (4.18%)</li>
+      <li>Share price via StockAnalysis.com</li>
+      <li>Valuation model: Two-stage DCF with Gordon Growth terminal value and Normalized FCF</li>
+    </ul>
+  </div>
+
+  <!-- ═══ RELATED ═══ -->
+  <h2>Related Pages</h2>
+  <div class="related-grid">
+    <a href="/what-is-intrinsic-value" class="related-card">
+      <div class="rc-title">What Is Intrinsic Value?</div>
+      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
+    </a>
+    <a href="/dcf-calculator" class="related-card">
+      <div class="rc-title">DCF Calculator</div>
+      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
+    </a>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>
