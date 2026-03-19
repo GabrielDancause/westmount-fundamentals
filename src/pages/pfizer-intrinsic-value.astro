@@ -1,0 +1,965 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+<<<<<<< Updated upstream
+import * as cheerio from 'cheerio';
+=======
+>>>>>>> Stashed changes
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Pfizer (PFE) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of Pfizer Inc. Using actual FY2025 financials to arrive at a single fair value estimate for PFE shares.",
+<<<<<<< Updated upstream
+  "datePublished": new Date().toISOString().split('T')[0],
+  "dateModified": new Date().toISOString().split('T')[0],
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+=======
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": {
+    "@type": "Organization",
+    "name": "Gemini 2.5 Pro",
+>>>>>>> Stashed changes
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/pfizer-intrinsic-value"
+  }
+};
+
+export const meta = {
+  title: "Pfizer (PFE) Intrinsic Value: A DCF Analysis",
+<<<<<<< Updated upstream
+  description: "We ran a full discounted cash flow on Pfizer using FY2025 actuals. One number. Every assumption disclosed. Here's what PFE is really worth.",
+  category: "study",
+  published: new Date().toISOString().split('T')[0],
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING FROM STOCKANALYSIS.COM
+   ═══════════════════════════════════════════════════════════════ */
+async function fetchFromTable(url) {
+  try {
+    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    const headers = [];
+    $('table thead tr th').each((i, el) => {
+      headers.push($(el).text().trim());
+    });
+    const data = {};
+    $('table tbody tr').each((i, row) => {
+      const title = $(row).find('td').eq(0).text().trim();
+      const values = [];
+      $(row).find('td').each((j, col) => {
+        if (j > 0) values.push($(col).text().trim().replace(/,/g, '').replace('%', ''));
+      });
+      data[title] = values;
+    });
+    return { headers, data };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function fetchPrice(ticker) {
+  try {
+    const res = await fetch(`https://stockanalysis.com/stocks/${ticker}/`, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match = html.match(/<div class="[^"]*text-4xl[^"]*">([\d\.]+)<\/div>/);
+    if (match) return parseFloat(match[1]);
+    const match2 = html.match(/"price":([\d\.]+)/);
+    if (match2) return parseFloat(match2[1]);
+  } catch (e) {
+    return null;
+  }
+  return null;
+}
+
+const is = await fetchFromTable('https://stockanalysis.com/stocks/pfe/financials/');
+const bs = await fetchFromTable('https://stockanalysis.com/stocks/pfe/financials/balance-sheet/');
+const cf = await fetchFromTable('https://stockanalysis.com/stocks/pfe/financials/cash-flow-statement/');
+const fetchedPrice = await fetchPrice('pfe');
+
+const parseVal = (arr, i) => arr && arr[i] !== '-' && arr[i] !== undefined ? parseFloat(arr[i]) : null;
+
+// Extracted metrics for base case calculation
+let fcf2025 = parseVal(cf?.data['Free Cash Flow'], 0);
+let sharesOutstanding = parseVal(is?.data['Shares Outstanding (Basic)'], 0);
+let cashAndEquiv = parseVal(bs?.data['Cash & Equivalents'], 0);
+let stInvestments = parseVal(bs?.data['Short-Term Investments'], 0);
+let totalDebt = parseVal(bs?.data['Total Debt'], 0);
+let rev2025 = parseVal(is?.data['Revenue'], 0);
+let eps2025 = parseVal(is?.data['EPS (Diluted)'], 0);
+let opMargin2025 = parseVal(is?.data['Operating Margin'], 0);
+
+// Set null fallbacks safely
+const fcf2025Val = fcf2025 ?? 9075;
+const sharesOutstandingVal = sharesOutstanding ?? 5683;
+const cashAndInvestmentsVal = (cashAndEquiv ?? 1142) + (stInvestments ?? 12454);
+const totalDebtVal = totalDebt ?? 64795;
+const netCash = cashAndInvestmentsVal - totalDebtVal;
+const rev2025Val = rev2025 ?? 62579;
+const eps2025Val = eps2025 ?? 1.36;
+const opMargin2025Val = opMargin2025 ?? 12.02;
+
+// Market comparison
+const currentPrice = fetchedPrice ?? 27.32;
+
+// --- ASSUMPTIONS ---
+const growthRatePhase1 = 0.04;         // 4% FCF growth, Years 1-5
+const growthRateTerminal = 0.02;      // 2% perpetuity growth (terminal)
+=======
+  description: "We ran a full discounted cash flow on Pfizer using FY2025 actuals. One number. Every assumption disclosed. Here's what Pfizer is really worth.",
+  category: "study",
+  published: "2026-03-18",
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ALL INPUTS AND CALCULATIONS
+   Every number is sourced from Pfizer's FY2025 financials.
+   We use a two-stage DCF: high-growth phase (Years 1-5) then terminal value.
+   ═══════════════════════════════════════════════════════════════ */
+
+// --- INPUTS (all in millions USD unless noted) ---
+const fcf2025 = 9075;                  // FY2025 Free Cash Flow ($M)
+const sharesOutstanding = 5683;        // Basic shares outstanding ($M) — FY2025
+const cashAndInvestments = 13596;      // Cash + short-term investments ($M)
+const totalDebt = 64795;               // Total debt ($M)
+const netCash = cashAndInvestments - totalDebt; // -$51,199M
+
+// --- ASSUMPTIONS (fully disclosed below) ---
+const growthRatePhase1 = 0.05;         // 5% FCF growth, Years 1-5
+const growthRateTerminal = 0.02;       // 2% perpetuity growth (terminal)
+>>>>>>> Stashed changes
+const discountRate = 0.08;             // 8% WACC / required return
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+<<<<<<< Updated upstream
+let fcf = fcf2025Val;
+=======
+let fcf = fcf2025;
+>>>>>>> Stashed changes
+for (let yr = 1; yr <= 5; yr++) {
+  fcf = fcf * (1 + growthRatePhase1);
+  projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor: 1 / Math.pow(1 + discountRate, yr) });
+}
+projectedFCF.forEach(p => { p.pvFCF = Math.round(p.fcf * p.pvFactor); });
+
+<<<<<<< Updated upstream
+// --- PHASE 2: TERMINAL VALUE ---
+=======
+// --- PHASE 2: TERMINAL VALUE (Gordon Growth Model) ---
+>>>>>>> Stashed changes
+const fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+const terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+const pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+
+// --- ENTERPRISE VALUE ---
+const pvPhase1 = projectedFCF.reduce((sum, p) => sum + p.pvFCF, 0);
+const enterpriseValue = pvPhase1 + pvTerminalValue;
+
+// --- EQUITY VALUE ---
+const equityValue = enterpriseValue + netCash;
+<<<<<<< Updated upstream
+const intrinsicValuePerShare = equityValue / sharesOutstandingVal;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+const marginOfSafety = (((roundedIV - currentPrice) / currentPrice) * 100).toFixed(1);
+=======
+const intrinsicValuePerShare = equityValue / sharesOutstanding;
+const roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+// Market comparison
+const currentPrice = 27.33;
+const marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+>>>>>>> Stashed changes
+const verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+const verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+
+// --- HISTORICAL DATA for charts ---
+<<<<<<< Updated upstream
+const revenueHistory = is ? is.headers.slice(1, 6).map((yr, i) => {
+  return { year: parseInt(yr.replace('FY ', '')) || (2025 - i), value: parseVal(is.data['Revenue'], i) || 0 };
+}).reverse() : [];
+
+const fcfHistory = cf ? cf.headers.slice(1, 6).map((yr, i) => {
+  return { year: parseInt(yr.replace('FY ', '')) || (2025 - i), value: parseVal(cf.data['Free Cash Flow'], i) || 0 };
+}).reverse() : [];
+
+const epsHistory = is ? is.headers.slice(1, 6).map((yr, i) => {
+  return { year: parseInt(yr.replace('FY ', '')) || (2025 - i), value: parseVal(is.data['EPS (Diluted)'], i) || 0 };
+}).reverse() : [];
+
+const marginHistory = is ? is.headers.slice(1, 6).map((yr, i) => {
+  const op = parseVal(is.data['Operating Margin'], i) || 0;
+  const pr = parseVal(is.data['Profit Margin'], i) || 0;
+  // approximate FCF margin
+  const fcfVal = parseVal(cf?.data['Free Cash Flow'], i);
+  const revVal = parseVal(is.data['Revenue'], i);
+  const fcfM = (fcfVal && revVal) ? (fcfVal / revVal * 100).toFixed(2) : '0.00';
+  return { year: parseInt(yr.replace('FY ', '')) || (2025 - i), operating: op, profit: pr, fcfMargin: parseFloat(fcfM) };
+}).reverse() : [];
+
+// Sensitivity analysis
+const sensitivityRates = [0.06, 0.07, 0.08, 0.09, 0.10];
+const sensitivityGrowth = [0.00, 0.02, 0.04, 0.06, 0.08];
+=======
+const revenueHistory = [
+  { year: 2021, value: 81_288 },
+  { year: 2022, value: 101_175 },
+  { year: 2023, value: 59_553 },
+  { year: 2024, value: 63_627 },
+  { year: 2025, value: 62_579 },
+];
+const fcfHistory = [
+  { year: 2021, value: 29_869 },
+  { year: 2022, value: 26_031 },
+  { year: 2023, value: 4_793 },
+  { year: 2024, value: 9_835 },
+  { year: 2025, value: 9_075 },
+];
+const epsHistory = [
+  { year: 2021, value: 3.85 },
+  { year: 2022, value: 5.47 },
+  { year: 2023, value: 0.37 },
+  { year: 2024, value: 1.41 },
+  { year: 2025, value: 1.36 },
+];
+const marginHistory = [
+  { year: 2021, operating: 29.91, profit: 27.63, fcfMargin: 36.74 },
+  { year: 2022, operating: 34.32, profit: 31.04, fcfMargin: 25.73 },
+  { year: 2023, operating: 1.77, profit: 3.65, fcfMargin: 8.05 },
+  { year: 2024, operating: 12.61, profit: 12.65, fcfMargin: 15.46 },
+  { year: 2025, operating: 12.02, profit: 12.44, fcfMargin: 14.50 },
+];
+
+// Sensitivity analysis
+const sensitivityRates = [0.06, 0.07, 0.08, 0.09, 0.10];
+const sensitivityGrowth = [0.01, 0.03, 0.05, 0.07, 0.09];
+>>>>>>> Stashed changes
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+<<<<<<< Updated upstream
+      let f = fcf2025Val;
+=======
+      let f = fcf2025;
+>>>>>>> Stashed changes
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+<<<<<<< Updated upstream
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstandingVal);
+=======
+      return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+>>>>>>> Stashed changes
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="Pfizer (PFE) Intrinsic Value: A DCF Analysis"
+<<<<<<< Updated upstream
+  description="We ran a full discounted cash flow on Pfizer using FY2025 actuals. One number. Every assumption disclosed. Here's what PFE is really worth."
+=======
+  description="We ran a full discounted cash flow on Pfizer using FY2025 actuals. One number. Every assumption disclosed. Here's what Pfizer is really worth."
+>>>>>>> Stashed changes
+  canonical="https://westmountfundamentals.com/pfizer-intrinsic-value"
+  schema={schema}
+>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.bar-chart { margin: 24px 0 40px; }
+.bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; transition: width 0.6s ease; }
+.bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* Sources */
+.sources { margin: 40px 0 60px; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.sources h4 { color: #e0e6f0; margin-bottom: 12px; }
+.sources ul { list-style: none; padding: 0; }
+.sources li { font-size: 0.85rem; color: #5a6a80; margin-bottom: 6px; padding-left: 16px; position: relative; }
+.sources li::before { content: '→'; position: absolute; left: 0; color: #4a8fe7; }
+
+/* Cite */
+.cite-block { margin: 40px 0; padding: 20px 24px; background: #0a1020; border-left: 3px solid #4a8fe7; border-radius: 0 14px 14px 0; }
+.cite-block h4 { color: #e0e6f0; margin-bottom: 8px; font-size: 0.85rem; }
+.cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* Related */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 60px; }
+.related-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 20px; display: block; color: inherit; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+.related-card:hover { border-color: #4a8fe7; transform: translateY(-2px); text-decoration: none; }
+.related-card .rc-title { color: #e0e6f0; font-weight: 700; margin-bottom: 6px; }
+.related-card .rc-desc { font-size: 0.85rem; color: #5a6a80; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .assumption-grid { grid-template-columns: 1fr; }
+  .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="header">
+  <div class="header-content">
+<<<<<<< Updated upstream
+    <div class="tag">Compiled by Gemini 3.1</div>
+    <h1>Pfizer (PFE)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Pfizer Inc. — using FY2025 actuals, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated {new Date().toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})} · Data: FY2025 10-K</p>
+=======
+    <div class="tag">Compiled by Gemini 2.5 Pro</div>
+    <h1>Pfizer (PFE)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of Pfizer Inc. — using FY2025 actuals, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated March 18, 2026 · Data: FY2025 Financials</p>
+>>>>>>> Stashed changes
+  </div>
+</div>
+
+<div class="container">
+  <!-- ═══ THE VERDICT ═══ -->
+  <div class="verdict-card">
+    <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+    <div class="verdict-price">${roundedIV.toFixed(2)}</div>
+    <div class="verdict-vs">vs. market price of ${currentPrice.toFixed(2)} ({marginOfSafety}%)</div>
+    <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+      {verdictText}
+    </div>
+  </div>
+
+  <!-- ═══ KEY METRICS ═══ -->
+  <div class="stats-row">
+    <div class="stat-card">
+<<<<<<< Updated upstream
+      <div class="stat-value">${(rev2025Val / 1000).toFixed(1)}B</div>
+      <div class="stat-label">FY2025 Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${(fcf2025Val / 1000).toFixed(1)}B</div>
+      <div class="stat-label">Free Cash Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${eps2025Val.toFixed(2)}</div>
+      <div class="stat-label">EPS (Diluted)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{opMargin2025Val.toFixed(1)}%</div>
+=======
+      <div class="stat-value">$62.6B</div>
+      <div class="stat-label">FY2025 Revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$9.1B</div>
+      <div class="stat-label">Free Cash Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$1.36</div>
+      <div class="stat-label">EPS (Diluted)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">12.0%</div>
+>>>>>>> Stashed changes
+      <div class="stat-label">Operating Margin</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${(netCash / 1000).toFixed(1)}B</div>
+<<<<<<< Updated upstream
+      <div class="stat-label">Net Cash</div>
+=======
+      <div class="stat-label">Net Debt</div>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <h2>Methodology: Two-Stage DCF</h2>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
+
+  <div class="method-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Start with actual Free Cash Flow</h4>
+<<<<<<< Updated upstream
+      <p>Pfizer generated <strong>${(fcf2025Val / 1000).toFixed(2)} billion</strong> in free cash flow in FY2025. This is real cash the business produces after paying for everything, including capital expenditures, reflecting the post-COVID baseline operation level.</p>
+=======
+      <p>Pfizer generated <strong>$9.07 billion</strong> in free cash flow in FY2025. This is operating cash flow minus capital expenditures. This is real cash the business produces after paying for everything, representing the post-COVID baseline.</p>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Project FCF growth for 5 years (Phase 1)</h4>
+<<<<<<< Updated upstream
+      <p>We grow FCF at <strong>4% per year</strong> for 5 years. This accounts for Pfizer's patent cliffs and pipeline replacements while modeling steady non-COVID growth driven by acquired products and existing blockbusters.</p>
+=======
+      <p>We grow FCF at <strong>5% per year</strong> for 5 years. This factors in a return to modest growth fueled by the Seagen acquisition, massive cost-cutting initiatives, and an expanded oncology pipeline, balancing out patent expirations (LOEs) on major drugs like Eliquis.</p>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Calculate terminal value (Phase 2)</h4>
+<<<<<<< Updated upstream
+      <p>After Year 5, we assume FCF grows at <strong>2% forever</strong> — slightly below GDP growth, reflecting the continuous cycle of drug patents expiring and new approvals. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate).</p>
+=======
+      <p>After Year 5, we assume FCF grows at <strong>2% forever</strong>. This is slightly below long-term GDP growth, reflecting the continuous challenge of replacing patent-protected revenues in the pharmaceutical industry. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate).</p>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Discount everything to present value</h4>
+<<<<<<< Updated upstream
+      <p>All future cash flows are discounted at <strong>8%</strong> — our required rate of return. This aligns with Pfizer's lower beta (defensive value stock). It's above the 10Y Treasury (4.18%) plus a typical equity risk premium.</p>
+=======
+      <p>All future cash flows are discounted at <strong>8%</strong> — our required rate of return. Pfizer is a mature, defensive dividend payer with a low beta, making its cost of equity relatively low compared to tech companies, despite a higher debt load from acquisitions.</p>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Add net cash, divide by shares</h4>
+<<<<<<< Updated upstream
+      <p>Enterprise Value + Net Cash (${(netCash / 1000).toFixed(1)}B) = Equity Value. Divide by shares outstanding ({(sharesOutstandingVal / 1000).toFixed(2)}B) for the per-share intrinsic value.</p>
+=======
+      <p>Enterprise Value + Net Cash (-$51.2B) = Equity Value. Since Pfizer has substantial net debt, this dramatically reduces the final equity value. Divide by shares outstanding (5.68B) for the per-share intrinsic value.</p>
+>>>>>>> Stashed changes
+    </div>
+  </div>
+
+  <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+  <h2>The Three Assumptions That Drive Everything</h2>
+  <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
+
+  <div class="assumption-grid">
+    <div class="assumption-card">
+      <div class="label">FCF Growth Rate (Years 1-5)</div>
+<<<<<<< Updated upstream
+      <div class="value">4%</div>
+      <div class="rationale">
+        Pfizer is in a transition phase. Revenues plummeted after the COVID-19 vaccine/treatment boom. Now, with major acquisitions like Seagen and a focus on oncology and non-COVID base business, we model a modest 4% growth rate in cash flow as new drugs offset revenue losses from impending patent expirations (like Eliquis).
+=======
+      <div class="value">5%</div>
+      <div class="rationale">
+        Pfizer is facing a steep patent cliff between now and 2030. To offset this, they spent heavily on Seagen (oncology) and are aggressively cutting costs ($4B+ reduction program). 5% growth assumes execution on pipeline delivery and synergies, acknowledging it will be an uphill battle against generic competition.
+>>>>>>> Stashed changes
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Discount Rate (WACC)</div>
+      <div class="value">8%</div>
+      <div class="rationale">
+<<<<<<< Updated upstream
+        10Y Treasury: 4.18%. Equity risk premium: ~4-5%. Beta: Low (value stock). CAPM gives ~8%. We use 8% because Pfizer is a mature, defensive pharmaceutical giant. This means: "we demand 8% annual returns to justify owning this stock," which is lower than a volatile tech stock.
+=======
+        With the 10Y Treasury at 4.18%, an 8% WACC is appropriate for a mature pharmaceutical giant. Pharma revenues are recession-resistant (low beta), which lowers the cost of equity, though Pfizer's large debt burden from recent acquisitions keeps the blended discount rate from falling further.
+>>>>>>> Stashed changes
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Terminal Growth Rate</div>
+      <div class="value">2%</div>
+      <div class="rationale">
+<<<<<<< Updated upstream
+        Long-term nominal GDP growth is ~3%. We use 2% because pharma companies face continuous patent cliffs requiring constant R&D reinvestment just to maintain revenues. 2% suggests Pfizer will continue to survive and modestly grow via pricing power and steady pipeline execution forever.
+=======
+        2% models long-term inflation and modest demographic tailwinds (aging populations). In pharma, perpetual growth beyond 2-3% is unrealistic because patents expire, forcing companies to constantly innovate just to stand still.
+>>>>>>> Stashed changes
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+  <h2>Projected Free Cash Flows</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>FCF ($M)</th>
+          <th>PV Factor</th>
+          <th>Present Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Base (FY2025)</td>
+<<<<<<< Updated upstream
+          <td>${fcf2025Val.toLocaleString()}</td>
+=======
+          <td>${fcf2025.toLocaleString()}</td>
+>>>>>>> Stashed changes
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        {projectedFCF.map(p => (
+          <tr>
+            <td>Year {p.year} ({2025 + p.year})</td>
+            <td>${p.fcf.toLocaleString()}</td>
+            <td>{p.pvFactor.toFixed(4)}</td>
+            <td>${p.pvFCF.toLocaleString()}</td>
+          </tr>
+        ))}
+        <tr class="row-total">
+          <td colspan="3">Sum of Phase 1 PV</td>
+          <td class="highlight-cell">${pvPhase1.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ TERMINAL VALUE ═══ -->
+  <h3>Terminal Value</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Year 6 FCF (Year 5 × 1.02)</td>
+          <td>${Math.round(fcfYear6).toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>Terminal Value (FCF₆ ÷ (8% − 2%))</td>
+          <td>${terminalValue.toLocaleString()}</td>
+        </tr>
+        <tr class="row-total">
+          <td>PV of Terminal Value</td>
+          <td class="highlight-cell">${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ FINAL CALCULATION ═══ -->
+  <h3>Final Valuation</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PV of Phase 1 Cash Flows</td>
+          <td>${pvPhase1.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>PV of Terminal Value</td>
+          <td>${pvTerminalValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>= Enterprise Value</td>
+          <td>${enterpriseValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>+ Net Cash (Cash − Debt)</td>
+          <td>${netCash.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>= Equity Value</td>
+          <td>${equityValue.toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td>÷ Shares Outstanding</td>
+<<<<<<< Updated upstream
+          <td>{sharesOutstandingVal.toLocaleString()}</td>
+=======
+          <td>{sharesOutstanding.toLocaleString()}</td>
+>>>>>>> Stashed changes
+        </tr>
+        <tr class="row-total">
+          <td>Intrinsic Value Per Share</td>
+          <td class="highlight-cell">${roundedIV.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ HISTORICAL CHARTS ═══ -->
+  <h2>Financial Track Record</h2>
+<<<<<<< Updated upstream
+  <p>Pfizer's history reflects a massive surge during the COVID-19 pandemic and subsequent normalization. Looking at the 5-year trend helps context the current baseline.</p>
+=======
+  <p>Before trusting a forward projection, look at where the company has been. Here's Pfizer's 5-year performance, dominated by the rise and fall of COVID-19 revenues.</p>
+>>>>>>> Stashed changes
+
+  <h3>Revenue ($B)</h3>
+  <div class="bar-chart">
+    {revenueHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+<<<<<<< Updated upstream
+          <div class="bar-fill revenue" style={`width: ${Math.max((r.value / 101175) * 100, 5)}%`}>
+=======
+          <div class="bar-fill revenue" style={`width: ${(r.value / 101175) * 100}%`}>
+>>>>>>> Stashed changes
+            ${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Free Cash Flow ($B)</h3>
+  <div class="bar-chart">
+    {fcfHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+<<<<<<< Updated upstream
+          <div class="bar-fill fcf" style={`width: ${Math.max((r.value / 29869) * 100, 5)}%`}>
+=======
+          <div class="bar-fill fcf" style={`width: ${(r.value / 29869) * 100}%`}>
+>>>>>>> Stashed changes
+            ${(r.value / 1000).toFixed(1)}B
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <h3>Earnings Per Share (Diluted)</h3>
+  <div class="bar-chart">
+    {epsHistory.map(r => (
+      <div class="bar-row">
+        <div class="bar-label">{r.year}</div>
+        <div class="bar-track">
+<<<<<<< Updated upstream
+          <div class="bar-fill eps" style={`width: ${Math.max((r.value / 5.47) * 100, 5)}%`}>
+=======
+          <div class="bar-fill eps" style={`width: ${(r.value / 5.47) * 100}%`}>
+>>>>>>> Stashed changes
+            ${r.value.toFixed(2)}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- ═══ MARGIN TRENDS ═══ -->
+  <h3>Margin Trends</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>Operating Margin</th>
+          <th>Profit Margin</th>
+          <th>FCF Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {marginHistory.map(m => (
+          <tr>
+            <td>{m.year}</td>
+            <td>{m.operating}%</td>
+            <td>{m.profit}%</td>
+            <td>{m.fcfMargin}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+<<<<<<< Updated upstream
+  <p><strong>Key observation:</strong> Margins peaked in 2022 due to the high-margin nature of Comirnaty (vaccine) and Paxlovid. The 2023 collapse reflects massive inventory write-offs. FY2024 and FY2025 margins represent the new, post-pandemic operational reality.</p>
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Our base case uses 4% growth and 8% discount rate. Here's what the intrinsic value looks like under different assumptions. Find the combination you believe in.</p>
+=======
+  <p><strong>Key observation:</strong> Pfizer's margins crashed in 2023 as high-margin COVID-19 vaccine and therapeutic revenues evaporated. FY2024 and FY2025 show stabilization back to low double-digits, heavily reliant on execution of their multi-billion dollar cost realignment program.</p>
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Our base case uses 5% growth and an 8% discount rate. But reasonable people disagree on these numbers. Here's what the intrinsic value looks like under different assumptions. Find the combination you believe in.</p>
+>>>>>>> Stashed changes
+
+  <div class="table-wrap">
+    <table class="sensitivity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+          {sensitivityGrowth.map(g => (
+<<<<<<< Updated upstream
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+=======
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100)}%</th>
+>>>>>>> Stashed changes
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityTable.map(row => (
+          <tr>
+<<<<<<< Updated upstream
+            <td>{(row.dr * 100).toFixed(0)}%</td>
+=======
+            <td>{(row.dr * 100)}%</td>
+>>>>>>> Stashed changes
+            {row.values.map((v, i) => (
+              <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                ${v}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+<<<<<<< Updated upstream
+  <p>The highlighted cell is our base case. Because we assume a low terminal growth (2%), the model is extremely sensitive to the discount rate. If you believe Pfizer is riskier and demands a 10% return, the value drops significantly.</p>
+=======
+  <p>The highlighted cell is our base case. Because of the massive $64.8B debt load, small changes in WACC drastically alter the equity value leftover for shareholders.</p>
+>>>>>>> Stashed changes
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>What This Model Doesn't Capture</h2>
+  <p>No model is complete. Here's what a DCF inherently misses — and how it might bias our estimate.</p>
+
+  <h3>Upside risks (our number could be too low)</h3>
+  <ul>
+<<<<<<< Updated upstream
+    <li><strong>Oncology dominance:</strong> Seagen acquisition unlocks massive potential in ADCs (Antibody-Drug Conjugates). Faster than expected integration and pipeline success could boost long-term growth above 4%.</li>
+    <li><strong>Cost-cutting success:</strong> Pfizer has initiated a multi-billion dollar cost-cutting program. If they execute cleanly, operating margins could expand back toward 25-30%, driving FCF higher.</li>
+    <li><strong>Surprise blockbusters:</strong> The model assumes average R&D success. A breakthrough in weight-loss drugs (GLP-1s) or another novel vaccine could radically alter the cash flow trajectory.</li>
+=======
+    <li><strong>Pipeline success:</strong> If Pfizer's oncology pipeline (bolstered by Seagen) delivers blockbusters faster than anticipated, 5% FCF growth will prove too conservative.</li>
+    <li><strong>Obesity market:</strong> Pfizer is still developing oral GLP-1 candidates. If they succeed, it unlocks a massive, high-margin market not currently priced in.</li>
+    <li><strong>Cost-cutting over-delivery:</strong> The company is targeting $4B+ in cost savings. If they exceed this, FCF margins will expand rapidly.</li>
+>>>>>>> Stashed changes
+  </ul>
+
+  <h3>Downside risks (our number could be too high)</h3>
+  <ul>
+<<<<<<< Updated upstream
+    <li><strong>Patent cliffs:</strong> Eliquis (shared with BMS) and Ibrance face loss of exclusivity later this decade. If the pipeline fails to offset these lost revenues, growth could be negative.</li>
+    <li><strong>Debt load:</strong> Pfizer took on significant debt to buy Seagen (Total debt is over $64B). The interest expense is real, and the net debt position pulls down the equity value directly.</li>
+    <li><strong>Capital allocation missteps:</strong> If recent acquisitions do not yield the promised returns, the cash spent effectively destroys shareholder value long-term.</li>
+=======
+    <li><strong>Patent cliff (LOE):</strong> Major drugs like Eliquis, Ibrance, and Vyndaqel lose exclusivity in the coming years. If replacement revenue is slower to materialize, FCF will decline, not grow.</li>
+    <li><strong>Debt burden:</strong> The $43B Seagen acquisition left Pfizer highly leveraged ($64.8B total debt). This limits capital flexibility for share buybacks and future M&A.</li>
+    <li><strong>Drug pricing regulation:</strong> The US Inflation Reduction Act (IRA) allows Medicare to negotiate drug prices, inherently pressuring long-term profit margins for all large pharma companies.</li>
+>>>>>>> Stashed changes
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+<<<<<<< Updated upstream
+      <summary>Why use an 8% discount rate for Pfizer?</summary>
+      <div class="faq-answer">Pfizer is considered a defensive value stock, often held for its dividend and stability in down markets. Its beta is historically low compared to the broader market. While tech stocks might command a 10-12% rate, an 8% hurdle rate is appropriate for a mature, cash-generative pharmaceutical company.</div>
+    </details>
+    <details>
+      <summary>Why is the free cash flow assumption only 4%?</summary>
+      <div class="faq-answer">While tech companies might project 15%+ growth, big pharma faces a structural headwind: patents expire. Pfizer must constantly invent or buy new drugs just to replace declining revenue from older drugs losing exclusivity. A 4% growth rate implies they successfully replace lost revenue and eke out modest growth.</div>
+    </details>
+    <details>
+      <summary>Does this include the dividend?</summary>
+      <div class="faq-answer">A DCF inherently captures the ability to pay dividends. By valuing the total free cash flow the business generates, we are capturing all the cash that could be used for dividends, share buybacks, or debt reduction. Paying a dividend doesn't create new value; it just distributes the cash flow we've already counted.</div>
+=======
+      <summary>Why use DCF instead of a P/E or EV/EBITDA multiple?</summary>
+      <div class="faq-answer">Multiples tell you what the market <em>is</em> paying — not what a company is <em>worth</em>. During bubbles, P/E ratios are high; during panics, they're low. A DCF forces you to state explicit assumptions about growth and risk, then lets math determine the price. It's the only valuation method that directly connects cash flow generation to value.</div>
+    </details>
+    <details>
+      <summary>Why an 8% discount rate for Pfizer?</summary>
+      <div class="faq-answer">Pfizer operates in a non-cyclical, defensive sector with a very low beta (~0.6). According to CAPM, this justifies a lower required return (cost of equity) compared to volatile tech stocks. However, we cannot use a lower rate like 6-7% due to their elevated debt load increasing financial risk.</div>
+    </details>
+    <details>
+      <summary>Why is the Intrinsic Value sometimes negative in the sensitivity table?</summary>
+      <div class="faq-answer">Pfizer has over $51 billion in net debt. If you assume low growth (1%) and a high discount rate (10%), the total Enterprise Value generated by future cash flows is less than the debt they owe. In that mathematical scenario, the equity is technically worthless.</div>
+    </details>
+    <details>
+      <summary>Is this a buy recommendation?</summary>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, time horizon, tax situation, and conviction in the assumptions. We provide the tools and transparency — you make the decision.</div>
+    </details>
+    <details>
+      <summary>How often is this updated?</summary>
+      <div class="faq-answer">We update this analysis when Pfizer reports quarterly earnings or when material events change the thesis (e.g., major FDA approvals, clinical trial failures, or acquisitions).</div>
+>>>>>>> Stashed changes
+    </details>
+  </div>
+
+  <!-- ═══ CITE ═══ -->
+  <div class="cite-block">
+    <h4>📝 Cite This Research</h4>
+<<<<<<< Updated upstream
+    <p>Westmount Research. "Pfizer (PFE) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, {new Date().toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'})}.</p>
+=======
+    <p>Gemini 2.5 Pro. "Pfizer (PFE) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, March 18, 2026.</p>
+>>>>>>> Stashed changes
+  </div>
+
+  <!-- ═══ DATA SOURCES ═══ -->
+  <div class="sources">
+    <h4>Data Sources & Methodology</h4>
+    <ul>
+<<<<<<< Updated upstream
+      <li>Pfizer Inc. FY2025 Financials, sourced via StockAnalysis</li>
+      <li>U.S. 10-Year Treasury yield (4.18%)</li>
+      <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+      <li>Calculations generated dynamically using latest available market data</li>
+    </ul>
+  </div>
+
+=======
+      <li>Pfizer Inc. FY2025 Financials, via stockanalysis.com</li>
+      <li>U.S. 10-Year Treasury yield (4.18%) as of March 2026</li>
+      <li>Share price ($27.33) as of market close March 18, 2026, NYSE</li>
+      <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+      <li>All calculations performed in real-time using source data (no third-party valuation services)</li>
+    </ul>
+  </div>
+
+  <!-- ═══ RELATED ═══ -->
+  <h2>Related Pages</h2>
+  <div class="related-grid">
+    <a href="/what-is-intrinsic-value" class="related-card">
+      <div class="rc-title">What Is Intrinsic Value?</div>
+      <div class="rc-desc">The concept behind every DCF — why cash flows determine what a company is really worth.</div>
+    </a>
+    <a href="/dcf-calculator" class="related-card">
+      <div class="rc-title">DCF Calculator</div>
+      <div class="rc-desc">Run your own discounted cash flow analysis with custom inputs.</div>
+    </a>
+    <a href="/what-is-free-cash-flow" class="related-card">
+      <div class="rc-title">What Is Free Cash Flow?</div>
+      <div class="rc-desc">Why FCF matters more than earnings for valuation.</div>
+    </a>
+    <a href="/pe-ratio-calculator" class="related-card">
+      <div class="rc-title">P/E Ratio Calculator</div>
+      <div class="rc-desc">Compare Pfizer's P/E to the market and its own history.</div>
+    </a>
+  </div>
+
+>>>>>>> Stashed changes
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>
