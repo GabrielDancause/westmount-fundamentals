@@ -1,0 +1,573 @@
+---
+export const meta = {
+  title: "Williams Companies (WMB) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on The Williams Companies using actual financials. One number. Every assumption disclosed. Here's what WMB is really worth.",
+  category: "study",
+  published: "2026-03-18",
+};
+import SiteLayout from "../layouts/SiteLayout.astro";
+import * as cheerio from 'cheerio';
+
+
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Williams Companies (WMB) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of The Williams Companies (WMB). Using actual financials to arrive at a single fair value estimate for WMB shares.",
+  "datePublished": "2026-03-18",
+  "dateModified": "2026-03-18",
+  "author": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/williams-companies-intrinsic-value"
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA FETCHING
+   ═══════════════════════════════════════════════════════════════ */
+async function fetchHtml(url) {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+      }
+    });
+    if (!res.ok) return null;
+    return await res.text();
+  } catch (e) {
+    return null;
+  }
+}
+
+function extractRow(html, rowName) {
+  if (!html) return [];
+  const $ = cheerio.load(html);
+  let values = [];
+  $('table tbody tr').each((i, el) => {
+    const firstTd = $(el).find('td').first().text().trim();
+    if (firstTd === rowName) {
+      $(el).find('td').each((j, td) => {
+        if (j > 0) {
+          const valText = $(td).text().trim().replace(/,/g, '');
+          if (valText === '-' || valText === '') {
+            values.push(null);
+          } else {
+            values.push(parseFloat(valText));
+          }
+        }
+      });
+    }
+  });
+  return values;
+}
+
+const htmlIS = await fetchHtml('https://stockanalysis.com/stocks/wmb/financials/');
+const htmlCF = await fetchHtml('https://stockanalysis.com/stocks/wmb/financials/cash-flow-statement/');
+const htmlBS = await fetchHtml('https://stockanalysis.com/stocks/wmb/financials/balance-sheet/');
+
+const fcfArr = extractRow(htmlCF, 'Free Cash Flow');
+const ocfArr = extractRow(htmlCF, 'Operating Cash Flow');
+const sharesArr = extractRow(htmlIS, 'Shares Outstanding (Diluted)');
+const cashArr = extractRow(htmlBS, 'Cash & Equivalents');
+const debtArr = extractRow(htmlBS, 'Total Debt');
+
+// Parse current price
+let currentPrice = null;
+if (htmlIS) {
+  const priceMatch = htmlIS.match(/<div class="[^"]*text-4xl[^"]*"[^>]*>([\d\.,]+)<\/div>/);
+  if (priceMatch && priceMatch[1]) {
+    currentPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
+  }
+}
+
+// Ensure we have current data; index 0 is TTM/latest year
+const baseFcf = fcfArr[0] !== undefined ? fcfArr[0] : null;
+const baseOcf = ocfArr[0] !== undefined ? ocfArr[0] : null;
+const sharesOutstanding = sharesArr[0] !== undefined ? sharesArr[0] : null;
+const cashAndInvestments = cashArr[0] !== undefined ? cashArr[0] : null;
+const totalDebt = debtArr[0] !== undefined ? debtArr[0] : null;
+
+// The Williams Companies (WMB) is an energy infrastructure operator (pipelines).
+// Pipeline MLPs/C-corps often have very high ongoing growth capex which depresses traditional FCF.
+// Operating Cash Flow (OCF) is typically used as a base cash proxy for energy infrastructure
+// before deducting growth capex, or we use standard FCF if it's stable.
+// However, looking at WMB, it generates solid positive FCF. We'll use FCF as the base.
+let fcfBase = baseFcf;
+
+let netCash = null;
+if (cashAndInvestments !== null && totalDebt !== null) {
+  netCash = cashAndInvestments - totalDebt;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DCF MODEL — ASSUMPTIONS & CALCULATIONS
+   ═══════════════════════════════════════════════════════════════ */
+// Base 10Y Treasury is 4.18%.
+// WMB is an energy pipeline utility. Highly stable cash flows (toll road model).
+// Cost of capital (WACC) for pipelines is typically 8.0% - 9.0%. We use 8.5%.
+const discountRate = 0.085;
+
+// Phase 1 Growth: Modest 5% growth reflecting pipeline expansions and inflation escalators.
+const growthRatePhase1 = 0.05;
+
+// Terminal Growth: 2.5%, slightly below GDP reflecting energy transition risks long-term.
+const growthRateTerminal = 0.025;
+
+let projectedFCF = [];
+let pvPhase1 = 0;
+let fcfYear6 = null;
+let terminalValue = null;
+let pvTerminalValue = null;
+let enterpriseValue = null;
+let equityValue = null;
+let intrinsicValuePerShare = null;
+let roundedIV = null;
+let marginOfSafety = null;
+
+if (fcfBase !== null && sharesOutstanding !== null && netCash !== null) {
+  let fcf = fcfBase;
+  for (let yr = 1; yr <= 5; yr++) {
+    fcf = fcf * (1 + growthRatePhase1);
+    const pvFactor = 1 / Math.pow(1 + discountRate, yr);
+    const pvFCF = fcf * pvFactor;
+    projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor, pvFCF: Math.round(pvFCF) });
+    pvPhase1 += pvFCF;
+  }
+
+  fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+  terminalValue = fcfYear6 / (discountRate - growthRateTerminal);
+  pvTerminalValue = terminalValue * projectedFCF[4].pvFactor;
+
+  enterpriseValue = pvPhase1 + pvTerminalValue;
+  equityValue = enterpriseValue + netCash; // netCash is usually deeply negative for pipelines
+
+  intrinsicValuePerShare = equityValue / sharesOutstanding;
+  roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+  if (currentPrice !== null) {
+    marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+  }
+}
+
+const verdictText = roundedIV !== null && currentPrice !== null
+  ? (roundedIV > currentPrice ? "Undervalued" : "Overvalued")
+  : "N/A";
+const verdictColor = roundedIV !== null && currentPrice !== null
+  ? (roundedIV > currentPrice ? "#10b981" : "#ef4444")
+  : "#5a6a80";
+
+// Sensitivity analysis
+const sensitivityRates = [0.075, 0.080, 0.085, 0.090, 0.095];
+const sensitivityGrowth = [0.03, 0.04, 0.05, 0.06, 0.07];
+let sensitivityTable = [];
+
+if (fcfBase !== null && sharesOutstanding !== null && netCash !== null) {
+  sensitivityTable = sensitivityRates.map(dr => {
+    return {
+      dr,
+      values: sensitivityGrowth.map(gr => {
+        let f = fcfBase;
+        let pvSum = 0;
+        for (let y = 1; y <= 5; y++) {
+          f = f * (1 + gr);
+          pvSum += f / Math.pow(1 + dr, y);
+        }
+        const f6 = f * (1 + growthRateTerminal);
+        const tv = f6 / (dr - growthRateTerminal);
+        const pvTV = tv / Math.pow(1 + dr, 5);
+        return Math.round((pvSum + pvTV + netCash) / sharesOutstanding);
+      })
+    };
+  });
+}
+---
+
+<SiteLayout
+  site="westmount"
+  title="Williams Companies (WMB) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on The Williams Companies using actual financials. One number. Every assumption disclosed. Here's what WMB is really worth."
+  canonical="https://westmountfundamentals.com/williams-companies-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; }
+a { color: #4a8fe7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); }
+.header-content { position: relative; z-index: 1; }
+.tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin-bottom: 16px; line-height: 1.1; }
+@media (max-width: 640px) { h1 { font-size: 2rem; } }
+.subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+.compiled-by { color: #5a6a80; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-top: 12px; }
+
+/* Big verdict */
+.verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); }
+.verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .verdict-price { font-size: 3rem; } }
+.verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+p, li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+ul, ol { padding-left: 24px; }
+li { margin-bottom: 8px; }
+strong { color: #e0e6f0; }
+.highlight { color: #4a8fe7; font-weight: 700; }
+
+/* Assumption cards */
+.assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+table { width: 100%; border-collapse: collapse; }
+th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+th:first-child { text-align: left; }
+td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+tr:hover td { background: rgba(74,143,231,0.03); }
+.row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Methodology */
+.method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { color: #e0e6f0; font-size: 1rem; margin-bottom: 6px; }
+.step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.disclaimer h4 { color: #ef4444; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* FAQ */
+.faq { margin: 40px 0; }
+.faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.faq details[open] summary::after { content: '−'; }
+.faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+</style>
+
+<div class="header">
+  <div class="header-content">
+    <div class="tag">Original Research</div>
+    <h1>Williams Companies (WMB)<br/>Intrinsic Value</h1>
+    <p class="subtitle">A transparent, two-stage discounted cash flow valuation of The Williams Companies — using actual financials, disclosed assumptions, and one final number.</p>
+    <p class="date">Updated March 18, 2026</p>
+    <div class="compiled-by">Compiled by Gemini 3.1</div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- ═══ THE VERDICT ═══ -->
+  <div class="verdict-card">
+    <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+    <div class="verdict-price">{roundedIV !== null ? `$${roundedIV.toFixed(2)}` : 'N/A'}</div>
+    <div class="verdict-vs">
+      {currentPrice !== null && marginOfSafety !== null
+        ? `vs. market price of $${currentPrice.toFixed(2)} (${marginOfSafety}%)`
+        : 'Market price unavailable'}
+    </div>
+    <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+      {verdictText}
+    </div>
+  </div>
+
+  <!-- ═══ KEY METRICS ═══ -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">{fcfBase !== null ? `$${(fcfBase / 1000).toFixed(2)}B` : 'N/A'}</div>
+      <div class="stat-label">Free Cash Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{baseOcf !== null ? `$${(baseOcf / 1000).toFixed(2)}B` : 'N/A'}</div>
+      <div class="stat-label">Operating Cash Flow</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{totalDebt !== null ? `$${(totalDebt / 1000).toFixed(1)}B` : 'N/A'}</div>
+      <div class="stat-label">Total Debt</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{sharesOutstanding !== null ? `${(sharesOutstanding / 1000).toFixed(2)}B` : 'N/A'}</div>
+      <div class="stat-label">Shares Out.</div>
+    </div>
+  </div>
+
+  <!-- ═══ METHODOLOGY ═══ -->
+  <h2>Methodology: Two-Stage DCF</h2>
+  <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model to calculate the intrinsic value of Williams Companies. For energy infrastructure companies, debt loads are typically very high, and maintenance capex vs. growth capex is a key distinction.</p>
+
+  <div class="method-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>Start with Base Cash Flow</h4>
+      <p>WMB generated <strong>${fcfBase !== null ? fcfBase.toLocaleString() : 'N/A'} million</strong> in Free Cash Flow in the most recent period. As a pipeline operator with a "toll road" business model handling roughly one-third of US natural gas, cash flows are highly stable.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>Project FCF growth for 5 years (Phase 1)</h4>
+      <p>We grow FCF at <strong>{(growthRatePhase1 * 100).toFixed(1)}% per year</strong> for 5 years. This reflects WMB's strong position in natural gas infrastructure, fee-based contracts with inflation escalators, and execution on growth projects.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>Calculate terminal value (Phase 2)</h4>
+      <p>After Year 5, we assume FCF grows at <strong>{(growthRateTerminal * 100).toFixed(1)}% forever</strong>. This is slightly below long-term GDP growth, acknowledging the eventual, long-term energy transition away from fossil fuels, while recognizing natural gas as a necessary bridge fuel for decades.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>Discount everything to present value</h4>
+      <p>All future cash flows are discounted at <strong>{(discountRate * 100).toFixed(1)}%</strong>. This required rate of return is appropriate for a regulated/toll-road pipeline utility, balancing the 10Y Treasury (4.18%) and WMB's stable, investment-grade profile.</p>
+    </div>
+  </div>
+
+  <div class="method-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h4>Add net cash, divide by shares</h4>
+      <p>Enterprise Value + Net Cash (${netCash !== null ? netCash.toLocaleString() : 'N/A'}M) = Equity Value. Pipeline companies run with high debt, so Net Cash is heavily negative. We divide by shares outstanding ({sharesOutstanding !== null ? sharesOutstanding.toLocaleString() : 'N/A'}M) for the per-share intrinsic value.</p>
+    </div>
+  </div>
+
+  <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+  <h2>The Three Assumptions That Drive Everything</h2>
+
+  <div class="assumption-grid">
+    <div class="assumption-card">
+      <div class="label">FCF Growth Rate (Years 1-5)</div>
+      <div class="value">{(growthRatePhase1 * 100).toFixed(1)}%</div>
+      <div class="rationale">
+        WMB has a massive backlog of high-return pipeline expansion projects (like Transco expansions) and inflation-linked tariffs. A 5% growth rate is highly visible given their contracted natural gas transmission volumes.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Discount Rate (WACC)</div>
+      <div class="value">{(discountRate * 100).toFixed(1)}%</div>
+      <div class="rationale">
+        10Y Treasury: 4.18%. WMB operates much like a utility. With stable cash flows immune to commodity price swings, an 8.5% discount rate provides an adequate margin over the risk-free rate for infrastructure equity.
+      </div>
+    </div>
+    <div class="assumption-card">
+      <div class="label">Terminal Growth Rate</div>
+      <div class="value">{(growthRateTerminal * 100).toFixed(1)}%</div>
+      <div class="rationale">
+        Natural gas will be critical for power generation for decades, especially with surging AI data center electricity demand. However, a 2.5% terminal growth rate assumes volume growth eventually flattens long-term due to renewables penetration.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+  <h2>Projected Free Cash Flows</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Year</th>
+          <th>FCF ($M)</th>
+          <th>PV Factor</th>
+          <th>Present Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Base</td>
+          <td>{fcfBase !== null ? `$${fcfBase.toLocaleString()}` : 'N/A'}</td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        {projectedFCF.length > 0 ? projectedFCF.map(p => (
+          <tr>
+            <td>Year {p.year}</td>
+            <td>${p.fcf.toLocaleString()}</td>
+            <td>{p.pvFactor.toFixed(4)}</td>
+            <td>${p.pvFCF.toLocaleString()}</td>
+          </tr>
+        )) : <tr><td colspan="4" style="text-align:center">Data unavailable</td></tr>}
+        <tr class="row-total">
+          <td colspan="3">Sum of Phase 1 PV</td>
+          <td class="highlight-cell">{pvPhase1 > 0 ? `$${Math.round(pvPhase1).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ TERMINAL VALUE ═══ -->
+  <h3>Terminal Value</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Year 6 FCF (Year 5 × 1.025)</td>
+          <td>{fcfYear6 !== null ? `$${Math.round(fcfYear6).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>Terminal Value (FCF₆ ÷ (8.5% − 2.5%))</td>
+          <td>{terminalValue !== null ? `$${Math.round(terminalValue).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr class="row-total">
+          <td>PV of Terminal Value</td>
+          <td class="highlight-cell">{pvTerminalValue !== null ? `$${Math.round(pvTerminalValue).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ FINAL CALCULATION ═══ -->
+  <h3>Final Valuation</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Component</th>
+          <th>Value ($M)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PV of Phase 1 Cash Flows</td>
+          <td>{pvPhase1 > 0 ? `$${Math.round(pvPhase1).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>PV of Terminal Value</td>
+          <td>{pvTerminalValue !== null ? `$${Math.round(pvTerminalValue).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>= Enterprise Value</td>
+          <td>{enterpriseValue !== null ? `$${Math.round(enterpriseValue).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>+ Net Cash (Cash − Debt)</td>
+          <td>{netCash !== null ? `$${netCash.toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>= Equity Value</td>
+          <td>{equityValue !== null ? `$${Math.round(equityValue).toLocaleString()}` : 'N/A'}</td>
+        </tr>
+        <tr>
+          <td>÷ Shares Outstanding</td>
+          <td>{sharesOutstanding !== null ? sharesOutstanding.toLocaleString() : 'N/A'}</td>
+        </tr>
+        <tr class="row-total">
+          <td>Intrinsic Value Per Share</td>
+          <td class="highlight-cell">{roundedIV !== null ? `$${roundedIV.toFixed(2)}` : 'N/A'}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+  <h2>Sensitivity Analysis</h2>
+  <p>Pipeline valuations are highly sensitive to discount rates (yield requirements) and terminal assumptions. Here is the matrix of intrinsic values under different scenarios.</p>
+
+  <div class="table-wrap">
+    <table class="sensitivity-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+          {sensitivityGrowth.map(g => (
+            <th class={g === growthRatePhase1 ? 'current' : ''}>{(g * 100).toFixed(1)}%</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityTable.length > 0 ? sensitivityTable.map(row => (
+          <tr>
+            <td>{(row.dr * 100).toFixed(1)}%</td>
+            {row.values.map((v, i) => (
+              <td class={row.dr === discountRate && sensitivityGrowth[i] === growthRatePhase1 ? 'current' : ''}>
+                ${v}
+              </td>
+            ))}
+          </tr>
+        )) : <tr><td colspan="6" style="text-align:center">Data unavailable</td></tr>}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+  <h2>Risks & What This Model Misses</h2>
+  <ul>
+    <li><strong>Interest Rate Risk:</strong> As a high-yield infrastructure stock, WMB trades inversely to interest rates. If the 10Y Treasury spikes above 5%, the required discount rate will rise, compressing the intrinsic value.</li>
+    <li><strong>Regulatory Blocking:</strong> Expanding pipelines faces severe regulatory and environmental hurdles. If WMB cannot execute its growth capex backlog due to permitting failures, the 5% growth rate is at risk.</li>
+    <li><strong>Debt Load:</strong> With over ${totalDebt !== null ? (totalDebt/1000).toFixed(1) : 'N/A'}B in debt, a significant portion of operating cash flow goes to interest expenses. A credit downgrade would increase capital costs.</li>
+    <li><strong>AI Power Demand:</strong> This model may be too conservative if AI data centers drive a massive, unforecasted spike in US natural gas consumption, requiring heavily expanded pipeline throughput.</li>
+  </ul>
+
+  <!-- ═══ FAQ ═══ -->
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq">
+    <details>
+      <summary>Why use standard Free Cash Flow for a pipeline company?</summary>
+      <div class="faq-answer">Midstream companies often emphasize Distributable Cash Flow (DCF) because heavy growth capex depresses standard FCF. However, true intrinsic value must account for the cash spent to achieve growth. Since WMB generates positive standard FCF even after capex, we use it as the purest measure of cash generation available to equity holders.</div>
+    </details>
+    <details>
+      <summary>How does WMB's debt impact the valuation?</summary>
+      <div class="faq-answer">Significantly. The model calculates the Enterprise Value first (value of the entire firm operations), and then strictly subtracts all Total Debt to arrive at Equity Value. The massive debt pile acts as an anchor on the per-share value, which is standard for capital-intensive infrastructure.</div>
+    </details>
+    <details>
+      <summary>Is this a buy recommendation?</summary>
+      <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value. Whether to buy depends on your personal risk tolerance, portfolio allocation, time horizon, tax situation, and conviction in the assumptions.</div>
+    </details>
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    <h4>⚠️ Important Disclaimer</h4>
+    <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</SiteLayout>

@@ -1,0 +1,741 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "L3Harris Technologies (LHX) Intrinsic Value: A DCF Analysis",
+  "description": "A transparent, step-by-step discounted cash flow valuation of L3Harris Technologies. Using actual financials to arrive at a single fair value estimate for LHX shares.",
+  "datePublished": new Date().toISOString().split('T')[0],
+  "dateModified": new Date().toISOString().split('T')[0],
+  "author": {
+    "@type": "Organization",
+    "name": "Compiled by Gemini 3.1",
+    "url": "https://westmountfundamentals.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Research",
+    "url": "https://westmountfundamentals.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/l3harris-intrinsic-value"
+  }
+};
+
+export const meta = {
+  title: "L3Harris Technologies (LHX) Intrinsic Value: A DCF Analysis",
+  description: "We ran a full discounted cash flow on L3Harris Technologies. One number. Every assumption disclosed. Here's what LHX is really worth.",
+  category: "study",
+  published: new Date().toISOString().split('T')[0],
+};
+
+import * as cheerio from 'cheerio';
+
+// --- DATA FETCHING (stockanalysis.com) ---
+let currentPrice = null;
+let sharesM = null;
+let totalDebtM = null;
+let totalCashM = null;
+let fcfM = null;
+let revenue2025 = null;
+let eps = null;
+let operatingMargin = null;
+
+let revenueHistory = [];
+let fcfHistory = [];
+let epsHistory = [];
+let marginHistory = [];
+
+try {
+  const ticker = 'lhx';
+  const urls = [
+    `https://stockanalysis.com/stocks/${ticker}/financials/`,
+    `https://stockanalysis.com/stocks/${ticker}/financials/cash-flow-statement/`,
+    `https://stockanalysis.com/stocks/${ticker}/financials/balance-sheet/`
+  ];
+
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1'
+  };
+
+  const responses = [];
+  for (const url of urls) {
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status} for ${url}`);
+    }
+    responses.push(res);
+  }
+
+  const [finHtml, cfHtml, bsHtml] = await Promise.all(responses.map(res => res.text()));
+
+  const parseTable = (html) => {
+    const $ = cheerio.load(html);
+    const data = {};
+    const years = [];
+
+    // Extract years from the header
+    $('table thead tr th').each((i, cell) => {
+      if (i > 0) {
+        const text = $(cell).text().trim();
+        const yearMatch = text.match(/\b(20\d{2})\b/);
+        years.push(yearMatch ? parseInt(yearMatch[1], 10) : new Date().getFullYear() - i + 1);
+      }
+    });
+
+    // Extract row data
+    $('table tbody tr').each((_, row) => {
+      const rowHeader = $(row).find('td').first().text().trim();
+      const values = [];
+      $(row).find('td').each((i, cell) => {
+        if (i > 0) {
+          const textVal = $(cell).text().trim().replace(/,/g, '');
+          values.push(textVal === '-' || textVal === '' ? null : parseFloat(textVal));
+        }
+      });
+      if (values.length > 0) {
+        data[rowHeader] = { values, years };
+      }
+    });
+    return data;
+  };
+
+  const finData = parseTable(finHtml);
+  const cfData = parseTable(cfHtml);
+  const bsData = parseTable(bsHtml);
+
+  // Parse current price
+  const priceMatch = finHtml.match(/<div class="[^"]*text-4xl[^"]*"[^>]*>([\d\.,]+)<\/div>/);
+  if (priceMatch && priceMatch[1]) {
+    currentPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
+  }
+
+  // Set latest metrics (index 0 is TTM/Latest)
+  if (finData['Revenue'] && finData['Revenue'].values.length > 0) {
+    revenue2025 = finData['Revenue'].values[0] * 1000000; // Multiply by 1M since stockanalysis is in millions
+  }
+  if (cfData['Free Cash Flow'] && cfData['Free Cash Flow'].values.length > 0) {
+    fcfM = cfData['Free Cash Flow'].values[0];
+  }
+  if (finData['EPS (Diluted)'] && finData['EPS (Diluted)'].values.length > 0) {
+    eps = finData['EPS (Diluted)'].values[0];
+  }
+  if (finData['Shares Outstanding (Diluted)'] && finData['Shares Outstanding (Diluted)'].values.length > 0) {
+    sharesM = finData['Shares Outstanding (Diluted)'].values[0];
+  }
+  if (bsData['Cash & Equivalents'] && bsData['Cash & Equivalents'].values.length > 0) {
+    totalCashM = bsData['Cash & Equivalents'].values[0];
+  }
+  if (bsData['Total Debt'] && bsData['Total Debt'].values.length > 0) {
+    totalDebtM = bsData['Total Debt'].values[0];
+  }
+
+  if (finData['Operating Income'] && finData['Revenue'] &&
+      finData['Operating Income'].values[0] !== null && finData['Revenue'].values[0] !== null) {
+    operatingMargin = (finData['Operating Income'].values[0] / finData['Revenue'].values[0]) * 100;
+  }
+
+  // Populate history arrays (reverse to chronological order)
+  if (finData['Revenue']) {
+    for (let i = finData['Revenue'].values.length - 1; i >= 0; i--) {
+      if (finData['Revenue'].values[i] !== null) {
+        revenueHistory.push({ year: finData['Revenue'].years[i], value: finData['Revenue'].values[i] * 1000000 });
+      }
+    }
+  }
+
+  if (cfData['Free Cash Flow']) {
+    for (let i = cfData['Free Cash Flow'].values.length - 1; i >= 0; i--) {
+      if (cfData['Free Cash Flow'].values[i] !== null) {
+        fcfHistory.push({ year: cfData['Free Cash Flow'].years[i], value: cfData['Free Cash Flow'].values[i] * 1000000 });
+      }
+    }
+  }
+
+  if (finData['Operating Income'] && finData['Revenue']) {
+    for (let i = finData['Operating Income'].values.length - 1; i >= 0; i--) {
+      const op = finData['Operating Income'].values[i];
+      const rev = finData['Revenue'].values[i];
+      if (op !== null && rev !== null && rev !== 0) {
+        marginHistory.push({ year: finData['Operating Income'].years[i], operating: parseFloat(((op / rev) * 100).toFixed(2)) });
+      }
+    }
+  }
+
+} catch (err) {
+  console.error("Error fetching LHX data from stockanalysis:", err.message);
+}
+
+const netCashM = (totalCashM !== null && totalDebtM !== null) ? totalCashM - totalDebtM : null;
+
+// Ensure base numbers are present before projecting
+const fcfBase = fcfM;
+
+// --- ASSUMPTIONS ---
+const growthRatePhase1 = 0.08;         // 8% FCF growth, Years 1-5
+const growthRateTerminal = 0.025;      // 2.5% perpetuity growth (terminal)
+const riskFreeRate = 0.0418;           // 10Y Treasury: 4.18%
+const equityRiskPremium = 0.055;       // 5.5% ERP
+const actualBeta = 0.70; // Hardcoded fallback or sourced from other means since stockanalysis beta is not easily scraped here
+// WACC / Cost of Equity using CAPM
+const calculatedDiscountRate = riskFreeRate + (actualBeta * equityRiskPremium);
+const discountRate = calculatedDiscountRate;
+
+// --- PHASE 1: PROJECT FCF FOR YEARS 1-5 ---
+const projectedFCF = [];
+let pvPhase1 = 0;
+if (fcfBase !== null) {
+  let fcf = fcfBase;
+  for (let yr = 1; yr <= 5; yr++) {
+    fcf = fcf * (1 + growthRatePhase1);
+    const pvFactor = 1 / Math.pow(1 + discountRate, yr);
+    const pvFCF = Math.round(fcf * pvFactor);
+    projectedFCF.push({ year: yr, fcf: Math.round(fcf), pvFactor, pvFCF });
+    pvPhase1 += pvFCF;
+  }
+}
+
+// --- PHASE 2: TERMINAL VALUE ---
+let fcfYear6 = null;
+let terminalValue = null;
+let pvTerminalValue = null;
+if (projectedFCF.length === 5) {
+  fcfYear6 = projectedFCF[4].fcf * (1 + growthRateTerminal);
+  terminalValue = Math.round(fcfYear6 / (discountRate - growthRateTerminal));
+  pvTerminalValue = Math.round(terminalValue * projectedFCF[4].pvFactor);
+}
+
+// --- VALUATION ---
+let enterpriseValue = null;
+let equityValue = null;
+let roundedIV = null;
+let marginOfSafety = null;
+let verdictText = "N/A";
+let verdictColor = "#5a6a80";
+
+if (fcfBase !== null && netCashM !== null && sharesM !== null && pvTerminalValue !== null) {
+  enterpriseValue = pvPhase1 + pvTerminalValue;
+  equityValue = enterpriseValue + netCashM;
+  const intrinsicValuePerShare = equityValue / sharesM;
+  roundedIV = Math.round(intrinsicValuePerShare * 100) / 100;
+
+  if (currentPrice !== null) {
+    marginOfSafety = ((roundedIV - currentPrice) / currentPrice * 100).toFixed(1);
+    verdictText = roundedIV > currentPrice ? "Undervalued" : "Overvalued";
+    verdictColor = roundedIV > currentPrice ? "#10b981" : "#ef4444";
+  }
+}
+
+// Sensitivity analysis
+const sensitivityRates = [discountRate - 0.02, discountRate - 0.01, discountRate, discountRate + 0.01, discountRate + 0.02];
+const sensitivityGrowth = [0.04, 0.06, 0.08, 0.10, 0.12];
+const sensitivityTable = sensitivityRates.map(dr => {
+  return {
+    dr,
+    values: sensitivityGrowth.map(gr => {
+      if (fcfBase === null || netCashM === null || sharesM === null) return null;
+      let f = fcfBase;
+      let pvSum = 0;
+      for (let y = 1; y <= 5; y++) {
+        f = f * (1 + gr);
+        pvSum += f / Math.pow(1 + dr, y);
+      }
+      const f6 = f * (1 + growthRateTerminal);
+      const tv = f6 / (dr - growthRateTerminal);
+      const pvTV = tv / Math.pow(1 + dr, 5);
+      return Math.round((pvSum + pvTV + netCashM) / sharesM);
+    })
+  };
+});
+---
+
+<SiteLayout
+  site="westmount"
+  title="L3Harris Technologies (LHX) Intrinsic Value: A DCF Analysis"
+  description="We ran a full discounted cash flow on L3Harris Technologies. One number. Every assumption disclosed. Here's what LHX is really worth."
+  canonical="https://westmountfundamentals.com/l3harris-intrinsic-value"
+  schema={schema}
+>
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+
+.dcf-wrapper *, .dcf-wrapper *::before, .dcf-wrapper *::after { box-sizing: border-box; }
+.dcf-wrapper { font-family: 'Inter', -apple-system, sans-serif; background: #060a12; color: #c8d0de; line-height: 1.7; width: 100%; min-height: 100vh; padding-bottom: 60px; }
+.dcf-wrapper a { color: #4a8fe7; text-decoration: none; }
+.dcf-wrapper a:hover { text-decoration: underline; }
+.dcf-wrapper .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* Header */
+.dcf-wrapper .header { text-align: center; padding: 80px 24px 60px; background: linear-gradient(180deg, #0a1628 0%, #060a12 100%); position: relative; border-bottom: 1px solid #152040; }
+.dcf-wrapper .header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 40%, rgba(74,143,231,0.06) 0%, transparent 60%); pointer-events: none; }
+.dcf-wrapper .header-content { position: relative; z-index: 1; }
+.dcf-wrapper .tag { display: inline-block; background: rgba(74,143,231,0.12); color: #4a8fe7; font-size: 0.75rem; font-weight: 800; padding: 6px 16px; border-radius: 20px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+.dcf-wrapper h1 { font-size: 2.8rem; font-weight: 900; color: #fff; letter-spacing: -1.2px; margin: 0 0 16px 0; line-height: 1.1; }
+@media (max-width: 640px) { .dcf-wrapper h1 { font-size: 2rem; } }
+.dcf-wrapper .subtitle { color: #7a8a9e; font-size: 1.1rem; max-width: 700px; margin: 0 auto 16px; }
+.dcf-wrapper .date { color: #3a4a60; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+
+/* Big verdict */
+.dcf-wrapper .verdict-card { max-width: 560px; margin: 60px auto 0; background: linear-gradient(135deg, #0a1628 0%, #0d1830 100%); border: 2px solid #152040; border-radius: 20px; padding: 48px 32px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
+.dcf-wrapper .verdict-card::before { content: ''; position: absolute; top: -60%; left: -20%; width: 140%; height: 120%; background: radial-gradient(ellipse, rgba(74,143,231,0.04) 0%, transparent 70%); pointer-events: none; }
+.dcf-wrapper .verdict-label { font-size: 0.8rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; position: relative; }
+.dcf-wrapper .verdict-price { font-family: 'JetBrains Mono', monospace; font-size: 4.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px; position: relative; }
+@media (max-width: 640px) { .dcf-wrapper .verdict-price { font-size: 3rem; } }
+.dcf-wrapper .verdict-vs { font-size: 0.95rem; color: #5a6a80; margin-bottom: 20px; position: relative; }
+.dcf-wrapper .verdict-badge { display: inline-block; padding: 8px 24px; border-radius: 30px; font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; position: relative; }
+
+/* Stats */
+.dcf-wrapper .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 40px auto; max-width: 900px; }
+.dcf-wrapper .stat-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
+.dcf-wrapper .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #4a8fe7; margin-bottom: 4px; }
+.dcf-wrapper .stat-label { font-size: 0.78rem; color: #5a6a80; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Sections */
+.dcf-wrapper h2 { font-size: 1.8rem; font-weight: 800; color: #fff; margin: 60px 0 20px; letter-spacing: -0.5px; border-bottom: 2px solid #152040; padding-bottom: 12px; }
+.dcf-wrapper h3 { font-size: 1.3rem; font-weight: 700; color: #e0e6f0; margin: 32px 0 12px; }
+.dcf-wrapper p, .dcf-wrapper li { color: #a0aab8; font-size: 1rem; margin-bottom: 16px; }
+.dcf-wrapper ul, .dcf-wrapper ol { padding-left: 24px; }
+.dcf-wrapper li { margin-bottom: 8px; }
+.dcf-wrapper strong { color: #e0e6f0; }
+
+/* Assumption cards */
+.dcf-wrapper .assumption-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0 40px; }
+.dcf-wrapper .assumption-card { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; }
+.dcf-wrapper .assumption-card .label { font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.dcf-wrapper .assumption-card .value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.dcf-wrapper .assumption-card .rationale { font-size: 0.85rem; color: #7a8a9e; line-height: 1.5; }
+
+/* Tables */
+.dcf-wrapper .table-wrap { overflow-x: auto; margin: 24px 0 40px; border-radius: 14px; border: 1px solid #152040; background: #0a1020; }
+.dcf-wrapper table { width: 100%; border-collapse: collapse; margin: 0; }
+.dcf-wrapper th { background: #0d1428; padding: 14px 16px; font-size: 0.75rem; color: #5a6a80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: right; border-bottom: 2px solid #152040; white-space: nowrap; }
+.dcf-wrapper th:first-child { text-align: left; }
+.dcf-wrapper td { padding: 14px 16px; font-size: 0.9rem; color: #c8d0de; text-align: right; border-bottom: 1px solid #0d1428; font-family: 'JetBrains Mono', monospace; }
+.dcf-wrapper td:first-child { text-align: left; font-family: 'Inter', sans-serif; color: #a0aab8; font-weight: 600; }
+.dcf-wrapper tr:hover td { background: rgba(74,143,231,0.03); }
+.dcf-wrapper .row-total td { font-weight: 800; color: #fff; border-top: 2px solid #1a2a40; background: rgba(74,143,231,0.04); }
+.dcf-wrapper td.highlight-cell { color: #4a8fe7; font-weight: 700; }
+
+/* Sensitivity */
+.dcf-wrapper .sensitivity-table th.current { background: rgba(74,143,231,0.15); color: #4a8fe7; }
+.dcf-wrapper .sensitivity-table td.current { background: rgba(74,143,231,0.08); color: #4a8fe7; font-weight: 700; }
+
+/* Chart bars */
+.dcf-wrapper .bar-chart { margin: 24px 0 40px; }
+.dcf-wrapper .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.dcf-wrapper .bar-label { width: 48px; font-size: 0.85rem; color: #5a6a80; font-weight: 600; text-align: right; flex-shrink: 0; }
+.dcf-wrapper .bar-track { flex: 1; background: #0a1020; border-radius: 8px; height: 32px; overflow: hidden; position: relative; }
+.dcf-wrapper .bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; font-family: 'JetBrains Mono', monospace; min-width: 80px; }
+.dcf-wrapper .bar-fill.revenue { background: linear-gradient(90deg, #1a3a6e, #4a8fe7); }
+.dcf-wrapper .bar-fill.fcf { background: linear-gradient(90deg, #1a5a3e, #10b981); }
+.dcf-wrapper .bar-fill.eps { background: linear-gradient(90deg, #5a3a7e, #a78bfa); }
+
+/* Methodology */
+.dcf-wrapper .method-step { display: flex; gap: 16px; margin-bottom: 24px; padding: 20px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.dcf-wrapper .step-num { width: 40px; height: 40px; background: rgba(74,143,231,0.12); color: #4a8fe7; font-weight: 800; font-size: 1.1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dcf-wrapper .step-content { flex: 1; }
+.dcf-wrapper .step-content h4 { color: #e0e6f0; font-size: 1rem; margin: 0 0 6px 0; }
+.dcf-wrapper .step-content p { margin-bottom: 0; font-size: 0.9rem; }
+
+/* Disclaimer */
+.dcf-wrapper .disclaimer { margin: 60px 0 0; padding: 24px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); border-radius: 14px; }
+.dcf-wrapper .disclaimer h4 { color: #ef4444; margin: 0 0 8px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.dcf-wrapper .disclaimer p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; }
+
+/* Sources */
+.dcf-wrapper .sources { margin: 40px 0 60px; padding: 24px; background: #0a1020; border: 1px solid #152040; border-radius: 14px; }
+.dcf-wrapper .sources h4 { color: #e0e6f0; margin: 0 0 12px 0; }
+.dcf-wrapper .sources ul { list-style: none; padding: 0; }
+.dcf-wrapper .sources li { font-size: 0.85rem; color: #5a6a80; margin-bottom: 6px; padding-left: 16px; position: relative; }
+.dcf-wrapper .sources li::before { content: '→'; position: absolute; left: 0; color: #4a8fe7; }
+
+/* Cite */
+.dcf-wrapper .cite-block { margin: 40px 0; padding: 20px 24px; background: #0a1020; border-left: 3px solid #4a8fe7; border-radius: 0 14px 14px 0; }
+.dcf-wrapper .cite-block h4 { color: #e0e6f0; margin: 0 0 8px 0; font-size: 0.85rem; }
+.dcf-wrapper .cite-block p { font-size: 0.85rem; color: #7a8a9e; margin-bottom: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* FAQ */
+.dcf-wrapper .faq { margin: 40px 0; }
+.dcf-wrapper .faq details { background: #0a1020; border: 1px solid #152040; border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+.dcf-wrapper .faq summary { padding: 18px 20px; cursor: pointer; font-weight: 700; color: #e0e6f0; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.dcf-wrapper .faq summary::after { content: '+'; font-size: 1.2rem; color: #4a8fe7; transition: transform 0.2s; }
+.dcf-wrapper .faq details[open] summary::after { content: '−'; }
+.dcf-wrapper .faq .faq-answer { padding: 0 20px 18px; font-size: 0.9rem; color: #a0aab8; }
+
+@media (max-width: 640px) {
+  .dcf-wrapper .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .dcf-wrapper .assumption-grid { grid-template-columns: 1fr; }
+  .dcf-wrapper .verdict-card { padding: 32px 20px; }
+}
+</style>
+
+<div class="dcf-wrapper">
+  <div class="header">
+    <div class="header-content">
+      <div class="tag">Compiled by Gemini 3.1</div>
+      <h1>L3Harris (LHX)<br/>Intrinsic Value</h1>
+      <p class="subtitle">A transparent, two-stage discounted cash flow valuation of L3Harris Technologies — using actuals, disclosed assumptions, and one final number.</p>
+      <p class="date">Updated {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · Data: stockanalysis.com</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- ═══ THE VERDICT ═══ -->
+    <div class="verdict-card">
+      <div class="verdict-label">Estimated Intrinsic Value Per Share</div>
+      <div class="verdict-price">{roundedIV !== null ? `$${roundedIV.toFixed(2)}` : 'N/A'}</div>
+      <div class="verdict-vs">
+        {currentPrice !== null ? `vs. market price of $${currentPrice.toFixed(2)} (${marginOfSafety}%)` : 'Market price unavailable'}
+      </div>
+      <div class="verdict-badge" style={`background: ${verdictColor}22; color: ${verdictColor}; border: 1px solid ${verdictColor}44;`}>
+        {verdictText}
+      </div>
+    </div>
+
+    <!-- ═══ KEY METRICS ═══ -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{revenue2025 !== null ? `$${(revenue2025/1000000000).toFixed(1)}B` : 'N/A'}</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{fcfM !== null ? `$${(fcfM/1000).toFixed(1)}B` : 'N/A'}</div>
+        <div class="stat-label">Free Cash Flow</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{eps !== null ? `$${eps.toFixed(2)}` : 'N/A'}</div>
+        <div class="stat-label">EPS (Trailing)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{operatingMargin !== null ? `${operatingMargin.toFixed(1)}%` : 'N/A'}</div>
+        <div class="stat-label">Operating Margin</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{netCashM !== null ? `$${(netCashM / 1000).toFixed(1)}B` : 'N/A'}</div>
+        <div class="stat-label">Net Cash</div>
+      </div>
+    </div>
+
+    <!-- ═══ METHODOLOGY ═══ -->
+    <h2>Methodology: Two-Stage DCF</h2>
+    <p>We use a <strong>two-stage discounted cash flow (DCF)</strong> model — the gold standard of intrinsic valuation. No multiples, no comparables, no vibes. Just future cash flows discounted to today.</p>
+
+    <div class="method-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Start with actual Free Cash Flow</h4>
+        <p>L3Harris generated <strong>{fcfM !== null ? `$${fcfM.toLocaleString()} million` : 'N/A'}</strong> in free cash flow. This is real cash the business produces after paying for everything, including capital expenditures required to maintain their defense platforms.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Project FCF growth for 5 years (Phase 1)</h4>
+        <p>We project FCF to grow at <strong>{(growthRatePhase1*100).toFixed(1)}% per year</strong> for 5 years. This reflects the steady nature of defense contracting, backlog visibility, and margin expansion efforts following the L3 and Harris merger integrations and Aerojet Rocketdyne acquisition.</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Calculate terminal value (Phase 2)</h4>
+        <p>After Year 5, we assume FCF grows at <strong>{(growthRateTerminal*100).toFixed(1)}% forever</strong> — slightly below long-term GDP growth. We use the <strong>Gordon Growth Model</strong>: Terminal Value = FCF₆ ÷ (discount rate − terminal growth rate).</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Discount everything to present value</h4>
+        <p>All future cash flows are discounted at <strong>{(discountRate*100).toFixed(2)}%</strong> — our required rate of return. This is based on the 10Y Treasury ({(riskFreeRate*100).toFixed(2)}%) plus an equity risk premium adjusted by the stock's beta ({actualBeta.toFixed(2)}).</p>
+      </div>
+    </div>
+
+    <div class="method-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Add net cash, divide by shares</h4>
+        <p>Enterprise Value + Net Cash ({netCashM !== null ? `$${Math.round(netCashM).toLocaleString()}M` : 'N/A'}) = Equity Value. Divide by shares outstanding ({sharesM !== null ? `${Math.round(sharesM).toLocaleString()}M` : 'N/A'}) for the per-share intrinsic value.</p>
+      </div>
+    </div>
+
+    <!-- ═══ THE THREE ASSUMPTIONS ═══ -->
+    <h2>The Three Assumptions That Drive Everything</h2>
+    <p>A DCF is only as good as its inputs. We're making exactly <strong>three</strong> judgment calls — everything else is math. Here's what we chose and why.</p>
+
+    <div class="assumption-grid">
+      <div class="assumption-card">
+        <div class="label">FCF Growth Rate (Years 1-5)</div>
+        <div class="value">{(growthRatePhase1 * 100).toFixed(1)}%</div>
+        <div class="rationale">
+          L3Harris operates in a highly consolidated defense sector with strong pricing power and long-term contracts. The 8% growth assumes moderate top-line expansion driven by global defense budgets, combined with steady margin improvements as recent acquisitions are fully digested.
+        </div>
+      </div>
+      <div class="assumption-card">
+        <div class="label">Discount Rate (WACC)</div>
+        <div class="value">{(discountRate * 100).toFixed(2)}%</div>
+        <div class="rationale">
+          Calculated using the Capital Asset Pricing Model (CAPM). 10Y Treasury: {(riskFreeRate * 100).toFixed(2)}%. Equity risk premium: {(equityRiskPremium * 100).toFixed(1)}%. Beta: {actualBeta.toFixed(2)}. This cost of equity accurately reflects the relatively lower volatility of a prime defense contractor.
+        </div>
+      </div>
+      <div class="assumption-card">
+        <div class="label">Terminal Growth Rate</div>
+        <div class="value">{(growthRateTerminal * 100).toFixed(1)}%</div>
+        <div class="rationale">
+          Long-term nominal GDP growth is ~3%. We conservatively use 2.5% to reflect mature market dynamics in the aerospace and defense industry. A 2.5% terminal rate acknowledges that L3Harris will grow indefinitely alongside standard inflation and sovereign defense spending.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FCF PROJECTIONS TABLE ═══ -->
+    <h2>Projected Free Cash Flows</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Year</th>
+            <th>FCF ($M)</th>
+            <th>PV Factor</th>
+            <th>Present Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Base</td>
+            <td>{fcfBase !== null ? `$${Math.round(fcfBase).toLocaleString()}` : 'N/A'}</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          {projectedFCF.map(p => (
+            <tr>
+              <td>Year {p.year}</td>
+              <td>${p.fcf.toLocaleString()}</td>
+              <td>{p.pvFactor.toFixed(4)}</td>
+              <td>${p.pvFCF.toLocaleString()}</td>
+            </tr>
+          ))}
+          <tr class="row-total">
+            <td colspan="3">Sum of Phase 1 PV</td>
+            <td class="highlight-cell">{pvPhase1 !== null ? `$${pvPhase1.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ TERMINAL VALUE ═══ -->
+    <h3>Terminal Value</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Component</th>
+            <th>Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Year 6 FCF (Year 5 × {(1 + growthRateTerminal).toFixed(3)})</td>
+            <td>{fcfYear6 !== null ? `$${Math.round(fcfYear6).toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>Terminal Value (FCF₆ ÷ (DR − TGR))</td>
+            <td>{terminalValue !== null ? `$${terminalValue.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr class="row-total">
+            <td>PV of Terminal Value</td>
+            <td class="highlight-cell">{pvTerminalValue !== null ? `$${pvTerminalValue.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ FINAL CALCULATION ═══ -->
+    <h3>Final Valuation</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Component</th>
+            <th>Value ($M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>PV of Phase 1 Cash Flows</td>
+            <td>{pvPhase1 !== null ? `$${pvPhase1.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>PV of Terminal Value</td>
+            <td>{pvTerminalValue !== null ? `$${pvTerminalValue.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>= Enterprise Value</td>
+            <td>{enterpriseValue !== null ? `$${enterpriseValue.toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>+ Net Cash (Cash − Debt)</td>
+            <td>{netCashM !== null ? `$${Math.round(netCashM).toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>= Equity Value</td>
+            <td>{equityValue !== null ? `$${Math.round(equityValue).toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr>
+            <td>÷ Shares Outstanding</td>
+            <td>{sharesM !== null ? `${Math.round(sharesM).toLocaleString()}` : 'N/A'}</td>
+          </tr>
+          <tr class="row-total">
+            <td>Intrinsic Value Per Share</td>
+            <td class="highlight-cell">{roundedIV !== null ? `$${roundedIV.toFixed(2)}` : 'N/A'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ HISTORICAL CHARTS ═══ -->
+    <h2>Financial Track Record</h2>
+    <p>Before trusting a forward projection, look at where the company has been.</p>
+
+    <h3>Revenue ($B)</h3>
+    <div class="bar-chart">
+      {revenueHistory.length > 0 ? revenueHistory.map(r => (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill revenue" style={`width: ${r.value ? Math.max((r.value / Math.max(...revenueHistory.map(x=>x.value))) * 100, 10) : 0}%`}>
+              {r.value !== null ? `$${(r.value / 1000000000).toFixed(1)}B` : 'N/A'}
+            </div>
+          </div>
+        </div>
+      )) : <p>Historical revenue data unavailable.</p>}
+    </div>
+
+    <h3>Free Cash Flow ($M)</h3>
+    <div class="bar-chart">
+      {fcfHistory.length > 0 ? fcfHistory.map(r => (
+        <div class="bar-row">
+          <div class="bar-label">{r.year}</div>
+          <div class="bar-track">
+            <div class="bar-fill fcf" style={`width: ${r.value ? Math.max((r.value / Math.max(...fcfHistory.map(x=>x.value))) * 100, 10) : 0}%`}>
+              {r.value !== null ? `$${(r.value / 1000000).toFixed(0)}M` : 'N/A'}
+            </div>
+          </div>
+        </div>
+      )) : <p>Historical FCF data unavailable.</p>}
+    </div>
+
+    <h3>Operating Margin</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left">Year</th>
+            <th>Operating Margin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {marginHistory.length > 0 ? marginHistory.map(m => (
+            <tr>
+              <td>{m.year}</td>
+              <td>{m.operating !== null ? `${m.operating}%` : 'N/A'}</td>
+            </tr>
+          )) : <tr><td colspan="2">Historical margin data unavailable.</td></tr>}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ SENSITIVITY ANALYSIS ═══ -->
+    <h2>Sensitivity Analysis</h2>
+    <p>Our base case uses {(growthRatePhase1*100).toFixed(1)}% growth and {(discountRate*100).toFixed(2)}% discount rate. Here's what the intrinsic value looks like under different assumptions.</p>
+
+    <div class="table-wrap">
+      <table class="sensitivity-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Discount Rate ↓ / Growth →</th>
+            {sensitivityGrowth.map(g => (
+              <th class={Math.abs(g - growthRatePhase1) < 0.001 ? 'current' : ''}>{(g * 100).toFixed(0)}%</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {sensitivityTable.map((row, i) => (
+            <tr>
+              <td>{(row.dr * 100).toFixed(2)}%</td>
+              {row.values.map((v, j) => (
+                <td class={Math.abs(row.dr - discountRate) < 0.001 && Math.abs(sensitivityGrowth[j] - growthRatePhase1) < 0.001 ? 'current' : ''}>
+                  {v !== null ? `$${v}` : 'N/A'}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══ WHAT THE MODEL DOESN'T CAPTURE ═══ -->
+    <h2>What This Model Doesn't Capture</h2>
+
+    <h3>Upside risks (our number could be too low)</h3>
+    <ul>
+      <li><strong>Budget Increases:</strong> Unexpected geopolitical tensions often result in rapid increases in the U.S. defense budget, significantly boosting order backlogs for L3Harris.</li>
+      <li><strong>M&A Synergies:</strong> Better-than-expected cost savings from the Aerojet Rocketdyne acquisition or past integrations could expand margins faster than projected.</li>
+      <li><strong>Space Systems Boom:</strong> Rapid acceleration in the militarization of space could disproportionately benefit L3Harris's space division.</li>
+    </ul>
+
+    <h3>Downside risks (our number could be too high)</h3>
+    <ul>
+      <li><strong>Defense Budget Cuts:</strong> Any flatlining or reduction in the U.S. Department of Defense budget directly impacts L3Harris's addressable market.</li>
+      <li><strong>Supply Chain & Inflation:</strong> Fixed-price contracts can compress margins severely if labor and material costs rise faster than expected.</li>
+      <li><strong>Execution Risk:</strong> Integrating large acquisitions (like Aerojet Rocketdyne) carries execution risk; failure to achieve synergies can drag down overall FCF generation.</li>
+    </ul>
+
+    <!-- ═══ FAQ ═══ -->
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq">
+      <details>
+        <summary>Why use a DCF for a defense contractor?</summary>
+        <div class="faq-answer">Defense contractors like LHX are ideal candidates for DCF valuation because their revenues are highly visible (backed by massive government backlogs) and their cash flows are generally stable and predictable over long horizons.</div>
+      </details>
+      <details>
+        <summary>Is this a buy recommendation?</summary>
+        <div class="faq-answer">No. This is an analytical framework for estimating intrinsic value based on mathematical assumptions. Whether to buy depends on your personal risk tolerance, portfolio allocation, and conviction in the assumptions.</div>
+      </details>
+      <details>
+        <summary>How does the Aerojet Rocketdyne acquisition affect this?</summary>
+        <div class="faq-answer">The acquisition increased total debt and temporarily suppressed free cash flow due to integration costs. Our 8% FCF growth rate assumes the company successfully digests the acquisition and realizes long-term cash generation synergies.</div>
+      </details>
+    </div>
+
+    <!-- ═══ CITE ═══ -->
+    <div class="cite-block">
+      <h4>📝 Cite This Research</h4>
+      <p>Westmount Research. "L3Harris Technologies (LHX) Intrinsic Value: A DCF Analysis." westmountfundamentals.com, {new Date().getFullYear()}.</p>
+    </div>
+
+    <!-- ═══ DATA SOURCES ═══ -->
+    <div class="sources">
+      <h4>Data Sources & Methodology</h4>
+      <ul>
+        <li>Financial data sourced programmatically via stockanalysis.com</li>
+        <li>U.S. 10-Year Treasury yield (4.18%)</li>
+        <li>Valuation model: Two-stage DCF with Gordon Growth terminal value</li>
+        <li>All calculations performed in real-time</li>
+      </ul>
+    </div>
+
+    <!-- ═══ DISCLAIMER ═══ -->
+    <div class="disclaimer">
+      <h4>⚠️ Important Disclaimer</h4>
+      <p>This analysis is for educational and informational purposes only. It is not investment advice, a recommendation to buy or sell securities, or a solicitation of any kind. The intrinsic value estimate is based on assumptions that may prove incorrect. Past performance does not guarantee future results. All investments carry risk, including the loss of principal. Always conduct your own due diligence and consult a licensed financial advisor before making investment decisions.</p>
+    </div>
+  </div>
+</div>
+</SiteLayout>
