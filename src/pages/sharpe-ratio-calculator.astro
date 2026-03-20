@@ -1,0 +1,592 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Sharpe Ratio Calculator — Free Risk-Adjusted Return Calculator | Westmount Fundamentals", description: "Calculate the Sharpe ratio, Sortino ratio, and compare risk-adjusted returns across portfolios. Learn the Sharpe ratio formula developed by Nobel laureate William Sharpe.", category: "study", published: "2026-03-20" };
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Sharpe Ratio Calculator — Free Risk-Adjusted Return Calculator",
+    "description": "Calculate the Sharpe ratio, Sortino ratio, and compare risk-adjusted returns across portfolios. Learn the Sharpe ratio formula developed by Nobel laureate William Sharpe.",
+    "datePublished": "2026-03-20",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the Sharpe ratio and how do you calculate it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Sharpe ratio measures risk-adjusted return by subtracting the risk-free rate from the portfolio return and dividing by the portfolio's standard deviation. The formula is: Sharpe Ratio = (Rp - Rf) / σp, where Rp is portfolio return, Rf is the risk-free rate, and σp is portfolio standard deviation. A higher Sharpe ratio indicates better risk-adjusted performance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good Sharpe ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A Sharpe ratio above 1.0 is generally considered good, above 2.0 is excellent, and above 3.0 is exceptional. A ratio between 0.5 and 1.0 is adequate, while below 0.5 suggests the risk taken may not be adequately compensated. The S&P 500 has historically delivered a Sharpe ratio of approximately 0.5 to 0.7 over long periods."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between the Sharpe ratio and the Sortino ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The key difference is in how they measure risk. The Sharpe ratio uses total standard deviation (both upside and downside volatility), while the Sortino ratio uses only downside deviation (volatility from negative returns). The Sortino ratio is often preferred because it only penalizes harmful volatility — upside volatility is actually desirable for investors."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who developed the Sharpe ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Sharpe ratio was developed by William F. Sharpe, an American economist and professor at Stanford University. He introduced the concept in 1966, originally calling it the 'reward-to-variability ratio.' Sharpe won the Nobel Memorial Prize in Economic Sciences in 1990 for his contributions to the Capital Asset Pricing Model (CAPM) and modern portfolio theory."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can the Sharpe ratio be negative and what does that mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, a negative Sharpe ratio means the portfolio's return is lower than the risk-free rate. This indicates the investor would have been better off holding risk-free assets like Treasury bills. A negative Sharpe ratio can occur during bear markets or when a portfolio significantly underperforms. When comparing two negative Sharpe ratios, interpretation becomes tricky — a ratio of -0.5 is not necessarily better than -1.0."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/sharpe-ratio-calculator/" schema={schema}>
+
+<style is:inline>
+  :root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --warning: #f59e0b; --bg-card: #0d1117; --border: #30363d; }
+  .sr-hero { text-align:center; padding:3rem 1rem 2rem; background:linear-gradient(135deg,rgba(74,143,231,0.08),rgba(74,143,231,0.02)); border-bottom:1px solid rgba(74,143,231,0.15); }
+  .sr-hero h1 { font-size:2.2rem; margin-bottom:0.5rem; color:#e8eaed; line-height:1.2; }
+  .sr-hero .subtitle { color:#9aa0a6; font-size:1.1rem; max-width:700px; margin:0 auto; }
+  .sr-wrap { max-width:1200px; margin:0 auto; padding:0 1.5rem 3rem; }
+  .stat-row { display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap; margin:2rem 0; }
+  .stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.5rem; min-width:200px; flex:1; max-width:270px; text-align:center; }
+  .stat-card .sv { font-size:1.6rem; font-weight:700; color:var(--accent); }
+  .stat-card .sl { font-size:0.78rem; color:#9aa0a6; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.3rem; }
+  .calc-section { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem; margin:2rem 0; }
+  .calc-section h2 { font-size:1.5rem; color:#e8eaed; margin:0 0 1.2rem; }
+  .calc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+  .field label { display:block; font-size:0.82rem; color:#9aa0a6; margin-bottom:0.3rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .field input, .field select { width:100%; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; padding:0.7rem 1rem; color:#e8eaed; font-size:1rem; box-sizing:border-box; }
+  .field input:focus, .field select:focus { border-color:var(--accent); outline:none; }
+  .btn-calc { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:0.8rem 2rem; font-size:1rem; font-weight:600; cursor:pointer; margin-top:1rem; transition:opacity 0.2s; }
+  .btn-calc:hover { opacity:0.85; }
+  .results-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem; }
+  .result-box { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; }
+  .result-box .rv { font-size:1.8rem; font-weight:700; }
+  .result-box .rl { font-size:0.78rem; color:#9aa0a6; text-transform:uppercase; letter-spacing:0.04em; }
+  .result-box .interp { font-size:0.85rem; margin-top:0.3rem; font-weight:600; }
+  .chart-wrap { margin-top:1.5rem; background:rgba(0,0,0,0.3); border-radius:12px; padding:1rem; }
+  .chart-wrap canvas { width:100%!important; max-height:400px; }
+  .table-wrap { margin-top:1.5rem; overflow-x:auto; }
+  .table-wrap table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+  .table-wrap th { background:rgba(74,143,231,0.12); color:var(--accent); padding:0.7rem; text-align:right; font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; }
+  .table-wrap th:first-child { text-align:left; }
+  .table-wrap td { padding:0.6rem 0.7rem; border-bottom:1px solid rgba(255,255,255,0.05); color:#c8d0de; text-align:right; }
+  .table-wrap td:first-child { text-align:left; color:#9aa0a6; }
+  .table-wrap tr:hover td { background:rgba(74,143,231,0.05); }
+  .formula-box { background:linear-gradient(135deg,rgba(74,143,231,0.1),rgba(74,143,231,0.03)); border:1px solid rgba(74,143,231,0.25); border-radius:12px; padding:1.5rem 2rem; margin:1.5rem 0; text-align:center; }
+  .formula-box .formula { font-size:1.4rem; font-weight:700; color:#e8eaed; font-family:monospace; letter-spacing:0.02em; }
+  .formula-box .formula-desc { color:#9aa0a6; font-size:0.9rem; margin-top:0.5rem; }
+  .content-section { margin:2.5rem 0; }
+  .content-section h2 { font-size:1.5rem; color:#e8eaed; margin-bottom:1rem; }
+  .content-section h3 { font-size:1.2rem; color:#c8d0de; margin:1.5rem 0 0.5rem; }
+  .content-section p { color:#b0b8c4; line-height:1.7; margin-bottom:1rem; }
+  .insight-list { list-style:none; padding:0; margin:1.5rem 0; }
+  .insight-list li { display:flex; gap:0.8rem; align-items:flex-start; padding:0.8rem 0; border-bottom:1px solid rgba(255,255,255,0.05); color:#c8d0de; line-height:1.5; }
+  .insight-list li:last-child { border-bottom:none; }
+  .insight-num { background:var(--accent); color:#fff; min-width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.82rem; flex-shrink:0; }
+  .faq-section { margin:2.5rem 0; }
+  .faq-item { border-bottom:1px solid var(--border); }
+  .faq-q { padding:1rem 0; cursor:pointer; color:#e8eaed; font-weight:600; font-size:1.05rem; display:flex; justify-content:space-between; align-items:center; }
+  .faq-q::after { content:'+'; font-size:1.3rem; color:var(--accent); transition:transform 0.2s; }
+  .faq-item.open .faq-q::after { content:'\2212'; }
+  .faq-a { max-height:0; overflow:hidden; transition:max-height 0.3s ease; }
+  .faq-item.open .faq-a { max-height:500px; }
+  .faq-a p { color:#9aa0a6; padding:0 0 1rem; line-height:1.6; }
+  .compare-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1rem; }
+  .port-card { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; padding:1.2rem; }
+  .port-card h3 { color:var(--accent); margin:0 0 0.8rem; font-size:1rem; }
+  .port-card .field { margin-bottom:0.6rem; }
+  .port-result { text-align:center; padding:0.8rem; margin-top:0.8rem; background:rgba(0,0,0,0.3); border-radius:8px; }
+  .port-result .rv { font-size:1.5rem; font-weight:700; }
+  .interp-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:1.5rem 0; }
+  .interp-card { background:rgba(255,255,255,0.04); border-left:4px solid; border-radius:0 10px 10px 0; padding:1.2rem 1.5rem; }
+  .interp-card h4 { margin:0 0 0.3rem; font-size:1.1rem; }
+  .interp-card p { color:#9aa0a6; margin:0; font-size:0.9rem; line-height:1.5; }
+  .breadcrumb { max-width:1200px; margin:0 auto; padding:16px 24px 0; font-size:13px; color:#94a3b8; }
+  .breadcrumb a { color:#94a3b8; text-decoration:none; }
+  .breadcrumb a:hover { color:var(--accent); }
+  .winner-badge { display:inline-block; background:var(--positive); color:#fff; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:10px; margin-left:6px; text-transform:uppercase; }
+  @media(max-width:768px) {
+    .sr-hero h1 { font-size:1.6rem; }
+    .results-row { grid-template-columns:1fr; }
+    .compare-row { grid-template-columns:1fr; }
+    .interp-grid { grid-template-columns:1fr; }
+    .stat-card { min-width:140px; }
+    .calc-grid { grid-template-columns:1fr 1fr; }
+  }
+  @media(max-width:480px) {
+    .calc-grid { grid-template-columns:1fr; }
+    .stat-row { gap:0.8rem; }
+  }
+</style>
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span style="margin:0 6px;opacity:0.5">›</span>
+  <a href="/tools/">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span>
+  <span style="color:#c8d0de">Sharpe Ratio Calculator</span>
+</nav>
+
+<div class="sr-hero">
+  <h1>Sharpe Ratio Calculator</h1>
+  <p class="subtitle">Calculate risk-adjusted returns with the Sharpe ratio, Sortino ratio, and compare portfolios side by side. Understand how much return you earn per unit of risk.</p>
+</div>
+
+<div class="sr-wrap">
+
+  <!-- Stat Cards -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sv">0.5 – 0.7</div>
+      <div class="sl">S&P 500 Historical Sharpe Ratio</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">1990</div>
+      <div class="sl">Nobel Prize — William F. Sharpe</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">> 1.0</div>
+      <div class="sl">Generally Considered "Good"</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">1966</div>
+      <div class="sl">Year the Sharpe Ratio Was Introduced</div>
+    </div>
+  </div>
+
+  <!-- SHARPE RATIO CALCULATOR -->
+  <div class="calc-section" id="calculator">
+    <h2>📊 Sharpe Ratio Calculator</h2>
+    <p style="color:#9aa0a6;margin-bottom:1.2rem;">Enter your portfolio's return, the risk-free rate, and standard deviation to calculate the Sharpe ratio and see how well your risk is being compensated.</p>
+    <div class="formula-box">
+      <div class="formula">Sharpe Ratio = (Rp − Rf) / σp</div>
+      <div class="formula-desc">Rp = Portfolio Return &nbsp;|&nbsp; Rf = Risk-Free Rate &nbsp;|&nbsp; σp = Standard Deviation</div>
+    </div>
+    <div class="calc-grid" style="margin-top:1.2rem;">
+      <div class="field">
+        <label for="sh-return">Portfolio Return (%)</label>
+        <input type="number" id="sh-return" value="12" min="-50" max="100" step="0.1">
+      </div>
+      <div class="field">
+        <label for="sh-rf">Risk-Free Rate (%)</label>
+        <input type="number" id="sh-rf" value="4.5" min="0" max="20" step="0.1">
+      </div>
+      <div class="field">
+        <label for="sh-std">Portfolio Std Deviation (%)</label>
+        <input type="number" id="sh-std" value="15" min="0.1" max="100" step="0.1">
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcSharpe()">Calculate Sharpe Ratio</button>
+    <div class="results-row" id="sh-results" style="display:none">
+      <div class="result-box">
+        <div class="rv" id="sh-ratio" style="color:var(--accent)">—</div>
+        <div class="rl">Sharpe Ratio</div>
+        <div class="interp" id="sh-interp">—</div>
+      </div>
+      <div class="result-box">
+        <div class="rv" id="sh-excess" style="color:var(--positive)">—</div>
+        <div class="rl">Excess Return</div>
+      </div>
+      <div class="result-box">
+        <div class="rv" id="sh-risk" style="color:var(--warning)">—</div>
+        <div class="rl">Risk (Std Dev)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SORTINO RATIO CALCULATOR -->
+  <div class="calc-section">
+    <h2>📉 Sortino Ratio Calculator</h2>
+    <p style="color:#9aa0a6;margin-bottom:1.2rem;">The Sortino ratio is like the Sharpe ratio but only penalizes downside volatility — because upside volatility is actually good for investors.</p>
+    <div class="formula-box">
+      <div class="formula">Sortino Ratio = (Rp − Rf) / σd</div>
+      <div class="formula-desc">σd = Downside Deviation (volatility from negative returns only)</div>
+    </div>
+    <div class="calc-grid" style="margin-top:1.2rem;">
+      <div class="field">
+        <label for="so-return">Portfolio Return (%)</label>
+        <input type="number" id="so-return" value="12" min="-50" max="100" step="0.1">
+      </div>
+      <div class="field">
+        <label for="so-rf">Risk-Free Rate (%)</label>
+        <input type="number" id="so-rf" value="4.5" min="0" max="20" step="0.1">
+      </div>
+      <div class="field">
+        <label for="so-dd">Downside Deviation (%)</label>
+        <input type="number" id="so-dd" value="10" min="0.1" max="100" step="0.1">
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcSortino()">Calculate Sortino Ratio</button>
+    <div class="results-row" id="so-results" style="display:none">
+      <div class="result-box">
+        <div class="rv" id="so-ratio" style="color:var(--accent)">—</div>
+        <div class="rl">Sortino Ratio</div>
+        <div class="interp" id="so-interp">—</div>
+      </div>
+      <div class="result-box">
+        <div class="rv" id="so-excess" style="color:var(--positive)">—</div>
+        <div class="rl">Excess Return</div>
+      </div>
+      <div class="result-box">
+        <div class="rv" id="so-risk" style="color:var(--warning)">—</div>
+        <div class="rl">Downside Deviation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTI-PORTFOLIO COMPARISON -->
+  <div class="calc-section">
+    <h2>⚖️ Multi-Portfolio Comparison</h2>
+    <p style="color:#9aa0a6;margin-bottom:1.2rem;">Compare the Sharpe ratios of up to 3 portfolios side by side to find which offers the best risk-adjusted return.</p>
+    <div class="compare-row">
+      <div class="port-card">
+        <h3>Portfolio A</h3>
+        <div class="field"><label>Return (%)</label><input type="number" id="pa-ret" value="12" step="0.1"></div>
+        <div class="field"><label>Risk-Free Rate (%)</label><input type="number" id="pa-rf" value="4.5" step="0.1"></div>
+        <div class="field"><label>Std Deviation (%)</label><input type="number" id="pa-std" value="15" step="0.1"></div>
+        <div class="port-result" id="pa-result"><div class="rv" style="color:#9aa0a6">—</div><div class="rl" style="font-size:0.75rem;color:#9aa0a6">SHARPE RATIO</div></div>
+      </div>
+      <div class="port-card">
+        <h3>Portfolio B</h3>
+        <div class="field"><label>Return (%)</label><input type="number" id="pb-ret" value="9" step="0.1"></div>
+        <div class="field"><label>Risk-Free Rate (%)</label><input type="number" id="pb-rf" value="4.5" step="0.1"></div>
+        <div class="field"><label>Std Deviation (%)</label><input type="number" id="pb-std" value="8" step="0.1"></div>
+        <div class="port-result" id="pb-result"><div class="rv" style="color:#9aa0a6">—</div><div class="rl" style="font-size:0.75rem;color:#9aa0a6">SHARPE RATIO</div></div>
+      </div>
+      <div class="port-card">
+        <h3>Portfolio C</h3>
+        <div class="field"><label>Return (%)</label><input type="number" id="pc-ret" value="15" step="0.1"></div>
+        <div class="field"><label>Risk-Free Rate (%)</label><input type="number" id="pc-rf" value="4.5" step="0.1"></div>
+        <div class="field"><label>Std Deviation (%)</label><input type="number" id="pc-std" value="22" step="0.1"></div>
+        <div class="port-result" id="pc-result"><div class="rv" style="color:#9aa0a6">—</div><div class="rl" style="font-size:0.75rem;color:#9aa0a6">SHARPE RATIO</div></div>
+      </div>
+    </div>
+    <button class="btn-calc" onclick="calcCompare()">Compare Portfolios</button>
+  </div>
+
+  <!-- CHART: Return vs Risk Scatter -->
+  <div class="calc-section">
+    <h2>📈 Return vs. Risk — Common Asset Allocations</h2>
+    <p style="color:#9aa0a6;margin-bottom:1rem;">This scatter plot shows historical risk-return profiles for common allocations. The dashed line represents the Capital Allocation Line (optimal risk-return tradeoff).</p>
+    <div class="chart-wrap">
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+
+  <!-- CHART: Sharpe Ratios Bar -->
+  <div class="calc-section">
+    <h2>📊 Sharpe Ratios of Major ETFs &amp; Asset Classes</h2>
+    <p style="color:#9aa0a6;margin-bottom:1rem;">Historical Sharpe ratios (10-year) for popular ETFs and asset classes, assuming a risk-free rate of ~4.5%.</p>
+    <div class="chart-wrap">
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+
+  <!-- WHAT IS THE SHARPE RATIO -->
+  <div class="content-section">
+    <h2>What Is the Sharpe Ratio?</h2>
+    <p>The <strong>Sharpe ratio</strong> is the most widely used measure of <strong>risk-adjusted return</strong> in finance. It tells you how much excess return you receive for the extra volatility you endure holding a riskier asset. In simple terms: it measures the "bang for your buck" of taking risk.</p>
+    <p>The ratio was developed by <strong>William F. Sharpe</strong>, a professor at Stanford University, who first introduced it in his 1966 paper as the "reward-to-variability ratio." Sharpe went on to win the <strong>Nobel Memorial Prize in Economic Sciences in 1990</strong> for his contributions to the Capital Asset Pricing Model (CAPM) and the theory of price formation for financial assets.</p>
+    <p>The formula is elegantly simple: take your portfolio's return, subtract the risk-free rate (what you'd earn from Treasury bills with zero risk), and divide by the portfolio's standard deviation (a measure of volatility). The result tells you the units of return earned per unit of risk taken.</p>
+
+    <div class="formula-box">
+      <div class="formula">Sharpe = (Rp − Rf) / σp</div>
+      <div class="formula-desc">Higher is better. A Sharpe ratio of 1.0 means you earn 1% excess return per 1% of volatility.</div>
+    </div>
+
+    <h3>Why Risk-Adjusted Returns Matter</h3>
+    <p>Raw returns can be misleading. A fund returning 20% sounds great — until you learn it had 40% volatility and nearly went to zero twice. Another fund returning 10% with just 8% volatility may actually be the superior investment. The Sharpe ratio captures this distinction by normalizing returns against the risk taken to achieve them.</p>
+    <p>This is crucial for portfolio construction: by comparing Sharpe ratios across investments, you can build portfolios that maximize return for a given level of risk — the fundamental insight of <strong>Modern Portfolio Theory</strong>.</p>
+  </div>
+
+  <!-- SHARPE vs SORTINO vs TREYNOR TABLE -->
+  <div class="calc-section">
+    <h2>📋 Sharpe vs. Sortino vs. Treynor Ratio</h2>
+    <p style="color:#9aa0a6;margin-bottom:1rem;">Three popular risk-adjusted return metrics, each with a different perspective on risk.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="text-align:left">Feature</th><th style="text-align:left">Sharpe Ratio</th><th style="text-align:left">Sortino Ratio</th><th style="text-align:left">Treynor Ratio</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Formula</td><td style="text-align:left">(Rp − Rf) / σp</td><td style="text-align:left">(Rp − Rf) / σd</td><td style="text-align:left">(Rp − Rf) / β</td></tr>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Risk Measure</td><td style="text-align:left">Total volatility (std dev)</td><td style="text-align:left">Downside deviation only</td><td style="text-align:left">Beta (systematic risk)</td></tr>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Penalizes Upside?</td><td style="text-align:left;color:var(--negative)">Yes</td><td style="text-align:left;color:var(--positive)">No</td><td style="text-align:left;color:var(--positive)">No</td></tr>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Best For</td><td style="text-align:left">General comparison</td><td style="text-align:left">Asymmetric return profiles</td><td style="text-align:left">Diversified portfolios</td></tr>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Developed By</td><td style="text-align:left">William Sharpe (1966)</td><td style="text-align:left">Frank Sortino (1980s)</td><td style="text-align:left">Jack Treynor (1965)</td></tr>
+          <tr><td style="text-align:left;color:#e8eaed;font-weight:600">Limitation</td><td style="text-align:left">Treats all volatility equally</td><td style="text-align:left">Requires downside data</td><td style="text-align:left">Only captures market risk</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INTERPRETATION GUIDE -->
+  <div class="content-section">
+    <h2>Sharpe Ratio Interpretation Guide</h2>
+    <p>Understanding what different Sharpe ratio values mean in practice can help you evaluate investments more effectively. Here is a practical breakdown:</p>
+    <div class="interp-grid">
+      <div class="interp-card" style="border-color:var(--negative)">
+        <h4 style="color:var(--negative)">Below 0.5 — Poor</h4>
+        <p>The portfolio is not adequately compensating for risk. You could likely achieve similar returns with less volatility, or earn more return for the same risk. Example: a speculative stock fund returning 8% with 20% std dev and 4.5% risk-free rate gives a Sharpe of 0.18.</p>
+      </div>
+      <div class="interp-card" style="border-color:var(--warning)">
+        <h4 style="color:var(--warning)">0.5 – 1.0 — Adequate</h4>
+        <p>Reasonable risk-adjusted performance, roughly in line with the broad stock market. The S&P 500 historically sits in this range. Example: a balanced fund returning 10% with 11% std dev gives a Sharpe of 0.50.</p>
+      </div>
+      <div class="interp-card" style="border-color:var(--positive)">
+        <h4 style="color:var(--positive)">1.0 – 2.0 — Good</h4>
+        <p>Strong risk-adjusted returns that outperform the market on a volatility-adjusted basis. Many top-performing hedge funds and managed strategies target this range. Example: a diversified portfolio returning 14% with 9.5% std dev gives a Sharpe of 1.0.</p>
+      </div>
+      <div class="interp-card" style="border-color:var(--accent)">
+        <h4 style="color:var(--accent)">Above 2.0 — Excellent</h4>
+        <p>Exceptional risk-adjusted performance, rarely sustained over long periods. If you see a Sharpe above 3.0 over multi-year periods, scrutinize the data — it may indicate survivorship bias, overfitting, or unrealistic assumptions. Example: a trend-following fund returning 18% with 6.5% std dev gives a Sharpe of 2.08.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY INSIGHTS -->
+  <div class="content-section">
+    <h2>5 Key Insights About the Sharpe Ratio</h2>
+    <ul class="insight-list">
+      <li><span class="insight-num">1</span><span><strong>Higher is always better, but context matters.</strong> A Sharpe of 0.8 during a financial crisis may be more impressive than a Sharpe of 1.5 during a raging bull market. Always compare within similar time periods and market conditions.</span></li>
+      <li><span class="insight-num">2</span><span><strong>The Sharpe ratio assumes normal distributions.</strong> It uses standard deviation, which treats upside and downside volatility equally. For investments with skewed returns (like options strategies), the Sortino ratio or Omega ratio may be more appropriate.</span></li>
+      <li><span class="insight-num">3</span><span><strong>Diversification is the "free lunch" of the Sharpe ratio.</strong> By combining uncorrelated assets, you can reduce portfolio volatility without proportionally reducing returns — effectively increasing your Sharpe ratio. This is the foundation of Modern Portfolio Theory.</span></li>
+      <li><span class="insight-num">4</span><span><strong>The risk-free rate matters more than you think.</strong> When the risk-free rate rises (as in 2023-2025), it raises the bar for all risky investments. A portfolio needs to deliver meaningfully more than the risk-free rate to justify its volatility.</span></li>
+      <li><span class="insight-num">5</span><span><strong>Negative Sharpe ratios require caution.</strong> A negative ratio means the portfolio earned less than the risk-free rate. However, comparing two negative Sharpe ratios is not straightforward — a ratio of −0.5 is not necessarily "better" than −1.0, as the math can be counterintuitive with negative excess returns.</span></li>
+    </ul>
+  </div>
+
+  <!-- FAQ SECTION -->
+  <div class="faq-section">
+    <h2 style="font-size:1.5rem;color:#e8eaed;margin-bottom:1rem;">Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the Sharpe ratio and how do you calculate it?</div><div class="faq-a"><p>The Sharpe ratio measures risk-adjusted return by subtracting the risk-free rate from the portfolio return and dividing by the portfolio's standard deviation. The formula is: Sharpe Ratio = (Rp - Rf) / σp. A higher ratio indicates better compensation for risk taken. For example, if your portfolio returns 12%, the risk-free rate is 4.5%, and your standard deviation is 15%, the Sharpe ratio is (12 - 4.5) / 15 = 0.50.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is a good Sharpe ratio?</div><div class="faq-a"><p>A Sharpe ratio above 1.0 is generally considered good, above 2.0 is excellent, and above 3.0 is exceptional. The S&P 500 has historically delivered a Sharpe ratio of approximately 0.5 to 0.7 over long periods. Most professional fund managers consider consistently achieving a Sharpe ratio above 1.0 to be a strong achievement.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the difference between the Sharpe ratio and the Sortino ratio?</div><div class="faq-a"><p>The Sharpe ratio uses total standard deviation (both upside and downside volatility) as its risk measure, while the Sortino ratio uses only downside deviation. This makes the Sortino ratio more suitable for investments with asymmetric returns, as it does not penalize upside volatility — which investors actually welcome.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Who developed the Sharpe ratio?</div><div class="faq-a"><p>William F. Sharpe, a Stanford professor, introduced the ratio in 1966 as the "reward-to-variability ratio." He won the Nobel Prize in Economics in 1990 for his work on the Capital Asset Pricing Model (CAPM). The measure was later renamed in his honor and remains the gold standard for risk-adjusted performance evaluation.</p></div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can the Sharpe ratio be negative and what does that mean?</div><div class="faq-a"><p>Yes, a negative Sharpe ratio means the portfolio underperformed the risk-free rate. You would have been better off holding Treasury bills. This can happen during bear markets or with poorly performing investments. When comparing two negative ratios, be cautious — the math becomes counterintuitive, and a "less negative" ratio does not always mean better performance.</p></div></div>
+  </div>
+
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+function getRatingColor(val) {
+  if (val >= 2) return '#4a8fe7';
+  if (val >= 1) return '#10b981';
+  if (val >= 0.5) return '#f59e0b';
+  return '#ef4444';
+}
+function getRatingText(val) {
+  if (val >= 2) return 'Excellent';
+  if (val >= 1) return 'Good';
+  if (val >= 0.5) return 'Adequate';
+  if (val > 0) return 'Poor';
+  return 'Negative';
+}
+
+/* Sharpe Calculator */
+function calcSharpe() {
+  var rp = parseFloat(document.getElementById('sh-return').value);
+  var rf = parseFloat(document.getElementById('sh-rf').value);
+  var sd = parseFloat(document.getElementById('sh-std').value);
+  if (isNaN(rp) || isNaN(rf) || isNaN(sd) || sd <= 0) return;
+  var excess = rp - rf;
+  var ratio = excess / sd;
+  var color = getRatingColor(ratio);
+  var text = getRatingText(ratio);
+  document.getElementById('sh-ratio').textContent = ratio.toFixed(2);
+  document.getElementById('sh-ratio').style.color = color;
+  document.getElementById('sh-interp').textContent = text;
+  document.getElementById('sh-interp').style.color = color;
+  document.getElementById('sh-excess').textContent = excess.toFixed(2) + '%';
+  document.getElementById('sh-risk').textContent = sd.toFixed(2) + '%';
+  document.getElementById('sh-results').style.display = 'grid';
+}
+
+/* Sortino Calculator */
+function calcSortino() {
+  var rp = parseFloat(document.getElementById('so-return').value);
+  var rf = parseFloat(document.getElementById('so-rf').value);
+  var dd = parseFloat(document.getElementById('so-dd').value);
+  if (isNaN(rp) || isNaN(rf) || isNaN(dd) || dd <= 0) return;
+  var excess = rp - rf;
+  var ratio = excess / dd;
+  var color = getRatingColor(ratio);
+  var text = getRatingText(ratio);
+  document.getElementById('so-ratio').textContent = ratio.toFixed(2);
+  document.getElementById('so-ratio').style.color = color;
+  document.getElementById('so-interp').textContent = text;
+  document.getElementById('so-interp').style.color = color;
+  document.getElementById('so-excess').textContent = excess.toFixed(2) + '%';
+  document.getElementById('so-risk').textContent = dd.toFixed(2) + '%';
+  document.getElementById('so-results').style.display = 'grid';
+}
+
+/* Multi-Portfolio Comparison */
+function calcCompare() {
+  var ports = [
+    { id:'a', ret: parseFloat(document.getElementById('pa-ret').value), rf: parseFloat(document.getElementById('pa-rf').value), std: parseFloat(document.getElementById('pa-std').value) },
+    { id:'b', ret: parseFloat(document.getElementById('pb-ret').value), rf: parseFloat(document.getElementById('pb-rf').value), std: parseFloat(document.getElementById('pb-std').value) },
+    { id:'c', ret: parseFloat(document.getElementById('pc-ret').value), rf: parseFloat(document.getElementById('pc-rf').value), std: parseFloat(document.getElementById('pc-std').value) }
+  ];
+  var best = -Infinity;
+  var bestId = '';
+  var i, p, ratio, el, color;
+  for (i = 0; i < ports.length; i++) {
+    p = ports[i];
+    if (isNaN(p.ret) || isNaN(p.rf) || isNaN(p.std) || p.std <= 0) continue;
+    ratio = (p.ret - p.rf) / p.std;
+    ports[i].ratio = ratio;
+    if (ratio > best) { best = ratio; bestId = p.id; }
+  }
+  for (i = 0; i < ports.length; i++) {
+    p = ports[i];
+    if (p.ratio === undefined) continue;
+    el = document.getElementById('p' + p.id + '-result');
+    color = getRatingColor(p.ratio);
+    var badge = (p.id === bestId) ? '<span class="winner-badge">Best</span>' : '';
+    el.innerHTML = '<div class="rv" style="color:' + color + '">' + p.ratio.toFixed(2) + badge + '</div><div class="rl" style="font-size:0.75rem;color:#9aa0a6">SHARPE RATIO — ' + getRatingText(p.ratio) + '</div>';
+  }
+}
+
+/* Scatter: Return vs Risk */
+var scatterData = [
+  { x: 3.5, y: 5.5, label: '100% Bonds' },
+  { x: 7.2, y: 6.8, label: '20/80 Stocks/Bonds' },
+  { x: 9.8, y: 8.2, label: '40/60' },
+  { x: 11.5, y: 9.5, label: '60/40' },
+  { x: 13.2, y: 10.5, label: '80/20' },
+  { x: 15.3, y: 11.2, label: '100% Stocks' },
+  { x: 20.5, y: 9.8, label: '100% Intl Stocks' },
+  { x: 6.5, y: 7.5, label: 'REITs' },
+  { x: 18.0, y: 12.5, label: 'Small-Cap' }
+];
+var scatterCtx = document.getElementById('scatterChart');
+if (scatterCtx) {
+  new Chart(scatterCtx.getContext('2d'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Asset Allocations',
+          data: scatterData.map(function(d) { return { x: d.x, y: d.y }; }),
+          backgroundColor: 'rgba(74,143,231,0.8)',
+          pointRadius: 8,
+          pointHoverRadius: 11
+        },
+        {
+          label: 'Capital Allocation Line',
+          data: [{ x: 0, y: 4.5 }, { x: 22, y: 4.5 + 22 * 0.45 }],
+          type: 'line',
+          borderColor: 'rgba(16,185,129,0.5)',
+          borderDash: [8, 4],
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.datasetIndex === 0) {
+                var d = scatterData[ctx.dataIndex];
+                var sharpe = ((d.y - 4.5) / d.x).toFixed(2);
+                return d.label + ': Return ' + d.y + '%, Risk ' + d.x + '%, Sharpe ' + sharpe;
+              }
+              return 'CAL (Optimal Line)';
+            }
+          }
+        },
+        legend: { labels: { color: '#9aa0a6' } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Risk (Std Deviation %)', color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9aa0a6' } },
+        y: { title: { display: true, text: 'Return (%)', color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9aa0a6' } }
+      }
+    }
+  });
+}
+
+/* Bar: Sharpe Ratios of ETFs */
+var barLabels = ['SPY', 'QQQ', 'VTI', 'SCHD', 'BND', 'US Stocks', 'Intl Stocks', 'Bonds', '60/40 Blend', 'REITs'];
+var barValues = [0.62, 0.78, 0.60, 0.55, 0.22, 0.58, 0.30, 0.20, 0.65, 0.35];
+var barColors = barValues.map(function(v) { return getRatingColor(v); });
+var barCtx = document.getElementById('barChart');
+if (barCtx) {
+  new Chart(barCtx.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: barLabels,
+      datasets: [{
+        label: 'Sharpe Ratio (10-Year)',
+        data: barValues,
+        backgroundColor: barColors.map(function(c) { return c.replace(')', ',0.7)').replace('rgb', 'rgba'); }),
+        borderColor: barColors,
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return 'Sharpe: ' + ctx.parsed.x.toFixed(2) + ' — ' + getRatingText(ctx.parsed.x);
+            }
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Sharpe Ratio', color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9aa0a6' }, min: 0, max: 1.0 },
+        y: { grid: { display: false }, ticks: { color: '#e8eaed', font: { weight: '600' } } }
+      }
+    }
+  });
+}
+
+/* FAQ toggle */
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var isOpen = item.className.indexOf('open') !== -1;
+  if (isOpen) {
+    item.className = item.className.replace(' open', '');
+  } else {
+    item.className = item.className + ' open';
+  }
+}
+
+/* Auto-calculate on load */
+calcSharpe();
+calcSortino();
+</script>
+
+</SiteLayout>

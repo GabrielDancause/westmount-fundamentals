@@ -1,0 +1,850 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Net Income Calculator — Formula, Profit Margins & Trend Analysis", description: "Free net income calculator with gross profit, operating income, profit margin analysis, and multi-year trend tracking. Learn how to calculate net income and what it means for business profitability.", category: "study", published: "2026-03-20" };
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Net Income Calculator — Formula, Profit Margins & Trend Analysis",
+    "description": "Free net income calculator with gross profit, operating income, profit margin analysis, and multi-year trend tracking. Learn the net income formula and what it means for profitability.",
+    "datePublished": "2026-03-20",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is net income and how do you calculate it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Net income is the total profit a company earns after subtracting all expenses from revenue. The net income formula is: Net Income = Revenue − Cost of Goods Sold − Operating Expenses − Interest − Taxes. It is also called the bottom line, net profit, or net earnings. Net income appears at the bottom of the income statement."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between net income and gross profit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gross profit only subtracts the cost of goods sold (COGS) from revenue, showing how efficiently a company produces its products. Net income goes further by also subtracting operating expenses, interest, and taxes. Gross profit is always higher than net income because it excludes many expenses."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good net profit margin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A good net profit margin varies by industry. Software companies often achieve 20-30% net margins, while retail and grocery stores may operate at 2-5%. The S&P 500 average net profit margin is approximately 10-12%. Always compare margins within the same sector for meaningful analysis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why can net income be misleading?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Net income can be misleading because it includes one-time items (like asset sales or lawsuit settlements), non-cash charges (depreciation and stock-based compensation), and can be manipulated through accounting choices. A company may report strong net income from selling assets while its core business is declining."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is net income different from EBITDA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EBITDA (Earnings Before Interest, Taxes, Depreciation, and Amortization) strips out financing costs, tax effects, and non-cash depreciation charges to focus on operating cash flow. Net income includes all of these deductions. EBITDA is better for comparing companies across different capital structures, while net income shows actual bottom-line profitability."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title="Net Income Calculator — Formula, Profit Margins & Trend Analysis" description="Free net income calculator with gross profit, operating income, profit margin analysis, and multi-year trend tracking. Learn how to calculate net income and what it means for business profitability." canonical="https://westmountfundamentals.com/net-income-calculator/" schema={schema}>
+
+<style is:inline>
+  :root {
+    --ni-accent: #4a8fe7;
+    --ni-positive: #10b981;
+    --ni-negative: #ef4444;
+    --ni-warning: #f59e0b;
+    --ni-bg-card: #0d1117;
+    --ni-border: #30363d;
+  }
+  .ni-hero { text-align: center; padding: 3rem 1rem 2rem; max-width: 900px; margin: 0 auto; }
+  .ni-hero h1 { font-size: 2.4rem; margin-bottom: 1rem; line-height: 1.2; }
+  .ni-hero p { color: #8b949e; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+
+  .ni-stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .ni-stat-card { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .ni-stat-card .ni-stat-value { font-size: 1.8rem; font-weight: 700; color: var(--ni-accent); }
+  .ni-stat-card .ni-stat-label { font-size: 0.85rem; color: #8b949e; margin-top: 0.3rem; }
+
+  .ni-section { max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .ni-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .ni-section-subtitle { color: #8b949e; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+  .ni-calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .ni-calc-box { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; padding: 2rem; }
+  .ni-calc-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--ni-accent); }
+  .ni-calc-box .ni-calc-desc { color: #8b949e; font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+  .ni-form-group { margin-bottom: 1rem; }
+  .ni-form-group label { display: block; font-size: 0.85rem; color: #c9d1d9; margin-bottom: 0.3rem; }
+  .ni-form-group input { width: 100%; padding: 0.6rem 0.8rem; background: #161b22; border: 1px solid var(--ni-border); border-radius: 8px; color: #e6edf3; font-size: 1rem; box-sizing: border-box; }
+  .ni-form-group input:focus { outline: none; border-color: var(--ni-accent); }
+
+  .ni-calc-btn { width: 100%; padding: 0.75rem; background: var(--ni-accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+  .ni-calc-btn:hover { opacity: 0.9; }
+
+  .ni-result-box { margin-top: 1.5rem; padding: 1.2rem; background: #161b22; border: 1px solid var(--ni-border); border-radius: 8px; display: none; }
+  .ni-result-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--ni-border); }
+  .ni-result-row:last-child { border-bottom: none; }
+  .ni-result-label { color: #8b949e; }
+  .ni-result-val { font-weight: 600; }
+  .ni-result-val.ni-pos { color: var(--ni-positive); }
+  .ni-result-val.ni-neg { color: var(--ni-negative); }
+
+  .ni-chart-container { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+  .ni-chart-container canvas { max-height: 400px; }
+
+  .ni-trend-inputs { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1rem; }
+  .ni-trend-inputs .ni-form-group { flex: 1; min-width: 100px; margin-bottom: 0; }
+
+  .ni-content-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .ni-content-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .ni-content-section h3 { font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .ni-content-section p { color: #c9d1d9; line-height: 1.7; margin-bottom: 1rem; }
+
+  .ni-formula-box { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; padding: 1.5rem 2rem; margin: 1.5rem 0; font-family: monospace; font-size: 1.05rem; color: var(--ni-accent); text-align: center; line-height: 1.8; }
+
+  .ni-compare-table { width: 100%; border-collapse: collapse; background: var(--ni-bg-card); border-radius: 12px; overflow: hidden; margin: 1.5rem 0; }
+  .ni-compare-table th, .ni-compare-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--ni-border); font-size: 0.9rem; }
+  .ni-compare-table th { background: #161b22; color: #8b949e; font-size: 0.8rem; text-transform: uppercase; }
+  .ni-compare-table tr:last-child td { border-bottom: none; }
+  .ni-check { color: var(--ni-positive); }
+  .ni-cross { color: var(--ni-negative); }
+
+  .ni-insights-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .ni-insight-card { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; padding: 1.2rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .ni-insight-num { background: var(--ni-accent); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .ni-insight-text { color: #c9d1d9; font-size: 0.95rem; line-height: 1.5; }
+  .ni-insight-text strong { color: #e6edf3; }
+
+  .ni-faq-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .ni-faq-section h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
+  .ni-faq-item { background: var(--ni-bg-card); border: 1px solid var(--ni-border); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .ni-faq-q { padding: 1.2rem 1.5rem; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .ni-faq-q:hover { background: #161b22; }
+  .ni-faq-arrow { transition: transform 0.2s; color: #8b949e; }
+  .ni-faq-a { padding: 0 1.5rem 1.2rem; color: #8b949e; line-height: 1.7; display: none; }
+  .ni-faq-item.open .ni-faq-a { display: block; }
+  .ni-faq-item.open .ni-faq-arrow { transform: rotate(180deg); }
+
+  .ni-warning-box { background: #1a1500; border: 1px solid #f59e0b33; border-radius: 12px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+  .ni-warning-box h4 { color: var(--ni-warning); margin-bottom: 0.5rem; }
+  .ni-warning-box ul { color: #c9d1d9; padding-left: 1.2rem; margin: 0; }
+  .ni-warning-box li { margin-bottom: 0.4rem; line-height: 1.5; }
+
+  @media (max-width: 768px) {
+    .ni-stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .ni-calc-grid { grid-template-columns: 1fr; }
+    .ni-hero h1 { font-size: 1.8rem; }
+    .ni-trend-inputs { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .ni-stat-cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Hero -->
+<div class="ni-hero">
+  <h1>Net Income Calculator</h1>
+  <p>Calculate net income, gross profit, operating income, and profit margins. Analyze multi-year trends and understand what the bottom line really tells you about a company's profitability.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="ni-stat-cards">
+  <div class="ni-stat-card">
+    <div class="ni-stat-value">~10-12%</div>
+    <div class="ni-stat-label">S&P 500 Avg Net Margin</div>
+  </div>
+  <div class="ni-stat-card">
+    <div class="ni-stat-value">$1.8T</div>
+    <div class="ni-stat-label">S&P 500 Total Net Income (2024)</div>
+  </div>
+  <div class="ni-stat-card">
+    <div class="ni-stat-value">Bottom Line</div>
+    <div class="ni-stat-label">Also Called Net Profit / Earnings</div>
+  </div>
+  <div class="ni-stat-card">
+    <div class="ni-stat-value">EPS</div>
+    <div class="ni-stat-label">Net Income ÷ Shares Outstanding</div>
+  </div>
+</div>
+
+<!-- Net Income Calculator -->
+<div class="ni-section">
+  <h2>Net Income Calculator</h2>
+  <p class="ni-section-subtitle">Enter revenue and expenses to calculate gross profit, operating income, pre-tax income, and net income with all profit margins.</p>
+
+  <div class="ni-calc-grid">
+    <div class="ni-calc-box">
+      <h3>📊 Full Income Statement Calculator</h3>
+      <p class="ni-calc-desc">Net Income = Revenue − COGS − Operating Expenses − Interest − Taxes</p>
+      <div class="ni-form-group">
+        <label>Revenue ($)</label>
+        <input type="number" id="ni-revenue" placeholder="e.g. 10,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Cost of Goods Sold ($)</label>
+        <input type="number" id="ni-cogs" placeholder="e.g. 4,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Operating Expenses ($)</label>
+        <input type="number" id="ni-opex" placeholder="e.g. 3,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Interest Expense ($)</label>
+        <input type="number" id="ni-interest" placeholder="e.g. 200,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Tax Rate (%)</label>
+        <input type="number" id="ni-taxrate" placeholder="e.g. 21" value="21">
+      </div>
+      <button class="ni-calc-btn" onclick="calcNetIncome()">Calculate Net Income</button>
+      <div class="ni-result-box" id="ni-result"></div>
+    </div>
+
+    <!-- Profit Margin Calculator -->
+    <div class="ni-calc-box">
+      <h3>📈 Profit Margin Calculator</h3>
+      <p class="ni-calc-desc">Enter financial figures to get all three profit margins at once.</p>
+      <div class="ni-form-group">
+        <label>Revenue ($)</label>
+        <input type="number" id="pm-revenue" placeholder="e.g. 10,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Gross Profit ($)</label>
+        <input type="number" id="pm-gross" placeholder="e.g. 6,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Operating Income ($)</label>
+        <input type="number" id="pm-operating" placeholder="e.g. 3,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Net Income ($)</label>
+        <input type="number" id="pm-net" placeholder="e.g. 1,500,000">
+      </div>
+      <button class="ni-calc-btn" onclick="calcMargins()">Calculate Margins</button>
+      <div class="ni-result-box" id="pm-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Revenue Waterfall Chart -->
+<div class="ni-section">
+  <h2>Revenue Waterfall Breakdown</h2>
+  <p class="ni-section-subtitle">Visual breakdown from revenue to net income — see where the money goes at each step. Uses values from the Net Income Calculator above.</p>
+  <div class="ni-chart-container">
+    <canvas id="waterfallChart"></canvas>
+  </div>
+</div>
+
+<!-- Net Income Trend Analyzer -->
+<div class="ni-section">
+  <h2>Net Income Trend Analyzer</h2>
+  <p class="ni-section-subtitle">Enter 3 to 5 years of net income data to calculate the compound annual growth rate (CAGR) and visualize the trend.</p>
+
+  <div class="ni-calc-box">
+    <h3>📉 Multi-Year Net Income Trend</h3>
+    <p class="ni-calc-desc">Enter net income for each year. Leave Year 4 and Year 5 blank if you only have 3 years.</p>
+    <div class="ni-trend-inputs">
+      <div class="ni-form-group">
+        <label>Year 1 ($)</label>
+        <input type="number" id="trend-y1" placeholder="e.g. 1,000,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Year 2 ($)</label>
+        <input type="number" id="trend-y2" placeholder="e.g. 1,200,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Year 3 ($)</label>
+        <input type="number" id="trend-y3" placeholder="e.g. 1,500,000">
+      </div>
+      <div class="ni-form-group">
+        <label>Year 4 ($)</label>
+        <input type="number" id="trend-y4" placeholder="Optional">
+      </div>
+      <div class="ni-form-group">
+        <label>Year 5 ($)</label>
+        <input type="number" id="trend-y5" placeholder="Optional">
+      </div>
+    </div>
+    <button class="ni-calc-btn" onclick="calcTrend()">Analyze Trend</button>
+    <div class="ni-result-box" id="trend-result"></div>
+    <div class="ni-chart-container" style="display:none;" id="trend-chart-wrap">
+      <canvas id="trendChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Net Profit Margin by S&P 500 Sector -->
+<div class="ni-section">
+  <h2>Net Profit Margin by S&P 500 Sector</h2>
+  <p class="ni-section-subtitle">Average net profit margins vary dramatically across industries. Use this benchmark to compare your company's profitability.</p>
+  <div class="ni-chart-container">
+    <canvas id="sectorChart"></canvas>
+  </div>
+</div>
+
+<!-- What is Net Income -->
+<div class="ni-content-section">
+  <h2>What Is Net Income?</h2>
+  <p>Net income — also called <strong>net profit</strong>, <strong>net earnings</strong>, or simply the <strong>bottom line</strong> — is the total amount of profit a company earns after deducting all expenses from revenue. It sits at the very bottom of the income statement, which is why it's called the bottom line.</p>
+  <p>When a company reports "earnings" in its quarterly results, it's referring to net income. When analysts talk about a company's "profit," they usually mean net income. And when you see <strong>earnings per share (EPS)</strong>, that's just net income divided by the number of shares outstanding.</p>
+
+  <h3>The Net Income Formula</h3>
+  <div class="ni-formula-box">
+    Net Income = Revenue − COGS − Operating Expenses − Interest − Taxes<br>
+    <span style="font-size:0.85rem; color:#8b949e;">or equivalently:</span><br>
+    Net Income = Gross Profit − Operating Expenses − Interest − Taxes
+  </div>
+
+  <p>The calculation flows through several intermediate profit lines, each telling you something different:</p>
+  <p><strong>Gross Profit</strong> = Revenue − Cost of Goods Sold. This shows how efficiently a company produces its products or delivers its services.</p>
+  <p><strong>Operating Income</strong> = Gross Profit − Operating Expenses (SG&A, R&D, etc.). This shows the profitability of core business operations.</p>
+  <p><strong>Pre-Tax Income</strong> = Operating Income − Interest Expense. This shows profit before the government takes its share.</p>
+  <p><strong>Net Income</strong> = Pre-Tax Income − Taxes. The final bottom line after everything is accounted for.</p>
+</div>
+
+<!-- Comparison Table -->
+<div class="ni-content-section">
+  <h2>Net Income vs Gross Profit vs Operating Income vs EBITDA</h2>
+  <p>Each profit metric strips away different layers of expenses. Here's how they compare:</p>
+
+  <div style="overflow-x:auto;">
+    <table class="ni-compare-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Includes COGS</th>
+          <th>Includes OpEx</th>
+          <th>Includes Interest</th>
+          <th>Includes Taxes</th>
+          <th>Includes D&A</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Gross Profit</strong></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td>Production efficiency</td>
+        </tr>
+        <tr>
+          <td><strong>Operating Income</strong></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td>Core operations</td>
+        </tr>
+        <tr>
+          <td><strong><a href="/ebitda-calculator/" style="color:var(--ni-accent);">EBITDA</a></strong></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗</span></td>
+          <td><span class="ni-cross">✗ Added Back</span></td>
+          <td>Cross-company comparison</td>
+        </tr>
+        <tr>
+          <td><strong>Net Income</strong></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td><span class="ni-check">✓ Deducted</span></td>
+          <td>True bottom-line profit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>For a deep dive into EBITDA and how it compares to net income in valuation, check our <a href="/ebitda-calculator/" style="color:var(--ni-accent);">EBITDA Calculator</a>.</p>
+</div>
+
+<!-- Why Net Income Can Be Misleading -->
+<div class="ni-content-section">
+  <h2>Why Net Income Can Be Misleading</h2>
+  <p>Net income is the most cited profitability metric, but it has real limitations that every investor should understand. Here are the three biggest traps:</p>
+
+  <div class="ni-warning-box">
+    <h4>⚠️ One-Time Items</h4>
+    <ul>
+      <li>Asset sales, lawsuit settlements, and restructuring charges can inflate or deflate net income in a single quarter</li>
+      <li>A company might report record net income from selling a building — not from growing its core business</li>
+      <li>Always check if earnings are "recurring" or "non-recurring" in the footnotes</li>
+    </ul>
+  </div>
+
+  <div class="ni-warning-box">
+    <h4>⚠️ Depreciation & Amortization</h4>
+    <ul>
+      <li>Companies with heavy capital expenditures (factories, equipment) show lower net income due to depreciation — even if cash flow is strong</li>
+      <li>Two companies with identical cash flows can report very different net income depending on their depreciation schedules</li>
+      <li>This is why <a href="/ebitda-calculator/" style="color:var(--ni-accent);">EBITDA</a> is popular — it adds back these non-cash charges</li>
+    </ul>
+  </div>
+
+  <div class="ni-warning-box">
+    <h4>⚠️ Stock-Based Compensation (SBC)</h4>
+    <ul>
+      <li>Tech companies often pay employees with stock options, which are expensed on the income statement</li>
+      <li>SBC reduces net income but doesn't require actual cash spending — it dilutes existing shareholders instead</li>
+      <li>Some companies report "adjusted net income" that excludes SBC, making their profitability look much better</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 5 Key Insights -->
+<div class="ni-content-section">
+  <h2>5 Key Insights About Net Income</h2>
+  <div class="ni-insights-grid">
+    <div class="ni-insight-card">
+      <div class="ni-insight-num">1</div>
+      <div class="ni-insight-text"><strong>Net income drives stock prices.</strong> Earnings per share (EPS) is derived from net income, and it's the single most important factor in stock valuation. When a company "beats earnings," it means net income exceeded expectations.</div>
+    </div>
+    <div class="ni-insight-card">
+      <div class="ni-insight-num">2</div>
+      <div class="ni-insight-text"><strong>Margins matter more than absolute numbers.</strong> A $10B company earning $1B (10% margin) is more efficient than a $100B company earning $5B (5% margin). Always compare net profit margins, not just raw net income figures.</div>
+    </div>
+    <div class="ni-insight-card">
+      <div class="ni-insight-num">3</div>
+      <div class="ni-insight-text"><strong>Net income funds dividends.</strong> Companies can only sustainably pay dividends from net income. The payout ratio (dividends ÷ net income) tells you whether a dividend is safe. A ratio above 100% means the company is paying more than it earns.</div>
+    </div>
+    <div class="ni-insight-card">
+      <div class="ni-insight-num">4</div>
+      <div class="ni-insight-text"><strong>Negative net income isn't always bad.</strong> High-growth companies like Amazon were unprofitable for years while reinvesting every dollar into growth. The question is whether losses are strategic (investing in future growth) or structural (bad business model).</div>
+    </div>
+    <div class="ni-insight-card">
+      <div class="ni-insight-num">5</div>
+      <div class="ni-insight-text"><strong>Look at the trend, not a single year.</strong> One year of high net income could be a fluke. Three to five years of consistently growing net income is a strong signal of business quality. Use our trend analyzer above to measure compound annual growth.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="ni-faq-section">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="ni-faq-item">
+    <div class="ni-faq-q" onclick="toggleNiFaq(this)">
+      <span>What is net income and how do you calculate it?</span>
+      <span class="ni-faq-arrow">▼</span>
+    </div>
+    <div class="ni-faq-a">Net income is the total profit a company earns after subtracting all expenses from revenue. The formula is: Net Income = Revenue − Cost of Goods Sold − Operating Expenses − Interest − Taxes. It is also called the bottom line, net profit, or net earnings, and appears at the very bottom of the income statement.</div>
+  </div>
+
+  <div class="ni-faq-item">
+    <div class="ni-faq-q" onclick="toggleNiFaq(this)">
+      <span>What is the difference between net income and gross profit?</span>
+      <span class="ni-faq-arrow">▼</span>
+    </div>
+    <div class="ni-faq-a">Gross profit only subtracts the cost of goods sold (COGS) from revenue, showing production efficiency. Net income goes further by also subtracting operating expenses, interest, and taxes. Gross profit is always higher than net income because it excludes many additional expenses.</div>
+  </div>
+
+  <div class="ni-faq-item">
+    <div class="ni-faq-q" onclick="toggleNiFaq(this)">
+      <span>What is a good net profit margin?</span>
+      <span class="ni-faq-arrow">▼</span>
+    </div>
+    <div class="ni-faq-a">A good net profit margin varies by industry. Software companies often achieve 20-30%, while retail and grocery stores operate at 2-5%. The S&P 500 average is approximately 10-12%. Always compare within the same sector for meaningful analysis.</div>
+  </div>
+
+  <div class="ni-faq-item">
+    <div class="ni-faq-q" onclick="toggleNiFaq(this)">
+      <span>Why can net income be misleading?</span>
+      <span class="ni-faq-arrow">▼</span>
+    </div>
+    <div class="ni-faq-a">Net income can be misleading because it includes one-time items (asset sales, lawsuit settlements), non-cash charges (depreciation, stock-based compensation), and can be affected by accounting choices. Always look at the quality of earnings, not just the number.</div>
+  </div>
+
+  <div class="ni-faq-item">
+    <div class="ni-faq-q" onclick="toggleNiFaq(this)">
+      <span>How is net income different from EBITDA?</span>
+      <span class="ni-faq-arrow">▼</span>
+    </div>
+    <div class="ni-faq-a">EBITDA strips out interest, taxes, depreciation, and amortization to focus on operating cash flow. Net income includes all of these. EBITDA is better for comparing companies with different capital structures, while net income shows the actual bottom-line profit after all obligations. Learn more with our <a href="/ebitda-calculator/" style="color:var(--ni-accent);">EBITDA Calculator</a>.</div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script is:inline>
+  var waterfallChartInstance = null;
+  var trendChartInstance = null;
+  var sectorChartInstance = null;
+
+  function fmtCurrency(n) {
+    if (n === undefined || n === null || isNaN(n)) return "$0";
+    var abs = Math.abs(n);
+    var sign = n < 0 ? "-" : "";
+    if (abs >= 1e9) return sign + "$" + (abs / 1e9).toFixed(2) + "B";
+    if (abs >= 1e6) return sign + "$" + (abs / 1e6).toFixed(2) + "M";
+    if (abs >= 1e3) return sign + "$" + (abs / 1e3).toFixed(1) + "K";
+    return sign + "$" + abs.toFixed(0);
+  }
+
+  function fmtPct(n) {
+    if (n === undefined || n === null || isNaN(n)) return "0.0%";
+    return n.toFixed(1) + "%";
+  }
+
+  function valClass(n) {
+    return n >= 0 ? "ni-pos" : "ni-neg";
+  }
+
+  /* ==================== Net Income Calculator ==================== */
+  function calcNetIncome() {
+    var revenue = parseFloat(document.getElementById("ni-revenue").value) || 0;
+    var cogs = parseFloat(document.getElementById("ni-cogs").value) || 0;
+    var opex = parseFloat(document.getElementById("ni-opex").value) || 0;
+    var interest = parseFloat(document.getElementById("ni-interest").value) || 0;
+    var taxRate = parseFloat(document.getElementById("ni-taxrate").value) || 0;
+
+    if (revenue === 0) { alert("Please enter revenue."); return; }
+
+    var grossProfit = revenue - cogs;
+    var operatingIncome = grossProfit - opex;
+    var preTaxIncome = operatingIncome - interest;
+    var taxes = preTaxIncome > 0 ? preTaxIncome * (taxRate / 100) : 0;
+    var netIncome = preTaxIncome - taxes;
+
+    var grossMargin = (grossProfit / revenue) * 100;
+    var operatingMargin = (operatingIncome / revenue) * 100;
+    var preTaxMargin = (preTaxIncome / revenue) * 100;
+    var netMargin = (netIncome / revenue) * 100;
+
+    var html = "";
+    html += '<div class="ni-result-row"><span class="ni-result-label">Revenue</span><span class="ni-result-val">' + fmtCurrency(revenue) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">− COGS</span><span class="ni-result-val ni-neg">' + fmtCurrency(cogs) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">= Gross Profit (' + fmtPct(grossMargin) + ' margin)</span><span class="ni-result-val ' + valClass(grossProfit) + '">' + fmtCurrency(grossProfit) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">− Operating Expenses</span><span class="ni-result-val ni-neg">' + fmtCurrency(opex) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">= Operating Income (' + fmtPct(operatingMargin) + ' margin)</span><span class="ni-result-val ' + valClass(operatingIncome) + '">' + fmtCurrency(operatingIncome) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">− Interest Expense</span><span class="ni-result-val ni-neg">' + fmtCurrency(interest) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">= Pre-Tax Income (' + fmtPct(preTaxMargin) + ' margin)</span><span class="ni-result-val ' + valClass(preTaxIncome) + '">' + fmtCurrency(preTaxIncome) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">− Taxes (' + fmtPct(taxRate) + ' rate)</span><span class="ni-result-val ni-neg">' + fmtCurrency(taxes) + '</span></div>';
+    html += '<div class="ni-result-row" style="border-top:2px solid var(--ni-accent);padding-top:0.8rem;"><span class="ni-result-label" style="font-weight:700;color:#e6edf3;">Net Income (' + fmtPct(netMargin) + ' margin)</span><span class="ni-result-val ' + valClass(netIncome) + '" style="font-size:1.2rem;">' + fmtCurrency(netIncome) + '</span></div>';
+
+    var box = document.getElementById("ni-result");
+    box.innerHTML = html;
+    box.style.display = "block";
+
+    updateWaterfallChart(revenue, grossProfit, operatingIncome, netIncome);
+  }
+
+  /* ==================== Profit Margin Calculator ==================== */
+  function calcMargins() {
+    var revenue = parseFloat(document.getElementById("pm-revenue").value) || 0;
+    var gross = parseFloat(document.getElementById("pm-gross").value) || 0;
+    var operating = parseFloat(document.getElementById("pm-operating").value) || 0;
+    var net = parseFloat(document.getElementById("pm-net").value) || 0;
+
+    if (revenue === 0) { alert("Please enter revenue."); return; }
+
+    var grossMargin = (gross / revenue) * 100;
+    var opMargin = (operating / revenue) * 100;
+    var netMargin = (net / revenue) * 100;
+
+    var rating = "Low";
+    var ratingColor = "var(--ni-negative)";
+    if (netMargin >= 20) { rating = "Excellent"; ratingColor = "var(--ni-positive)"; }
+    else if (netMargin >= 10) { rating = "Strong"; ratingColor = "var(--ni-positive)"; }
+    else if (netMargin >= 5) { rating = "Average"; ratingColor = "var(--ni-warning)"; }
+
+    var html = "";
+    html += '<div class="ni-result-row"><span class="ni-result-label">Gross Profit Margin</span><span class="ni-result-val ' + valClass(grossMargin) + '">' + fmtPct(grossMargin) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">Operating Profit Margin</span><span class="ni-result-val ' + valClass(opMargin) + '">' + fmtPct(opMargin) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">Net Profit Margin</span><span class="ni-result-val ' + valClass(netMargin) + '">' + fmtPct(netMargin) + '</span></div>';
+    html += '<div class="ni-result-row" style="border-top:2px solid var(--ni-accent);padding-top:0.8rem;"><span class="ni-result-label">Profitability Rating</span><span class="ni-result-val" style="color:' + ratingColor + ';">' + rating + '</span></div>';
+
+    var box = document.getElementById("pm-result");
+    box.innerHTML = html;
+    box.style.display = "block";
+  }
+
+  /* ==================== Waterfall Chart ==================== */
+  function updateWaterfallChart(revenue, grossProfit, operatingIncome, netIncome) {
+    var ctx = document.getElementById("waterfallChart").getContext("2d");
+    if (waterfallChartInstance) waterfallChartInstance.destroy();
+
+    var cogsVal = revenue - grossProfit;
+    var opexVal = grossProfit - operatingIncome;
+    var belowOp = operatingIncome - netIncome;
+
+    waterfallChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Revenue", "COGS", "Gross Profit", "OpEx", "Operating Income", "Interest & Tax", "Net Income"],
+        datasets: [
+          {
+            label: "Base",
+            data: [0, netIncome < 0 ? 0 : 0, 0, netIncome < 0 ? 0 : 0, 0, netIncome < 0 ? 0 : 0, 0],
+            backgroundColor: "transparent",
+            borderWidth: 0
+          },
+          {
+            label: "Base (hidden)",
+            data: [0, grossProfit, 0, operatingIncome, 0, netIncome > 0 ? netIncome : 0, 0],
+            backgroundColor: "transparent",
+            borderWidth: 0
+          },
+          {
+            label: "Value",
+            data: [revenue, cogsVal, grossProfit, opexVal, operatingIncome, belowOp, netIncome > 0 ? netIncome : 0],
+            backgroundColor: [
+              "#4a8fe7",
+              "#ef4444",
+              "#10b981",
+              "#ef4444",
+              "#10b981",
+              "#ef4444",
+              netIncome >= 0 ? "#10b981" : "#ef4444"
+            ],
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                if (context.datasetIndex < 2) return "";
+                return fmtCurrency(context.raw);
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { color: "#8b949e" } },
+          y: {
+            stacked: true,
+            grid: { color: "#30363d" },
+            ticks: {
+              color: "#8b949e",
+              callback: function(val) { return fmtCurrency(val); }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /* ==================== Trend Analyzer ==================== */
+  function calcTrend() {
+    var vals = [];
+    var y1 = parseFloat(document.getElementById("trend-y1").value);
+    var y2 = parseFloat(document.getElementById("trend-y2").value);
+    var y3 = parseFloat(document.getElementById("trend-y3").value);
+    var y4 = parseFloat(document.getElementById("trend-y4").value);
+    var y5 = parseFloat(document.getElementById("trend-y5").value);
+
+    if (!isNaN(y1)) vals.push(y1);
+    if (!isNaN(y2)) vals.push(y2);
+    if (!isNaN(y3)) vals.push(y3);
+    if (!isNaN(y4)) vals.push(y4);
+    if (!isNaN(y5)) vals.push(y5);
+
+    if (vals.length < 3) { alert("Please enter at least 3 years of data."); return; }
+
+    var first = vals[0];
+    var last = vals[vals.length - 1];
+    var years = vals.length - 1;
+
+    var cagr = 0;
+    var direction = "Flat";
+    var dirColor = "var(--ni-warning)";
+
+    if (first > 0 && last > 0) {
+      cagr = (Math.pow(last / first, 1 / years) - 1) * 100;
+    } else if (first < 0 && last > 0) {
+      cagr = 999;
+    } else if (first > 0 && last < 0) {
+      cagr = -999;
+    }
+
+    if (cagr > 5) { direction = "Growing ↑"; dirColor = "var(--ni-positive)"; }
+    else if (cagr < -5) { direction = "Declining ↓"; dirColor = "var(--ni-negative)"; }
+    else { direction = "Flat →"; dirColor = "var(--ni-warning)"; }
+
+    var totalChange = first !== 0 ? ((last - first) / Math.abs(first)) * 100 : 0;
+
+    var html = "";
+    html += '<div class="ni-result-row"><span class="ni-result-label">Starting Net Income</span><span class="ni-result-val">' + fmtCurrency(first) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">Ending Net Income</span><span class="ni-result-val">' + fmtCurrency(last) + '</span></div>';
+    html += '<div class="ni-result-row"><span class="ni-result-label">Total Change</span><span class="ni-result-val ' + valClass(totalChange) + '">' + fmtPct(totalChange) + '</span></div>';
+    if (Math.abs(cagr) < 900) {
+      html += '<div class="ni-result-row"><span class="ni-result-label">CAGR</span><span class="ni-result-val ' + valClass(cagr) + '">' + fmtPct(cagr) + '</span></div>';
+    }
+    html += '<div class="ni-result-row" style="border-top:2px solid var(--ni-accent);padding-top:0.8rem;"><span class="ni-result-label">Trend Direction</span><span class="ni-result-val" style="color:' + dirColor + ';">' + direction + '</span></div>';
+
+    var box = document.getElementById("trend-result");
+    box.innerHTML = html;
+    box.style.display = "block";
+
+    var wrap = document.getElementById("trend-chart-wrap");
+    wrap.style.display = "block";
+
+    var labels = [];
+    for (var i = 0; i < vals.length; i++) { labels.push("Year " + (i + 1)); }
+
+    var ctx = document.getElementById("trendChart").getContext("2d");
+    if (trendChartInstance) trendChartInstance.destroy();
+
+    trendChartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Net Income",
+          data: vals,
+          borderColor: "#4a8fe7",
+          backgroundColor: "rgba(74,143,231,0.1)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 6,
+          pointBackgroundColor: "#4a8fe7",
+          pointBorderColor: "#fff",
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) { return fmtCurrency(context.raw); }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: "#8b949e" } },
+          y: {
+            grid: { color: "#30363d" },
+            ticks: {
+              color: "#8b949e",
+              callback: function(val) { return fmtCurrency(val); }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /* ==================== Sector Chart ==================== */
+  function initSectorChart() {
+    var ctx = document.getElementById("sectorChart").getContext("2d");
+    if (sectorChartInstance) sectorChartInstance.destroy();
+
+    var sectors = [
+      "Technology",
+      "Real Estate",
+      "Financials",
+      "Healthcare",
+      "Communication Services",
+      "Industrials",
+      "Consumer Staples",
+      "Utilities",
+      "Materials",
+      "Energy",
+      "Consumer Discretionary"
+    ];
+    var margins = [23.5, 20.1, 18.4, 13.2, 12.8, 9.5, 8.2, 7.8, 7.1, 6.8, 5.9];
+    var colors = margins.map(function(m) {
+      if (m >= 15) return "#10b981";
+      if (m >= 10) return "#4a8fe7";
+      if (m >= 7) return "#f59e0b";
+      return "#ef4444";
+    });
+
+    sectorChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: sectors,
+        datasets: [{
+          label: "Net Profit Margin (%)",
+          data: margins,
+          backgroundColor: colors,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) { return context.raw + "% net margin"; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: "#30363d" },
+            ticks: {
+              color: "#8b949e",
+              callback: function(val) { return val + "%"; }
+            }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: "#c9d1d9" }
+          }
+        }
+      }
+    });
+  }
+
+  /* ==================== FAQ Toggle ==================== */
+  function toggleNiFaq(el) {
+    var item = el.parentElement;
+    var isOpen = item.className.indexOf("open") !== -1;
+    if (isOpen) {
+      item.className = item.className.replace(" open", "");
+    } else {
+      item.className = item.className + " open";
+    }
+  }
+
+  /* ==================== Init ==================== */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSectorChart);
+  } else {
+    initSectorChart();
+  }
+</script>
+
+</SiteLayout>

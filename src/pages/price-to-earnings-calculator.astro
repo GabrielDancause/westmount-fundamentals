@@ -1,0 +1,1100 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "P/E Ratio Calculator — Price to Earnings, Forward PE & PEG Ratio", description: "Calculate P/E ratio, forward PE, PEG ratio, and earnings yield instantly. Compare trailing vs forward PE with interactive charts and S&P 500 sector benchmarks.", category: "study", published: "2026-03-20" };
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "P/E Ratio Calculator — Price to Earnings, Forward PE & PEG Ratio",
+    "description": "Calculate P/E ratio, forward PE, PEG ratio, and earnings yield instantly. Compare trailing vs forward PE with interactive charts and S&P 500 sector benchmarks.",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "datePublished": "2026-03-20",
+    "mainEntityOfPage": "https://westmountfundamentals.com/price-to-earnings-calculator/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do you calculate the P/E ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The P/E ratio is calculated by dividing the current stock price by the earnings per share (EPS). For example, if a stock trades at $150 and has EPS of $10, the P/E ratio is 15x. You can also divide total market capitalization by net income for the same result."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good P/E ratio for a stock?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There is no universal 'good' P/E ratio. Generally, a P/E between 15-20 is considered fair value for large-cap stocks. Below 10 may signal deep value (or trouble), while above 30 often indicates high growth expectations. Always compare P/E within the same sector and consider growth rates."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between trailing and forward P/E?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trailing P/E uses actual earnings from the past 12 months (TTM), making it based on real data. Forward P/E uses analyst estimates of next year's earnings, reflecting future expectations. Forward P/E is typically lower than trailing P/E for growing companies because expected earnings are higher."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the PEG ratio tell you?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The PEG ratio (Price/Earnings-to-Growth) adjusts the P/E ratio by the company's earnings growth rate. A PEG of 1.0 suggests the stock is fairly valued relative to its growth. Below 1.0 may indicate the stock is undervalued, while above 1.0 may signal overvaluation. It was popularized by Peter Lynch."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do some stocks have no P/E ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A stock has no P/E ratio (or shows N/A) when the company has negative earnings (a net loss). Since dividing by negative EPS produces a meaningless number, P/E is not reported. This is common for early-stage growth companies, biotech firms, and companies in cyclical downturns. Alternative metrics like P/S ratio or EV/Revenue are used instead."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title="P/E Ratio Calculator — Price to Earnings, Forward PE & PEG Ratio" description="Calculate P/E ratio, forward PE, PEG ratio, and earnings yield instantly. Compare trailing vs forward PE with interactive charts and S&P 500 sector benchmarks." canonical="https://westmountfundamentals.com/price-to-earnings-calculator/" schema={schema}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">P/E Ratio Calculator</span></nav>
+    <span>6 min read</span>
+  </div>
+  <div class="container page-content">
+    <h1>Price-to-Earnings (P/E) Ratio Calculator</h1>
+    <p style="text-align:center;max-width:660px;margin:0 auto 2.5rem;color:var(--text-secondary,#94a3b8)">Calculate P/E ratio, forward PE, PEG ratio, and earnings yield. Use the tools below to evaluate whether a stock is fairly priced relative to its earnings.</p>
+
+    <!-- Stat Cards -->
+    <div class="pe-stats-grid">
+      <div class="pe-stat-card">
+        <span class="pe-stat-label">S&P 500 P/E (TTM)</span>
+        <span class="pe-stat-value">24.2x</span>
+        <span class="pe-stat-note">As of March 2026</span>
+      </div>
+      <div class="pe-stat-card">
+        <span class="pe-stat-label">Historical Median P/E</span>
+        <span class="pe-stat-value">16.8x</span>
+        <span class="pe-stat-note">S&P 500 since 1950</span>
+      </div>
+      <div class="pe-stat-card">
+        <span class="pe-stat-label">Shiller CAPE Ratio</span>
+        <span class="pe-stat-value">33.5x</span>
+        <span class="pe-stat-note">Cyclically adjusted</span>
+      </div>
+      <div class="pe-stat-card">
+        <span class="pe-stat-label">Highest P/E Stock</span>
+        <span class="pe-stat-value">TSLA</span>
+        <span class="pe-stat-note">~170x trailing P/E</span>
+      </div>
+    </div>
+
+    <!-- Calculator 1: P/E Ratio -->
+    <div class="calculator-card" id="pe-calc">
+      <h2 class="calc-title">P/E Ratio Calculator</h2>
+      <p class="calc-subtitle">Calculate the price-to-earnings ratio using stock price &amp; EPS, or market cap &amp; net income.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label>Calculation Method</label>
+            <select id="pe-method" class="styled-select">
+              <option value="price-eps">Stock Price ÷ EPS</option>
+              <option value="mcap-income">Market Cap ÷ Net Income</option>
+            </select>
+          </div>
+          <div class="input-group" id="pe-price-group">
+            <label for="pe-price">Stock Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-price" value="150" min="0.01" step="0.01"></div>
+          </div>
+          <div class="input-group" id="pe-eps-group">
+            <label for="pe-eps">Earnings Per Share (EPS)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-eps" value="7.50" min="0.01" step="0.01"></div>
+          </div>
+          <div class="input-group" id="pe-mcap-group" style="display:none">
+            <label for="pe-mcap">Market Cap</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-mcap" value="2000000000000" min="1" step="1000000"><span class="suffix">USD</span></div>
+          </div>
+          <div class="input-group" id="pe-income-group" style="display:none">
+            <label for="pe-income">Net Income</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-income" value="100000000000" min="1" step="1000000"><span class="suffix">USD</span></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">P/E Ratio</span>
+            <span class="calc-result-value" id="pe-result">20.00x</span>
+            <div class="price-status" id="pe-interpret">Fair Value</div>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item">
+              <span class="result-label">Earnings Yield</span>
+              <span class="result-value" id="pe-earnings-yield">5.00%</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Interpretation</span>
+              <span class="result-value" id="pe-category" style="font-size:0.95rem">Fair Value (15-20x)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator 2: Forward P/E -->
+    <div class="calculator-card" id="fpe-calc">
+      <h2 class="calc-title">Forward P/E Calculator</h2>
+      <p class="calc-subtitle">Use analyst EPS estimates to calculate the forward price-to-earnings ratio.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="fpe-price">Stock Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="fpe-price" value="150" min="0.01" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="fpe-eps">Analyst EPS Estimate (Next 12M)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="fpe-eps" value="9.00" min="0.01" step="0.01"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Forward P/E Ratio</span>
+            <span class="calc-result-value" id="fpe-result">16.67x</span>
+            <div class="price-status" id="fpe-interpret">Fair Value</div>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item">
+              <span class="result-label">Forward Earnings Yield</span>
+              <span class="result-value" id="fpe-yield">6.00%</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Implied EPS Growth</span>
+              <span class="result-value" id="fpe-growth">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator 3: PEG Ratio -->
+    <div class="calculator-card" id="peg-calc">
+      <h2 class="calc-title">PEG Ratio Calculator</h2>
+      <p class="calc-subtitle">Adjust the P/E ratio for growth. A PEG below 1.0 may signal an undervalued stock.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="peg-pe">P/E Ratio</label>
+            <div class="input-wrapper"><input type="number" id="peg-pe" value="20" min="0.1" step="0.1"><span class="suffix">x</span></div>
+          </div>
+          <div class="input-group">
+            <label for="peg-growth">Expected EPS Growth Rate</label>
+            <div class="input-wrapper"><input type="number" id="peg-growth" value="15" min="0.1" step="0.1"><span class="suffix">%</span></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">PEG Ratio</span>
+            <span class="calc-result-value" id="peg-result">1.33</span>
+            <div class="price-status" id="peg-interpret">Overvalued</div>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item">
+              <span class="result-label">Assessment</span>
+              <span class="result-value" id="peg-assess" style="font-size:0.95rem">Slightly overvalued vs growth</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Fair P/E (PEG=1)</span>
+              <span class="result-value" id="peg-fair">15.00x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator 4: Earnings Yield -->
+    <div class="calculator-card" id="ey-calc">
+      <h2 class="calc-title">Earnings Yield Calculator</h2>
+      <p class="calc-subtitle">The inverse of P/E — compare stock earnings yield to bond yields.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="ey-pe">P/E Ratio</label>
+            <div class="input-wrapper"><input type="number" id="ey-pe" value="20" min="0.1" step="0.1"><span class="suffix">x</span></div>
+          </div>
+          <div class="input-group">
+            <label for="ey-bond">10-Year Treasury Yield (optional)</label>
+            <div class="input-wrapper"><input type="number" id="ey-bond" value="4.25" min="0" step="0.01"><span class="suffix">%</span></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Earnings Yield</span>
+            <span class="calc-result-value" id="ey-result">5.00%</span>
+            <div class="price-status" id="ey-interpret">Above Bond Yield</div>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item">
+              <span class="result-label">Equity Risk Premium</span>
+              <span class="result-value" id="ey-premium">0.75%</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Verdict</span>
+              <span class="result-value" id="ey-verdict" style="font-size:0.95rem">Stocks offer slim premium</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="content-section">
+      <h2>S&P 500 P/E Ratio: Historical Trend (1990–2025)</h2>
+      <p>The trailing P/E ratio of the S&P 500 has swung wildly — from under 10x during the 2008 financial crisis to over 45x at the peak of the dot-com bubble.</p>
+      <div class="chart-container">
+        <canvas id="pe-history-chart" aria-label="S&P 500 P/E ratio history from 1990 to 2025"></canvas>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>P/E Ratio by S&P 500 Sector (2026)</h2>
+      <p>Sector context matters when evaluating P/E ratios. Technology commands premium multiples due to higher growth, while energy and financials trade at lower valuations.</p>
+      <div class="chart-container">
+        <canvas id="pe-sector-chart" aria-label="P/E ratio comparison by S&P 500 sector"></canvas>
+      </div>
+    </div>
+
+    <!-- P/E Interpretation Guide -->
+    <div class="content-section">
+      <h2>P/E Ratio Interpretation Guide</h2>
+      <p>Use this framework as a starting point — but always consider sector, growth rate, and market conditions before drawing conclusions.</p>
+      <div class="pe-guide-grid">
+        <div class="pe-guide-item guide-deep-value">
+          <span class="guide-range">&lt; 10x</span>
+          <span class="guide-label">Deep Value</span>
+          <span class="guide-desc">May indicate distress, cyclical lows, or overlooked bargains. Common in energy and financials.</span>
+        </div>
+        <div class="pe-guide-item guide-value">
+          <span class="guide-range">10–15x</span>
+          <span class="guide-label">Value</span>
+          <span class="guide-desc">Historically cheap. Typical of mature, slow-growth industries. Often utilities, banks, and industrials.</span>
+        </div>
+        <div class="pe-guide-item guide-fair">
+          <span class="guide-range">15–20x</span>
+          <span class="guide-label">Fair Value</span>
+          <span class="guide-desc">Near the long-term S&P 500 average. A reasonable price for stable, moderate-growth companies.</span>
+        </div>
+        <div class="pe-guide-item guide-growth">
+          <span class="guide-range">20–30x</span>
+          <span class="guide-label">Growth</span>
+          <span class="guide-desc">Investors expect above-average earnings growth. Common in tech, healthcare, and consumer discretionary.</span>
+        </div>
+        <div class="pe-guide-item guide-expensive">
+          <span class="guide-range">&gt; 30x</span>
+          <span class="guide-label">Expensive</span>
+          <span class="guide-desc">High expectations priced in. Could be justified by rapid growth — or a sign of euphoria. Tread carefully.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- What is P/E Ratio -->
+    <div class="content-section">
+      <h2>What Is the P/E Ratio?</h2>
+      <p>The <strong>price-to-earnings ratio (P/E ratio)</strong> is one of the most widely used valuation metrics in investing. It tells you how much investors are willing to pay for each dollar of a company's earnings. The formula is simple:</p>
+      <div class="highlight-box">
+        <h3>PE Ratio Formula</h3>
+        <code>P/E Ratio = Stock Price ÷ Earnings Per Share (EPS)</code>
+        <p style="margin-top:1rem;font-size:0.9rem">Alternatively: <strong>P/E = Market Cap ÷ Net Income</strong> — both produce the same result.</p>
+      </div>
+
+      <h3>Trailing P/E vs Forward P/E</h3>
+      <p><strong>Trailing P/E (TTM)</strong> uses actual reported earnings from the past 12 months. It's based on real data but looks backward. <strong>Forward P/E</strong> uses analyst estimates of future earnings, making it forward-looking but subject to estimation errors. For growing companies, forward P/E is usually lower than trailing P/E because expected earnings are higher.</p>
+
+      <h3>Limitations of P/E Ratio</h3>
+      <ul>
+        <li><strong>Negative earnings:</strong> P/E is meaningless for companies with losses — you cannot divide by negative EPS</li>
+        <li><strong>Earnings manipulation:</strong> EPS can be inflated through share buybacks, one-time gains, or aggressive accounting</li>
+        <li><strong>Sector differences:</strong> A P/E of 25 is cheap for high-growth tech but expensive for a utility company</li>
+        <li><strong>Cyclical distortion:</strong> Earnings at cycle peaks make P/E look low; earnings at troughs make it look high</li>
+        <li><strong>No debt consideration:</strong> P/E ignores capital structure — two companies with the same P/E can have vastly different leverage</li>
+      </ul>
+    </div>
+
+    <!-- 5 Key Insights -->
+    <div class="content-section">
+      <h2>5 Key Insights About P/E Ratios</h2>
+      <div class="insights-grid">
+        <div class="insight-card">
+          <span class="insight-num">1</span>
+          <h3>Low P/E ≠ Cheap</h3>
+          <p>A stock with a P/E of 8x may be cheap — or it may be a value trap with declining earnings. Always check the trend in EPS, not just the ratio.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">2</span>
+          <h3>PEG Is More Useful Than P/E Alone</h3>
+          <p>A stock with 30x P/E growing at 35% (PEG 0.86) is cheaper than one at 15x P/E growing at 5% (PEG 3.0). Growth context matters enormously.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">3</span>
+          <h3>Sector Comparison Is Essential</h3>
+          <p>Tech companies routinely trade at 25-40x earnings. Comparing a tech stock's P/E to an energy company's is meaningless — always compare within sector.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">4</span>
+          <h3>Interest Rates Drive P/E Levels</h3>
+          <p>When rates are low, P/E ratios expand because future earnings are worth more today. Rising rates compress multiples — the 2022 tech selloff was a P/E compression event.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">5</span>
+          <h3>Earnings Yield Bridges Stocks &amp; Bonds</h3>
+          <p>At a P/E of 20x, stocks yield 5%. If the 10-year Treasury yields 4.5%, the equity risk premium is razor-thin — historically a warning sign for returns.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valuation Metrics Comparison Table -->
+    <div class="content-section">
+      <h2>P/E vs Other Valuation Ratios</h2>
+      <p>No single metric tells the full story. Here is how P/E compares to other popular valuation ratios — and when to use each one.</p>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Formula</th>
+              <th>Best For</th>
+              <th>Limitation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>P/E Ratio</strong></td>
+              <td>Price ÷ EPS</td>
+              <td>Profitable companies with stable earnings</td>
+              <td>Useless for unprofitable firms</td>
+            </tr>
+            <tr>
+              <td><a href="/price-to-book/" style="color:var(--accent-color,#60a5fa)">P/B Ratio</a></td>
+              <td>Price ÷ Book Value</td>
+              <td>Banks, REITs, asset-heavy industries</td>
+              <td>Irrelevant for asset-light tech</td>
+            </tr>
+            <tr>
+              <td><strong>P/S Ratio</strong></td>
+              <td>Price ÷ Revenue</td>
+              <td>Unprofitable growth companies, SaaS</td>
+              <td>Ignores profitability entirely</td>
+            </tr>
+            <tr>
+              <td><a href="/ev-ebitda-sectors/" style="color:var(--accent-color,#60a5fa)">EV/EBITDA</a></td>
+              <td>Enterprise Value ÷ EBITDA</td>
+              <td>Capital-intensive firms, M&A analysis</td>
+              <td>EBITDA can obscure capex needs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>How do you calculate the P/E ratio?</h3>
+        <p>The P/E ratio is calculated by dividing the current stock price by the earnings per share (EPS). For example, if a stock trades at $150 and has EPS of $10, the P/E ratio is 15x. You can also divide total market capitalization by net income for the same result.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is a good P/E ratio for a stock?</h3>
+        <p>There is no universal "good" P/E ratio. Generally, a P/E between 15-20 is considered fair value for large-cap stocks. Below 10 may signal deep value (or trouble), while above 30 often indicates high growth expectations. Always compare P/E within the same sector and consider growth rates.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the difference between trailing and forward P/E?</h3>
+        <p>Trailing P/E uses actual earnings from the past 12 months (TTM), making it based on real data. Forward P/E uses analyst estimates of next year's earnings, reflecting future expectations. Forward P/E is typically lower than trailing P/E for growing companies because expected earnings are higher.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What does the PEG ratio tell you?</h3>
+        <p>The PEG ratio (Price/Earnings-to-Growth) adjusts the P/E ratio by the company's earnings growth rate. A PEG of 1.0 suggests the stock is fairly valued relative to its growth. Below 1.0 may indicate the stock is undervalued, while above 1.0 may signal overvaluation. It was popularized by Peter Lynch.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why do some stocks have no P/E ratio?</h3>
+        <p>A stock has no P/E ratio (or shows N/A) when the company has negative earnings (a net loss). Since dividing by negative EPS produces a meaningless number, P/E is not reported. This is common for early-stage growth companies, biotech firms, and companies in cyclical downturns. Alternative metrics like P/S ratio or EV/Revenue are used instead.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Pages -->
+  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+    <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
+      <h3 style="font-size:16px;color:var(--text-bright,#fff);margin-bottom:12px">Data Sources &amp; Methodology</h3>
+      <p style="font-size:14px;color:var(--text-dim,#94a3b8);line-height:1.7;margin:0">P/E ratio data and historical S&P 500 earnings sourced from S&P Global, Robert Shiller's CAPE dataset, and financial data providers. Sector P/E ratios reflect trailing twelve month (TTM) earnings as of Q1 2026. Calculator results are for educational purposes only.</p>
+    </div>
+  </section>
+
+  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+    <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
+      <h3 style="font-size:14px;color:var(--text-dim,#94a3b8);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Cite This Page</h3>
+      <code style="display:block;background:var(--bg-color,#060a12);padding:16px;border-radius:8px;font-size:13px;color:var(--text-primary,#c8d0de);font-family:monospace;white-space:pre-wrap;word-break:break-all">Westmount Fundamentals. "P/E Ratio Calculator." westmountfundamentals.com/price-to-earnings-calculator, 2026.</code>
+    </div>
+  </section>
+
+  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+    <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      <a href="/what-is-pe-ratio/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">What Is the P/E Ratio? Complete Guide</a>
+      <a href="/pe-ratio-by-sector-2026/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">P/E Ratio by Sector (2026)</a>
+      <a href="/sp500-pe-ratio-history/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">S&P 500 P/E Ratio History</a>
+      <a href="/ev-ebitda-sectors/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">EV/EBITDA by Sector</a>
+      <a href="/price-to-book/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Price-to-Book (P/B) Ratio Guide</a>
+      <a href="/bond-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Bond Calculator — Price, YTM & Duration</a>
+    </div>
+  </section>
+</SiteLayout>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style is:inline>
+  .pe-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .pe-stat-card {
+    background: var(--card-bg, #0a1020);
+    border: 1px solid var(--border-color, #152040);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .pe-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pe-stat-value {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-bright, #fff);
+  }
+  .pe-stat-note {
+    font-size: 0.75rem;
+    color: var(--text-dim, #64748b);
+  }
+  .calculator-card {
+    background: var(--card-bg, #0a1020);
+    border: 1px solid var(--border-color, #152040);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .calc-title {
+    font-size: 1.3rem;
+    color: var(--text-bright, #fff);
+    margin: 0 0 0.25rem;
+  }
+  .calc-subtitle {
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-color, #060a12);
+    border: 1px solid var(--border-color, #152040);
+    color: var(--text-primary, #c8d0de);
+    font-family: var(--font-mono, monospace);
+    font-size: 1.05rem;
+    padding: 0.7rem 1rem 0.7rem 2.2rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-color, #60a5fa);
+  }
+  .styled-select {
+    width: 100%;
+    background-color: var(--bg-color, #060a12);
+    border: 1px solid var(--border-color, #152040);
+    color: var(--text-primary, #c8d0de);
+    font-family: var(--font-mono, monospace);
+    font-size: 1.05rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+  .styled-select:focus {
+    outline: none;
+    border-color: var(--accent-color, #60a5fa);
+  }
+  .results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--bg-color, #060a12);
+    border: 1px solid var(--border-color, #152040);
+    border-radius: 12px;
+    padding: 1.75rem;
+  }
+  .primary-result {
+    text-align: center;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-color, #152040);
+  }
+  .calc-result-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .calc-result-value {
+    display: block;
+    font-family: var(--font-mono, monospace);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-bright, #fff);
+    margin: 0.4rem 0;
+  }
+  .price-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    display: inline-block;
+  }
+  .status-deep-value { border: 1px solid #22c55e; color: #22c55e; }
+  .status-value { border: 1px solid #4ade80; color: #4ade80; }
+  .status-fair { border: 1px solid #60a5fa; color: #60a5fa; }
+  .status-growth { border: 1px solid #f59e0b; color: #f59e0b; }
+  .status-expensive { border: 1px solid #ef4444; color: #ef4444; }
+  .status-positive { border: 1px solid #22c55e; color: #22c55e; }
+  .status-neutral { border: 1px solid #60a5fa; color: #60a5fa; }
+  .status-negative { border: 1px solid #ef4444; color: #ef4444; }
+  .secondary-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .result-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    font-weight: 600;
+  }
+  .result-value {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.2rem;
+    color: var(--text-primary, #c8d0de);
+    font-weight: 600;
+  }
+  .chart-container {
+    background: var(--card-bg, #0a1020);
+    border: 1px solid var(--border-color, #152040);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0 0;
+  }
+  .pe-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .pe-guide-item {
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    border: 1px solid var(--border-color, #152040);
+    background: var(--card-bg, #0a1020);
+  }
+  .guide-range {
+    font-family: var(--font-mono, monospace);
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .guide-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .guide-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
+  }
+  .guide-deep-value .guide-range, .guide-deep-value .guide-label { color: #22c55e; }
+  .guide-deep-value { border-color: rgba(34,197,94,0.3); }
+  .guide-value .guide-range, .guide-value .guide-label { color: #4ade80; }
+  .guide-value { border-color: rgba(74,222,128,0.3); }
+  .guide-fair .guide-range, .guide-fair .guide-label { color: #60a5fa; }
+  .guide-fair { border-color: rgba(96,165,250,0.3); }
+  .guide-growth .guide-range, .guide-growth .guide-label { color: #f59e0b; }
+  .guide-growth { border-color: rgba(245,158,11,0.3); }
+  .guide-expensive .guide-range, .guide-expensive .guide-label { color: #ef4444; }
+  .guide-expensive { border-color: rgba(239,68,68,0.3); }
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .insight-card {
+    background: var(--card-bg, #0a1020);
+    border: 1px solid var(--border-color, #152040);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .insight-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-color, #60a5fa);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+  .insight-card h3 {
+    font-size: 1rem;
+    color: var(--text-bright, #fff);
+    margin: 0.25rem 0 0.5rem;
+  }
+  .insight-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .comparison-table-wrap {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .comparison-table th, .comparison-table td {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-color, #152040);
+  }
+  .comparison-table th {
+    color: var(--text-secondary, #94a3b8);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .comparison-table td {
+    color: var(--text-primary, #c8d0de);
+  }
+  .comparison-table tbody tr:hover {
+    background: rgba(96,165,250,0.05);
+  }
+  .highlight-box {
+    background: var(--card-bg, #0a1020);
+    border: 1px solid var(--border-color, #152040);
+    border-left: 4px solid var(--accent-color, #60a5fa);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .highlight-box h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: var(--text-bright, #fff);
+  }
+  .highlight-box code {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--accent-color, #60a5fa);
+    font-family: var(--font-mono, monospace);
+  }
+  @media (max-width: 768px) {
+    .pe-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .calc-grid { grid-template-columns: 1fr; }
+    .secondary-results { grid-template-columns: 1fr; }
+    .pe-guide-grid { grid-template-columns: 1fr; }
+    .calculator-card { padding: 1.25rem; }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    /* ============================================
+       CALCULATOR 1: P/E RATIO
+       ============================================ */
+    var peMethod = document.getElementById('pe-method');
+    var pePrice = document.getElementById('pe-price');
+    var peEps = document.getElementById('pe-eps');
+    var peMcap = document.getElementById('pe-mcap');
+    var peIncome = document.getElementById('pe-income');
+    var peResult = document.getElementById('pe-result');
+    var peInterpret = document.getElementById('pe-interpret');
+    var peEarningsYield = document.getElementById('pe-earnings-yield');
+    var peCategory = document.getElementById('pe-category');
+
+    function getPeClass(pe) {
+      if (pe < 10) return { label: 'Deep Value', cls: 'status-deep-value', cat: 'Deep Value (<10x)' };
+      if (pe < 15) return { label: 'Value', cls: 'status-value', cat: 'Value (10-15x)' };
+      if (pe < 20) return { label: 'Fair Value', cls: 'status-fair', cat: 'Fair Value (15-20x)' };
+      if (pe < 30) return { label: 'Growth', cls: 'status-growth', cat: 'Growth Premium (20-30x)' };
+      return { label: 'Expensive', cls: 'status-expensive', cat: 'Expensive (>30x)' };
+    }
+
+    function calcPE() {
+      var method = peMethod.value;
+      var pe = 0;
+      if (method === 'price-eps') {
+        var price = parseFloat(pePrice.value) || 0;
+        var eps = parseFloat(peEps.value) || 0;
+        if (eps > 0) pe = price / eps;
+      } else {
+        var mcap = parseFloat(peMcap.value) || 0;
+        var income = parseFloat(peIncome.value) || 0;
+        if (income > 0) pe = mcap / income;
+      }
+      if (pe > 0) {
+        var info = getPeClass(pe);
+        peResult.textContent = pe.toFixed(2) + 'x';
+        peInterpret.textContent = info.label;
+        peInterpret.className = 'price-status ' + info.cls;
+        peEarningsYield.textContent = (1 / pe * 100).toFixed(2) + '%';
+        peCategory.textContent = info.cat;
+      } else {
+        peResult.textContent = 'N/A';
+        peInterpret.textContent = 'Invalid';
+        peInterpret.className = 'price-status status-neutral';
+        peEarningsYield.textContent = '—';
+        peCategory.textContent = '—';
+      }
+    }
+
+    peMethod.addEventListener('change', function() {
+      var isPriceEps = peMethod.value === 'price-eps';
+      document.getElementById('pe-price-group').style.display = isPriceEps ? '' : 'none';
+      document.getElementById('pe-eps-group').style.display = isPriceEps ? '' : 'none';
+      document.getElementById('pe-mcap-group').style.display = isPriceEps ? 'none' : '';
+      document.getElementById('pe-income-group').style.display = isPriceEps ? 'none' : '';
+      calcPE();
+    });
+
+    [pePrice, peEps, peMcap, peIncome].forEach(function(el) { el.addEventListener('input', calcPE); });
+    calcPE();
+
+    /* ============================================
+       CALCULATOR 2: FORWARD P/E
+       ============================================ */
+    var fpePrice = document.getElementById('fpe-price');
+    var fpeEps = document.getElementById('fpe-eps');
+    var fpeResult = document.getElementById('fpe-result');
+    var fpeInterpret = document.getElementById('fpe-interpret');
+    var fpeYield = document.getElementById('fpe-yield');
+    var fpeGrowth = document.getElementById('fpe-growth');
+
+    function calcFPE() {
+      var price = parseFloat(fpePrice.value) || 0;
+      var eps = parseFloat(fpeEps.value) || 0;
+      if (eps > 0 && price > 0) {
+        var fpe = price / eps;
+        var info = getPeClass(fpe);
+        fpeResult.textContent = fpe.toFixed(2) + 'x';
+        fpeInterpret.textContent = info.label;
+        fpeInterpret.className = 'price-status ' + info.cls;
+        fpeYield.textContent = (1 / fpe * 100).toFixed(2) + '%';
+        // Implied growth vs trailing
+        var trailingEps = parseFloat(peEps.value) || 0;
+        if (trailingEps > 0 && eps !== trailingEps) {
+          var growth = ((eps - trailingEps) / trailingEps * 100);
+          fpeGrowth.textContent = (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
+        } else {
+          fpeGrowth.textContent = '—';
+        }
+      } else {
+        fpeResult.textContent = 'N/A';
+        fpeInterpret.textContent = 'Invalid';
+        fpeInterpret.className = 'price-status status-neutral';
+        fpeYield.textContent = '—';
+        fpeGrowth.textContent = '—';
+      }
+    }
+
+    [fpePrice, fpeEps].forEach(function(el) { el.addEventListener('input', calcFPE); });
+    calcFPE();
+
+    /* ============================================
+       CALCULATOR 3: PEG RATIO
+       ============================================ */
+    var pegPe = document.getElementById('peg-pe');
+    var pegGrowthInput = document.getElementById('peg-growth');
+    var pegResult = document.getElementById('peg-result');
+    var pegInterpret = document.getElementById('peg-interpret');
+    var pegAssess = document.getElementById('peg-assess');
+    var pegFair = document.getElementById('peg-fair');
+
+    function calcPEG() {
+      var pe = parseFloat(pegPe.value) || 0;
+      var growth = parseFloat(pegGrowthInput.value) || 0;
+      if (pe > 0 && growth > 0) {
+        var peg = pe / growth;
+        pegResult.textContent = peg.toFixed(2);
+        pegFair.textContent = growth.toFixed(2) + 'x';
+        if (peg < 0.5) {
+          pegInterpret.textContent = 'Very Undervalued';
+          pegInterpret.className = 'price-status status-deep-value';
+          pegAssess.textContent = 'Strong bargain vs growth rate';
+        } else if (peg < 1.0) {
+          pegInterpret.textContent = 'Undervalued';
+          pegInterpret.className = 'price-status status-value';
+          pegAssess.textContent = 'Attractively priced vs growth';
+        } else if (peg < 1.2) {
+          pegInterpret.textContent = 'Fairly Valued';
+          pegInterpret.className = 'price-status status-fair';
+          pegAssess.textContent = 'Roughly in line with growth';
+        } else if (peg < 2.0) {
+          pegInterpret.textContent = 'Overvalued';
+          pegInterpret.className = 'price-status status-growth';
+          pegAssess.textContent = 'Premium to growth rate';
+        } else {
+          pegInterpret.textContent = 'Very Overvalued';
+          pegInterpret.className = 'price-status status-expensive';
+          pegAssess.textContent = 'P/E far exceeds growth rate';
+        }
+      } else {
+        pegResult.textContent = 'N/A';
+        pegInterpret.textContent = 'Invalid';
+        pegInterpret.className = 'price-status status-neutral';
+        pegAssess.textContent = '—';
+        pegFair.textContent = '—';
+      }
+    }
+
+    [pegPe, pegGrowthInput].forEach(function(el) { el.addEventListener('input', calcPEG); });
+    calcPEG();
+
+    /* ============================================
+       CALCULATOR 4: EARNINGS YIELD
+       ============================================ */
+    var eyPe = document.getElementById('ey-pe');
+    var eyBond = document.getElementById('ey-bond');
+    var eyResult = document.getElementById('ey-result');
+    var eyInterpret = document.getElementById('ey-interpret');
+    var eyPremium = document.getElementById('ey-premium');
+    var eyVerdict = document.getElementById('ey-verdict');
+
+    function calcEY() {
+      var pe = parseFloat(eyPe.value) || 0;
+      var bond = parseFloat(eyBond.value) || 0;
+      if (pe > 0) {
+        var ey = 1 / pe * 100;
+        var premium = ey - bond;
+        eyResult.textContent = ey.toFixed(2) + '%';
+        eyPremium.textContent = (premium >= 0 ? '+' : '') + premium.toFixed(2) + '%';
+        if (premium > 3) {
+          eyInterpret.textContent = 'Stocks Attractive';
+          eyInterpret.className = 'price-status status-value';
+          eyVerdict.textContent = 'Wide equity risk premium';
+        } else if (premium > 1) {
+          eyInterpret.textContent = 'Above Bond Yield';
+          eyInterpret.className = 'price-status status-fair';
+          eyVerdict.textContent = 'Moderate equity premium';
+        } else if (premium > 0) {
+          eyInterpret.textContent = 'Slim Premium';
+          eyInterpret.className = 'price-status status-growth';
+          eyVerdict.textContent = 'Stocks offer slim premium';
+        } else {
+          eyInterpret.textContent = 'Bonds More Attractive';
+          eyInterpret.className = 'price-status status-expensive';
+          eyVerdict.textContent = 'Negative equity risk premium';
+        }
+      } else {
+        eyResult.textContent = 'N/A';
+        eyInterpret.textContent = 'Invalid';
+        eyInterpret.className = 'price-status status-neutral';
+        eyPremium.textContent = '—';
+        eyVerdict.textContent = '—';
+      }
+    }
+
+    [eyPe, eyBond].forEach(function(el) { el.addEventListener('input', calcEY); });
+    calcEY();
+
+    /* ============================================
+       CHART 1: S&P 500 P/E HISTORY
+       ============================================ */
+    var histCtx = document.getElementById('pe-history-chart');
+    if (histCtx) {
+      var years = [];
+      var peData = [];
+      var rawData = {
+        1990:20,1991:26,1992:22,1993:21,1994:15,1995:18,1996:19,1997:24,1998:33,1999:44,
+        2000:45,2001:37,2002:29,2003:22,2004:20,2005:18,2006:17,2007:22,2008:18,2009:10,
+        2010:16,2011:14,2012:15,2013:17,2014:19,2015:21,2016:23,2017:24,2018:20,2019:23,
+        2020:40,2021:35,2022:20,2023:23,2024:25,2025:24
+      };
+      for (var y in rawData) {
+        if (rawData.hasOwnProperty(y)) {
+          years.push(y);
+          peData.push(rawData[y]);
+        }
+      }
+      new Chart(histCtx, {
+        type: 'line',
+        data: {
+          labels: years,
+          datasets: [{
+            label: 'S&P 500 Trailing P/E',
+            data: peData,
+            borderColor: '#60a5fa',
+            backgroundColor: 'rgba(96,165,250,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return 'P/E: ' + ctx.parsed.y + 'x'; }
+              }
+            },
+            annotation: undefined
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(148,163,184,0.08)' },
+              ticks: { color: '#94a3b8', maxTicksLimit: 12 }
+            },
+            y: {
+              grid: { color: 'rgba(148,163,184,0.08)' },
+              ticks: { color: '#94a3b8', callback: function(v) { return v + 'x'; } },
+              beginAtZero: true,
+              suggestedMax: 50
+            }
+          }
+        }
+      });
+    }
+
+    /* ============================================
+       CHART 2: P/E BY SECTOR
+       ============================================ */
+    var sectorCtx = document.getElementById('pe-sector-chart');
+    if (sectorCtx) {
+      var sectorLabels = ['Information Technology', 'Consumer Discretionary', 'Healthcare', 'Communication Services', 'Industrials', 'Consumer Staples', 'Utilities', 'Materials', 'Financials', 'Real Estate', 'Energy'];
+      var sectorPE = [35, 28, 22, 20, 19, 21, 18, 16, 15, 35, 12];
+      var sectorColors = ['#60a5fa','#818cf8','#f472b6','#fb923c','#a78bfa','#34d399','#fbbf24','#94a3b8','#22d3ee','#e879f9','#f87171'];
+      new Chart(sectorCtx, {
+        type: 'bar',
+        data: {
+          labels: sectorLabels,
+          datasets: [{
+            label: 'Trailing P/E',
+            data: sectorPE,
+            backgroundColor: sectorColors,
+            borderRadius: 4,
+            barThickness: 22
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return ctx.parsed.x + 'x P/E'; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(148,163,184,0.08)' },
+              ticks: { color: '#94a3b8', callback: function(v) { return v + 'x'; } },
+              beginAtZero: true,
+              suggestedMax: 40
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#c8d0de', font: { size: 12 } }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>

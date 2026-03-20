@@ -1,0 +1,1004 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Earnings Per Share Calculator | EPS Formula, Diluted EPS & Growth Rate", description: "Calculate basic EPS, diluted EPS, EPS growth rate (CAGR), and P/E ratio with our free earnings per share calculator. Compare Magnificent 7 EPS with interactive charts.", category: "study", published: "2026-03-20" };
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Earnings Per Share Calculator | EPS Formula, Diluted EPS & Growth Rate",
+    "description": "Calculate basic EPS, diluted EPS, EPS growth rate, and P/E ratio. Compare Magnificent 7 EPS and track S&P 500 EPS growth with interactive Chart.js visualizations.",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "datePublished": "2026-03-20",
+    "mainEntityOfPage": "https://westmountfundamentals.com/earnings-per-share-calculator/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is earnings per share (EPS)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Earnings per share (EPS) measures the portion of a company's net profit allocated to each outstanding share of common stock. It is calculated as (Net Income − Preferred Dividends) ÷ Weighted Average Shares Outstanding. EPS is the single most widely followed profitability metric on Wall Street and forms the denominator of the P/E ratio."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate diluted EPS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Diluted EPS accounts for all potentially dilutive securities — stock options, convertible bonds, and warrants — that could increase the share count. The treasury stock method assumes in-the-money options are exercised and proceeds are used to buy back shares at the average market price. Diluted EPS = (Net Income − Preferred Dividends) ÷ (Weighted Average Shares + Net Dilutive Shares)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between basic and diluted EPS?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Basic EPS uses only the actual shares outstanding, while diluted EPS includes the impact of all potentially dilutive securities (options, warrants, convertible bonds). Diluted EPS is always less than or equal to basic EPS. A large gap between the two signals significant potential dilution, which is common in tech companies with heavy stock-based compensation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate EPS growth rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Year-over-year EPS growth is calculated as ((Current EPS − Prior EPS) ÷ |Prior EPS|) × 100. For multi-year growth, use the compound annual growth rate (CAGR) formula: ((Ending EPS ÷ Beginning EPS)^(1/n) − 1) × 100, where n is the number of years. Consistent double-digit EPS growth is a hallmark of high-quality compounders."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can EPS be manipulated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Companies can inflate EPS through share buybacks (reducing share count without improving profits), one-time gains, aggressive revenue recognition, or excluding recurring costs as 'non-recurring.' Always compare GAAP EPS to non-GAAP EPS, check if buyback-driven EPS growth outpaces actual net income growth, and examine cash flow from operations for confirmation."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/earnings-per-share-calculator/" schema={schema}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/study/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Study</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Earnings Per Share Calculator</span></nav>
+    <span>10 min read</span>
+  </div>
+
+  <div class="container page-content">
+    <h1>Earnings Per Share Calculator</h1>
+    <p style="text-align:center;max-width:680px;margin:0 auto 2.5rem;color:var(--text-secondary,#94a3b8)">Calculate basic EPS, diluted EPS, EPS growth rate (CAGR), and P/E ratio. The most important profitability metric on Wall Street — explained and calculated for free.</p>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number">$240</span>
+        <span class="stat-label">S&P 500 EPS (2025 est.)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">22×</span>
+        <span class="stat-label">S&P 500 Forward P/E</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">8.5%</span>
+        <span class="stat-label">10-Year S&P 500 EPS CAGR</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">$22.10</span>
+        <span class="stat-label">Highest Mag 7 EPS (META)</span>
+      </div>
+    </div>
+
+    <!-- Basic EPS Calculator -->
+    <div class="calculator-card" id="basic-eps-calculator">
+      <h2>Basic EPS Calculator</h2>
+      <p class="calc-desc">Calculate basic earnings per share using the EPS formula: <strong>(Net Income − Preferred Dividends) ÷ Weighted Average Shares Outstanding</strong>.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="eps-net-income">Net Income</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="eps-net-income" value="500000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="eps-preferred-div">Preferred Dividends</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="eps-preferred-div" value="0" min="0" step="100000"></div>
+          </div>
+          <div class="input-group">
+            <label for="eps-shares">Weighted Average Shares Outstanding</label>
+            <div class="input-wrapper"><input type="number" id="eps-shares" value="100000000" min="1" step="1000000"><span class="suffix">shares</span></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Basic Earnings Per Share</span>
+            <span class="calc-result-value" id="basic-eps-result">$5.00</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Net Income Available to Common</span><span class="result-value" id="eps-net-available">$500,000,000</span></div>
+            <div class="result-item"><span class="result-label">Annual Earnings (per share)</span><span class="result-value" id="eps-annual">$5.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diluted EPS Calculator -->
+    <div class="calculator-card" id="diluted-eps-calculator">
+      <h2>Diluted EPS Calculator</h2>
+      <p class="calc-desc">Calculate diluted EPS using the treasury stock method. Add potentially dilutive securities to see the impact on earnings per share.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="dil-options">Stock Options (in-the-money)</label>
+            <div class="input-wrapper"><input type="number" id="dil-options" value="5000000" min="0" step="100000"><span class="suffix">shares</span></div>
+          </div>
+          <div class="input-group">
+            <label for="dil-option-price">Average Option Exercise Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="dil-option-price" value="30" min="0" step="1"></div>
+          </div>
+          <div class="input-group">
+            <label for="dil-market-price">Current Market Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="dil-market-price" value="50" min="0.01" step="1"></div>
+          </div>
+          <div class="input-group">
+            <label for="dil-convertible">Convertible Bond Shares</label>
+            <div class="input-wrapper"><input type="number" id="dil-convertible" value="2000000" min="0" step="100000"><span class="suffix">shares</span></div>
+          </div>
+          <div class="input-group">
+            <label for="dil-warrants">Warrant Shares</label>
+            <div class="input-wrapper"><input type="number" id="dil-warrants" value="1000000" min="0" step="100000"><span class="suffix">shares</span></div>
+          </div>
+          <div class="input-group">
+            <label for="dil-warrant-price">Average Warrant Exercise Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="dil-warrant-price" value="35" min="0" step="1"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Diluted Earnings Per Share</span>
+            <span class="calc-result-value" id="diluted-eps-result">$4.50</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Basic EPS</span><span class="result-value" id="dil-basic-ref">$5.00</span></div>
+            <div class="result-item"><span class="result-label">Net Dilutive Shares (Treasury Method)</span><span class="result-value" id="dil-net-shares">5,000,000</span></div>
+            <div class="result-item"><span class="result-label">Total Diluted Shares</span><span class="result-value" id="dil-total-shares">105,000,000</span></div>
+            <div class="result-item"><span class="result-label">Dilution Impact</span><span class="result-value" id="dil-impact">-10.0%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EPS Growth Rate Calculator -->
+    <div class="calculator-card" id="eps-growth-calculator">
+      <h2>EPS Growth Rate Calculator</h2>
+      <p class="calc-desc">Calculate year-over-year EPS growth or multi-year compound annual growth rate (CAGR). Enter EPS for two years or up to five years for a CAGR calculation.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="growth-eps1">Year 1 EPS (earlier)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="growth-eps1" value="3.50" min="0" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="growth-eps2">Year 2 EPS (later)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="growth-eps2" value="5.00" min="0" step="0.01"></div>
+          </div>
+          <div class="multi-year-divider"><span>Multi-Year CAGR (optional)</span></div>
+          <div class="input-group">
+            <label for="growth-eps3">Year 3 EPS</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="growth-eps3" value="" placeholder="optional" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="growth-eps4">Year 4 EPS</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="growth-eps4" value="" placeholder="optional" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="growth-eps5">Year 5 EPS</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="growth-eps5" value="" placeholder="optional" step="0.01"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">YoY EPS Growth Rate</span>
+            <span class="calc-result-value" id="growth-yoy-result">+42.9%</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">EPS Change ($)</span><span class="result-value" id="growth-change">+$1.50</span></div>
+            <div class="result-item"><span class="result-label">Multi-Year CAGR</span><span class="result-value" id="growth-cagr">—</span></div>
+            <div class="result-item"><span class="result-label">Years in CAGR</span><span class="result-value" id="growth-years">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P/E from EPS Calculator -->
+    <div class="calculator-card" id="pe-calculator">
+      <h2>P/E Ratio from EPS Calculator</h2>
+      <p class="calc-desc">Enter a stock price and EPS to compute the price-to-earnings ratio. The EPS auto-fills from the basic EPS calculator above.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="pe-stock-price">Current Stock Price</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-stock-price" value="110" min="0" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="pe-eps">Earnings Per Share (EPS)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pe-eps" value="5.00" min="0.01" step="0.01"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">P/E Ratio</span>
+            <span class="calc-result-value" id="pe-result">22.0×</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Interpretation</span><span class="result-value" id="pe-interpretation" style="font-size:0.85rem">Fairly valued</span></div>
+            <div class="result-item"><span class="result-label">Earnings Yield</span><span class="result-value" id="pe-earnings-yield">4.5%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Magnificent 7 EPS Chart -->
+    <div class="content-section">
+      <h2>Magnificent 7 — EPS Comparison (2024)</h2>
+      <p>Earnings per share vary dramatically among the Magnificent 7 mega-cap tech stocks. META leads with $22.10 EPS, while TSLA trails at $2.50 — a near 9× difference that reflects vastly different profitability profiles.</p>
+      <div class="chart-container"><canvas id="mag7Chart"></canvas></div>
+    </div>
+
+    <!-- S&P 500 EPS Growth Chart -->
+    <div class="content-section">
+      <h2>S&P 500 EPS Growth (2015–2025)</h2>
+      <p>S&P 500 earnings per share have grown from roughly $100 in 2015 to an estimated $240 in 2025 — a compound annual growth rate of approximately 8.5%. The COVID dip in 2020 and subsequent recovery are clearly visible.</p>
+      <div class="chart-container"><canvas id="sp500EpsChart"></canvas></div>
+    </div>
+
+    <!-- What is EPS -->
+    <div class="content-section">
+      <h2>What Is Earnings Per Share (EPS)?</h2>
+      <p>Earnings per share is the most widely followed profitability metric on Wall Street. It measures how much net profit a company earns for each outstanding share of common stock. When analysts say a company "beat expectations," they almost always mean it reported EPS above the consensus estimate.</p>
+
+      <div class="highlight-box">
+        <h3>The EPS Formula</h3>
+        <code>Basic EPS = (Net Income − Preferred Dividends) ÷ Weighted Average Shares Outstanding</code>
+        <p style="margin-top:1rem;font-size:0.9rem">To calculate <strong>diluted EPS</strong>, add potentially dilutive shares to the denominator:<br><code>Diluted EPS = (Net Income − Preferred Dividends) ÷ (Weighted Avg Shares + Net Dilutive Shares)</code></p>
+      </div>
+
+      <h3>Why EPS Matters</h3>
+      <p>EPS is the foundation of stock valuation. The price-to-earnings (P/E) ratio — the most common valuation metric — is simply the stock price divided by EPS. When EPS grows, the stock price tends to follow (assuming the P/E multiple stays constant). Investors, analysts, and the financial media all obsess over EPS because it directly connects company profitability to share price.</p>
+
+      <h3>EPS and the P/E Ratio</h3>
+      <p>The relationship between EPS and stock price is expressed through the P/E ratio: <strong>Stock Price = EPS × P/E Multiple</strong>. A company earning $5 per share with a 20× P/E trades at $100. If EPS grows to $6, the stock rises to $120 — assuming the market maintains the same multiple. This is why EPS growth is the primary driver of long-term stock returns.</p>
+    </div>
+
+    <!-- Basic vs Diluted EPS -->
+    <div class="content-section">
+      <h2>Basic vs. Diluted EPS — When Diluted Matters More</h2>
+
+      <div class="two-col">
+        <div class="col-card positive-card">
+          <h3>📊 Basic EPS</h3>
+          <ul>
+            <li><strong>Uses actual shares outstanding</strong> — the weighted average number of common shares during the period.</li>
+            <li><strong>Simpler calculation</strong> — straightforward and easy to understand.</li>
+            <li><strong>Best for:</strong> Companies with minimal stock-based compensation and few convertible securities (traditional industrials, banks, utilities).</li>
+            <li><strong>Limitation:</strong> Overstates per-share earnings when significant dilutive securities exist.</li>
+          </ul>
+        </div>
+        <div class="col-card negative-card">
+          <h3>📉 Diluted EPS</h3>
+          <ul>
+            <li><strong>Includes all potential shares</strong> — options, warrants, and convertible bonds increase the denominator.</li>
+            <li><strong>Treasury stock method</strong> — assumes options are exercised and proceeds buy back shares at market price.</li>
+            <li><strong>Best for:</strong> Tech companies with heavy stock-based compensation (the gap between basic and diluted EPS can be 5-15%).</li>
+            <li><strong>Always use diluted EPS</strong> when valuing companies with significant equity compensation — basic EPS will mislead you.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- EPS Manipulation Red Flags -->
+    <div class="content-section">
+      <h2>EPS Manipulation Red Flags</h2>
+      <p>EPS is a powerful metric, but it can be gamed. Here are the most common ways companies inflate their EPS — and how to spot them.</p>
+
+      <div class="red-flags-grid">
+        <div class="flag-card">
+          <span class="flag-icon">🔄</span>
+          <h4>Share Buybacks Inflating EPS</h4>
+          <p>A company can boost EPS simply by buying back shares, reducing the denominator — even if net income is flat or declining. <strong>Red flag:</strong> EPS growth of 15% while net income grew only 3%. Always compare EPS growth to net income growth.</p>
+        </div>
+        <div class="flag-card">
+          <span class="flag-icon">🎯</span>
+          <h4>One-Time Gains</h4>
+          <p>Selling an asset, settling a lawsuit, or recording a tax benefit can produce a one-time EPS spike. <strong>Red flag:</strong> Sudden EPS jump with no corresponding revenue growth. Check if "other income" or "extraordinary items" drove the beat.</p>
+        </div>
+        <div class="flag-card">
+          <span class="flag-icon">🚫</span>
+          <h4>"Adjusted" or Non-GAAP Exclusions</h4>
+          <p>Companies exclude stock-based compensation, restructuring charges, or amortization as "non-recurring" — even when they recur every year. <strong>Red flag:</strong> Non-GAAP EPS is consistently 30-50% higher than GAAP EPS. If the adjustments happen every quarter, they are not one-time.</p>
+        </div>
+        <div class="flag-card">
+          <span class="flag-icon">📈</span>
+          <h4>Aggressive Revenue Recognition</h4>
+          <p>Pulling forward revenue from future periods inflates current-period earnings. <strong>Red flag:</strong> Revenue growing faster than cash flow from operations. Receivables growing faster than revenue. Deferred revenue declining unexpectedly.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="content-section">
+      <h2>5 Key Insights About EPS</h2>
+      <div class="insights-list">
+        <div class="insight-item">
+          <span class="insight-num">1</span>
+          <div>
+            <h4>EPS drives stock prices more than any other metric</h4>
+            <p>Over the long term, stock prices track earnings growth. A company that compounds EPS at 15% annually will see its stock price roughly double every 5 years — even without P/E expansion. This is why growth investors obsess over EPS trajectory.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">2</span>
+          <div>
+            <h4>Always use diluted EPS for tech stocks</h4>
+            <p>Tech companies issue massive amounts of stock-based compensation. Using basic EPS for a company like Tesla or Nvidia overstates per-share profitability by 5-15%. Diluted EPS gives the true economic picture of what each share really earns.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">3</span>
+          <div>
+            <h4>EPS without context is meaningless</h4>
+            <p>An EPS of $10 tells you nothing in isolation. Is the P/E 5× or 50×? Is EPS growing or shrinking? Is it GAAP or adjusted? Always pair EPS with the P/E ratio, growth rate, and quality of earnings analysis to get the full picture.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">4</span>
+          <div>
+            <h4>Buyback-driven EPS growth is lower quality</h4>
+            <p>If a company's EPS grew 12% but net income only grew 2%, the difference came from share buybacks — not from growing the business. While buybacks can create value for shareholders, EPS growth fueled by actual revenue and profit expansion is far more sustainable.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">5</span>
+          <div>
+            <h4>Consistent EPS growth matters more than absolute EPS</h4>
+            <p>Meta's $22 EPS is higher than Nvidia's $2.94, but that doesn't make META the better investment. What matters is the growth trajectory, sustainability, and the price you pay for that EPS. A company growing EPS at 30% CAGR deserves a much higher P/E than one growing at 5%.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item"><summary>What is earnings per share (EPS)?</summary><p>Earnings per share measures the portion of a company's net profit allocated to each outstanding share of common stock. It is calculated as (Net Income − Preferred Dividends) ÷ Weighted Average Shares Outstanding. EPS is the single most widely followed profitability metric and forms the denominator of the P/E ratio.</p></details>
+        <details class="faq-item"><summary>How do you calculate diluted EPS?</summary><p>Diluted EPS accounts for all potentially dilutive securities — stock options, convertible bonds, and warrants. The treasury stock method assumes in-the-money options are exercised and proceeds buy back shares at the average market price. Diluted EPS = (Net Income − Preferred Dividends) ÷ (Weighted Average Shares + Net Dilutive Shares).</p></details>
+        <details class="faq-item"><summary>What is the difference between basic and diluted EPS?</summary><p>Basic EPS uses only actual shares outstanding, while diluted EPS includes all potentially dilutive securities. Diluted EPS is always less than or equal to basic EPS. A large gap signals heavy stock-based compensation — common in tech. Analysts and investors prefer diluted EPS for valuation.</p></details>
+        <details class="faq-item"><summary>How do you calculate EPS growth rate?</summary><p>Year-over-year EPS growth = ((Current EPS − Prior EPS) ÷ |Prior EPS|) × 100. For multi-year growth, use CAGR: ((Ending EPS ÷ Beginning EPS)^(1/n) − 1) × 100. Consistent double-digit EPS growth over 5+ years is a hallmark of high-quality compounders.</p></details>
+        <details class="faq-item"><summary>Can EPS be manipulated?</summary><p>Yes. Companies can inflate EPS through share buybacks (reducing the share count), one-time gains, aggressive revenue recognition, or excluding recurring costs as "non-recurring." Always compare GAAP vs. non-GAAP EPS, verify that EPS growth matches net income growth, and confirm earnings with cash flow from operations.</p></details>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style is:inline>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat-card {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+    font-family: var(--font-mono, monospace);
+  }
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.4;
+  }
+  .calculator-card {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .calculator-card h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  .calc-desc {
+    color: var(--text-secondary, #94a3b8);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .input-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #94a3b8);
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    pointer-events: none;
+  }
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%;
+    background: var(--bg-color, #010409);
+    border: 1px solid var(--border, #30363d);
+    color: var(--text-primary, #c8d0de);
+    font-family: var(--font-mono, monospace);
+    font-size: 1.05rem;
+    padding: 0.75rem 1rem 0.75rem 2rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent, #4a8fe7);
+  }
+  .results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--bg-color, #010409);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .result-box.primary-result {
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+  .calc-result-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    margin-bottom: 0.5rem;
+  }
+  .calc-result-value {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+    font-family: var(--font-mono, monospace);
+  }
+  .secondary-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border, #30363d);
+  }
+  .result-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+  }
+  .result-value {
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+    color: var(--text-primary, #c8d0de);
+  }
+  .multi-year-divider {
+    text-align: center;
+    padding: 0.75rem 0 0.25rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary, #94a3b8);
+    border-top: 1px solid var(--border, #30363d);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .chart-container {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    max-height: 500px;
+  }
+  .content-section {
+    margin: 3rem 0;
+  }
+  .highlight-box {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-left: 4px solid var(--accent, #4a8fe7);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .highlight-box code {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--accent, #4a8fe7);
+    margin-top: 0.5rem;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .col-card {
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: var(--bg-card, #0d1117);
+  }
+  .col-card h3 { margin-top: 0; font-size: 1.1rem; }
+  .col-card ul { padding-left: 1.2rem; }
+  .col-card li { margin-bottom: 0.75rem; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary, #94a3b8); }
+  .positive-card { border-left: 3px solid var(--positive, #10b981); }
+  .negative-card { border-left: 3px solid var(--negative, #ef4444); }
+  .red-flags-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  .flag-card {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-top: 3px solid var(--negative, #ef4444);
+  }
+  .flag-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .flag-card h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    color: var(--text-primary, #c8d0de);
+  }
+  .flag-card p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
+  }
+  .insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .insight-item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .insight-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--accent, #4a8fe7);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .insight-item h4 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+  }
+  .insight-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .faq-item {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.5rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+  }
+  .faq-item[open] summary::before { content: "\2212"; }
+  .faq-item p {
+    margin: 0.75rem 0 0 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.6;
+  }
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .calc-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .red-flags-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", function() {
+    var fmt = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    var fmtLarge = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    var fmtNum = new Intl.NumberFormat("en-US");
+
+    // --- Basic EPS Calculator ---
+    var epsNetIncome = document.getElementById("eps-net-income");
+    var epsPrefDiv = document.getElementById("eps-preferred-div");
+    var epsShares = document.getElementById("eps-shares");
+    var basicEpsResult = document.getElementById("basic-eps-result");
+    var epsNetAvailable = document.getElementById("eps-net-available");
+    var epsAnnual = document.getElementById("eps-annual");
+
+    // Diluted EPS fields
+    var dilOptions = document.getElementById("dil-options");
+    var dilOptionPrice = document.getElementById("dil-option-price");
+    var dilMarketPrice = document.getElementById("dil-market-price");
+    var dilConvertible = document.getElementById("dil-convertible");
+    var dilWarrants = document.getElementById("dil-warrants");
+    var dilWarrantPrice = document.getElementById("dil-warrant-price");
+    var dilutedEpsResult = document.getElementById("diluted-eps-result");
+    var dilBasicRef = document.getElementById("dil-basic-ref");
+    var dilNetShares = document.getElementById("dil-net-shares");
+    var dilTotalShares = document.getElementById("dil-total-shares");
+    var dilImpact = document.getElementById("dil-impact");
+
+    // Growth fields
+    var growthEps1 = document.getElementById("growth-eps1");
+    var growthEps2 = document.getElementById("growth-eps2");
+    var growthEps3 = document.getElementById("growth-eps3");
+    var growthEps4 = document.getElementById("growth-eps4");
+    var growthEps5 = document.getElementById("growth-eps5");
+    var growthYoyResult = document.getElementById("growth-yoy-result");
+    var growthChange = document.getElementById("growth-change");
+    var growthCagr = document.getElementById("growth-cagr");
+    var growthYears = document.getElementById("growth-years");
+
+    // P/E fields
+    var peStockPrice = document.getElementById("pe-stock-price");
+    var peEps = document.getElementById("pe-eps");
+    var peResult = document.getElementById("pe-result");
+    var peInterp = document.getElementById("pe-interpretation");
+    var peEarningsYield = document.getElementById("pe-earnings-yield");
+
+    function calcBasicEPS() {
+      var netIncome = parseFloat(epsNetIncome.value) || 0;
+      var prefDiv = parseFloat(epsPrefDiv.value) || 0;
+      var shares = parseFloat(epsShares.value) || 1;
+      if (shares < 1) shares = 1;
+
+      var available = netIncome - prefDiv;
+      var eps = available / shares;
+
+      basicEpsResult.textContent = fmt.format(eps);
+      epsNetAvailable.textContent = fmtLarge.format(available);
+      epsAnnual.textContent = fmt.format(eps);
+
+      // Auto-fill P/E calculator
+      peEps.value = eps.toFixed(2);
+      calcPE();
+      calcDilutedEPS();
+    }
+
+    function calcDilutedEPS() {
+      var netIncome = parseFloat(epsNetIncome.value) || 0;
+      var prefDiv = parseFloat(epsPrefDiv.value) || 0;
+      var shares = parseFloat(epsShares.value) || 1;
+      if (shares < 1) shares = 1;
+      var available = netIncome - prefDiv;
+      var basicEps = available / shares;
+
+      var options = parseFloat(dilOptions.value) || 0;
+      var optionPrice = parseFloat(dilOptionPrice.value) || 0;
+      var marketPrice = parseFloat(dilMarketPrice.value) || 0.01;
+      if (marketPrice <= 0) marketPrice = 0.01;
+      var convertible = parseFloat(dilConvertible.value) || 0;
+      var warrants = parseFloat(dilWarrants.value) || 0;
+      var warrantPrice = parseFloat(dilWarrantPrice.value) || 0;
+
+      // Treasury stock method for options
+      var netOptionShares = 0;
+      if (optionPrice < marketPrice && options > 0) {
+        var buybackShares = Math.floor((options * optionPrice) / marketPrice);
+        netOptionShares = options - buybackShares;
+      }
+
+      // Treasury stock method for warrants
+      var netWarrantShares = 0;
+      if (warrantPrice < marketPrice && warrants > 0) {
+        var warrantBuyback = Math.floor((warrants * warrantPrice) / marketPrice);
+        netWarrantShares = warrants - warrantBuyback;
+      }
+
+      var totalDilutiveShares = netOptionShares + convertible + netWarrantShares;
+      var dilutedShareCount = shares + totalDilutiveShares;
+      var dilEps = available / dilutedShareCount;
+
+      dilutedEpsResult.textContent = fmt.format(dilEps);
+      dilBasicRef.textContent = fmt.format(basicEps);
+      dilNetShares.textContent = fmtNum.format(totalDilutiveShares);
+      dilTotalShares.textContent = fmtNum.format(dilutedShareCount);
+
+      var impact = basicEps !== 0 ? ((dilEps - basicEps) / Math.abs(basicEps)) * 100 : 0;
+      dilImpact.textContent = impact.toFixed(1) + "%";
+      dilImpact.style.color = impact < 0 ? "var(--negative, #ef4444)" : "var(--positive, #10b981)";
+    }
+
+    function calcGrowth() {
+      var eps1 = parseFloat(growthEps1.value);
+      var eps2 = parseFloat(growthEps2.value);
+
+      if (isNaN(eps1) || isNaN(eps2) || eps1 === 0) {
+        growthYoyResult.textContent = "\u2014";
+        growthChange.textContent = "\u2014";
+        growthCagr.textContent = "\u2014";
+        growthYears.textContent = "\u2014";
+        return;
+      }
+
+      var yoyGrowth = ((eps2 - eps1) / Math.abs(eps1)) * 100;
+      var change = eps2 - eps1;
+      var sign = yoyGrowth >= 0 ? "+" : "";
+      growthYoyResult.textContent = sign + yoyGrowth.toFixed(1) + "%";
+      growthYoyResult.style.color = yoyGrowth >= 0 ? "var(--positive, #10b981)" : "var(--negative, #ef4444)";
+      growthChange.textContent = (change >= 0 ? "+" : "") + fmt.format(change);
+      growthChange.style.color = change >= 0 ? "var(--positive, #10b981)" : "var(--negative, #ef4444)";
+
+      // Multi-year CAGR
+      var epsValues = [eps1, eps2];
+      var eps3 = parseFloat(growthEps3.value);
+      var eps4 = parseFloat(growthEps4.value);
+      var eps5 = parseFloat(growthEps5.value);
+      if (!isNaN(eps3) && growthEps3.value !== "") epsValues.push(eps3);
+      if (!isNaN(eps4) && growthEps4.value !== "") epsValues.push(eps4);
+      if (!isNaN(eps5) && growthEps5.value !== "") epsValues.push(eps5);
+
+      if (epsValues.length >= 3) {
+        var first = epsValues[0];
+        var last = epsValues[epsValues.length - 1];
+        var n = epsValues.length - 1;
+        if (first > 0 && last > 0) {
+          var cagr = (Math.pow(last / first, 1 / n) - 1) * 100;
+          var cagrSign = cagr >= 0 ? "+" : "";
+          growthCagr.textContent = cagrSign + cagr.toFixed(1) + "%";
+          growthCagr.style.color = cagr >= 0 ? "var(--positive, #10b981)" : "var(--negative, #ef4444)";
+          growthYears.textContent = n + " years";
+        } else {
+          growthCagr.textContent = "N/A (negative EPS)";
+          growthCagr.style.color = "var(--text-secondary, #94a3b8)";
+          growthYears.textContent = n + " years";
+        }
+      } else {
+        growthCagr.textContent = "\u2014";
+        growthCagr.style.color = "var(--text-secondary, #94a3b8)";
+        growthYears.textContent = "\u2014";
+      }
+    }
+
+    function calcPE() {
+      var price = parseFloat(peStockPrice.value) || 0;
+      var eps = parseFloat(peEps.value) || 0;
+
+      if (eps <= 0) {
+        peResult.textContent = "N/A";
+        peInterp.textContent = "Negative or zero EPS \u2014 P/E not meaningful";
+        peEarningsYield.textContent = "\u2014";
+        return;
+      }
+
+      var pe = price / eps;
+      peResult.textContent = pe.toFixed(1) + "\u00d7";
+
+      var interp = "";
+      if (pe < 10) {
+        interp = "Deep value \u2014 low expectations or cyclical trough";
+        peResult.style.color = "var(--positive, #10b981)";
+      } else if (pe < 20) {
+        interp = "Reasonably valued \u2014 moderate growth expectations";
+        peResult.style.color = "var(--accent, #4a8fe7)";
+      } else if (pe < 35) {
+        interp = "Growth premium \u2014 market expects above-average earnings growth";
+        peResult.style.color = "#f59e0b";
+      } else {
+        interp = "Expensive \u2014 very high growth expectations or speculative";
+        peResult.style.color = "var(--negative, #ef4444)";
+      }
+      peInterp.textContent = interp;
+
+      var earningsYield = (eps / price) * 100;
+      peEarningsYield.textContent = earningsYield.toFixed(1) + "%";
+    }
+
+    // Attach listeners
+    var basicInputs = [epsNetIncome, epsPrefDiv, epsShares];
+    for (var i = 0; i < basicInputs.length; i++) {
+      basicInputs[i].addEventListener("input", calcBasicEPS);
+    }
+
+    var dilInputs = [dilOptions, dilOptionPrice, dilMarketPrice, dilConvertible, dilWarrants, dilWarrantPrice];
+    for (var j = 0; j < dilInputs.length; j++) {
+      dilInputs[j].addEventListener("input", calcDilutedEPS);
+    }
+
+    var growthInputs = [growthEps1, growthEps2, growthEps3, growthEps4, growthEps5];
+    for (var k = 0; k < growthInputs.length; k++) {
+      growthInputs[k].addEventListener("input", calcGrowth);
+    }
+
+    peStockPrice.addEventListener("input", calcPE);
+    peEps.addEventListener("input", calcPE);
+
+    // Initial calculations
+    calcBasicEPS();
+    calcGrowth();
+
+    // --- Charts ---
+
+    // Magnificent 7 EPS Bar Chart
+    var mag7Ctx = document.getElementById("mag7Chart").getContext("2d");
+    new Chart(mag7Ctx, {
+      type: "bar",
+      data: {
+        labels: ["META", "MSFT", "GOOGL", "AAPL", "AMZN", "NVDA", "TSLA"],
+        datasets: [{
+          label: "EPS (TTM)",
+          data: [22.10, 12.40, 7.50, 6.75, 5.50, 2.94, 2.50],
+          backgroundColor: [
+            "#4a8fe7", "#10b981", "#f59e0b", "#94a3b8", "#ef4444", "#8b5cf6", "#ec4899"
+          ],
+          borderRadius: 6,
+          barThickness: 40
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return "EPS: $" + ctx.parsed.y.toFixed(2); }
+            }
+          }
+        },
+        scales: {
+          y: {
+            title: { display: true, text: "Earnings Per Share ($)", color: "#94a3b8" },
+            grid: { color: "rgba(48,54,61,0.5)" },
+            ticks: { color: "#94a3b8", callback: function(v) { return "$" + v; } },
+            beginAtZero: true
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: "#c8d0de", font: { size: 13, weight: "bold" } }
+          }
+        }
+      }
+    });
+
+    // S&P 500 EPS Growth Line Chart
+    var sp500Ctx = document.getElementById("sp500EpsChart").getContext("2d");
+    new Chart(sp500Ctx, {
+      type: "line",
+      data: {
+        labels: ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025E"],
+        datasets: [{
+          label: "S&P 500 EPS",
+          data: [100, 106, 124, 152, 160, 136, 197, 218, 221, 235, 240],
+          borderColor: "#4a8fe7",
+          backgroundColor: "rgba(74,143,231,0.1)",
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: "#4a8fe7",
+          pointBorderColor: "#0d1117",
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return "EPS: $" + ctx.parsed.y; }
+            }
+          }
+        },
+        scales: {
+          y: {
+            title: { display: true, text: "Earnings Per Share ($)", color: "#94a3b8" },
+            grid: { color: "rgba(48,54,61,0.5)" },
+            ticks: { color: "#94a3b8", callback: function(v) { return "$" + v; } },
+            min: 80,
+            max: 260
+          },
+          x: {
+            grid: { color: "rgba(48,54,61,0.3)" },
+            ticks: { color: "#c8d0de" }
+          }
+        }
+      }
+    });
+  });
+</script>

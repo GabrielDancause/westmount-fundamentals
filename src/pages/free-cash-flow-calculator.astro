@@ -1,0 +1,807 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Free Cash Flow Calculator — FCF Formula, FCF Yield & FCFE", description: "Free cash flow calculator with FCF formula, FCF yield, and FCFE calculators. Learn how to calculate free cash flow, compare FCF vs net income, and assess cash flow quality for smarter investing.", category: "study", published: "2026-03-20" };
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Free Cash Flow Calculator — FCF Formula, FCF Yield & FCFE",
+    "description": "Free cash flow calculator with FCF formula, FCF yield, and FCFE calculators. Learn how to calculate free cash flow and assess cash flow quality.",
+    "datePublished": "2026-03-20",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is free cash flow and why does it matter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Free cash flow (FCF) is the cash a company generates after accounting for capital expenditures needed to maintain or expand its asset base. FCF = Operating Cash Flow - Capital Expenditures. It matters because it represents the actual cash available for dividends, share buybacks, debt repayment, and acquisitions — making it the most reliable measure of a company's financial health."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate free cash flow?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The most common free cash flow formula is: FCF = Operating Cash Flow - Capital Expenditures. You can also calculate it from net income: FCF = Net Income + Depreciation & Amortization - Changes in Working Capital - Capital Expenditures. Both methods should produce similar results when using consistent financial data from the cash flow statement."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good FCF yield for stocks?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "An FCF yield above 5% is generally considered attractive for value investors. FCF yield between 3-5% is average for the S&P 500, while yields above 8% may indicate undervaluation or a mature company returning significant cash. Growth stocks often have lower FCF yields (1-3%) because they reinvest heavily. Always compare FCF yield within the same sector."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between free cash flow and net income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Net income includes non-cash charges like depreciation and can be manipulated through accounting choices. Free cash flow measures actual cash generated, making it harder to distort. A company can report positive net income while burning cash (negative FCF), which is a red flag. Conversely, a company with negative net income but positive FCF may be healthier than it appears."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is free cash flow to equity (FCFE)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Free Cash Flow to Equity (FCFE) is the cash available specifically to equity shareholders after all expenses, reinvestment, and debt obligations. FCFE = FCF + Net Borrowing - Debt Repayment. It is used in equity valuation models like the FCFE discount model to estimate the intrinsic value of a company's stock."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title="Free Cash Flow Calculator — FCF Formula, FCF Yield & FCFE" description="Free cash flow calculator with FCF formula, FCF yield, and FCFE calculators. Learn how to calculate free cash flow, compare FCF vs net income, and assess cash flow quality for smarter investing." canonical="https://westmountfundamentals.com/free-cash-flow-calculator/" schema={schema}>
+
+<style is:inline>
+  :root {
+    --accent: #4a8fe7;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --warning: #f59e0b;
+    --bg-card: #0d1117;
+    --border: #30363d;
+  }
+  .fcf-hero { text-align: center; padding: 3rem 1rem 2rem; max-width: 900px; margin: 0 auto; }
+  .fcf-hero h1 { font-size: 2.4rem; margin-bottom: 1rem; line-height: 1.2; }
+  .fcf-hero p { color: #8b949e; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.85rem; color: #8b949e; margin-top: 0.3rem; }
+
+  .calc-section { max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .calc-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .section-subtitle { color: #8b949e; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .calc-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+  .calc-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .calc-box .calc-desc { color: #8b949e; font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.85rem; color: #c9d1d9; margin-bottom: 0.3rem; }
+  .form-group input { width: 100%; padding: 0.6rem 0.8rem; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #e6edf3; font-size: 1rem; box-sizing: border-box; }
+  .form-group input:focus { outline: none; border-color: var(--accent); }
+
+  .calc-btn { width: 100%; padding: 0.75rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+  .calc-btn:hover { opacity: 0.9; }
+
+  .result-box { margin-top: 1.5rem; padding: 1.2rem; background: #161b22; border: 1px solid var(--border); border-radius: 8px; display: none; }
+  .result-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: #8b949e; }
+  .result-val { font-weight: 600; }
+  .result-val.pos { color: var(--positive); }
+  .result-val.neg { color: var(--negative); }
+
+  .interpretation { margin-top: 1rem; padding: 0.8rem; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; }
+
+  .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+  .chart-container canvas { max-height: 400px; }
+
+  .content-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .content-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .content-section h3 { font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .content-section p { color: #c9d1d9; line-height: 1.7; margin-bottom: 1rem; }
+
+  .formula-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 2rem; margin: 1.5rem 0; font-family: monospace; font-size: 1.1rem; color: var(--accent); text-align: center; }
+
+  .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; margin: 1.5rem 0; }
+  .compare-table th, .compare-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .compare-table th { background: #161b22; color: #8b949e; font-size: 0.8rem; text-transform: uppercase; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .check { color: var(--positive); }
+  .cross { color: var(--negative); }
+
+  .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .checklist-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; display: flex; gap: 0.8rem; align-items: flex-start; }
+  .checklist-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .checklist-text { color: #c9d1d9; font-size: 0.9rem; line-height: 1.5; }
+  .checklist-text strong { color: #e6edf3; }
+
+  .insights-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .insight-num { background: var(--accent); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .insight-text { color: #c9d1d9; font-size: 0.95rem; line-height: 1.5; }
+  .insight-text strong { color: #e6edf3; }
+
+  .faq-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .faq-section h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-q { padding: 1.2rem 1.5rem; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q:hover { background: #161b22; }
+  .faq-arrow { transition: transform 0.2s; color: #8b949e; }
+  .faq-a { padding: 0 1.5rem 1.2rem; color: #8b949e; line-height: 1.7; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+  @media (max-width: 768px) {
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .calc-grid { grid-template-columns: 1fr; }
+    .checklist-grid { grid-template-columns: 1fr; }
+    .fcf-hero h1 { font-size: 1.8rem; }
+  }
+  @media (max-width: 480px) {
+    .stat-cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Hero -->
+<div class="fcf-hero">
+  <h1>Free Cash Flow Calculator</h1>
+  <p>Calculate free cash flow, FCF yield, and free cash flow to equity. Use the FCF formula to evaluate a company's true cash-generating power and make smarter investment decisions.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-value">~4.5%</div>
+    <div class="stat-label">S&P 500 Avg FCF Yield</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">70%</div>
+    <div class="stat-label">FCF Used for Buybacks + Dividends</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">22x</div>
+    <div class="stat-label">Avg Price-to-FCF Ratio</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">#1</div>
+    <div class="stat-label">Cash Flow Metric for Valuation</div>
+  </div>
+</div>
+
+<!-- Calculator 1: Standard FCF -->
+<div class="calc-section">
+  <h2>Free Cash Flow Calculator</h2>
+  <p class="section-subtitle">Calculate FCF using the direct method (from operating cash flow) or the indirect method (from net income).</p>
+
+  <div class="calc-grid">
+    <!-- Direct Method -->
+    <div class="calc-box">
+      <h3>💰 Direct Method (From Operating Cash Flow)</h3>
+      <p class="calc-desc">FCF = Operating Cash Flow − Capital Expenditures</p>
+      <div class="form-group">
+        <label>Operating Cash Flow ($)</label>
+        <input type="number" id="d-ocf" placeholder="e.g. 5,000,000">
+      </div>
+      <div class="form-group">
+        <label>Capital Expenditures ($)</label>
+        <input type="number" id="d-capex" placeholder="e.g. 1,500,000">
+      </div>
+      <button class="calc-btn" onclick="calcDirect()">Calculate FCF</button>
+      <div class="result-box" id="d-result"></div>
+    </div>
+
+    <!-- Indirect Method -->
+    <div class="calc-box">
+      <h3>🔄 Indirect Method (From Net Income)</h3>
+      <p class="calc-desc">FCF = Net Income + D&A − ΔWC − CapEx</p>
+      <div class="form-group">
+        <label>Net Income ($)</label>
+        <input type="number" id="i-ni" placeholder="e.g. 3,000,000">
+      </div>
+      <div class="form-group">
+        <label>Depreciation & Amortization ($)</label>
+        <input type="number" id="i-da" placeholder="e.g. 800,000">
+      </div>
+      <div class="form-group">
+        <label>Change in Working Capital ($)</label>
+        <input type="number" id="i-wc" placeholder="e.g. 200,000 (positive = cash used)">
+      </div>
+      <div class="form-group">
+        <label>Capital Expenditures ($)</label>
+        <input type="number" id="i-capex" placeholder="e.g. 1,500,000">
+      </div>
+      <button class="calc-btn" onclick="calcIndirect()">Calculate FCF</button>
+      <div class="result-box" id="i-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Calculator 2: Alternative FCF from Revenue -->
+<div class="calc-section">
+  <h2>Alternative FCF Calculator (From Revenue)</h2>
+  <p class="section-subtitle">Estimate free cash flow starting from revenue using operating margin, tax rate, and capital needs.</p>
+
+  <div class="calc-grid">
+    <div class="calc-box" style="grid-column: 1 / -1; max-width: 600px;">
+      <h3>📈 Revenue-Based FCF Estimate</h3>
+      <p class="calc-desc">NOPAT − Net Capital Spending − ΔWC = FCF</p>
+      <div class="form-group">
+        <label>Revenue ($)</label>
+        <input type="number" id="alt-rev" placeholder="e.g. 20,000,000">
+      </div>
+      <div class="form-group">
+        <label>Operating Margin (%)</label>
+        <input type="number" id="alt-margin" placeholder="e.g. 25" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Depreciation & Amortization ($)</label>
+        <input type="number" id="alt-da" placeholder="e.g. 800,000">
+      </div>
+      <div class="form-group">
+        <label>Capital Expenditures ($)</label>
+        <input type="number" id="alt-capex" placeholder="e.g. 1,500,000">
+      </div>
+      <div class="form-group">
+        <label>Tax Rate (%)</label>
+        <input type="number" id="alt-tax" placeholder="e.g. 21" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Change in Working Capital ($)</label>
+        <input type="number" id="alt-wc" placeholder="e.g. 200,000 (positive = cash used)">
+      </div>
+      <button class="calc-btn" onclick="calcAlt()">Calculate FCF</button>
+      <div class="result-box" id="alt-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Calculator 3: FCF Yield -->
+<div class="calc-section">
+  <h2>FCF Yield Calculator</h2>
+  <p class="section-subtitle">Calculate how much free cash flow you're getting per dollar invested in a stock.</p>
+
+  <div class="calc-grid">
+    <div class="calc-box">
+      <h3>📊 FCF Yield</h3>
+      <p class="calc-desc">FCF Yield = (FCF per Share / Stock Price) × 100</p>
+      <div class="form-group">
+        <label>FCF per Share ($)</label>
+        <input type="number" id="fy-fcfps" placeholder="e.g. 5.50" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Current Stock Price ($)</label>
+        <input type="number" id="fy-price" placeholder="e.g. 120.00" step="0.01">
+      </div>
+      <button class="calc-btn" onclick="calcYield()">Calculate FCF Yield</button>
+      <div class="result-box" id="fy-result"></div>
+    </div>
+
+    <!-- FCFE Calculator -->
+    <div class="calc-box">
+      <h3>🏦 Free Cash Flow to Equity (FCFE)</h3>
+      <p class="calc-desc">FCFE = FCF + Net Borrowing − Debt Repayment</p>
+      <div class="form-group">
+        <label>Free Cash Flow ($)</label>
+        <input type="number" id="fe-fcf" placeholder="e.g. 3,500,000">
+      </div>
+      <div class="form-group">
+        <label>Net Borrowing ($)</label>
+        <input type="number" id="fe-borrow" placeholder="e.g. 1,000,000">
+      </div>
+      <div class="form-group">
+        <label>Debt Repayment ($)</label>
+        <input type="number" id="fe-repay" placeholder="e.g. 500,000">
+      </div>
+      <button class="calc-btn" onclick="calcFCFE()">Calculate FCFE</button>
+      <div class="result-box" id="fe-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="calc-section">
+  <h2>FCF Visualizations</h2>
+  <p class="section-subtitle">See how operating cash flow breaks down into free cash flow and how FCF yield varies by sector.</p>
+
+  <div class="calc-grid">
+    <div class="chart-container">
+      <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.1rem;">Cash Flow Waterfall: From OCF to Remaining Cash</h3>
+      <canvas id="waterfallChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3 style="color: var(--accent); margin-bottom: 1rem; font-size: 1.1rem;">FCF Yield by S&P 500 Sector</h3>
+      <canvas id="sectorChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- What is Free Cash Flow -->
+<div class="content-section">
+  <h2>What Is Free Cash Flow?</h2>
+  <p>Free cash flow (FCF) is the cash a business generates from operations after subtracting capital expenditures needed to maintain or grow its asset base. It represents the money actually available for shareholders — through dividends, share buybacks, debt repayment, or strategic acquisitions.</p>
+
+  <div class="formula-box">FCF = Operating Cash Flow − Capital Expenditures</div>
+
+  <h3>Why FCF Matters More Than Net Income</h3>
+  <p>Net income is an accounting figure that includes non-cash items like depreciation and can be influenced by accounting decisions (revenue recognition timing, asset write-downs, deferred taxes). Free cash flow strips away these distortions and shows the actual cash a company produces.</p>
+  <p>A company can report growing net income while burning cash — a dangerous mismatch. Conversely, capital-intensive businesses may show modest earnings but generate substantial free cash flow. This is why Warren Buffett focuses on "owner earnings," which is essentially free cash flow.</p>
+
+  <h3>The Free Cash Flow Formula (Two Methods)</h3>
+  <p><strong>Direct method:</strong> Start with operating cash flow from the cash flow statement, then subtract capital expenditures. This is the simplest and most common approach.</p>
+  <div class="formula-box">FCF = Operating Cash Flow − CapEx</div>
+  <p><strong>Indirect method:</strong> Start with net income, add back non-cash charges (depreciation and amortization), subtract changes in working capital, then subtract capital expenditures.</p>
+  <div class="formula-box">FCF = Net Income + D&A − ΔWorking Capital − CapEx</div>
+
+  <h3>How to Calculate Free Cash Flow: Step by Step</h3>
+  <p>1. Find <strong>Operating Cash Flow</strong> on the company's cash flow statement (also called "cash from operations"). 2. Find <strong>Capital Expenditures</strong> under "investing activities" on the same statement. 3. Subtract CapEx from OCF. The result is free cash flow. If FCF is positive, the company generates more cash than it needs to maintain its business. If negative, it's spending more than it earns — which may be fine for a growing company but is a red flag for a mature one.</p>
+</div>
+
+<!-- Comparison Table -->
+<div class="content-section">
+  <h2>FCF vs Net Income vs Operating Cash Flow</h2>
+  <p>Understanding the differences between these three metrics is essential for proper financial analysis.</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Free Cash Flow</th>
+        <th>Net Income</th>
+        <th>Operating Cash Flow</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>What it measures</td>
+        <td>Cash after all capital needs</td>
+        <td>Accounting profit (bottom line)</td>
+        <td>Cash from core operations</td>
+      </tr>
+      <tr>
+        <td>Includes CapEx?</td>
+        <td><span class="check">✓ Yes (subtracted)</span></td>
+        <td><span class="cross">✗ No (uses depreciation)</span></td>
+        <td><span class="cross">✗ No</span></td>
+      </tr>
+      <tr>
+        <td>Non-cash items</td>
+        <td><span class="check">✓ Excluded</span></td>
+        <td><span class="cross">✗ Included</span></td>
+        <td><span class="check">✓ Adjusted for</span></td>
+      </tr>
+      <tr>
+        <td>Easy to manipulate?</td>
+        <td><span class="check">✓ Harder</span></td>
+        <td><span class="cross">✗ Easier</span></td>
+        <td>Moderate</td>
+      </tr>
+      <tr>
+        <td>Best used for</td>
+        <td>Valuation, dividend safety</td>
+        <td>Earnings-based multiples (P/E)</td>
+        <td>Operational health check</td>
+      </tr>
+      <tr>
+        <td>Found on which statement?</td>
+        <td>Calculated (OCF − CapEx)</td>
+        <td>Income statement</td>
+        <td>Cash flow statement</td>
+      </tr>
+      <tr>
+        <td>Key valuation metric</td>
+        <td>Price/FCF, FCF yield</td>
+        <td>P/E ratio</td>
+        <td>P/OCF ratio</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FCF Quality Checklist -->
+<div class="content-section">
+  <h2>FCF Quality Checklist</h2>
+  <p>Use these four criteria to quickly assess whether a company's free cash flow profile signals financial strength.</p>
+
+  <div class="checklist-grid">
+    <div class="checklist-item">
+      <div class="checklist-icon">✅</div>
+      <div class="checklist-text"><strong>Positive FCF</strong> — The company generates more cash from operations than it spends on capital expenditures. Consistent positive FCF over 5+ years is a strong sign of a durable business.</div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-icon">✅</div>
+      <div class="checklist-text"><strong>FCF &gt; Net Income</strong> — When free cash flow exceeds net income, earnings quality is high. This means the company converts its profits into actual cash rather than paper gains.</div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-icon">✅</div>
+      <div class="checklist-text"><strong>Consistent FCF Growth</strong> — Growing free cash flow year over year shows improving operational efficiency and pricing power. A 10%+ CAGR in FCF over 5 years is excellent.</div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-icon">✅</div>
+      <div class="checklist-text"><strong>Low CapEx-to-OCF Ratio</strong> — A CapEx/OCF ratio below 30% means the company keeps most of its operating cash flow as free cash flow. Asset-light businesses typically excel here.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="content-section">
+  <h2>5 Key Insights About Free Cash Flow</h2>
+
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-num">1</div>
+      <div class="insight-text"><strong>FCF is the ultimate reality check.</strong> A company can report rising earnings for years while free cash flow declines — a warning sign of accounting aggression. Always verify that reported profits translate into actual cash generation.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">2</div>
+      <div class="insight-text"><strong>Negative FCF is not always bad.</strong> High-growth companies like Amazon or Tesla had years of negative FCF while investing heavily in capacity. The key question: is the company investing for future returns, or failing to generate cash from a mature business?</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">3</div>
+      <div class="insight-text"><strong>FCF yield is the cash-based P/E ratio.</strong> An FCF yield of 7% means you're buying $7 of annual cash flow for every $100 invested. Compare this to bond yields — if FCF yield exceeds the 10-year Treasury rate, the stock may offer better value.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">4</div>
+      <div class="insight-text"><strong>Sector differences matter enormously.</strong> Tech companies routinely convert 25-35% of revenue to FCF. Utilities and industrials may convert only 5-10%. Always compare FCF margins within the same sector, never across different industries.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">5</div>
+      <div class="insight-text"><strong>Buybacks + dividends should not exceed FCF.</strong> When a company pays out more than its free cash flow in shareholder returns, it must borrow or sell assets to fund the difference — an unsustainable practice that erodes long-term value.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>What is free cash flow and why does it matter?</span>
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Free cash flow (FCF) is the cash a company generates after accounting for capital expenditures needed to maintain or expand its asset base. FCF = Operating Cash Flow - Capital Expenditures. It matters because it represents the actual cash available for dividends, share buybacks, debt repayment, and acquisitions — making it the most reliable measure of a company's financial health.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>How do you calculate free cash flow?</span>
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">The most common free cash flow formula is: FCF = Operating Cash Flow - Capital Expenditures. You can also calculate it from net income: FCF = Net Income + Depreciation & Amortization - Changes in Working Capital - Capital Expenditures. Both methods should produce similar results when using consistent financial data from the cash flow statement.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>What is a good FCF yield for stocks?</span>
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">An FCF yield above 5% is generally considered attractive for value investors. FCF yield between 3-5% is average for the S&P 500, while yields above 8% may indicate undervaluation or a mature company returning significant cash. Growth stocks often have lower FCF yields (1-3%) because they reinvest heavily. Always compare FCF yield within the same sector.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>What is the difference between free cash flow and net income?</span>
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Net income includes non-cash charges like depreciation and can be manipulated through accounting choices. Free cash flow measures actual cash generated, making it harder to distort. A company can report positive net income while burning cash (negative FCF), which is a red flag. Conversely, a company with negative net income but positive FCF may be healthier than it appears.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>What is free cash flow to equity (FCFE)?</span>
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">Free Cash Flow to Equity (FCFE) is the cash available specifically to equity shareholders after all expenses, reinvestment, and debt obligations. FCFE = FCF + Net Borrowing - Debt Repayment. It is used in equity valuation models like the FCFE discount model to estimate the intrinsic value of a company's stock.</div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script is:inline>
+  function fmt(n) {
+    if (Math.abs(n) >= 1e9) return "$" + (n / 1e9).toFixed(2) + "B";
+    if (Math.abs(n) >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+    if (Math.abs(n) >= 1e3) return "$" + (n / 1e3).toFixed(1) + "K";
+    return "$" + n.toFixed(2);
+  }
+
+  function pct(n) { return n.toFixed(2) + "%"; }
+
+  function gv(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function showResult(id, rows) {
+    var box = document.getElementById(id);
+    var html = "";
+    for (var r = 0; r < rows.length; r++) {
+      var cls = "";
+      if (rows[r].color === "pos") cls = " pos";
+      if (rows[r].color === "neg") cls = " neg";
+      html += '<div class="result-row"><span class="result-label">' + rows[r].label + '</span><span class="result-val' + cls + '">' + rows[r].value + '</span></div>';
+    }
+    box.innerHTML = html;
+    box.style.display = "block";
+  }
+
+  /* Direct FCF Calculator */
+  function calcDirect() {
+    var ocf = gv("d-ocf");
+    var capex = gv("d-capex");
+    var fcf = ocf - capex;
+    var capexRatio = ocf > 0 ? (capex / ocf) * 100 : 0;
+    var rows = [
+      { label: "Operating Cash Flow", value: fmt(ocf) },
+      { label: "Capital Expenditures", value: fmt(capex), color: "neg" },
+      { label: "Free Cash Flow", value: fmt(fcf), color: fcf >= 0 ? "pos" : "neg" },
+      { label: "CapEx / OCF Ratio", value: pct(capexRatio), color: capexRatio < 30 ? "pos" : "neg" }
+    ];
+    showResult("d-result", rows);
+  }
+
+  /* Indirect FCF Calculator */
+  function calcIndirect() {
+    var ni = gv("i-ni");
+    var da = gv("i-da");
+    var wc = gv("i-wc");
+    var capex = gv("i-capex");
+    var ocf = ni + da - wc;
+    var fcf = ocf - capex;
+    var rows = [
+      { label: "Net Income", value: fmt(ni) },
+      { label: "Add: D&A", value: "+" + fmt(da) },
+      { label: "Less: ΔWorking Capital", value: "-" + fmt(wc) },
+      { label: "Operating Cash Flow", value: fmt(ocf) },
+      { label: "Less: CapEx", value: "-" + fmt(capex), color: "neg" },
+      { label: "Free Cash Flow", value: fmt(fcf), color: fcf >= 0 ? "pos" : "neg" }
+    ];
+    if (ni > 0) {
+      var conversion = (fcf / ni) * 100;
+      rows.push({ label: "FCF / Net Income", value: pct(conversion), color: conversion > 100 ? "pos" : "neg" });
+    }
+    showResult("i-result", rows);
+  }
+
+  /* Alternative FCF from Revenue */
+  function calcAlt() {
+    var rev = gv("alt-rev");
+    var margin = gv("alt-margin") / 100;
+    var da = gv("alt-da");
+    var capex = gv("alt-capex");
+    var tax = gv("alt-tax") / 100;
+    var wc = gv("alt-wc");
+    var ebit = rev * margin;
+    var nopat = ebit * (1 - tax);
+    var fcf = nopat + da - capex - wc;
+    var fcfMargin = rev > 0 ? (fcf / rev) * 100 : 0;
+    var rows = [
+      { label: "Revenue", value: fmt(rev) },
+      { label: "EBIT (Rev × Margin)", value: fmt(ebit) },
+      { label: "NOPAT (EBIT × (1 - Tax))", value: fmt(nopat) },
+      { label: "Add: D&A", value: "+" + fmt(da) },
+      { label: "Less: CapEx", value: "-" + fmt(capex), color: "neg" },
+      { label: "Less: ΔWorking Capital", value: "-" + fmt(wc) },
+      { label: "Free Cash Flow", value: fmt(fcf), color: fcf >= 0 ? "pos" : "neg" },
+      { label: "FCF Margin", value: pct(fcfMargin), color: fcfMargin > 10 ? "pos" : "neg" }
+    ];
+    showResult("alt-result", rows);
+  }
+
+  /* FCF Yield Calculator */
+  function calcYield() {
+    var fcfps = gv("fy-fcfps");
+    var price = gv("fy-price");
+    var yld = price > 0 ? (fcfps / price) * 100 : 0;
+    var ptofcf = fcfps > 0 ? price / fcfps : 0;
+    var rows = [
+      { label: "FCF per Share", value: fmt(fcfps) },
+      { label: "Stock Price", value: fmt(price) },
+      { label: "FCF Yield", value: pct(yld), color: yld >= 5 ? "pos" : (yld >= 3 ? "" : "neg") },
+      { label: "Price / FCF", value: ptofcf.toFixed(1) + "x" }
+    ];
+    showResult("fy-result", rows);
+    var interp = document.getElementById("fy-interp");
+    if (!interp) {
+      interp = document.createElement("div");
+      interp.id = "fy-interp";
+      interp.className = "interpretation";
+      document.getElementById("fy-result").appendChild(interp);
+    }
+    if (yld >= 8) {
+      interp.style.background = "rgba(16,185,129,0.15)";
+      interp.style.color = "#10b981";
+      interp.textContent = "High FCF yield — potentially undervalued or a mature cash cow";
+    } else if (yld >= 5) {
+      interp.style.background = "rgba(16,185,129,0.10)";
+      interp.style.color = "#10b981";
+      interp.textContent = "Attractive FCF yield — strong cash generation relative to price";
+    } else if (yld >= 3) {
+      interp.style.background = "rgba(245,158,11,0.15)";
+      interp.style.color = "#f59e0b";
+      interp.textContent = "Average FCF yield — in line with S&P 500 median";
+    } else if (yld > 0) {
+      interp.style.background = "rgba(239,68,68,0.15)";
+      interp.style.color = "#ef4444";
+      interp.textContent = "Low FCF yield — priced for growth or limited cash generation";
+    } else {
+      interp.style.background = "rgba(239,68,68,0.15)";
+      interp.style.color = "#ef4444";
+      interp.textContent = "Negative or zero FCF — company is not generating free cash";
+    }
+    interp.style.display = "block";
+  }
+
+  /* FCFE Calculator */
+  function calcFCFE() {
+    var fcf = gv("fe-fcf");
+    var borrow = gv("fe-borrow");
+    var repay = gv("fe-repay");
+    var fcfe = fcf + borrow - repay;
+    var netDebt = borrow - repay;
+    var rows = [
+      { label: "Free Cash Flow", value: fmt(fcf) },
+      { label: "Add: Net Borrowing", value: "+" + fmt(borrow) },
+      { label: "Less: Debt Repayment", value: "-" + fmt(repay), color: "neg" },
+      { label: "Net Debt Impact", value: fmt(netDebt), color: netDebt >= 0 ? "pos" : "neg" },
+      { label: "FCFE", value: fmt(fcfe), color: fcfe >= 0 ? "pos" : "neg" }
+    ];
+    showResult("fe-result", rows);
+  }
+
+  /* FAQ Toggle */
+  function toggleFaq(el) {
+    var item = el.parentElement;
+    var isOpen = item.className.indexOf("open") !== -1;
+    if (isOpen) {
+      item.className = "faq-item";
+    } else {
+      item.className = "faq-item open";
+    }
+  }
+
+  /* Charts */
+  document.addEventListener("DOMContentLoaded", function() {
+    /* Waterfall Chart */
+    var wCtx = document.getElementById("waterfallChart");
+    if (wCtx) {
+      var ocf = 12.5;
+      var capex = -3.2;
+      var fcfVal = ocf + capex;
+      var divs = -1.8;
+      var buybacks = -2.5;
+      var remaining = fcfVal + divs + buybacks;
+
+      new Chart(wCtx, {
+        type: "bar",
+        data: {
+          labels: ["Operating\nCash Flow", "CapEx", "Free Cash\nFlow", "Dividends", "Buybacks", "Remaining\nCash"],
+          datasets: [
+            {
+              label: "Invisible Base",
+              data: [0, ocf + capex, 0, fcfVal + divs + buybacks < 0 ? fcfVal + divs : fcfVal, fcfVal + divs, remaining < 0 ? 0 : 0],
+              backgroundColor: "transparent",
+              borderWidth: 0
+            },
+            {
+              label: "Increase",
+              data: [ocf, 0, fcfVal, 0, 0, remaining > 0 ? remaining : 0],
+              backgroundColor: ["#10b981", "transparent", "#10b981", "transparent", "transparent", "#4a8fe7"],
+              borderRadius: 4
+            },
+            {
+              label: "Decrease",
+              data: [0, Math.abs(capex), 0, Math.abs(divs), Math.abs(buybacks), remaining < 0 ? Math.abs(remaining) : 0],
+              backgroundColor: ["transparent", "#ef4444", "transparent", "#f59e0b", "#f59e0b", "#ef4444"],
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  if (ctx.datasetIndex === 0) return "";
+                  return "$" + ctx.raw.toFixed(1) + "B";
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false },
+              ticks: { color: "#8b949e", font: { size: 11 } }
+            },
+            y: {
+              stacked: true,
+              grid: { color: "rgba(48,54,61,0.5)" },
+              ticks: {
+                color: "#8b949e",
+                callback: function(v) { return "$" + v + "B"; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* Sector FCF Yield Chart */
+    var sCtx = document.getElementById("sectorChart");
+    if (sCtx) {
+      var sectors = ["Energy", "Financials", "Healthcare", "Industrials", "Consumer Staples", "Materials", "Utilities", "Communication", "Consumer Disc.", "Real Estate", "Technology"];
+      var yields = [8.2, 6.5, 5.4, 5.0, 4.8, 4.5, 4.2, 3.9, 3.6, 3.2, 3.8];
+      var colors = yields.map(function(y) {
+        if (y >= 6) return "#10b981";
+        if (y >= 4.5) return "#4a8fe7";
+        return "#f59e0b";
+      });
+
+      new Chart(sCtx, {
+        type: "bar",
+        data: {
+          labels: sectors,
+          datasets: [{
+            label: "FCF Yield %",
+            data: yields,
+            backgroundColor: colors,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return ctx.raw.toFixed(1) + "% FCF Yield"; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(48,54,61,0.5)" },
+              ticks: {
+                color: "#8b949e",
+                callback: function(v) { return v + "%"; }
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: "#8b949e", font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
+
+</SiteLayout>
