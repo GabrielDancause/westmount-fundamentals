@@ -1,0 +1,345 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Free Financial Calculators — 73 Tools for Investors",
+  description: "The most comprehensive suite of free financial calculators on the web. 73 interactive tools for valuation, portfolio analysis, retirement planning, dividends, risk assessment, and more.",
+  category: "study",
+  published: "2026-03-20"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How many financial calculators does Westmount Fundamentals offer?", "acceptedAnswer": { "@type": "Answer", "text": "We offer 73 free financial calculators across 10 categories including valuation, portfolio analysis, retirement planning, dividends, options, risk metrics, and more. All tools are completely free with no signup required." } },
+        { "@type": "Question", "name": "Are these financial calculators free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, all 73 calculators are 100% free with no registration, no ads, and no data collection. They run entirely in your browser." } },
+        { "@type": "Question", "name": "What is the most popular financial calculator?", "acceptedAnswer": { "@type": "Answer", "text": "Our Intrinsic Value Calculator is the most comprehensive, pre-loaded with DCF analysis for 168 S&P 500 stocks. The Compound Interest Calculator and Amortization Schedule Calculator are also among the most visited." } },
+        { "@type": "Question", "name": "Can I use these calculators for stock analysis?", "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. Our valuation calculators (DCF, Graham Number, Margin of Safety, EV/EBITDA) are specifically designed for stock analysis. Many come pre-loaded with real S&P 500 data." } },
+        { "@type": "Question", "name": "Do I need to create an account to use the calculators?", "acceptedAnswer": { "@type": "Answer", "text": "No account needed. All calculators work instantly in your browser. Your data stays on your device — we never store or transmit your inputs." } }
+      ]
+    }
+  ]
+};
+
+const faqItems = schema["@graph"][1].mainEntity;
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/calculators/" schema={JSON.stringify(schema)}>
+
+<style is:inline>
+  .hub-hero { text-align:center; padding:3rem 1rem 2rem; background:linear-gradient(135deg,rgba(74,143,231,0.1),rgba(74,143,231,0.02)); border-bottom:1px solid rgba(74,143,231,0.15); }
+  .hub-hero h1 { font-size:2.4rem; margin-bottom:0.5rem; color:#e8eaed; line-height:1.2; }
+  .hub-hero .subtitle { color:#94a3b8; font-size:1.1rem; max-width:700px; margin:0 auto; }
+  .hub-hero .total-badge { display:inline-block; background:rgba(74,143,231,0.15); color:#4a8fe7; padding:6px 16px; border-radius:20px; font-weight:700; font-size:1.3rem; margin-bottom:1rem; }
+  
+  .hub-container { max-width:1200px; margin:0 auto; padding:0 24px 3rem; }
+  
+  .search-bar { position:sticky; top:0; z-index:10; background:#060a12; padding:16px 0; border-bottom:1px solid #30363d; margin-bottom:2rem; }
+  .search-input { width:100%; padding:12px 16px 12px 44px; background:#0d1117; border:1px solid #30363d; border-radius:8px; color:#e8eaed; font-size:1rem; outline:none; }
+  .search-input:focus { border-color:#4a8fe7; }
+  .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:1.1rem; }
+  
+  .nav-pills { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:2rem; }
+  .nav-pill { display:inline-flex; align-items:center; gap:4px; padding:6px 14px; background:#0d1117; border:1px solid #30363d; border-radius:20px; color:#c8d0de; text-decoration:none; font-size:0.85rem; white-space:nowrap; transition:all 0.2s; }
+  .nav-pill:hover { border-color:#4a8fe7; color:#4a8fe7; background:rgba(74,143,231,0.08); }
+  .nav-count { background:rgba(148,163,184,0.15); padding:1px 7px; border-radius:10px; font-size:0.75rem; color:#94a3b8; }
+  
+  .cat-section { margin-bottom:2.5rem; }
+  .cat-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:1rem; padding-bottom:12px; border-bottom:1px solid #30363d; }
+  .cat-icon { font-size:1.8rem; line-height:1; margin-top:2px; }
+  .cat-title { font-size:1.3rem; color:#e8eaed; margin:0 0 4px; }
+  .cat-desc { color:#94a3b8; font-size:0.9rem; margin:0; max-width:600px; }
+  .cat-count { background:rgba(74,143,231,0.12); color:#4a8fe7; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.9rem; margin-left:auto; white-space:nowrap; }
+  
+  .calc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px; }
+  .calc-link { display:block; padding:14px 16px; background:#0d1117; border:1px solid #30363d; border-radius:8px; text-decoration:none; color:#c8d0de; transition:all 0.2s; }
+  .calc-link:hover { border-color:#4a8fe7; background:rgba(74,143,231,0.05); transform:translateY(-1px); }
+  .calc-link-title { font-size:0.95rem; font-weight:500; }
+  
+  .faq-section { max-width:800px; margin:2rem auto 0; }
+  .faq-item { border:1px solid #30363d; border-radius:8px; margin-bottom:8px; overflow:hidden; }
+  .faq-item summary { padding:14px 16px; cursor:pointer; color:#e8eaed; font-weight:500; background:#0d1117; }
+  .faq-item summary:hover { background:rgba(74,143,231,0.05); }
+  .faq-item p { padding:0 16px 14px; color:#94a3b8; margin:0; line-height:1.6; }
+  
+  @media (max-width:768px) {
+    .hub-hero h1 { font-size:1.6rem; }
+    .calc-grid { grid-template-columns:1fr 1fr; }
+    .cat-header { flex-wrap:wrap; }
+  }
+  @media (max-width:480px) {
+    .calc-grid { grid-template-columns:1fr; }
+  }
+</style>
+
+<div class="hub-hero">
+  <div class="total-badge">73 Free Tools</div>
+  <h1>Financial Calculators</h1>
+  <p class="subtitle">The most comprehensive suite of free financial calculators on the web. No signup. No ads. Every tool runs in your browser.</p>
+</div>
+
+<div class="hub-container">
+  <div class="search-bar" style="position:relative">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="calcSearch" placeholder="Search calculators... (e.g. DCF, dividend, retirement)">
+  </div>
+  
+  <div class="nav-pills">
+      <a href="#valuation-intrinsic-value" class="nav-pill">💎 Valuation & Intrinsic Value <span class="nav-count">8</span></a>
+      <a href="#income-profitability" class="nav-pill">💰 Income & Profitability <span class="nav-count">11</span></a>
+      <a href="#investing-portfolio" class="nav-pill">📊 Investing & Portfolio <span class="nav-count">15</span></a>
+      <a href="#debt-loans" class="nav-pill">🏦 Debt & Loans <span class="nav-count">9</span></a>
+      <a href="#retirement-savings" class="nav-pill">🏖️ Retirement & Savings <span class="nav-count">6</span></a>
+      <a href="#options-trading" class="nav-pill">📈 Options & Trading <span class="nav-count">3</span></a>
+      <a href="#dividends" class="nav-pill">💵 Dividends <span class="nav-count">7</span></a>
+      <a href="#risk-ratios" class="nav-pill">⚖️ Risk & Ratios <span class="nav-count">7</span></a>
+      <a href="#tax-fees" class="nav-pill">🧾 Tax & Fees <span class="nav-count">4</span></a>
+      <a href="#other" class="nav-pill">🔧 Other <span class="nav-count">3</span></a>
+  </div>
+  
+
+        <div class="cat-section" id="valuation-intrinsic-value">
+          <div class="cat-header">
+            <span class="cat-icon">💎</span>
+            <div>
+              <h2 class="cat-title">Valuation & Intrinsic Value</h2>
+              <p class="cat-desc">Calculate what stocks are really worth using DCF, Graham Number, book value, enterprise value, and margin of safety models.</p>
+            </div>
+            <span class="cat-count">8</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/book-value-per-share-calculator/" class="calc-link"><span class="calc-link-title">Book Value Per Share Calculator</span></a>
+            <a href="/enterprise-value-calculator/" class="calc-link"><span class="calc-link-title">Enterprise Value Calculator</span></a>
+            <a href="/future-value-calculator/" class="calc-link"><span class="calc-link-title">Future Value Calculator</span></a>
+            <a href="/intrinsic-value-calculator/" class="calc-link"><span class="calc-link-title">Intrinsic Value Calculator: Free DCF & Graham</span></a>
+            <a href="/margin-of-safety-calculator/" class="calc-link"><span class="calc-link-title">Margin of Safety Calculator</span></a>
+            <a href="/option-intrinsic-value-calculator/" class="calc-link"><span class="calc-link-title">Option Intrinsic Value Calculator: Free Call &</span></a>
+            <a href="/present-value-calculator/" class="calc-link"><span class="calc-link-title">Present Value Calculator</span></a>
+            <a href="/wacc-calculator/" class="calc-link"><span class="calc-link-title">WACC Calculator</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="income-profitability">
+          <div class="cat-header">
+            <span class="cat-icon">💰</span>
+            <div>
+              <h2 class="cat-title">Income & Profitability</h2>
+              <p class="cat-desc">Analyze earnings, revenue, EBITDA, free cash flow, ROI, and ROE to evaluate company profitability.</p>
+            </div>
+            <span class="cat-count">11</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/cagr-calculator/" class="calc-link"><span class="calc-link-title">Compound Annual Growth Rate (CAGR) Calculator</span></a>
+            <a href="/earnings-per-share-calculator/" class="calc-link"><span class="calc-link-title">Earnings Per Share Calculator</span></a>
+            <a href="/ebitda-calculator/" class="calc-link"><span class="calc-link-title">EBITDA Calculator</span></a>
+            <a href="/free-cash-flow-calculator/" class="calc-link"><span class="calc-link-title">Free Cash Flow Calculator</span></a>
+            <a href="/net-income-calculator/" class="calc-link"><span class="calc-link-title">Net Income Calculator</span></a>
+            <a href="/options-profit-calculator/" class="calc-link"><span class="calc-link-title">Options Profit Calculator</span></a>
+            <a href="/return-on-equity-calculator/" class="calc-link"><span class="calc-link-title">Return on Equity (ROE) Calculator</span></a>
+            <a href="/revenue-growth-calculator/" class="calc-link"><span class="calc-link-title">Revenue Growth Calculator</span></a>
+            <a href="/roi-calculator/" class="calc-link"><span class="calc-link-title">Return on Investment (ROI) Calculator</span></a>
+            <a href="/stock-profit-calculator/" class="calc-link"><span class="calc-link-title">Stock Profit Calculator</span></a>
+            <a href="/yoy-growth-calculator/" class="calc-link"><span class="calc-link-title">YoY Growth Calculator</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="investing-portfolio">
+          <div class="cat-header">
+            <span class="cat-icon">📊</span>
+            <div>
+              <h2 class="cat-title">Investing & Portfolio</h2>
+              <p class="cat-desc">Plan investments with compound interest, dollar-cost averaging, asset allocation, and portfolio analysis tools.</p>
+            </div>
+            <span class="cat-count">15</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/asset-allocation-calculator/" class="calc-link"><span class="calc-link-title">Asset Allocation Calculator by Age</span></a>
+            <a href="/compound-interest-calculator/" class="calc-link"><span class="calc-link-title">Compound Interest Calculator</span></a>
+            <a href="/dave-ramsey-investment-calculator/" class="calc-link"><span class="calc-link-title">Dave Ramsey Investment Calculator</span></a>
+            <a href="/dividend-reinvestment-calculator/" class="calc-link"><span class="calc-link-title">Dividend Reinvestment Calculator: Visualize the</span></a>
+            <a href="/dollar-cost-averaging-calculator/" class="calc-link"><span class="calc-link-title">Dollar Cost Averaging Calculator</span></a>
+            <a href="/index-fund-calculator/" class="calc-link"><span class="calc-link-title">Index Fund Calculator: See Your True Investment</span></a>
+            <a href="/investment-calculator/" class="calc-link"><span class="calc-link-title">Investment Calculator: See How Your Money Grows</span></a>
+            <a href="/mutual-fund-calculator/" class="calc-link"><span class="calc-link-title">Mutual Fund Calculator: Project Your Investment</span></a>
+            <a href="/portfolio-allocation-calculator/" class="calc-link"><span class="calc-link-title">Portfolio Allocation Calculator</span></a>
+            <a href="/portfolio-risk-calculator/" class="calc-link"><span class="calc-link-title">Advanced Portfolio Risk Calculator</span></a>
+            <a href="/position-size-calculator/" class="calc-link"><span class="calc-link-title">Position Size Calculator: Manage Your Trading Risk</span></a>
+            <a href="/ramsey-investment-calculator/" class="calc-link"><span class="calc-link-title">Dave Ramsey Investment Calculator: Will 12%</span></a>
+            <a href="/sp500-investment-calculator/" class="calc-link"><span class="calc-link-title">S&P 500 Investment Calculator</span></a>
+            <a href="/stock-calculator/" class="calc-link"><span class="calc-link-title">Stock Calculator: Project Your Investment Growth</span></a>
+            <a href="/stock-return-calculator/" class="calc-link"><span class="calc-link-title">Stock Return Calculator: True Annualized Profit</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="debt-loans">
+          <div class="cat-header">
+            <span class="cat-icon">🏦</span>
+            <div>
+              <h2 class="cat-title">Debt & Loans</h2>
+              <p class="cat-desc">Calculate loan payments, amortization schedules, debt payoff timelines, and margin requirements.</p>
+            </div>
+            <span class="cat-count">9</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/amortization-schedule-calculator/" class="calc-link"><span class="calc-link-title">Amortization Schedule Calculator</span></a>
+            <a href="/debt-payoff-calculator/" class="calc-link"><span class="calc-link-title">Debt Payoff Calculator: See Exactly When You</span></a>
+            <a href="/debt-to-income-ratio-calculator/" class="calc-link"><span class="calc-link-title">Debt-to-Income Ratio Calculator</span></a>
+            <a href="/home-equity-calculator/" class="calc-link"><span class="calc-link-title">Home Equity Calculator</span></a>
+            <a href="/interest-calculator/" class="calc-link"><span class="calc-link-title">Interest Calculator</span></a>
+            <a href="/loan-calculator/" class="calc-link"><span class="calc-link-title">Simple Loan Calculator</span></a>
+            <a href="/margin-calculator-stocks/" class="calc-link"><span class="calc-link-title">Margin Calculator: Stock Borrowing & Maintenance</span></a>
+            <a href="/margin-calculator/" class="calc-link"><span class="calc-link-title">Margin & Leverage Calculator</span></a>
+            <a href="/simple-interest-calculator/" class="calc-link"><span class="calc-link-title">Simple Interest Calculator</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="retirement-savings">
+          <div class="cat-header">
+            <span class="cat-icon">🏖️</span>
+            <div>
+              <h2 class="cat-title">Retirement & Savings</h2>
+              <p class="cat-desc">Plan for retirement with FIRE calculators, withdrawal strategies, net worth tracking, and savings projectors.</p>
+            </div>
+            <span class="cat-count">6</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/fire-retirement-calculator/" class="calc-link"><span class="calc-link-title">FIRE Retirement Calculator</span></a>
+            <a href="/net-worth-calculator/" class="calc-link"><span class="calc-link-title">Free Net Worth Calculator (Instant Results)</span></a>
+            <a href="/retirement-calculator/" class="calc-link"><span class="calc-link-title">Retirement Calculator: Plan Your Financial Future</span></a>
+            <a href="/retirement-withdrawal-calculator/" class="calc-link"><span class="calc-link-title">Retirement Withdrawal Calculator: 4% Rule & Beyond</span></a>
+            <a href="/rrsp-contribution-calculator/" class="calc-link"><span class="calc-link-title">RRSP Contribution Calculator</span></a>
+            <a href="/savings-calculator/" class="calc-link"><span class="calc-link-title">Savings Calculator: Model Compound Interest &</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="options-trading">
+          <div class="cat-header">
+            <span class="cat-icon">📈</span>
+            <div>
+              <h2 class="cat-title">Options & Trading</h2>
+              <p class="cat-desc">Price options, calculate profit/loss scenarios, and understand stock splits.</p>
+            </div>
+            <span class="cat-count">3</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/options-calculator/" class="calc-link"><span class="calc-link-title">Options Calculator</span></a>
+            <a href="/stock-options-calculator/" class="calc-link"><span class="calc-link-title">Stock Options Calculator: Uncover Your Real</span></a>
+            <a href="/stock-split-calculator/" class="calc-link"><span class="calc-link-title">Stock Split Calculator & Guide: How Forward and</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="dividends">
+          <div class="cat-header">
+            <span class="cat-icon">💵</span>
+            <div>
+              <h2 class="cat-title">Dividends</h2>
+              <p class="cat-desc">Project dividend income, model DRIP reinvestment, and analyze dividend yields across ETFs and stocks.</p>
+            </div>
+            <span class="cat-count">7</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/dividend-calculator/" class="calc-link"><span class="calc-link-title">Dividend Calculator: Project Your Income and</span></a>
+            <a href="/dividend-yield-calculator/" class="calc-link"><span class="calc-link-title">Dividend Yield Calculator</span></a>
+            <a href="/drip-calculator/" class="calc-link"><span class="calc-link-title">DRIP Calculator: Dividend Reinvestment Plan</span></a>
+            <a href="/msty-dividend-calculator/" class="calc-link"><span class="calc-link-title">MSTY Dividend Calculator</span></a>
+            <a href="/qqqi-dividend-calculator/" class="calc-link"><span class="calc-link-title">QQQI Dividend Income Calculator & Yield Projector</span></a>
+            <a href="/schd-dividend-calculator/" class="calc-link"><span class="calc-link-title">SCHD Dividend Calculator & Yield Analysis</span></a>
+            <a href="/ulty-dividend-calculator/" class="calc-link"><span class="calc-link-title">ULTY Dividend Calculator & Income Projection</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="risk-ratios">
+          <div class="cat-header">
+            <span class="cat-icon">⚖️</span>
+            <div>
+              <h2 class="cat-title">Risk & Ratios</h2>
+              <p class="cat-desc">Measure risk-adjusted returns with Sharpe ratio, beta, P/E ratio, and inflation-adjusted calculators.</p>
+            </div>
+            <span class="cat-count">7</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/beta-calculator/" class="calc-link"><span class="calc-link-title">Beta Calculator</span></a>
+            <a href="/depreciation-calculator/" class="calc-link"><span class="calc-link-title">Depreciation Calculator</span></a>
+            <a href="/inflation-calculator/" class="calc-link"><span class="calc-link-title">US Inflation Calculator (1913-2024)</span></a>
+            <a href="/inflation-rate-calculator/" class="calc-link"><span class="calc-link-title">Inflation Rate Calculator</span></a>
+            <a href="/price-to-earnings-calculator/" class="calc-link"><span class="calc-link-title">P/E Ratio Calculator</span></a>
+            <a href="/real-return-calculator/" class="calc-link"><span class="calc-link-title">Real Return Calculator: Inflation-Adjusted Returns</span></a>
+            <a href="/sharpe-ratio-calculator/" class="calc-link"><span class="calc-link-title">Sharpe Ratio Calculator</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="tax-fees">
+          <div class="cat-header">
+            <span class="cat-icon">🧾</span>
+            <div>
+              <h2 class="cat-title">Tax & Fees</h2>
+              <p class="cat-desc">Estimate capital gains tax, track cost basis, model tax-loss harvesting, and compare brokerage fees.</p>
+            </div>
+            <span class="cat-count">4</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/brokerage-fee-calculator/" class="calc-link"><span class="calc-link-title">Canadian Brokerage Fee Calculator (2026)</span></a>
+            <a href="/capital-gains-tax-calculator/" class="calc-link"><span class="calc-link-title">Free Capital Gains Tax Calculator & Estimator</span></a>
+            <a href="/cost-basis-calculator/" class="calc-link"><span class="calc-link-title">Cost Basis Calculator: Track Stock & Crypto</span></a>
+            <a href="/tax-loss-harvesting-calculator/" class="calc-link"><span class="calc-link-title">Tax-Loss Harvesting Calculator</span></a>
+          </div>
+        </div>
+        <div class="cat-section" id="other">
+          <div class="cat-header">
+            <span class="cat-icon">🔧</span>
+            <div>
+              <h2 class="cat-title">Other</h2>
+              <p class="cat-desc">Additional financial tools including bond calculators, annuity projectors, and the Rule of 72.</p>
+            </div>
+            <span class="cat-count">3</span>
+          </div>
+          <div class="calc-grid">
+            <a href="/annuity-calculator/" class="calc-link"><span class="calc-link-title">Annuity Payout Calculator</span></a>
+            <a href="/bond-calculator/" class="calc-link"><span class="calc-link-title">Free Bond Calculator</span></a>
+            <a href="/rule-of-72-calculator/" class="calc-link"><span class="calc-link-title">Rule of 72 Calculator: How Fast Will Your Money</span></a>
+          </div>
+        </div>
+
+  <div class="faq-section">
+    <h2 style="color:#e8eaed;margin-bottom:1rem">Frequently Asked Questions</h2>
+    {faqItems.map((faq: any) => (
+      <details class="faq-item">
+        <summary>{faq.name}</summary>
+        <p>{faq.acceptedAnswer.text}</p>
+      </details>
+    ))}
+  </div>
+</div>
+
+<script is:inline>
+  var searchInput = document.getElementById('calcSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      var query = this.value.toLowerCase();
+      var links = document.querySelectorAll('.calc-link');
+      var sections = document.querySelectorAll('.cat-section');
+      
+      for (var i = 0; i < links.length; i++) {
+        var title = links[i].textContent.toLowerCase();
+        links[i].style.display = title.indexOf(query) !== -1 ? '' : 'none';
+      }
+      
+      for (var j = 0; j < sections.length; j++) {
+        var visible = sections[j].querySelectorAll('.calc-link[style=""],.calc-link:not([style])');
+        var hasVisible = false;
+        var sectionLinks = sections[j].querySelectorAll('.calc-link');
+        for (var k = 0; k < sectionLinks.length; k++) {
+          if (sectionLinks[k].style.display !== 'none') {
+            hasVisible = true;
+            break;
+          }
+        }
+        sections[j].style.display = hasVisible ? '' : 'none';
+      }
+    });
+  }
+</script>
+
+</SiteLayout>
