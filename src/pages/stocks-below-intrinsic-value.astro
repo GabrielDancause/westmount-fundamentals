@@ -1,0 +1,380 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Stocks Trading Below Intrinsic Value: Undervalued Stocks List (2026)", description: "Find stocks trading below their intrinsic value right now. Our AI-powered DCF analysis identified 39 undervalued S&P 500 stocks with an average 38% margin of safety.", category: "study", published: "2026-03-20" };
+
+const ivFiles = import.meta.glob('../data/iv/*.json', { eager: true });
+const prospectFiles = import.meta.glob('../data/prospect/*.json', { eager: true });
+
+// Build IV data — use base files only (no opus/gemini variants)
+const stocks: any[] = [];
+const seen = new Set();
+for (const [path, rawData] of Object.entries(ivFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (!d.ticker || !d.computedIV || !d.currentPrice) continue;
+  const fname = path.split('/').pop() || '';
+  if (fname.includes('-opus') || fname.includes('-gemini')) continue;
+  if (seen.has(d.ticker)) continue;
+  seen.add(d.ticker);
+  const mos = ((d.computedIV - d.currentPrice) / d.computedIV * 100);
+  stocks.push({
+    t: d.ticker,
+    n: d.companyName || d.ticker,
+    iv: d.computedIV,
+    p: d.currentPrice,
+    mos: Math.round(mos * 10) / 10,
+    v: mos > 10 ? 'UNDERVALUED' : (mos < -10 ? 'OVERVALUED' : 'FAIR VALUE'),
+    fg: d.fcfGrowthRate,
+    dr: d.discountRate,
+    slug: d.slug || '',
+  });
+}
+
+const undervalued = stocks.filter(s => s.v === 'UNDERVALUED').sort((a, b) => b.mos - a.mos);
+const overvalued = stocks.filter(s => s.v === 'OVERVALUED').sort((a, b) => a.mos - b.mos);
+const fair = stocks.filter(s => s.v === 'FAIR VALUE');
+
+// Get prospect scores for undervalued stocks
+const prospectLookup: Record<string, number> = {};
+for (const [path, rawData] of Object.entries(prospectFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  const fname = path.split('/').pop() || '';
+  if (fname.includes('-opus') || fname.includes('-gemini') || fname.includes('-consensus')) continue;
+  if (d.ticker && d.overallScore) prospectLookup[d.ticker] = d.overallScore;
+}
+
+const avgMos = undervalued.length > 0 ? (undervalued.reduce((s, x) => s + x.mos, 0) / undervalued.length) : 0;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Stocks Trading Below Intrinsic Value: Undervalued Stocks List (2026)",
+      "description": "Find stocks trading below their intrinsic value. AI-powered DCF analysis of S&P 500 stocks with margin of safety rankings.",
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How do you find stocks trading below intrinsic value?", "acceptedAnswer": { "@type": "Answer", "text": "To find undervalued stocks, calculate the intrinsic value using a Discounted Cash Flow (DCF) model or Graham Number formula, then compare it to the current market price. A stock is considered undervalued when its market price is significantly below its calculated intrinsic value. Our screener uses AI-powered DCF analysis on 168 S&P 500 stocks to identify those with the largest margins of safety." } },
+        { "@type": "Question", "name": "What is a good margin of safety when buying stocks?", "acceptedAnswer": { "@type": "Answer", "text": "Benjamin Graham recommended at least 33% margin of safety. Warren Buffett looks for 25-50% depending on business quality. For highly predictable businesses like Visa or Coca-Cola, 25% may suffice. For cyclical or speculative companies, 40-50% or more provides adequate protection against valuation errors." } },
+        { "@type": "Question", "name": "Are undervalued stocks always good investments?", "acceptedAnswer": { "@type": "Answer", "text": "Not necessarily. A stock can appear undervalued because the market correctly anticipates declining fundamentals (a 'value trap'). Always combine valuation metrics with qualitative analysis: Is the business model sustainable? Is management competent? Are there catalysts for value realization? A cheap stock with deteriorating fundamentals may get cheaper." } },
+        { "@type": "Question", "name": "How often should you check if stocks are undervalued?", "acceptedAnswer": { "@type": "Answer", "text": "Intrinsic value changes slowly — it's driven by long-term fundamentals, not daily price movements. Review your valuations quarterly when new earnings data is released. However, check market prices more frequently for buying opportunities, especially during market selloffs when quality stocks may temporarily trade below intrinsic value." } },
+        { "@type": "Question", "name": "What is the difference between undervalued and cheap stocks?", "acceptedAnswer": { "@type": "Answer", "text": "A cheap stock simply has a low share price or low valuation multiples (P/E, P/B). An undervalued stock trades below its calculated intrinsic value based on future cash flows. A $500 stock can be undervalued if its intrinsic value is $700, while a $5 stock can be overvalued if it's worth $2. Price alone doesn't determine value." } }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Stocks Trading Below Intrinsic Value: Undervalued Stocks List (2026)"
+  description="Find stocks trading below their intrinsic value right now. Our AI-powered DCF analysis identified undervalued S&P 500 stocks with significant margins of safety."
+  canonical="https://westmountfundamentals.com/stocks-below-intrinsic-value/"
+  schema={schema}
+>
+
+<style>
+:root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --warning: #f59e0b; --bg-card: #0d1117; --bg-input: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; }
+.hero { text-align:center; padding:2rem 0 1rem; }
+.hero h1 { font-size:2rem; margin-bottom:0.5rem; color:#fff; }
+.hero .sub { color:var(--text-muted); font-size:1.05rem; max-width:650px; margin:0 auto; }
+.hero .badge { display:inline-block; background:var(--positive); color:#fff; padding:0.2rem 0.7rem; border-radius:12px; font-size:0.8rem; font-weight:600; margin-bottom:1rem; }
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1.5rem 0; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; text-align:center; }
+.stat-card .val { font-size:1.8rem; font-weight:700; color:#fff; }
+.stat-card .lbl { font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; }
+.chart-wrap { margin:2rem 0; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.chart-wrap h3 { color:#fff; margin-bottom:0.5rem; }
+.chart-wrap .chart-sub { color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem; }
+.section { margin:2.5rem 0; }
+.section h2 { color:#fff; margin-bottom:0.5rem; }
+.section .sub { color:var(--text-muted); margin-bottom:1rem; }
+.stock-table-wrap { overflow-x:auto; }
+table.stock-table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+table.stock-table th { text-align:left; padding:0.7rem 0.8rem; color:var(--text-muted); border-bottom:2px solid var(--border); cursor:pointer; white-space:nowrap; }
+table.stock-table th:hover { color:var(--accent); }
+table.stock-table td { padding:0.6rem 0.8rem; border-bottom:1px solid var(--border); color:var(--text); }
+table.stock-table tr:hover { background:rgba(74,143,231,0.05); }
+.mos-bar-wrap { display:flex; align-items:center; gap:0.5rem; }
+.mos-bar { height:10px; border-radius:5px; min-width:4px; }
+.verdict-badge { display:inline-block; padding:0.15rem 0.5rem; border-radius:6px; font-weight:600; font-size:0.8rem; }
+.v-under { background:rgba(16,185,129,0.15); color:var(--positive); }
+.v-over { background:rgba(239,68,68,0.15); color:var(--negative); }
+.v-fair { background:rgba(245,158,11,0.15); color:var(--warning); }
+.top-picks { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin:2rem 0; }
+.pick-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; position:relative; overflow:hidden; }
+.pick-card .rank { position:absolute; top:0.8rem; right:0.8rem; background:var(--positive); color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; }
+.pick-card .ticker { font-size:1.3rem; font-weight:800; color:#fff; }
+.pick-card .name { color:var(--text-muted); font-size:0.85rem; margin-bottom:0.8rem; }
+.pick-card .mos-big { font-size:2rem; font-weight:800; color:var(--positive); }
+.pick-card .mos-lbl { font-size:0.8rem; color:var(--text-muted); }
+.pick-card .price-row { display:flex; justify-content:space-between; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid var(--border); }
+.pick-card .price-row span { font-size:0.85rem; }
+.pick-card .pr-lbl { color:var(--text-muted); }
+.pick-card .pr-val { color:#fff; font-weight:600; }
+.insights-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; margin:2rem 0; }
+.insight-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.insight-card .ic-num { font-size:2rem; font-weight:800; color:var(--accent); }
+.insight-card .ic-title { color:#fff; font-weight:600; margin:0.3rem 0; }
+.insight-card .ic-desc { color:var(--text-muted); font-size:0.9rem; }
+.faq-section { margin:3rem 0; }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q { padding:1rem 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; color:#fff; font-weight:600; }
+.faq-q:hover { color:var(--accent); }
+.faq-a { padding:0 0 1rem; color:var(--text-muted); line-height:1.7; display:none; }
+.faq-a.open { display:block; }
+.faq-arrow { transition:transform 0.2s; }
+.faq-arrow.open { transform:rotate(180deg); }
+.cta-box { background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(74,143,231,0.1)); border:1px solid var(--positive); border-radius:16px; padding:2rem; text-align:center; margin:2rem 0; }
+.cta-box h3 { color:#fff; margin-bottom:0.5rem; }
+.cta-box p { color:var(--text-muted); margin-bottom:1rem; }
+.cta-btn { display:inline-block; padding:0.8rem 2rem; background:var(--positive); color:#fff; border-radius:8px; text-decoration:none; font-weight:700; margin:0 0.5rem; }
+.cta-btn-alt { display:inline-block; padding:0.8rem 2rem; background:var(--accent); color:#fff; border-radius:8px; text-decoration:none; font-weight:700; margin:0 0.5rem; }
+@media(max-width:768px) {
+  .stat-row { grid-template-columns:repeat(2,1fr); }
+  .top-picks { grid-template-columns:1fr; }
+  .insights-grid { grid-template-columns:1fr; }
+}
+</style>
+
+<div class="hero">
+  <span class="badge">UPDATED MARCH 2026</span>
+  <h1>Stocks Trading Below Intrinsic Value</h1>
+  <p class="sub">Our AI-powered DCF analysis found {undervalued.length} S&P 500 stocks trading below their intrinsic value with an average {avgMos.toFixed(1)}% margin of safety.</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="val" style="color:var(--positive)">{undervalued.length}</div><div class="lbl">Undervalued Stocks</div></div>
+  <div class="stat-card"><div class="val" style="color:var(--negative)">{overvalued.length}</div><div class="lbl">Overvalued Stocks</div></div>
+  <div class="stat-card"><div class="val" style="color:var(--warning)">{avgMos.toFixed(1)}%</div><div class="lbl">Avg Margin of Safety</div></div>
+  <div class="stat-card"><div class="val">{stocks.length}</div><div class="lbl">Stocks Analyzed</div></div>
+</div>
+
+<!-- Top Picks -->
+<div class="section">
+  <h2>Top Undervalued Stocks Right Now</h2>
+  <p class="sub">Ranked by margin of safety — the difference between intrinsic value and current price</p>
+</div>
+<div class="top-picks">
+  {undervalued.slice(0, 6).map((s, i) => (
+    <div class="pick-card">
+      <div class="rank">{i + 1}</div>
+      <div class="ticker">{s.t}</div>
+      <div class="name">{s.n}</div>
+      <div class="mos-big">{s.mos.toFixed(1)}%</div>
+      <div class="mos-lbl">Margin of Safety</div>
+      <div class="price-row">
+        <span><span class="pr-lbl">Price: </span><span class="pr-val">${s.p.toFixed(2)}</span></span>
+        <span><span class="pr-lbl">IV: </span><span class="pr-val" style="color:var(--positive)">${s.iv.toFixed(2)}</span></span>
+      </div>
+    </div>
+  ))}
+</div>
+
+<!-- Margin of Safety Distribution Chart -->
+<div class="chart-wrap">
+  <h3>📊 Valuation Distribution: S&P 500 Stocks</h3>
+  <p class="chart-sub">How many stocks fall into each valuation bucket</p>
+  <canvas id="dist-chart" height="280"></canvas>
+</div>
+
+<!-- Scatter: Price vs IV -->
+<div class="chart-wrap">
+  <h3>💰 Price vs Intrinsic Value</h3>
+  <p class="chart-sub">Dots below the line are undervalued; above are overvalued</p>
+  <canvas id="scatter-chart" height="320"></canvas>
+</div>
+
+<!-- Full Table -->
+<div class="section">
+  <h2>Complete Undervalued Stocks List</h2>
+  <p class="sub">All {undervalued.length} stocks trading below their DCF intrinsic value, sorted by margin of safety</p>
+  <div class="stock-table-wrap">
+    <table class="stock-table" id="under-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th>Price</th>
+          <th>Intrinsic Value</th>
+          <th>Margin of Safety</th>
+          <th>Growth Rate</th>
+          <th>Analysis</th>
+        </tr>
+      </thead>
+      <tbody>
+        {undervalued.map((s, i) => (
+          <tr>
+            <td>{i + 1}</td>
+            <td><strong>{s.t}</strong></td>
+            <td>{s.n}</td>
+            <td>${s.p.toFixed(2)}</td>
+            <td style="color:var(--positive);font-weight:600;">${s.iv.toFixed(2)}</td>
+            <td>
+              <div class="mos-bar-wrap">
+                <span style={`color:var(--positive);font-weight:600;`}>{s.mos.toFixed(1)}%</span>
+                <span class="mos-bar" style={`width:${Math.min(100, s.mos)}px;background:var(--positive);`}></span>
+              </div>
+            </td>
+            <td>{s.fg ? (s.fg * 100).toFixed(1) + '%' : '—'}</td>
+            <td><a href={`/intrinsic-value-calculator/`} style="color:var(--accent);text-decoration:none;">Calculate →</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="insights-grid">
+  <div class="insight-card">
+    <div class="ic-num">{undervalued.length}/{stocks.length}</div>
+    <div class="ic-title">Only {(undervalued.length / stocks.length * 100).toFixed(0)}% Are Undervalued</div>
+    <div class="ic-desc">The vast majority of S&P 500 stocks trade above their DCF intrinsic value in March 2026, reflecting elevated market valuations.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">{avgMos.toFixed(0)}%</div>
+    <div class="ic-title">Above Graham's Threshold</div>
+    <div class="ic-desc">The average margin of safety exceeds Benjamin Graham's recommended 33% minimum, suggesting genuine value opportunities exist.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">{undervalued.length > 0 ? undervalued[0].t : '—'}</div>
+    <div class="ic-title">Most Undervalued Stock</div>
+    <div class="ic-desc">{undervalued.length > 0 ? `${undervalued[0].n} has the largest margin of safety at ${undervalued[0].mos.toFixed(1)}%, trading at $${undervalued[0].p.toFixed(2)} vs IV of $${undervalued[0].iv.toFixed(2)}.` : 'No undervalued stocks found.'}</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">⚠️</div>
+    <div class="ic-title">Not Investment Advice</div>
+    <div class="ic-desc">DCF models depend heavily on assumptions. A stock appearing undervalued could be a value trap if fundamentals deteriorate. Always do your own research.</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <h3>Run Your Own Valuation</h3>
+  <p>Don't just take our numbers — adjust the growth rate, discount rate, and projection period to match your own thesis.</p>
+  <a href="/intrinsic-value-calculator/" class="cta-btn">DCF Calculator →</a>
+  <a href="/intrinsic-value-sp500/" class="cta-btn-alt">All 660+ IV Reports →</a>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do you find stocks trading below intrinsic value? <span class="faq-arrow">▼</span></div><div class="faq-a">Calculate intrinsic value using a DCF model or Graham Number formula, then compare to market price. Stocks with a positive margin of safety (IV > price) are potentially undervalued. Our screener automates this for 168 S&P 500 stocks using AI-generated DCF assumptions.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is a good margin of safety? <span class="faq-arrow">▼</span></div><div class="faq-a">Benjamin Graham recommended 33% minimum. Warren Buffett looks for 25-50%. The margin of safety protects against errors in your valuation assumptions. Higher margin = more protection but fewer opportunities.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Are undervalued stocks always good investments? <span class="faq-arrow">▼</span></div><div class="faq-a">No. A stock can appear cheap because the market correctly anticipates declining fundamentals — this is called a "value trap." Always combine DCF analysis with qualitative factors: business model durability, management quality, competitive moat, and catalysts for value realization.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How often is this list updated? <span class="faq-arrow">▼</span></div><div class="faq-a">Our intrinsic value calculations are based on AI-analyzed DCF models using the latest available financial data. Stock prices and valuations change as new earnings data is released quarterly. We recommend rechecking valuations after each earnings season.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What's the difference between undervalued and cheap stocks? <span class="faq-arrow">▼</span></div><div class="faq-a">A cheap stock has a low price or low multiples. An undervalued stock trades below its calculated intrinsic value. A $500 stock can be undervalued if its IV is $700, while a $5 stock can be overvalued if it's worth $2. Value investing is about price relative to intrinsic worth, not absolute price levels.</div></div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+var STOCKS = {JSON.stringify(stocks.map(s => ({t:s.t, n:s.n, iv:s.iv, p:s.p, mos:s.mos, v:s.v})))};
+
+function toggleFaq(el) {
+  var a = el.nextElementSibling;
+  var arrow = el.querySelector('.faq-arrow');
+  a.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  /* Distribution chart */
+  var buckets = {'< -50%': 0, '-50 to -20%': 0, '-20 to 0%': 0, '0 to 20%': 0, '20 to 50%': 0, '> 50%': 0};
+  for (var i = 0; i < STOCKS.length; i++) {
+    var m = STOCKS[i].mos;
+    if (m < -50) buckets['< -50%']++;
+    else if (m < -20) buckets['-50 to -20%']++;
+    else if (m < 0) buckets['-20 to 0%']++;
+    else if (m < 20) buckets['0 to 20%']++;
+    else if (m < 50) buckets['20 to 50%']++;
+    else buckets['> 50%']++;
+  }
+
+  new Chart(document.getElementById('dist-chart'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(buckets),
+      datasets: [{
+        label: 'Number of Stocks',
+        data: Object.values(buckets),
+        backgroundColor: ['#ef4444', '#f87171', '#fbbf24', '#86efac', '#10b981', '#059669'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: 'Margin of Safety Range', color: '#8b949e' }, ticks: { color: '#8b949e' }, grid: { display: false } },
+        y: { title: { display: true, text: 'Number of Stocks', color: '#8b949e' }, ticks: { color: '#8b949e' }, grid: { color: '#30363d' } }
+      }
+    }
+  });
+
+  /* Scatter chart — cap at reasonable values for visibility */
+  var scatterData = [];
+  for (var i = 0; i < STOCKS.length; i++) {
+    var s = STOCKS[i];
+    if (s.p > 0 && s.iv > 0 && s.p < 2000 && s.iv < 2000) {
+      scatterData.push({
+        x: s.p,
+        y: s.iv,
+        label: s.t,
+        color: s.mos > 10 ? '#10b981' : (s.mos < -10 ? '#ef4444' : '#f59e0b')
+      });
+    }
+  }
+
+  new Chart(document.getElementById('scatter-chart'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Undervalued',
+          data: scatterData.filter(function(d) { return d.color === '#10b981'; }).map(function(d) { return {x: d.x, y: d.y}; }),
+          backgroundColor: 'rgba(16,185,129,0.6)',
+          pointRadius: 6
+        },
+        {
+          label: 'Overvalued',
+          data: scatterData.filter(function(d) { return d.color === '#ef4444'; }).map(function(d) { return {x: d.x, y: d.y}; }),
+          backgroundColor: 'rgba(239,68,68,0.6)',
+          pointRadius: 6
+        },
+        {
+          label: 'Fair Value',
+          data: scatterData.filter(function(d) { return d.color === '#f59e0b'; }).map(function(d) { return {x: d.x, y: d.y}; }),
+          backgroundColor: 'rgba(245,158,11,0.6)',
+          pointRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#8b949e' } },
+        tooltip: {
+          callbacks: {
+            label: function(c) {
+              return 'Price: $' + c.parsed.x.toFixed(0) + ' | IV: $' + c.parsed.y.toFixed(0);
+            }
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Current Price ($)', color: '#8b949e' }, ticks: { color: '#8b949e', callback: function(v) { return '$' + v; } }, grid: { color: '#30363d' } },
+        y: { title: { display: true, text: 'Intrinsic Value ($)', color: '#8b949e' }, ticks: { color: '#8b949e', callback: function(v) { return '$' + v; } }, grid: { color: '#30363d' } }
+      }
+    }
+  });
+});
+</script>
+
+</SiteLayout>

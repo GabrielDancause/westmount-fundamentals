@@ -1,0 +1,427 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Option Intrinsic Value Calculator: Free Call & Put Calculator (2026)", description: "Calculate the intrinsic value and time value of any call or put option instantly. Free option value calculator with breakeven analysis and profit/loss chart.", category: "study", published: "2026-03-20" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Option Intrinsic Value Calculator: Free Call & Put Calculator",
+      "description": "Calculate the intrinsic value and time value of any call or put option instantly. Free option value calculator with breakeven analysis and profit/loss chart.",
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How do you calculate the intrinsic value of an option?", "acceptedAnswer": { "@type": "Answer", "text": "For a call option: Intrinsic Value = Current Stock Price - Strike Price (if positive, otherwise zero). For a put option: Intrinsic Value = Strike Price - Current Stock Price (if positive, otherwise zero). An option with intrinsic value is said to be 'in the money.' The remaining portion of the option's premium above intrinsic value is called time value." } },
+        { "@type": "Question", "name": "What is the difference between intrinsic value and time value of an option?", "acceptedAnswer": { "@type": "Answer", "text": "Intrinsic value is the amount an option is in-the-money — the immediate exercise value. Time value is the premium above intrinsic value that reflects the probability the option could become more valuable before expiration. Time value decreases as expiration approaches (theta decay). An out-of-the-money option has zero intrinsic value — its entire premium is time value." } },
+        { "@type": "Question", "name": "Can an option have negative intrinsic value?", "acceptedAnswer": { "@type": "Answer", "text": "No. Intrinsic value is always zero or positive. When a call option's strike price is above the stock price (or a put's strike is below), the intrinsic value is zero — the option is out-of-the-money. You would never exercise an option at a loss when you can simply let it expire." } },
+        { "@type": "Question", "name": "What option strategy is most profitable?", "acceptedAnswer": { "@type": "Answer", "text": "There is no single 'most profitable' strategy — it depends on your market outlook. For bullish views, long calls or bull call spreads offer leveraged upside. For income, covered calls and cash-secured puts are popular. Selling options (like iron condors) profits from time decay but has defined risk. The key is matching strategy to your conviction level and risk tolerance." } },
+        { "@type": "Question", "name": "How to calculate the breakeven price of an option?", "acceptedAnswer": { "@type": "Answer", "text": "For a long call: Breakeven = Strike Price + Premium Paid. For a long put: Breakeven = Strike Price - Premium Paid. For a covered call: Breakeven = Stock Purchase Price - Premium Received. The stock must reach the breakeven price at expiration for the trade to be profitable." } }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Option Intrinsic Value Calculator: Free Call & Put Calculator (2026)"
+  description="Calculate the intrinsic value and time value of any call or put option instantly. Free option value calculator with breakeven analysis and profit/loss chart."
+  canonical="https://westmountfundamentals.com/option-intrinsic-value-calculator/"
+  schema={schema}
+>
+
+<style>
+:root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --warning: #f59e0b; --bg-card: #0d1117; --bg-input: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; }
+.hero { text-align:center; padding:2rem 0 1rem; }
+.hero h1 { font-size:2rem; margin-bottom:0.5rem; color:#fff; }
+.hero .sub { color:var(--text-muted); font-size:1.05rem; max-width:600px; margin:0 auto; }
+.hero .badge { display:inline-block; background:var(--accent); color:#fff; padding:0.2rem 0.7rem; border-radius:12px; font-size:0.8rem; font-weight:600; margin-bottom:1rem; }
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1.5rem 0; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; text-align:center; }
+.stat-card .val { font-size:1.8rem; font-weight:700; color:#fff; }
+.stat-card .lbl { font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; }
+.calc-container { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem; margin:2rem 0; }
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+.input-section h3 { color:#fff; margin-bottom:1rem; }
+.input-group { margin-bottom:1rem; }
+.input-group label { display:block; color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem; }
+.input-group input, .input-group select { width:100%; padding:0.7rem; background:var(--bg-input); border:1px solid var(--border); border-radius:8px; color:#fff; font-size:1rem; }
+.input-group input:focus, .input-group select:focus { outline:none; border-color:var(--accent); }
+.input-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.input-hint { font-size:0.75rem; color:var(--text-muted); margin-top:0.2rem; }
+.btn-calc { width:100%; padding:0.9rem; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; margin-top:0.5rem; }
+.btn-calc:hover { background:#3a7fd7; }
+.type-toggle { display:flex; gap:0; margin-bottom:1.5rem; border-radius:8px; overflow:hidden; border:1px solid var(--border); }
+.type-btn { flex:1; padding:0.7rem; text-align:center; cursor:pointer; font-weight:700; font-size:1rem; transition:all 0.2s; background:var(--bg-input); color:var(--text-muted); }
+.type-btn.active-call { background:var(--positive); color:#fff; }
+.type-btn.active-put { background:var(--negative); color:#fff; }
+.result-panel { background:var(--bg-input); border-radius:12px; padding:1.5rem; min-height:320px; display:flex; flex-direction:column; justify-content:center; }
+.result-verdict { text-align:center; padding:1rem 0; }
+.result-verdict .iv-value { font-size:2.8rem; font-weight:800; color:#fff; }
+.result-verdict .iv-label { color:var(--text-muted); font-size:0.9rem; }
+.result-row { display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border); }
+.result-row:last-child { border-bottom:none; }
+.result-row .rl { color:var(--text-muted); font-size:0.9rem; }
+.result-row .rv { color:#fff; font-weight:600; font-size:0.9rem; }
+.moneyness-bar { height:24px; border-radius:12px; background:var(--bg-card); border:1px solid var(--border); position:relative; margin:1rem 0; overflow:hidden; }
+.moneyness-fill { height:100%; border-radius:12px; transition:width 0.5s; }
+.moneyness-labels { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); }
+.value-breakdown { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin:1rem 0; }
+.vb-box { text-align:center; padding:0.8rem; border-radius:8px; }
+.vb-box .vb-val { font-size:1.5rem; font-weight:700; }
+.vb-box .vb-lbl { font-size:0.75rem; color:var(--text-muted); margin-top:0.2rem; }
+.chart-wrap { margin:2rem 0; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.chart-wrap h3 { color:#fff; margin-bottom:1rem; }
+.examples-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin:2rem 0; }
+.example-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; cursor:pointer; transition:border-color 0.2s; }
+.example-card:hover { border-color:var(--accent); }
+.example-card .ec-title { color:#fff; font-weight:600; margin-bottom:0.3rem; }
+.example-card .ec-detail { color:var(--text-muted); font-size:0.85rem; }
+.how-section { margin:3rem 0; }
+.how-section h2 { color:#fff; }
+.concept-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin:1.5rem 0; }
+.concept-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.concept-card h4 { color:#fff; margin:0.5rem 0; }
+.concept-card .emoji { font-size:2rem; }
+.concept-card p { color:var(--text-muted); font-size:0.9rem; margin:0; line-height:1.6; }
+.formula-box { background:var(--bg-input); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin:1.5rem 0; text-align:center; }
+.formula-box .formula { font-size:1.1rem; color:var(--accent); font-weight:600; font-family:monospace; }
+.formula-box .formula-label { color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem; }
+.faq-section { margin:3rem 0; }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q { padding:1rem 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; color:#fff; font-weight:600; }
+.faq-q:hover { color:var(--accent); }
+.faq-a { padding:0 0 1rem; color:var(--text-muted); line-height:1.7; display:none; }
+.faq-a.open { display:block; }
+.faq-arrow { transition:transform 0.2s; }
+.faq-arrow.open { transform:rotate(180deg); }
+.cta-box { background:linear-gradient(135deg, rgba(74,143,231,0.15), rgba(16,185,129,0.1)); border:1px solid var(--accent); border-radius:16px; padding:2rem; text-align:center; margin:2rem 0; }
+.cta-box h3 { color:#fff; margin-bottom:0.5rem; }
+.cta-box p { color:var(--text-muted); margin-bottom:1rem; }
+.cta-btn { display:inline-block; padding:0.8rem 2rem; background:var(--accent); color:#fff; border-radius:8px; text-decoration:none; font-weight:700; }
+@media(max-width:768px) {
+  .stat-row { grid-template-columns:repeat(2,1fr); }
+  .calc-grid { grid-template-columns:1fr; }
+  .examples-grid { grid-template-columns:1fr; }
+  .concept-grid { grid-template-columns:1fr; }
+  .input-row { grid-template-columns:1fr; }
+}
+</style>
+
+<div class="hero">
+  <span class="badge">FREE TOOL · NO SIGNUP</span>
+  <h1>Option Intrinsic Value Calculator</h1>
+  <p class="sub">Calculate the intrinsic value, time value, and breakeven of any call or put option. See instant profit/loss charts.</p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="val" style="color:var(--positive)" id="s-iv">—</div><div class="lbl">Intrinsic Value</div></div>
+  <div class="stat-card"><div class="val" style="color:var(--warning)" id="s-tv">—</div><div class="lbl">Time Value</div></div>
+  <div class="stat-card"><div class="val" id="s-be">—</div><div class="lbl">Breakeven Price</div></div>
+  <div class="stat-card"><div class="val" id="s-moneyness">—</div><div class="lbl">Moneyness</div></div>
+</div>
+
+<div class="calc-container">
+  <div class="type-toggle">
+    <div class="type-btn active-call" id="btn-call" onclick="setType('call')">📈 CALL Option</div>
+    <div class="type-btn" id="btn-put" onclick="setType('put')">📉 PUT Option</div>
+  </div>
+  <div class="calc-grid">
+    <div class="input-section">
+      <h3>Option Details</h3>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Current Stock Price ($)</label>
+          <input type="number" id="opt-stock" placeholder="e.g. 150.00" step="0.01" value="185">
+          <div class="input-hint">Current market price of the underlying</div>
+        </div>
+        <div class="input-group">
+          <label>Strike Price ($)</label>
+          <input type="number" id="opt-strike" placeholder="e.g. 160.00" step="0.01" value="170">
+          <div class="input-hint">Exercise price of the option</div>
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Option Premium ($)</label>
+          <input type="number" id="opt-premium" placeholder="e.g. 8.50" step="0.01" value="22">
+          <div class="input-hint">Current price of the option contract</div>
+        </div>
+        <div class="input-group">
+          <label>Number of Contracts</label>
+          <input type="number" id="opt-contracts" placeholder="1" step="1" value="1">
+          <div class="input-hint">Each contract = 100 shares</div>
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Days to Expiration</label>
+          <input type="number" id="opt-dte" placeholder="e.g. 30" step="1" value="45">
+        </div>
+        <div class="input-group">
+          <label>Expected Move (%)</label>
+          <input type="number" id="opt-move" placeholder="e.g. 5" step="0.1" value="0">
+          <div class="input-hint">Optional: expected price change</div>
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calculateOption()">Calculate Option Value →</button>
+    </div>
+    <div class="result-panel" id="opt-result">
+      <div style="text-align:center;color:var(--text-muted);">
+        <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
+        <div>Enter option details to calculate</div>
+        <div style="font-size:0.85rem;margin-top:0.5rem;">Intrinsic value, time value, breakeven & P/L</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- P/L Chart -->
+<div class="chart-wrap" id="pl-chart-wrap" style="display:none;">
+  <h3>📈 Profit/Loss at Expiration</h3>
+  <canvas id="pl-chart" height="280"></canvas>
+</div>
+
+<!-- Quick Examples -->
+<h2 style="color:#fff;margin-top:2rem;">Quick Examples</h2>
+<div class="examples-grid">
+  <div class="example-card" onclick="loadExample('itm-call')">
+    <div class="ec-title">🟢 In-the-Money Call</div>
+    <div class="ec-detail">NVDA $170 Call @ $22 · Stock at $185 · 45 DTE</div>
+  </div>
+  <div class="example-card" onclick="loadExample('otm-put')">
+    <div class="ec-title">🔴 Out-of-Money Put</div>
+    <div class="ec-detail">AAPL $220 Put @ $5.50 · Stock at $252 · 30 DTE</div>
+  </div>
+  <div class="example-card" onclick="loadExample('atm-call')">
+    <div class="ec-title">🟡 At-the-Money Call</div>
+    <div class="ec-detail">MSFT $395 Call @ $12 · Stock at $395 · 21 DTE</div>
+  </div>
+</div>
+
+<!-- Concepts -->
+<div class="how-section">
+  <h2>Understanding Option Intrinsic Value</h2>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="emoji">💰</div>
+      <h4>Intrinsic Value</h4>
+      <p>The real, tangible value of an option if exercised right now. A $170 call on a $185 stock has $15 of intrinsic value. Out-of-the-money options have zero intrinsic value.</p>
+    </div>
+    <div class="concept-card">
+      <div class="emoji">⏳</div>
+      <h4>Time Value</h4>
+      <p>The premium above intrinsic value. Reflects the probability of the option gaining value before expiration. Decays exponentially as expiration approaches (theta decay).</p>
+    </div>
+    <div class="concept-card">
+      <div class="emoji">⚖️</div>
+      <h4>Moneyness</h4>
+      <p>In-the-Money (ITM): has intrinsic value. At-the-Money (ATM): strike ≈ stock price. Out-of-the-Money (OTM): no intrinsic value, only time value.</p>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="formula">Call IV = max(0, Stock Price − Strike Price)</div>
+    <div class="formula-label">Call option intrinsic value formula</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">Put IV = max(0, Strike Price − Stock Price)</div>
+    <div class="formula-label">Put option intrinsic value formula</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula">Time Value = Option Premium − Intrinsic Value</div>
+    <div class="formula-label">Time value is always ≥ 0 and decays toward zero at expiration</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <h3>Looking for Stock Intrinsic Value?</h3>
+  <p>Use our DCF and Graham Number calculators to find the fair value of any stock. Pre-loaded with 168 S&P 500 companies.</p>
+  <a href="/intrinsic-value-calculator/" class="cta-btn">Stock Intrinsic Value Calculator →</a>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How do you calculate the intrinsic value of an option? <span class="faq-arrow">▼</span></div><div class="faq-a">For a call option: Intrinsic Value = Current Stock Price - Strike Price (if positive, otherwise zero). For a put option: Intrinsic Value = Strike Price - Current Stock Price (if positive, otherwise zero). An option with intrinsic value is said to be "in the money."</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the difference between intrinsic value and time value? <span class="faq-arrow">▼</span></div><div class="faq-a">Intrinsic value is the amount an option is in-the-money. Time value is the premium above intrinsic value that reflects the probability the option could become more valuable before expiration. Time value decreases as expiration approaches. An out-of-the-money option has zero intrinsic value — its entire premium is time value.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can an option have negative intrinsic value? <span class="faq-arrow">▼</span></div><div class="faq-a">No. Intrinsic value is always zero or positive. When an option is out-of-the-money, its intrinsic value is zero. You would never exercise at a loss when you can let it expire worthless.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How to calculate the breakeven price of an option? <span class="faq-arrow">▼</span></div><div class="faq-a">For a long call: Breakeven = Strike Price + Premium Paid. For a long put: Breakeven = Strike Price - Premium Paid. The stock must reach the breakeven price at expiration for the trade to be profitable.</div></div>
+  <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What happens to intrinsic value at expiration? <span class="faq-arrow">▼</span></div><div class="faq-a">At expiration, time value is zero. The option is worth exactly its intrinsic value. If it's in-the-money, it will be exercised (or auto-exercised by your broker). If it's out-of-the-money, it expires worthless.</div></div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+var optionType = 'call';
+var plChart = null;
+
+function setType(type) {
+  optionType = type;
+  var btnCall = document.getElementById('btn-call');
+  var btnPut = document.getElementById('btn-put');
+  btnCall.className = 'type-btn' + (type === 'call' ? ' active-call' : '');
+  btnPut.className = 'type-btn' + (type === 'put' ? ' active-put' : '');
+  calculateOption();
+}
+
+function loadExample(ex) {
+  if (ex === 'itm-call') { setFields(185, 170, 22, 1, 45, 0); setType('call'); }
+  if (ex === 'otm-put') { setFields(252, 220, 5.5, 1, 30, 0); setType('put'); }
+  if (ex === 'atm-call') { setFields(395, 395, 12, 1, 21, 0); setType('call'); }
+  calculateOption();
+}
+
+function setFields(stock, strike, premium, contracts, dte, move) {
+  document.getElementById('opt-stock').value = stock;
+  document.getElementById('opt-strike').value = strike;
+  document.getElementById('opt-premium').value = premium;
+  document.getElementById('opt-contracts').value = contracts;
+  document.getElementById('opt-dte').value = dte;
+  document.getElementById('opt-move').value = move;
+}
+
+function calculateOption() {
+  var stock = parseFloat(document.getElementById('opt-stock').value);
+  var strike = parseFloat(document.getElementById('opt-strike').value);
+  var premium = parseFloat(document.getElementById('opt-premium').value);
+  var contracts = parseInt(document.getElementById('opt-contracts').value) || 1;
+  var dte = parseInt(document.getElementById('opt-dte').value) || 0;
+  var move = parseFloat(document.getElementById('opt-move').value) || 0;
+
+  if (!stock || !strike || !premium) return;
+
+  var iv, timeVal, breakeven, moneyness, moneyLabel;
+  if (optionType === 'call') {
+    iv = Math.max(0, stock - strike);
+    breakeven = strike + premium;
+    moneyness = ((stock - strike) / strike) * 100;
+  } else {
+    iv = Math.max(0, strike - stock);
+    breakeven = strike - premium;
+    moneyness = ((strike - stock) / strike) * 100;
+  }
+  timeVal = Math.max(0, premium - iv);
+
+  if (moneyness > 2) moneyLabel = 'IN THE MONEY';
+  else if (moneyness < -2) moneyLabel = 'OUT OF MONEY';
+  else moneyLabel = 'AT THE MONEY';
+
+  var moneyColor = moneyness > 2 ? 'var(--positive)' : (moneyness < -2 ? 'var(--negative)' : 'var(--warning)');
+
+  /* Stat cards */
+  document.getElementById('s-iv').textContent = '$' + iv.toFixed(2);
+  document.getElementById('s-iv').style.color = iv > 0 ? 'var(--positive)' : 'var(--text-muted)';
+  document.getElementById('s-tv').textContent = '$' + timeVal.toFixed(2);
+  document.getElementById('s-be').textContent = '$' + breakeven.toFixed(2);
+  document.getElementById('s-moneyness').textContent = moneyLabel;
+  document.getElementById('s-moneyness').style.color = moneyColor;
+
+  /* Total investment */
+  var totalCost = premium * contracts * 100;
+  var maxLoss = totalCost;
+  var ivPercent = premium > 0 ? (iv / premium * 100) : 0;
+  var tvPercent = premium > 0 ? (timeVal / premium * 100) : 0;
+
+  var html = '<div class="result-verdict">';
+  html += '<div class="iv-label">Option Premium Breakdown</div>';
+  html += '<div class="value-breakdown">';
+  html += '<div class="vb-box" style="background:rgba(16,185,129,0.1);border:1px solid var(--positive);border-radius:8px;"><div class="vb-val" style="color:var(--positive);">$' + iv.toFixed(2) + '</div><div class="vb-lbl">Intrinsic Value (' + ivPercent.toFixed(0) + '%)</div></div>';
+  html += '<div class="vb-box" style="background:rgba(245,158,11,0.1);border:1px solid var(--warning);border-radius:8px;"><div class="vb-val" style="color:var(--warning);">$' + timeVal.toFixed(2) + '</div><div class="vb-lbl">Time Value (' + tvPercent.toFixed(0) + '%)</div></div>';
+  html += '</div>';
+  html += '</div>';
+
+  /* Moneyness bar */
+  var barWidth = Math.min(100, Math.max(5, 50 + moneyness * 2));
+  var barColor = moneyness > 2 ? 'var(--positive)' : (moneyness < -2 ? 'var(--negative)' : 'var(--warning)');
+  html += '<div class="moneyness-bar"><div class="moneyness-fill" style="width:' + barWidth + '%;background:' + barColor + '"></div></div>';
+  html += '<div class="moneyness-labels"><span>Deep OTM</span><span>ATM</span><span>Deep ITM</span></div>';
+
+  html += '<div style="margin-top:1rem;">';
+  html += '<div class="result-row"><span class="rl">Moneyness</span><span class="rv" style="color:' + moneyColor + '">' + moneyLabel + ' (' + moneyness.toFixed(1) + '%)</span></div>';
+  html += '<div class="result-row"><span class="rl">Breakeven at Expiry</span><span class="rv">$' + breakeven.toFixed(2) + '</span></div>';
+  html += '<div class="result-row"><span class="rl">Total Investment</span><span class="rv">$' + totalCost.toLocaleString() + '</span></div>';
+  html += '<div class="result-row"><span class="rl">Max Loss</span><span class="rv" style="color:var(--negative);">-$' + maxLoss.toLocaleString() + '</span></div>';
+  html += '<div class="result-row"><span class="rl">Days to Expiry</span><span class="rv">' + dte + ' days</span></div>';
+  html += '</div>';
+
+  document.getElementById('opt-result').innerHTML = html;
+
+  /* P/L chart */
+  renderPLChart(stock, strike, premium, contracts, optionType);
+}
+
+function renderPLChart(stock, strike, premium, contracts, type) {
+  var wrap = document.getElementById('pl-chart-wrap');
+  wrap.style.display = 'block';
+  var ctx = document.getElementById('pl-chart').getContext('2d');
+  if (plChart) plChart.destroy();
+
+  var range = stock * 0.3;
+  var low = Math.max(0, stock - range);
+  var high = stock + range;
+  var step = (high - low) / 60;
+  var labels = [];
+  var plData = [];
+
+  for (var p = low; p <= high; p += step) {
+    labels.push(p.toFixed(0));
+    var payout;
+    if (type === 'call') payout = Math.max(0, p - strike) - premium;
+    else payout = Math.max(0, strike - p) - premium;
+    plData.push(payout * contracts * 100);
+  }
+
+  plChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Profit/Loss ($)',
+        data: plData,
+        borderColor: '#4a8fe7',
+        backgroundColor: function(context) {
+          var chart = context.chart;
+          var gradient = chart.ctx.createLinearGradient(0, 0, 0, chart.height);
+          gradient.addColorStop(0, 'rgba(16,185,129,0.3)');
+          gradient.addColorStop(0.5, 'rgba(74,143,231,0.05)');
+          gradient.addColorStop(1, 'rgba(239,68,68,0.3)');
+          return gradient;
+        },
+        fill: true,
+        borderWidth: 2.5,
+        pointRadius: 0,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(c) { return 'P/L: $' + c.parsed.y.toLocaleString(); } } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Stock Price at Expiration ($)', color: '#8b949e' }, ticks: { color: '#8b949e', maxTicksLimit: 10 }, grid: { color: '#30363d' } },
+        y: { title: { display: true, text: 'Profit / Loss ($)', color: '#8b949e' }, ticks: { color: '#8b949e', callback: function(v) { return '$' + v.toLocaleString(); } }, grid: { color: '#30363d' } }
+      }
+    }
+  });
+}
+
+function toggleFaq(el) {
+  var a = el.nextElementSibling;
+  var arrow = el.querySelector('.faq-arrow');
+  a.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+document.addEventListener('DOMContentLoaded', function() { calculateOption(); });
+</script>
+
+</SiteLayout>
