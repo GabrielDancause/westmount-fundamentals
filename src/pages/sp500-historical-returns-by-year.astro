@@ -3,18 +3,76 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 import registry from "../data/pages-registry.json";
 
 const page = (registry as any)["sp500-historical-returns-by-year"];
-export const meta = { title: "S&P 500 Annual Returns by Year (1928-2026)", description: "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.", category: "guide", published: "2026-03-15" };
+export const meta = { title: "S&P 500 Annual Returns by Year (1928-2026)", description: "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "S&P 500 Annual Returns by Year (1928-2026)",
-  "description": "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.",
-  "datePublished": "2024-03-01T08:00:00+00:00",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Westmount Research"
-  }
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "S&P 500 Annual Returns by Year (1928-2026)",
+      "description": "Complete S&P 500 returns by year (1928-2026). Analyze historical stock market performance, inflation-adjusted returns, and decade averages.",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Research"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Research",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/favicon.svg"
+        }
+      },
+      "datePublished": "2024-03-01T08:00:00+00:00",
+      "dateModified": "2026-03-20"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the average S&P 500 return per year?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The historical average annual return of the S&P 500 is approximately 10% before inflation, and around 7% when adjusted for inflation, assuming dividends are reinvested."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What was the worst year for the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The worst year for the S&P 500 was 1931, when the market fell 43.34% during the Great Depression. In recent history, 2008 was the worst year with a decline of 38.49%."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often does the S&P 500 have a negative year?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Historically, the S&P 500 has a negative annual return roughly once every four years, meaning it is positive about 73% of the time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does the S&P 500 return include dividends?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The standard quoted S&P 500 price return does not include dividends. However, the S&P 500 Total Return index, which is often cited for long-term performance, includes the reinvestment of all dividends."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the inflation-adjusted return of the S&P 500?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The inflation-adjusted (or real) return of the S&P 500 is the total return minus the inflation rate. Over the long term, the real return of the S&P 500 has averaged around 6.5% to 7% annualized."
+          }
+        }
+      ]
+    }
+  ]
 };
 
 ---
@@ -29,7 +87,6 @@ const schema = {
 :root {
       --green: #10b981;
       --red: #ef4444;
-
 }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -100,11 +157,90 @@ const schema = {
 
     footer { text-align: center; padding: 3rem 1.5rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.875rem; margin-top: 3rem; }
 
+    /* Growth Calculator */
+    .calculator-section {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(96, 165, 250, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+    .calculator-inputs {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .calc-field { display: flex; flex-direction: column; gap: 0.375rem; }
+    .calc-field label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .calc-field select, .calc-field input[type="number"] {
+      background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-primary);
+      padding: 0.625rem 1rem; border-radius: 0.5rem; font-family: 'Inter', sans-serif; font-size: 1rem;
+      min-width: 120px;
+    }
+    .calc-field select:focus, .calc-field input[type="number"]:focus { outline: none; border-color: var(--green); }
+    .calc-btn {
+      background: var(--green); color: #fff; border: none; padding: 0.625rem 1.5rem;
+      border-radius: 0.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .calc-btn:hover { background: #059669; }
+    .calc-result { display: none; }
+    .calc-result.visible { display: block; }
+    .calc-big-number {
+      font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      color: var(--green); line-height: 1.1; margin-bottom: 0.5rem;
+    }
+    .calc-subtitle { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 1.5rem; }
+    .calc-stats-row { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .calc-stat { }
+    .calc-stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .calc-stat-value { font-size: 1.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text-primary); }
+
+    /* Chart toggle */
+    .chart-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .chart-toggle button {
+      background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted);
+      padding: 0.5rem 1.25rem; border-radius: 0.375rem; cursor: pointer; font-weight: 600;
+      font-size: 0.875rem; transition: all 0.2s;
+    }
+    .chart-toggle button.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .chart-toggle button:hover:not(.active) { color: var(--text-primary); border-color: var(--text-muted); }
+
+    /* Decade cards */
+    .decade-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .decade-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem;
+      padding: 1.25rem; position: relative; overflow: hidden;
+    }
+    .decade-card.positive { border-left: 3px solid var(--green); }
+    .decade-card.negative { border-left: 3px solid var(--red); }
+    .decade-name { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.75rem; }
+    .decade-stat { display: flex; justify-content: space-between; padding: 0.25rem 0; font-size: 0.875rem; }
+    .decade-stat-label { color: var(--text-muted); }
+    .decade-stat-value { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+    /* Insight cards */
+    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .insight-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem;
+      padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .insight-icon { font-size: 1.75rem; flex-shrink: 0; line-height: 1; }
+    .insight-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+    .insight-highlight { color: var(--green); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
     @media (max-width: 768px) {
       .nav-links { display: none; }
       h1 { font-size: 2rem; }
       .stats-grid { grid-template-columns: 1fr; }
       .chart-container { height: 350px; }
+      .calc-big-number { font-size: 2rem; }
+      .calculator-inputs { flex-direction: column; align-items: stretch; }
+      .calc-stats-row { flex-direction: column; gap: 1rem; }
+      .decade-grid { grid-template-columns: 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
     }
   </style>
 
@@ -116,6 +252,7 @@ const schema = {
     <h1>{page.h1}</h1>
     <p class="subtitle">Comprehensive historical performance data including total returns, price returns, and inflation adjustments since 1928.</p>
 
+    <!-- 1. Stats Grid (existing) -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Avg Annual Return</div>
@@ -139,10 +276,71 @@ const schema = {
       </div>
     </div>
 
+    <!-- 2. Growth of $10,000 Calculator (NEW) -->
+    <div class="calculator-section">
+      <h2>📈 Growth of $10,000 Calculator</h2>
+      <p style="margin-bottom:1.25rem">See how a $10,000 investment in the S&P 500 would have grown over any historical period.</p>
+      <div class="calculator-inputs">
+        <div class="calc-field">
+          <label for="calcStart">Start Year</label>
+          <select id="calcStart"></select>
+        </div>
+        <div class="calc-field">
+          <label for="calcEnd">End Year</label>
+          <select id="calcEnd"></select>
+        </div>
+        <button class="calc-btn" id="calcBtn">Calculate</button>
+      </div>
+      <div class="calc-result" id="calcResult">
+        <div class="calc-big-number" id="calcValue">--</div>
+        <div class="calc-subtitle" id="calcDesc">$10,000 invested in ... would be worth ...</div>
+        <div class="calc-stats-row">
+          <div class="calc-stat">
+            <div class="calc-stat-label">Total Return</div>
+            <div class="calc-stat-value" id="calcTotalReturn">--</div>
+          </div>
+          <div class="calc-stat">
+            <div class="calc-stat-label">CAGR</div>
+            <div class="calc-stat-value" id="calcCAGR">--</div>
+          </div>
+          <div class="calc-stat">
+            <div class="calc-stat-label">Years</div>
+            <div class="calc-stat-value" id="calcYears">--</div>
+          </div>
+          <div class="calc-stat">
+            <div class="calc-stat-label">Real Value (Inflation-Adj.)</div>
+            <div class="calc-stat-value" id="calcRealValue">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Bar Chart with Nominal/Real Toggle (upgraded) -->
+    <div class="chart-toggle" id="barChartToggle">
+      <button class="active" data-mode="nominal">Nominal Returns</button>
+      <button data-mode="real">Real (Inflation-Adjusted)</button>
+    </div>
     <div class="chart-container">
       <canvas id="returnsChart"></canvas>
     </div>
 
+    <!-- 4. Cumulative Growth Chart (NEW) -->
+    <h2>Growth of $10,000 Since 1928</h2>
+    <div style="display:flex;gap:0.5rem;margin:0.75rem 0 1rem">
+      <button class="chart-toggle-btn" id="logScaleBtn" style="background:var(--card-bg);border:1px solid var(--border-color);color:var(--text-muted);padding:0.4rem 1rem;border-radius:0.375rem;cursor:pointer;font-size:0.8rem;font-weight:600">Toggle Log Scale</button>
+    </div>
+    <div class="chart-container" style="height:450px">
+      <canvas id="growthChart"></canvas>
+    </div>
+
+    <!-- 5. Rolling 10-Year Returns Chart (NEW) -->
+    <h2>Rolling 10-Year Annualized Returns</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1rem">Shows the annualized return for every 10-year period ending in the given year. Even across the worst stretches, long-term investing has historically delivered positive returns.</p>
+    <div class="chart-container" style="height:420px">
+      <canvas id="rollingChart"></canvas>
+    </div>
+
+    <!-- 6. Table (existing) -->
     <div class="table-controls">
       <h2>Complete Year-by-Year History</h2>
       <input type="text" id="searchInput" placeholder="Filter by decade (e.g., 1990)...">
@@ -165,6 +363,24 @@ const schema = {
       </table>
     </div>
 
+    <!-- 7. Decade Performance Cards (NEW) -->
+    <div class="content-section">
+      <h2>Decade-by-Decade Performance</h2>
+      <p>How each decade stacked up — from the Great Depression to the post-COVID era.</p>
+      <div class="decade-grid" id="decadeGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- 8. Key Insights (NEW) -->
+    <div class="content-section">
+      <h2>Key Insights from 98 Years of Data</h2>
+      <div class="insights-grid" id="insightsGrid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- 9. Methodology (existing) -->
     <div class="content-section">
       <h2>Methodology & Data Sources</h2>
       <p>This historical dataset compiles S&P 500 performance metrics from multiple authoritative sources to provide a complete picture of market returns since 1928. The data represents calendar year performance (January 1 to December 31).</p>
@@ -180,6 +396,7 @@ const schema = {
       <p>The <strong>Real Return</strong> is calculated using the exact formula: <code>((1 + Total Return) / (1 + Inflation)) - 1</code>, rather than simply subtracting inflation from the total return, to ensure mathematical accuracy over time.</p>
     </div>
 
+    <!-- 10. FAQ (existing) -->
     <div class="content-section">
       <h2>Frequently Asked Questions</h2>
       <div class="faq-item">
@@ -203,9 +420,8 @@ const schema = {
         <div class="faq-a">The inflation-adjusted (or real) return of the S&P 500 is the total return minus the inflation rate. Over the long term, the real return of the S&P 500 has averaged around 6.5% to 7% annualized.</div>
       </div>
     </div>
-  
-  
-  
+
+  <!-- 11. Embed + Citation (existing) -->
   <section class="embed-section" style="max-width:800px;margin:40px auto;padding:0 24px">
     <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
       <h3 style="font-size:16px;color:var(--text-bright,#fff);margin-bottom:8px">📎 Embed This Data</h3>
@@ -233,6 +449,7 @@ const schema = {
     </div>
   </section>
 
+  <!-- 12. Related Pages (existing) -->
   <section style="max-width:800px;margin:40px auto;padding:0 24px">
     <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
@@ -246,7 +463,7 @@ const schema = {
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script is:inline>
 window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "realReturn": -4.3}, {"year": 2025, "totalReturn": 17.88, "inflation": 2.9, "realReturn": 14.56}, {"year": 2024, "totalReturn": 25.02, "inflation": 2.9, "realReturn": 21.5}, {"year": 2023, "totalReturn": 26.29, "inflation": 4.1, "realReturn": 21.32}, {"year": 2022, "totalReturn": -18.11, "inflation": 8.0, "realReturn": -24.18}, {"year": 2021, "totalReturn": 28.71, "inflation": 4.7, "realReturn": 22.93}, {"year": 2020, "totalReturn": 18.4, "inflation": 1.2, "realReturn": 17.0}, {"year": 2019, "totalReturn": 31.49, "inflation": 1.8, "realReturn": 29.17}, {"year": 2018, "totalReturn": -4.38, "inflation": 2.4, "realReturn": -6.62}, {"year": 2017, "totalReturn": 21.83, "inflation": 2.1, "realReturn": 19.32}, {"year": 2016, "totalReturn": 11.96, "inflation": 1.3, "realReturn": 10.52}, {"year": 2015, "totalReturn": 1.38, "inflation": 0.1, "realReturn": 1.28}, {"year": 2014, "totalReturn": 13.69, "inflation": 1.6, "realReturn": 11.9}, {"year": 2013, "totalReturn": 32.39, "inflation": 1.5, "realReturn": 30.43}, {"year": 2012, "totalReturn": 16.0, "inflation": 2.1, "realReturn": 13.61}, {"year": 2011, "totalReturn": 2.11, "inflation": 3.2, "realReturn": -1.06}, {"year": 2010, "totalReturn": 15.06, "inflation": 1.6, "realReturn": 13.25}, {"year": 2009, "totalReturn": 26.46, "inflation": -0.4, "realReturn": 26.97}, {"year": 2008, "totalReturn": -37.0, "inflation": 3.8, "realReturn": -39.31}, {"year": 2007, "totalReturn": 5.49, "inflation": 2.8, "realReturn": 2.62}, {"year": 2006, "totalReturn": 15.79, "inflation": 3.2, "realReturn": 12.2}, {"year": 2005, "totalReturn": 4.91, "inflation": 3.4, "realReturn": 1.46}, {"year": 2004, "totalReturn": 10.88, "inflation": 2.7, "realReturn": 7.96}, {"year": 2003, "totalReturn": 28.68, "inflation": 2.3, "realReturn": 25.79}, {"year": 2002, "totalReturn": -22.1, "inflation": 1.6, "realReturn": -23.33}, {"year": 2001, "totalReturn": -11.89, "inflation": 2.8, "realReturn": -14.29}, {"year": 2000, "totalReturn": -9.1, "inflation": 3.4, "realReturn": -12.09}, {"year": 1999, "totalReturn": 21.04, "inflation": 2.2, "realReturn": 18.43}, {"year": 1998, "totalReturn": 28.58, "inflation": 1.6, "realReturn": 26.56}, {"year": 1997, "totalReturn": 33.36, "inflation": 2.3, "realReturn": 30.36}, {"year": 1996, "totalReturn": 22.96, "inflation": 3.0, "realReturn": 19.38}, {"year": 1995, "totalReturn": 37.58, "inflation": 2.8, "realReturn": 33.83}, {"year": 1994, "totalReturn": 1.32, "inflation": 2.6, "realReturn": -1.25}, {"year": 1993, "totalReturn": 10.08, "inflation": 3.0, "realReturn": 6.87}, {"year": 1992, "totalReturn": 7.62, "inflation": 3.0, "realReturn": 4.49}, {"year": 1991, "totalReturn": 30.47, "inflation": 4.2, "realReturn": 25.21}, {"year": 1990, "totalReturn": -3.1, "inflation": 5.4, "realReturn": -8.06}, {"year": 1989, "totalReturn": 31.69, "inflation": 4.8, "realReturn": 25.66}, {"year": 1988, "totalReturn": 16.61, "inflation": 4.1, "realReturn": 12.02}, {"year": 1987, "totalReturn": 5.25, "inflation": 3.6, "realReturn": 1.59}, {"year": 1986, "totalReturn": 18.67, "inflation": 1.9, "realReturn": 16.46}, {"year": 1985, "totalReturn": 31.73, "inflation": 3.6, "realReturn": 27.15}, {"year": 1984, "totalReturn": 6.27, "inflation": 4.3, "realReturn": 1.89}, {"year": 1983, "totalReturn": 22.56, "inflation": 3.2, "realReturn": 18.76}, {"year": 1982, "totalReturn": 21.55, "inflation": 6.2, "realReturn": 14.45}, {"year": 1981, "totalReturn": -4.91, "inflation": 10.3, "realReturn": -13.79}, {"year": 1980, "totalReturn": 32.42, "inflation": 13.5, "realReturn": 16.67}, {"year": 1979, "totalReturn": 18.44, "inflation": 11.3, "realReturn": 6.42}, {"year": 1978, "totalReturn": 6.56, "inflation": 7.6, "realReturn": -0.97}, {"year": 1977, "totalReturn": -7.18, "inflation": 6.5, "realReturn": -12.85}, {"year": 1976, "totalReturn": 23.84, "inflation": 5.8, "realReturn": 17.05}, {"year": 1975, "totalReturn": 37.2, "inflation": 9.1, "realReturn": 25.76}, {"year": 1974, "totalReturn": -26.47, "inflation": 11.0, "realReturn": -33.76}, {"year": 1973, "totalReturn": -14.66, "inflation": 6.2, "realReturn": -19.64}, {"year": 1972, "totalReturn": 18.98, "inflation": 3.2, "realReturn": 15.29}, {"year": 1971, "totalReturn": 14.31, "inflation": 4.4, "realReturn": 9.49}, {"year": 1970, "totalReturn": 4.01, "inflation": 5.7, "realReturn": -1.6}, {"year": 1969, "totalReturn": -8.5, "inflation": 5.5, "realReturn": -13.27}, {"year": 1968, "totalReturn": 11.06, "inflation": 4.2, "realReturn": 6.58}, {"year": 1967, "totalReturn": 23.98, "inflation": 3.1, "realReturn": 20.25}, {"year": 1966, "totalReturn": -10.06, "inflation": 2.9, "realReturn": -12.59}, {"year": 1965, "totalReturn": 12.45, "inflation": 1.6, "realReturn": 10.68}, {"year": 1964, "totalReturn": 16.48, "inflation": 1.3, "realReturn": 14.99}, {"year": 1963, "totalReturn": 22.8, "inflation": 1.3, "realReturn": 21.22}, {"year": 1962, "totalReturn": -8.73, "inflation": 1.0, "realReturn": -9.63}, {"year": 1961, "totalReturn": 26.89, "inflation": 1.0, "realReturn": 25.63}, {"year": 1960, "totalReturn": 0.47, "inflation": 1.7, "realReturn": -1.21}, {"year": 1959, "totalReturn": 11.96, "inflation": 0.7, "realReturn": 11.18}, {"year": 1958, "totalReturn": 43.36, "inflation": 2.8, "realReturn": 39.46}, {"year": 1957, "totalReturn": -10.78, "inflation": 3.3, "realReturn": -13.63}, {"year": 1956, "totalReturn": 6.56, "inflation": 1.5, "realReturn": 4.99}, {"year": 1955, "totalReturn": 31.56, "inflation": -0.4, "realReturn": 32.09}, {"year": 1954, "totalReturn": 52.62, "inflation": 0.7, "realReturn": 51.56}, {"year": 1953, "totalReturn": -0.99, "inflation": 0.8, "realReturn": -1.78}, {"year": 1952, "totalReturn": 18.37, "inflation": 1.9, "realReturn": 16.16}, {"year": 1951, "totalReturn": 24.02, "inflation": 7.9, "realReturn": 14.94}, {"year": 1950, "totalReturn": 31.71, "inflation": 1.3, "realReturn": 30.02}, {"year": 1949, "totalReturn": 18.79, "inflation": -1.2, "realReturn": 20.23}, {"year": 1948, "totalReturn": 5.5, "inflation": 8.1, "realReturn": -2.41}, {"year": 1947, "totalReturn": 5.71, "inflation": 14.4, "realReturn": -7.6}, {"year": 1946, "totalReturn": -8.07, "inflation": 8.3, "realReturn": -15.12}, {"year": 1945, "totalReturn": 36.44, "inflation": 2.3, "realReturn": 33.37}, {"year": 1944, "totalReturn": 19.75, "inflation": 1.7, "realReturn": 17.75}, {"year": 1943, "totalReturn": 25.9, "inflation": 6.1, "realReturn": 18.66}, {"year": 1942, "totalReturn": 20.34, "inflation": 10.9, "realReturn": 8.51}, {"year": 1941, "totalReturn": -11.59, "inflation": 5.0, "realReturn": -15.8}, {"year": 1940, "totalReturn": -9.78, "inflation": 0.7, "realReturn": -10.41}, {"year": 1939, "totalReturn": -0.41, "inflation": -1.4, "realReturn": 1.0}, {"year": 1938, "totalReturn": 31.12, "inflation": -2.1, "realReturn": 33.93}, {"year": 1937, "totalReturn": -35.03, "inflation": 3.6, "realReturn": -37.29}, {"year": 1936, "totalReturn": 33.92, "inflation": 1.5, "realReturn": 31.94}, {"year": 1935, "totalReturn": 47.67, "inflation": 2.2, "realReturn": 44.49}, {"year": 1934, "totalReturn": -1.44, "inflation": 3.1, "realReturn": -4.4}, {"year": 1933, "totalReturn": 53.99, "inflation": -5.1, "realReturn": 62.27}, {"year": 1932, "totalReturn": -8.19, "inflation": -9.9, "realReturn": 1.9}, {"year": 1931, "totalReturn": -43.34, "inflation": -9.0, "realReturn": -37.74}, {"year": 1930, "totalReturn": -24.9, "inflation": -2.3, "realReturn": -23.13}, {"year": 1929, "totalReturn": -8.42, "inflation": 0.0, "realReturn": -8.42}, {"year": 1928, "totalReturn": 43.61, "inflation": -1.7, "realReturn": 46.09}];
-// App Logic populated with real data.
+
     function formatPct(val) {
       if (val === null || val === undefined) return '--';
       return val.toFixed(2) + '%';
@@ -257,17 +474,27 @@ window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "rea
       return val > 0 ? 'pos' : (val < 0 ? 'neg' : '');
     }
 
+    function formatCurrency(val) {
+      if (val >= 1000000) return '$' + (val / 1000000).toFixed(2) + 'M';
+      if (val >= 1000) return '$' + val.toLocaleString('en-US', { maximumFractionDigits: 0 });
+      return '$' + val.toFixed(2);
+    }
+
     function renderApp() {
       if (!window.SP500_DATA) return;
 
       const data = window.SP500_DATA;
+      const sorted = [...data].sort((a, b) => a.year - b.year);
+
+      // Build lookup by year
+      const byYear = {};
+      sorted.forEach(d => { byYear[d.year] = d; });
 
       // Calculate Stats
       let sumReturns = 0;
       let posYears = 0;
       let bestYear = data[0];
       let worstYear = data[0];
-
       let validReturnsCount = 0;
 
       data.forEach(d => {
@@ -288,79 +515,86 @@ window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "rea
 
       const bestEl = document.getElementById('stat-best');
       bestEl.textContent = formatPct(bestYear.totalReturn);
-      document.getElementById('stat-best-desc').textContent = `Occurred in ${bestYear.year}`;
+      document.getElementById('stat-best-desc').textContent = 'Occurred in ' + bestYear.year;
 
       const worstEl = document.getElementById('stat-worst');
       worstEl.textContent = formatPct(worstYear.totalReturn);
-      document.getElementById('stat-worst-desc').textContent = `Occurred in ${worstYear.year}`;
+      document.getElementById('stat-worst-desc').textContent = 'Occurred in ' + worstYear.year;
 
-      // Table Rendering
-      const tbody = document.getElementById('tableBody');
-      const searchInput = document.getElementById('searchInput');
+      // ===== GROWTH CALCULATOR =====
+      var startSelect = document.getElementById('calcStart');
+      var endSelect = document.getElementById('calcEnd');
+      var years = sorted.map(function(d) { return d.year; });
 
-      let currentSort = { col: 'year', asc: false };
+      years.forEach(function(y) {
+        var opt1 = document.createElement('option');
+        opt1.value = y; opt1.textContent = y;
+        if (y === 1990) opt1.selected = true;
+        startSelect.appendChild(opt1);
 
-      function renderTable() {
-        const query = searchInput.value.toLowerCase();
-
-        let filtered = data.filter(d => d.year.toString().includes(query));
-
-        filtered.sort((a, b) => {
-          let valA = a[currentSort.col];
-          let valB = b[currentSort.col];
-          if (valA === null) valA = -999999;
-          if (valB === null) valB = -999999;
-          return currentSort.asc ? valA - valB : valB - valA;
-        });
-
-        tbody.innerHTML = '';
-        filtered.forEach(d => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${d.year}</td>
-            <td class="${getColorClass(d.totalReturn)}">${formatPct(d.totalReturn)}</td>
-            <td class="${getColorClass(d.priceReturn)}">${formatPct(d.priceReturn)}</td>
-            <td class="${getColorClass(d.inflation)}">${formatPct(d.inflation)}</td>
-            <td class="${getColorClass(d.realReturn)}">${formatPct(d.realReturn)}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-
-      document.querySelectorAll('th[data-sort]').forEach(th => {
-        th.addEventListener('click', () => {
-          const col = th.getAttribute('data-sort');
-          if (currentSort.col === col) {
-            currentSort.asc = !currentSort.asc;
-          } else {
-            currentSort.col = col;
-            currentSort.asc = false;
-          }
-          renderTable();
-        });
+        var opt2 = document.createElement('option');
+        opt2.value = y; opt2.textContent = y;
+        if (y === 2026) opt2.selected = true;
+        endSelect.appendChild(opt2);
       });
 
-      searchInput.addEventListener('keyup', renderTable);
-      renderTable();
+      function calculateGrowth(startYr, endYr) {
+        var nominal = 10000;
+        var real = 10000;
+        for (var y = startYr + 1; y <= endYr; y++) {
+          var d = byYear[y];
+          if (d) {
+            nominal *= (1 + d.totalReturn / 100);
+            real *= (1 + d.realReturn / 100);
+          }
+        }
+        var totalReturnPct = ((nominal - 10000) / 10000) * 100;
+        var numYears = endYr - startYr;
+        var cagr = numYears > 0 ? (Math.pow(nominal / 10000, 1 / numYears) - 1) * 100 : 0;
+        return { nominal: nominal, real: real, totalReturn: totalReturnPct, cagr: cagr, years: numYears };
+      }
 
-      // Chart Rendering
-      const ctx = document.getElementById('returnsChart').getContext('2d');
+      function runCalc() {
+        var s = parseInt(startSelect.value);
+        var e = parseInt(endSelect.value);
+        if (s >= e) { alert('Start year must be before end year.'); return; }
+        var r = calculateGrowth(s, e);
+        document.getElementById('calcValue').textContent = formatCurrency(r.nominal);
+        document.getElementById('calcDesc').textContent = '$10,000 invested in ' + s + ' would be worth ' + formatCurrency(r.nominal) + ' by ' + e;
+        document.getElementById('calcTotalReturn').textContent = r.totalReturn.toFixed(1) + '%';
+        document.getElementById('calcTotalReturn').className = 'calc-stat-value ' + (r.totalReturn >= 0 ? 'pos' : 'neg');
+        document.getElementById('calcCAGR').textContent = r.cagr.toFixed(2) + '%';
+        document.getElementById('calcCAGR').className = 'calc-stat-value ' + (r.cagr >= 0 ? 'pos' : 'neg');
+        document.getElementById('calcYears').textContent = r.years;
+        document.getElementById('calcRealValue').textContent = formatCurrency(r.real);
+        document.getElementById('calcResult').classList.add('visible');
+      }
 
-      // We'll chart from oldest to newest
-      const chartData = [...data].sort((a,b) => a.year - b.year);
-      const labels = chartData.map(d => d.year);
-      const totalReturns = chartData.map(d => d.totalReturn);
+      document.getElementById('calcBtn').addEventListener('click', runCalc);
+      // Auto-calculate on load
+      runCalc();
 
-      const bgColors = totalReturns.map(v => v >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)');
+      // ===== BAR CHART WITH TOGGLE =====
+      var chartData = sorted;
+      var labels = chartData.map(function(d) { return d.year; });
+      var totalReturns = chartData.map(function(d) { return d.totalReturn; });
+      var realReturns = chartData.map(function(d) { return d.realReturn; });
 
-      new Chart(ctx, {
+      var ctx = document.getElementById('returnsChart').getContext('2d');
+      var currentMode = 'nominal';
+
+      function getBarColors(values) {
+        return values.map(function(v) { return v >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'; });
+      }
+
+      var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: 'Total Return (%)',
             data: totalReturns,
-            backgroundColor: bgColors,
+            backgroundColor: getBarColors(totalReturns),
             borderWidth: 0,
             borderRadius: 2
           }]
@@ -374,9 +608,7 @@ window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "rea
               mode: 'index',
               intersect: false,
               callbacks: {
-                label: function(context) {
-                  return context.parsed.y.toFixed(2) + '%';
-                }
+                label: function(context) { return context.parsed.y.toFixed(2) + '%'; }
               }
             }
           },
@@ -392,11 +624,343 @@ window.SP500_DATA = [{"year": 2026, "totalReturn": -1.62, "inflation": 2.8, "rea
           }
         }
       });
+
+      // Toggle nominal/real
+      document.querySelectorAll('#barChartToggle button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('#barChartToggle button').forEach(function(b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var mode = btn.getAttribute('data-mode');
+          var vals = mode === 'real' ? realReturns : totalReturns;
+          barChart.data.datasets[0].data = vals;
+          barChart.data.datasets[0].label = mode === 'real' ? 'Real Return (%)' : 'Total Return (%)';
+          barChart.data.datasets[0].backgroundColor = getBarColors(vals);
+          barChart.update();
+        });
+      });
+
+      // ===== CUMULATIVE GROWTH CHART =====
+      var growthLabels = [sorted[0].year];
+      var growthValues = [10000];
+      var cumVal = 10000;
+      for (var i = 1; i < sorted.length; i++) {
+        cumVal *= (1 + sorted[i].totalReturn / 100);
+        growthLabels.push(sorted[i].year);
+        growthValues.push(cumVal);
+      }
+
+      var growthCtx = document.getElementById('growthChart').getContext('2d');
+      var useLogScale = false;
+
+      var growthChart = new Chart(growthCtx, {
+        type: 'line',
+        data: {
+          labels: growthLabels,
+          datasets: [{
+            label: 'Portfolio Value ($)',
+            data: growthValues,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#10b981',
+            borderWidth: 2,
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function(context) {
+                  return '$' + Math.round(context.parsed.y).toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: {
+                color: '#94a3b8',
+                callback: function(value) {
+                  if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                  if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+                  return '$' + value;
+                }
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8', maxTicksLimit: 20 }
+            }
+          }
+        }
+      });
+
+      document.getElementById('logScaleBtn').addEventListener('click', function() {
+        useLogScale = !useLogScale;
+        growthChart.options.scales.y.type = useLogScale ? 'logarithmic' : 'linear';
+        this.textContent = useLogScale ? 'Switch to Linear' : 'Toggle Log Scale';
+        this.style.background = useLogScale ? 'var(--green)' : 'var(--card-bg)';
+        this.style.color = useLogScale ? '#fff' : 'var(--text-muted)';
+        this.style.borderColor = useLogScale ? 'var(--green)' : 'var(--border-color)';
+        growthChart.update();
+      });
+
+      // ===== ROLLING 10-YEAR RETURNS =====
+      var rollingLabels = [];
+      var rollingValues = [];
+      var rollingMin = { val: Infinity, year: 0 };
+      var rollingMax = { val: -Infinity, year: 0 };
+
+      for (var end = 10; end < sorted.length; end++) {
+        var product = 1;
+        for (var j = end - 9; j <= end; j++) {
+          product *= (1 + sorted[j].totalReturn / 100);
+        }
+        var annualized = (Math.pow(product, 1 / 10) - 1) * 100;
+        rollingLabels.push(sorted[end].year);
+        rollingValues.push(annualized);
+        if (annualized < rollingMin.val) { rollingMin.val = annualized; rollingMin.year = sorted[end].year; }
+        if (annualized > rollingMax.val) { rollingMax.val = annualized; rollingMax.year = sorted[end].year; }
+      }
+
+      var rollingBg = rollingValues.map(function(v) {
+        return v >= 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)';
+      });
+      var rollingBorder = rollingValues.map(function(v) {
+        return v >= 0 ? '#10b981' : '#ef4444';
+      });
+
+      var rollingCtx = document.getElementById('rollingChart').getContext('2d');
+      new Chart(rollingCtx, {
+        type: 'line',
+        data: {
+          labels: rollingLabels,
+          datasets: [{
+            label: 'Rolling 10-Year Annualized Return (%)',
+            data: rollingValues,
+            borderColor: '#60a5fa',
+            backgroundColor: 'rgba(96, 165, 250, 0.1)',
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: '#60a5fa',
+            borderWidth: 2,
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                title: function(items) { return 'Decade ending ' + items[0].label; },
+                label: function(context) { return context.parsed.y.toFixed(2) + '% annualized'; }
+              }
+            },
+            annotation: undefined
+          },
+          scales: {
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#94a3b8', maxTicksLimit: 20 }
+            }
+          }
+        }
+      });
+
+      // ===== TABLE (existing) =====
+      var tbody = document.getElementById('tableBody');
+      var searchInput = document.getElementById('searchInput');
+      var currentSort = { col: 'year', asc: false };
+
+      function renderTable() {
+        var query = searchInput.value.toLowerCase();
+        var filtered = data.filter(function(d) { return d.year.toString().includes(query); });
+
+        filtered.sort(function(a, b) {
+          var valA = a[currentSort.col];
+          var valB = b[currentSort.col];
+          if (valA === null) valA = -999999;
+          if (valB === null) valB = -999999;
+          return currentSort.asc ? valA - valB : valB - valA;
+        });
+
+        tbody.innerHTML = '';
+        filtered.forEach(function(d) {
+          var tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td>' + d.year + '</td>' +
+            '<td class="' + getColorClass(d.totalReturn) + '">' + formatPct(d.totalReturn) + '</td>' +
+            '<td class="' + getColorClass(d.priceReturn) + '">' + formatPct(d.priceReturn) + '</td>' +
+            '<td class="' + getColorClass(d.inflation) + '">' + formatPct(d.inflation) + '</td>' +
+            '<td class="' + getColorClass(d.realReturn) + '">' + formatPct(d.realReturn) + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.querySelectorAll('th[data-sort]').forEach(function(th) {
+        th.addEventListener('click', function() {
+          var col = th.getAttribute('data-sort');
+          if (currentSort.col === col) {
+            currentSort.asc = !currentSort.asc;
+          } else {
+            currentSort.col = col;
+            currentSort.asc = false;
+          }
+          renderTable();
+        });
+      });
+
+      searchInput.addEventListener('keyup', renderTable);
+      renderTable();
+
+      // ===== DECADE PERFORMANCE CARDS =====
+      var decades = {};
+      sorted.forEach(function(d) {
+        var dec = Math.floor(d.year / 10) * 10;
+        var label = dec + 's';
+        if (!decades[label]) decades[label] = { label: label, start: dec, years: [] };
+        decades[label].years.push(d);
+      });
+
+      var decadeGrid = document.getElementById('decadeGrid');
+      // Only show full decades (1930s onward) + partial 2020s
+      var decadeKeys = Object.keys(decades).sort();
+
+      decadeKeys.forEach(function(key) {
+        var dec = decades[key];
+        if (dec.years.length < 2) return; // skip 1920s with only 1928
+
+        var sum = 0;
+        var best = dec.years[0];
+        var worst = dec.years[0];
+        var cumulative = 1;
+
+        dec.years.forEach(function(d) {
+          sum += d.totalReturn;
+          cumulative *= (1 + d.totalReturn / 100);
+          if (d.totalReturn > best.totalReturn) best = d;
+          if (d.totalReturn < worst.totalReturn) worst = d;
+        });
+
+        var avg = sum / dec.years.length;
+        var cumPct = (cumulative - 1) * 100;
+        var isPositive = avg >= 0;
+
+        var card = document.createElement('div');
+        card.className = 'decade-card ' + (isPositive ? 'positive' : 'negative');
+        card.innerHTML =
+          '<div class="decade-name">' + dec.label + '</div>' +
+          '<div class="decade-stat"><span class="decade-stat-label">Avg Annual</span><span class="decade-stat-value ' + (avg >= 0 ? 'pos' : 'neg') + '">' + avg.toFixed(1) + '%</span></div>' +
+          '<div class="decade-stat"><span class="decade-stat-label">Cumulative</span><span class="decade-stat-value ' + (cumPct >= 0 ? 'pos' : 'neg') + '">' + cumPct.toFixed(0) + '%</span></div>' +
+          '<div class="decade-stat"><span class="decade-stat-label">Best Year</span><span class="decade-stat-value pos">' + best.year + ' (' + best.totalReturn.toFixed(1) + '%)</span></div>' +
+          '<div class="decade-stat"><span class="decade-stat-label">Worst Year</span><span class="decade-stat-value neg">' + worst.year + ' (' + worst.totalReturn.toFixed(1) + '%)</span></div>';
+        decadeGrid.appendChild(card);
+      });
+
+      // ===== KEY INSIGHTS =====
+      // Calculate insights from data
+      var positiveCount = 0;
+      sorted.forEach(function(d) { if (d.totalReturn > 0) positiveCount++; });
+      var positivePct = ((positiveCount / sorted.length) * 100).toFixed(0);
+
+      // Growth of $10K since 1928
+      var growthSince1928 = calculateGrowth(1928, sorted[sorted.length - 1].year);
+
+      // Best decade
+      var bestDecade = { label: '', avg: -Infinity };
+      decadeKeys.forEach(function(key) {
+        var dec = decades[key];
+        if (dec.years.length < 5) return;
+        var s = 0;
+        dec.years.forEach(function(d) { s += d.totalReturn; });
+        var a = s / dec.years.length;
+        if (a > bestDecade.avg) { bestDecade = { label: key, avg: a }; }
+      });
+
+      // Crashes and recoveries
+      var crashes = [];
+      sorted.forEach(function(d) {
+        if (d.totalReturn <= -30) crashes.push(d.year);
+      });
+
+      // Recovery years after crashes
+      var recoveryYears = [];
+      crashes.forEach(function(crashYear) {
+        var cumLoss = 1;
+        // find the consecutive decline
+        var idx = sorted.findIndex(function(d) { return d.year === crashYear; });
+        cumLoss *= (1 + sorted[idx].totalReturn / 100);
+        for (var r = idx + 1; r < sorted.length; r++) {
+          cumLoss *= (1 + sorted[r].totalReturn / 100);
+          if (cumLoss >= 1) {
+            recoveryYears.push(sorted[r].year - crashYear);
+            break;
+          }
+        }
+      });
+      var avgRecovery = recoveryYears.length > 0
+        ? (recoveryYears.reduce(function(a, b) { return a + b; }, 0) / recoveryYears.length).toFixed(0)
+        : 'N/A';
+
+      // Rolling 10-year: negative periods count
+      var negativeRolling = 0;
+      rollingValues.forEach(function(v) { if (v < 0) negativeRolling++; });
+      var alwaysPositive10yr = negativeRolling === 0;
+
+      var insightsGrid = document.getElementById('insightsGrid');
+      var insights = [
+        {
+          icon: '📊',
+          text: 'The S&P 500 has delivered <span class="insight-highlight">positive returns in ' + positivePct + '%</span> of all years since 1928. The odds have historically favored the patient investor.'
+        },
+        {
+          icon: '💰',
+          text: '$10,000 invested in 1928 would be worth <span class="insight-highlight">' + formatCurrency(growthSince1928.nominal) + '</span> today — a testament to the extraordinary power of compound returns over nearly a century.'
+        },
+        {
+          icon: '🏆',
+          text: 'The best decade was the <span class="insight-highlight">' + bestDecade.label + '</span> with an average annual return of <span class="insight-highlight">' + bestDecade.avg.toFixed(1) + '%</span>.'
+        },
+        {
+          icon: '🔄',
+          text: 'After every major crash (>30% decline), the market recovered within <span class="insight-highlight">' + avgRecovery + ' years</span> on average. Markets have always bounced back.'
+        },
+        {
+          icon: '📈',
+          text: (alwaysPositive10yr
+            ? 'Every rolling 10-year period since 1928 delivered <span class="insight-highlight">positive returns</span>. Time in the market beats timing the market.'
+            : 'Only <span class="insight-highlight">' + negativeRolling + '</span> of ' + rollingValues.length + ' rolling 10-year periods were negative. The worst was <span class="insight-highlight">' + rollingMin.val.toFixed(1) + '%</span> annualized (ending ' + rollingMin.year + '), and the best was <span class="insight-highlight">' + rollingMax.val.toFixed(1) + '%</span> (ending ' + rollingMax.year + ').')
+        }
+      ];
+
+      insights.forEach(function(ins) {
+        var card = document.createElement('div');
+        card.className = 'insight-card';
+        card.innerHTML = '<div class="insight-icon">' + ins.icon + '</div><div class="insight-text">' + ins.text + '</div>';
+        insightsGrid.appendChild(card);
+      });
     }
 
-    // Call after DOM is fully loaded or data injected
-    document.addEventListener('DOMContentLoaded', () => {
-      // The injected script will call renderApp() directly or provide window.SP500_DATA
+    document.addEventListener('DOMContentLoaded', function() {
       if (window.SP500_DATA) renderApp();
     });
   </script>
