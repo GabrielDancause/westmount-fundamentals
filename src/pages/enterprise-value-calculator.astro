@@ -1,0 +1,734 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Enterprise Value Calculator — EV/EBITDA, EV Formula & Sector Multiples",
+  description: "Calculate enterprise value with our free EV calculator. Compare EV/EBITDA multiples by sector, understand EV vs market cap, and master the enterprise value formula step by step.",
+  category: "study",
+  published: "2026-03-20"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Enterprise Value Calculator — EV/EBITDA, EV Formula & Sector Multiples",
+      "description": meta.description,
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "datePublished": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is enterprise value and how is it calculated?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Enterprise value (EV) is the total value of a company including both equity and debt holders. It is calculated as Market Capitalization + Total Debt + Preferred Stock + Minority Interest − Cash & Cash Equivalents. EV represents what it would cost to acquire the entire business." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is enterprise value more useful than market cap?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Enterprise value accounts for a company's entire capital structure, including debt and cash. Market cap only reflects equity value. EV gives a more complete picture for comparing companies, especially in M&A where the acquirer assumes debt and receives cash." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good EV/EBITDA ratio?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A good EV/EBITDA ratio depends on the sector. Generally, below 8x is considered cheap, 8-12x is fair value, 12-20x is expensive, and above 20x is very expensive. Technology stocks average around 25x while energy companies average around 6x." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between EV/EBITDA and P/E ratio?",
+          "acceptedAnswer": { "@type": "Answer", "text": "EV/EBITDA uses enterprise value and pre-interest, pre-tax earnings, making it capital-structure neutral and ideal for comparing companies with different debt levels. P/E uses stock price and net income, which is affected by leverage and tax differences." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I use enterprise value for stock analysis?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Compare a company's EV/EBITDA multiple to its sector average to gauge relative valuation. A lower-than-sector EV/EBITDA may indicate undervaluation. Also track EV/Revenue for high-growth companies and EV/FCF for cash flow quality assessment." }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout
+  title={meta.title}
+  description={meta.description}
+  site="westmount"
+  canonical="https://westmountfundamentals.com/enterprise-value-calculator/"
+  schema={schema}
+>
+
+<style is:inline>
+  :root {
+    --accent: #4a8fe7;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --bg-card: #0d1117;
+    --border: #30363d;
+  }
+  .ev-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, rgba(74,143,231,0.10), rgba(16,185,129,0.04));
+    border-bottom: 1px solid rgba(74,143,231,0.15);
+  }
+  .ev-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #e8eaed; line-height: 1.2; }
+  .ev-hero .subtitle { color: #9aa0a6; font-size: 1.1rem; max-width: 700px; margin: 0 auto 1.5rem; }
+  .stat-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+  .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem 1.5rem; min-width: 140px; text-align: center; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+  .ev-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .section-title { font-size: 1.6rem; color: #e8eaed; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); display: inline-block; }
+  .section-desc { color: #9aa0a6; margin-bottom: 1.5rem; max-width: 800px; line-height: 1.7; }
+
+  /* Calculator Tabs */
+  .calc-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 0; }
+  .calc-tab { padding: 0.75rem 1.5rem; background: transparent; border: none; color: #9aa0a6; cursor: pointer; font-size: 0.95rem; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .calc-tab:hover { color: #e8eaed; }
+  .calc-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .calc-panel { display: none; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; }
+  .calc-panel.active { display: block; }
+
+  /* Form */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .calc-field label { display: block; font-size: 0.85rem; color: #9aa0a6; margin-bottom: 0.3rem; }
+  .calc-field input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; color: #e8eaed; font-size: 1rem; }
+  .calc-field input:focus { outline: none; border-color: var(--accent); }
+  .calc-field .hint { font-size: 0.75rem; color: #6b7280; margin-top: 0.2rem; }
+  .calc-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.75rem 2rem; font-size: 1rem; cursor: pointer; margin-top: 1rem; font-weight: 600; transition: opacity 0.2s; }
+  .calc-btn:hover { opacity: 0.85; }
+  .calc-result { margin-top: 1.5rem; padding: 1.2rem; background: rgba(74,143,231,0.08); border: 1px solid rgba(74,143,231,0.2); border-radius: 10px; display: none; }
+  .calc-result .result-label { font-size: 0.85rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; }
+  .calc-result .result-value { font-size: 2rem; font-weight: 700; color: var(--accent); margin: 0.25rem 0; }
+  .calc-result .result-detail { font-size: 0.9rem; color: #9aa0a6; line-height: 1.6; }
+  .interp-badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-left: 0.5rem; }
+  .interp-cheap { background: rgba(16,185,129,0.15); color: var(--positive); }
+  .interp-fair { background: rgba(74,143,231,0.15); color: var(--accent); }
+  .interp-expensive { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .interp-very-expensive { background: rgba(239,68,68,0.15); color: var(--negative); }
+
+  /* Toggle for share price mode */
+  .toggle-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; color: #9aa0a6; }
+  .toggle-row input[type="checkbox"] { accent-color: var(--accent); }
+
+  /* Charts */
+  .chart-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+  .chart-wrap h3 { color: #e8eaed; margin-bottom: 1rem; font-size: 1.1rem; }
+  .chart-wrap canvas { width: 100% !important; max-height: 420px; }
+
+  /* Comparison Table */
+  .comp-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; }
+  .comp-table th, .comp-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .comp-table th { color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(74,143,231,0.06); }
+  .comp-table td { color: #c9d1d9; font-size: 0.95rem; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* Sector Table */
+  .sector-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; }
+  .sector-table th, .sector-table td { padding: 0.6rem 1rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .sector-table th { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; background: rgba(74,143,231,0.06); }
+  .sector-table td { color: #c9d1d9; }
+
+  /* Formula Breakdown */
+  .formula-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin: 1.5rem 0; text-align: center; }
+  .formula-main { font-size: 1.3rem; color: #e8eaed; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+  .formula-main .op-plus { color: var(--positive); }
+  .formula-main .op-minus { color: var(--negative); }
+  .formula-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; text-align: left; margin-top: 1.5rem; }
+  .formula-step { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 1rem; border-left: 3px solid var(--accent); }
+  .formula-step .step-label { font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; }
+  .formula-step .step-val { font-size: 1.2rem; color: #e8eaed; font-weight: 600; margin: 0.25rem 0; }
+  .formula-step .step-desc { font-size: 0.8rem; color: #6b7280; }
+  .formula-step.neg { border-left-color: var(--negative); }
+
+  /* Insights */
+  .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin: 1.5rem 0 2rem; }
+  .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; }
+  .insight-card .insight-num { font-size: 0.75rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .insight-card h4 { color: #e8eaed; margin: 0.3rem 0 0.5rem; font-size: 1rem; }
+  .insight-card p { color: #9aa0a6; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+
+  /* Content section */
+  .content-section { margin: 2rem 0; }
+  .content-section h2 { font-size: 1.5rem; color: #e8eaed; margin-bottom: 0.75rem; }
+  .content-section p { color: #c9d1d9; line-height: 1.8; margin-bottom: 1rem; max-width: 800px; }
+  .content-section ul { color: #c9d1d9; line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem; }
+  .content-section li { margin-bottom: 0.4rem; }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+  .faq-q { color: #e8eaed; font-weight: 600; font-size: 1.05rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q::after { content: "+"; color: var(--accent); font-size: 1.3rem; }
+  .faq-item.open .faq-q::after { content: "−"; }
+  .faq-a { color: #9aa0a6; line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s, padding 0.3s; padding: 0; }
+  .faq-item.open .faq-a { max-height: 300px; padding-top: 0.75rem; }
+
+  @media (max-width: 700px) {
+    .ev-hero h1 { font-size: 1.5rem; }
+    .calc-grid { grid-template-columns: 1fr; }
+    .stat-row { gap: 0.8rem; }
+    .stat-card { min-width: 120px; padding: 0.8rem 1rem; }
+    .stat-card .stat-value { font-size: 1.4rem; }
+    .formula-main { font-size: 1rem; }
+    .calc-tab { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+  }
+</style>
+
+<!-- Hero -->
+<section class="ev-hero">
+  <h1>Enterprise Value Calculator</h1>
+  <p class="subtitle">Calculate enterprise value, compare EV/EBITDA multiples by sector, and understand why EV matters more than market cap for valuation.</p>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-value">$48.5T</div>
+      <div class="stat-label">S&P 500 Total EV</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">14.8x</div>
+      <div class="stat-label">Median EV/EBITDA</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4</div>
+      <div class="stat-label">Calculators</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">11</div>
+      <div class="stat-label">Sectors Compared</div>
+    </div>
+  </div>
+</section>
+
+<div class="ev-container">
+
+  <!-- Calculator Tabs -->
+  <h2 class="section-title">EV Calculators</h2>
+  <p class="section-desc">Calculate enterprise value and compare valuation multiples. Switch between tabs to use different calculators.</p>
+
+  <div class="calc-tabs">
+    <button class="calc-tab active" data-tab="ev">Enterprise Value</button>
+    <button class="calc-tab" data-tab="ebitda">EV/EBITDA</button>
+    <button class="calc-tab" data-tab="revenue">EV/Revenue</button>
+    <button class="calc-tab" data-tab="fcf">EV/FCF</button>
+  </div>
+
+  <!-- EV Calculator -->
+  <div class="calc-panel active" id="panel-ev">
+    <div class="toggle-row">
+      <input type="checkbox" id="ev-use-shares"> <label for="ev-use-shares">Use Share Price × Shares Outstanding instead of Market Cap</label>
+    </div>
+    <div class="calc-grid">
+      <div class="calc-field" id="ev-mcap-field">
+        <label>Market Capitalization ($)</label>
+        <input type="number" id="ev-mcap" placeholder="e.g. 2500000000000">
+        <div class="hint">Total market value of equity</div>
+      </div>
+      <div class="calc-field" id="ev-price-field" style="display:none">
+        <label>Share Price ($)</label>
+        <input type="number" id="ev-price" placeholder="e.g. 175.50" step="0.01">
+      </div>
+      <div class="calc-field" id="ev-shares-field" style="display:none">
+        <label>Shares Outstanding</label>
+        <input type="number" id="ev-shares" placeholder="e.g. 15000000000">
+      </div>
+      <div class="calc-field">
+        <label>Total Debt ($)</label>
+        <input type="number" id="ev-debt" placeholder="e.g. 120000000000">
+        <div class="hint">Short-term + long-term debt</div>
+      </div>
+      <div class="calc-field">
+        <label>Cash &amp; Cash Equivalents ($)</label>
+        <input type="number" id="ev-cash" placeholder="e.g. 65000000000">
+        <div class="hint">Cash, marketable securities</div>
+      </div>
+      <div class="calc-field">
+        <label>Preferred Stock ($)</label>
+        <input type="number" id="ev-pref" placeholder="e.g. 0" value="0">
+        <div class="hint">Optional — preferred equity</div>
+      </div>
+      <div class="calc-field">
+        <label>Minority Interest ($)</label>
+        <input type="number" id="ev-minority" placeholder="e.g. 0" value="0">
+        <div class="hint">Optional — non-controlling interest</div>
+      </div>
+    </div>
+    <button class="calc-btn" id="ev-calc-btn">Calculate Enterprise Value</button>
+    <div class="calc-result" id="ev-result">
+      <div class="result-label">Enterprise Value</div>
+      <div class="result-value" id="ev-result-val"></div>
+      <div class="result-detail" id="ev-result-detail"></div>
+    </div>
+  </div>
+
+  <!-- EV/EBITDA Calculator -->
+  <div class="calc-panel" id="panel-ebitda">
+    <div class="calc-grid">
+      <div class="calc-field">
+        <label>Enterprise Value ($)</label>
+        <input type="number" id="ebitda-ev" placeholder="e.g. 2800000000000">
+      </div>
+      <div class="calc-field">
+        <label>EBITDA ($)</label>
+        <input type="number" id="ebitda-val" placeholder="e.g. 130000000000">
+        <div class="hint">Earnings before interest, taxes, depreciation & amortization</div>
+      </div>
+    </div>
+    <button class="calc-btn" id="ebitda-calc-btn">Calculate EV/EBITDA</button>
+    <div class="calc-result" id="ebitda-result">
+      <div class="result-label">EV/EBITDA Multiple</div>
+      <div class="result-value" id="ebitda-result-val"></div>
+      <div class="result-detail" id="ebitda-result-detail"></div>
+    </div>
+  </div>
+
+  <!-- EV/Revenue Calculator -->
+  <div class="calc-panel" id="panel-revenue">
+    <div class="calc-grid">
+      <div class="calc-field">
+        <label>Enterprise Value ($)</label>
+        <input type="number" id="rev-ev" placeholder="e.g. 2800000000000">
+      </div>
+      <div class="calc-field">
+        <label>Annual Revenue ($)</label>
+        <input type="number" id="rev-val" placeholder="e.g. 400000000000">
+        <div class="hint">Trailing twelve month revenue</div>
+      </div>
+    </div>
+    <button class="calc-btn" id="rev-calc-btn">Calculate EV/Revenue</button>
+    <div class="calc-result" id="rev-result">
+      <div class="result-label">EV/Revenue Multiple</div>
+      <div class="result-value" id="rev-result-val"></div>
+      <div class="result-detail" id="rev-result-detail"></div>
+    </div>
+  </div>
+
+  <!-- EV/FCF Calculator -->
+  <div class="calc-panel" id="panel-fcf">
+    <div class="calc-grid">
+      <div class="calc-field">
+        <label>Enterprise Value ($)</label>
+        <input type="number" id="fcf-ev" placeholder="e.g. 2800000000000">
+      </div>
+      <div class="calc-field">
+        <label>Free Cash Flow ($)</label>
+        <input type="number" id="fcf-val" placeholder="e.g. 110000000000">
+        <div class="hint">Operating cash flow − capital expenditures</div>
+      </div>
+    </div>
+    <button class="calc-btn" id="fcf-calc-btn">Calculate EV/FCF</button>
+    <div class="calc-result" id="fcf-result">
+      <div class="result-label">EV/FCF Multiple</div>
+      <div class="result-value" id="fcf-result-val"></div>
+      <div class="result-detail" id="fcf-result-detail"></div>
+    </div>
+  </div>
+
+  <!-- EV Formula Visual Breakdown -->
+  <h2 class="section-title">Enterprise Value Formula Breakdown</h2>
+  <p class="section-desc">The EV formula captures the total cost to acquire a business. Here is a step-by-step example using Apple Inc.</p>
+  <div class="formula-box">
+    <div class="formula-main">
+      EV = Market Cap <span class="op-plus">+</span> Total Debt <span class="op-plus">+</span> Preferred Stock <span class="op-plus">+</span> Minority Interest <span class="op-minus">−</span> Cash
+    </div>
+    <div class="formula-steps">
+      <div class="formula-step">
+        <div class="step-label">Step 1 — Market Cap</div>
+        <div class="step-val">$2.80T</div>
+        <div class="step-desc">$182 × 15.4B shares</div>
+      </div>
+      <div class="formula-step">
+        <div class="step-label">Step 2 — Add Total Debt</div>
+        <div class="step-val">+ $111B</div>
+        <div class="step-desc">Short + long-term debt obligations</div>
+      </div>
+      <div class="formula-step">
+        <div class="step-label">Step 3 — Add Preferred</div>
+        <div class="step-val">+ $0</div>
+        <div class="step-desc">No preferred stock outstanding</div>
+      </div>
+      <div class="formula-step">
+        <div class="step-label">Step 4 — Add Minority Int.</div>
+        <div class="step-val">+ $0</div>
+        <div class="step-desc">No minority interest</div>
+      </div>
+      <div class="formula-step neg">
+        <div class="step-label">Step 5 — Subtract Cash</div>
+        <div class="step-val">− $65B</div>
+        <div class="step-desc">Cash & marketable securities</div>
+      </div>
+      <div class="formula-step" style="border-left-color: var(--positive);">
+        <div class="step-label">Result — Enterprise Value</div>
+        <div class="step-val" style="color: var(--positive);">$2.846T</div>
+        <div class="step-desc">The true acquisition cost</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EV/EBITDA by Sector -->
+  <h2 class="section-title">EV/EBITDA Multiples by Sector</h2>
+  <p class="section-desc">S&P 500 sector average EV/EBITDA multiples. Higher-growth sectors command premium valuations.</p>
+
+  <table class="sector-table">
+    <thead>
+      <tr><th>Sector</th><th>Avg EV/EBITDA</th><th>Avg Revenue Growth</th><th>Valuation Tier</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Technology</td><td>25.0x</td><td>14%</td><td><span class="interp-badge interp-very-expensive">Premium</span></td></tr>
+      <tr><td>Healthcare</td><td>16.0x</td><td>8%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Consumer Discretionary</td><td>18.0x</td><td>10%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Industrials</td><td>14.0x</td><td>6%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Communication Services</td><td>13.0x</td><td>7%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Consumer Staples</td><td>14.5x</td><td>4%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Utilities</td><td>12.0x</td><td>3%</td><td><span class="interp-badge interp-fair">Fair</span></td></tr>
+      <tr><td>Materials</td><td>10.5x</td><td>4%</td><td><span class="interp-badge interp-fair">Fair</span></td></tr>
+      <tr><td>Real Estate</td><td>18.5x</td><td>5%</td><td><span class="interp-badge interp-expensive">Above Avg</span></td></tr>
+      <tr><td>Financials</td><td>10.0x</td><td>5%</td><td><span class="interp-badge interp-fair">Fair</span></td></tr>
+      <tr><td>Energy</td><td>6.0x</td><td>2%</td><td><span class="interp-badge interp-cheap">Value</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Chart: EV/EBITDA by Sector -->
+  <div class="chart-wrap">
+    <h3>EV/EBITDA by Sector — S&P 500 Averages</h3>
+    <canvas id="chart-sector-bar"></canvas>
+  </div>
+
+  <!-- Chart: EV/EBITDA vs Revenue Growth -->
+  <div class="chart-wrap">
+    <h3>EV/EBITDA vs Revenue Growth by Sector (Growth Premium)</h3>
+    <canvas id="chart-scatter"></canvas>
+  </div>
+
+  <!-- What is Enterprise Value -->
+  <div class="content-section">
+    <h2 id="what-is-enterprise-value">What Is Enterprise Value? Why It Matters More Than Market Cap</h2>
+    <p>Enterprise value (EV) is the most comprehensive measure of a company's total value. Unlike market capitalization, which only reflects the value of outstanding equity, enterprise value accounts for the company's entire capital structure — including debt, preferred stock, minority interests, and available cash.</p>
+    <p>For mergers and acquisitions (M&A), EV is the definitive metric. When a company acquires another, it doesn't just buy the shares — it assumes all outstanding debt and receives the target's cash. Enterprise value represents the true takeover price, making it the gold standard for comparing companies across different capital structures.</p>
+    <p>This is why Wall Street analysts and private equity firms almost exclusively use EV-based multiples (EV/EBITDA, EV/Revenue) rather than equity-based multiples (P/E) when evaluating potential acquisitions. A company might look cheap on a P/E basis but expensive on EV/EBITDA because it carries heavy debt — and EV captures that reality.</p>
+    <ul>
+      <li><strong>Capital structure neutral:</strong> EV removes the distortion of leverage, enabling apples-to-apples comparison</li>
+      <li><strong>M&A standard:</strong> Represents the actual price an acquirer would pay for the entire business</li>
+      <li><strong>Better for cyclical companies:</strong> EBITDA-based EV multiples smooth out capital expenditure cycles</li>
+      <li><strong>Debt-aware:</strong> Two companies with the same market cap but different debt loads have very different enterprise values</li>
+    </ul>
+  </div>
+
+  <!-- EV vs Market Cap Comparison -->
+  <h2 class="section-title">Enterprise Value vs Market Cap</h2>
+  <p class="section-desc">Understanding the key differences between these two valuation measures.</p>
+  <table class="comp-table">
+    <thead>
+      <tr><th>Feature</th><th>Market Capitalization</th><th>Enterprise Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Definition</td><td>Share Price × Shares Outstanding</td><td>Market Cap + Debt + Preferred + Minority − Cash</td></tr>
+      <tr><td>What it measures</td><td>Equity value only</td><td>Total firm value (equity + debt − cash)</td></tr>
+      <tr><td>Includes debt?</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Accounts for cash?</td><td>No</td><td>Yes (subtracted)</td></tr>
+      <tr><td>Best used with</td><td>P/E ratio, P/B ratio</td><td>EV/EBITDA, EV/Revenue, EV/FCF</td></tr>
+      <tr><td>M&A relevance</td><td>Starting point only</td><td>True acquisition cost</td></tr>
+      <tr><td>Affected by leverage?</td><td>Indirectly</td><td>Directly and transparently</td></tr>
+      <tr><td>Cross-company comparison</td><td>Misleading across capital structures</td><td>Reliable across capital structures</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Key Insights -->
+  <h2 class="section-title">Key Insights</h2>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-num">Insight #1</div>
+      <h4>Growth Commands a Premium</h4>
+      <p>Technology companies trade at 25x EV/EBITDA — over 4x the multiple of energy companies — because investors pay up for double-digit revenue growth and high margins.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">Insight #2</div>
+      <h4>Debt Makes Cheap Stocks Expensive</h4>
+      <p>A stock with a low P/E but high debt will have a much higher EV/EBITDA. Always check enterprise value before concluding a stock is "cheap."</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">Insight #3</div>
+      <h4>Cash-Rich Companies Are Discounted</h4>
+      <p>Companies with massive cash reserves (like Apple or Google) have enterprise values significantly below their market caps, making them relatively cheaper on an EV basis.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">Insight #4</div>
+      <h4>EV/EBITDA Beats P/E for M&A</h4>
+      <p>Private equity uses EV/EBITDA almost exclusively because it strips out capital structure and tax effects, revealing the true operating value of a business.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">Insight #5</div>
+      <h4>Sector Context Is Everything</h4>
+      <p>An EV/EBITDA of 15x is expensive for an energy company but cheap for a tech company. Always compare multiples within the same sector for meaningful analysis.</p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <div id="faq-list">
+    <div class="faq-item">
+      <div class="faq-q">What is enterprise value and how is it calculated?</div>
+      <div class="faq-a">Enterprise value (EV) is the total value of a company including both equity and debt holders. It is calculated as Market Capitalization + Total Debt + Preferred Stock + Minority Interest − Cash & Cash Equivalents. EV represents what it would cost to acquire the entire business.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why is enterprise value more useful than market cap?</div>
+      <div class="faq-a">Enterprise value accounts for a company's entire capital structure, including debt and cash. Market cap only reflects equity value. EV gives a more complete picture for comparing companies, especially in M&A where the acquirer assumes debt and receives cash.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is a good EV/EBITDA ratio?</div>
+      <div class="faq-a">A good EV/EBITDA ratio depends on the sector. Generally, below 8x is considered cheap, 8–12x is fair value, 12–20x is expensive, and above 20x is very expensive. Technology stocks average around 25x while energy companies average around 6x.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the difference between EV/EBITDA and P/E ratio?</div>
+      <div class="faq-a">EV/EBITDA uses enterprise value and pre-interest, pre-tax earnings, making it capital-structure neutral and ideal for comparing companies with different debt levels. P/E uses stock price and net income, which is affected by leverage and tax differences.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I use enterprise value for stock analysis?</div>
+      <div class="faq-a">Compare a company's EV/EBITDA multiple to its sector average to gauge relative valuation. A lower-than-sector EV/EBITDA may indicate undervaluation. Also track EV/Revenue for high-growth companies and EV/FCF for cash flow quality assessment.</div>
+    </div>
+  </div>
+
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+(function() {
+  /* ---- Tab switching ---- */
+  var tabs = document.querySelectorAll('.calc-tab');
+  var panels = document.querySelectorAll('.calc-panel');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener('click', function() {
+      var target = this.getAttribute('data-tab');
+      for (var j = 0; j < tabs.length; j++) {
+        tabs[j].classList.remove('active');
+        panels[j].classList.remove('active');
+      }
+      this.classList.add('active');
+      document.getElementById('panel-' + target).classList.add('active');
+    });
+  }
+
+  /* ---- Share price toggle ---- */
+  var useShares = document.getElementById('ev-use-shares');
+  var mcapField = document.getElementById('ev-mcap-field');
+  var priceField = document.getElementById('ev-price-field');
+  var sharesField = document.getElementById('ev-shares-field');
+  useShares.addEventListener('change', function() {
+    if (this.checked) {
+      mcapField.style.display = 'none';
+      priceField.style.display = 'block';
+      sharesField.style.display = 'block';
+    } else {
+      mcapField.style.display = 'block';
+      priceField.style.display = 'none';
+      sharesField.style.display = 'none';
+    }
+  });
+
+  /* ---- Number formatting ---- */
+  function fmtB(n) {
+    if (Math.abs(n) >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+    if (Math.abs(n) >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (Math.abs(n) >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    return '$' + n.toLocaleString();
+  }
+
+  function getVal(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  /* ---- EV Calculator ---- */
+  document.getElementById('ev-calc-btn').addEventListener('click', function() {
+    var mcap;
+    if (useShares.checked) {
+      mcap = getVal('ev-price') * getVal('ev-shares');
+    } else {
+      mcap = getVal('ev-mcap');
+    }
+    var debt = getVal('ev-debt');
+    var cash = getVal('ev-cash');
+    var pref = getVal('ev-pref');
+    var minority = getVal('ev-minority');
+    var ev = mcap + debt + pref + minority - cash;
+
+    var res = document.getElementById('ev-result');
+    res.style.display = 'block';
+    document.getElementById('ev-result-val').textContent = fmtB(ev);
+    document.getElementById('ev-result-detail').innerHTML =
+      'Market Cap: ' + fmtB(mcap) + ' + Debt: ' + fmtB(debt) + ' + Preferred: ' + fmtB(pref) +
+      ' + Minority: ' + fmtB(minority) + ' − Cash: ' + fmtB(cash) +
+      '<br>The enterprise value represents the total acquisition cost of this company.';
+  });
+
+  /* ---- EV/EBITDA Calculator ---- */
+  function getInterp(ratio) {
+    if (ratio < 8) return { label: 'Cheap', cls: 'interp-cheap' };
+    if (ratio < 12) return { label: 'Fair Value', cls: 'interp-fair' };
+    if (ratio < 20) return { label: 'Expensive', cls: 'interp-expensive' };
+    return { label: 'Very Expensive', cls: 'interp-very-expensive' };
+  }
+
+  document.getElementById('ebitda-calc-btn').addEventListener('click', function() {
+    var ev = getVal('ebitda-ev');
+    var ebitda = getVal('ebitda-val');
+    if (ebitda === 0) { alert('EBITDA cannot be zero.'); return; }
+    var ratio = ev / ebitda;
+    var interp = getInterp(ratio);
+    var res = document.getElementById('ebitda-result');
+    res.style.display = 'block';
+    document.getElementById('ebitda-result-val').innerHTML = ratio.toFixed(2) + 'x <span class="interp-badge ' + interp.cls + '">' + interp.label + '</span>';
+    document.getElementById('ebitda-result-detail').innerHTML =
+      'EV: ' + fmtB(ev) + ' ÷ EBITDA: ' + fmtB(ebitda) + ' = ' + ratio.toFixed(2) + 'x' +
+      '<br>Interpretation: Below 8x = cheap, 8-12x = fair, 12-20x = expensive, 20x+ = very expensive.' +
+      '<br>Compare to sector averages above for context.';
+  });
+
+  /* ---- EV/Revenue Calculator ---- */
+  document.getElementById('rev-calc-btn').addEventListener('click', function() {
+    var ev = getVal('rev-ev');
+    var rev = getVal('rev-val');
+    if (rev === 0) { alert('Revenue cannot be zero.'); return; }
+    var ratio = ev / rev;
+    var res = document.getElementById('rev-result');
+    res.style.display = 'block';
+    document.getElementById('rev-result-val').textContent = ratio.toFixed(2) + 'x';
+    var desc = 'EV: ' + fmtB(ev) + ' ÷ Revenue: ' + fmtB(rev) + ' = ' + ratio.toFixed(2) + 'x';
+    if (ratio < 1) desc += '<br>Below 1x — company is valued below its annual revenue, potentially undervalued.';
+    else if (ratio < 3) desc += '<br>1-3x is typical for mature, low-growth businesses.';
+    else if (ratio < 10) desc += '<br>3-10x is common for growing companies with strong margins.';
+    else desc += '<br>Above 10x indicates a high-growth, high-expectation valuation.';
+    document.getElementById('rev-result-detail').innerHTML = desc;
+  });
+
+  /* ---- EV/FCF Calculator ---- */
+  document.getElementById('fcf-calc-btn').addEventListener('click', function() {
+    var ev = getVal('fcf-ev');
+    var fcf = getVal('fcf-val');
+    if (fcf === 0) { alert('Free cash flow cannot be zero.'); return; }
+    var ratio = ev / fcf;
+    var res = document.getElementById('fcf-result');
+    res.style.display = 'block';
+    document.getElementById('fcf-result-val').textContent = ratio.toFixed(2) + 'x';
+    var desc = 'EV: ' + fmtB(ev) + ' ÷ FCF: ' + fmtB(fcf) + ' = ' + ratio.toFixed(2) + 'x';
+    if (ratio < 15) desc += '<br>Below 15x — attractive FCF yield, strong cash generation relative to value.';
+    else if (ratio < 25) desc += '<br>15-25x is reasonable for quality growth companies.';
+    else desc += '<br>Above 25x — high valuation relative to free cash flow.';
+    document.getElementById('fcf-result-detail').innerHTML = desc;
+  });
+
+  /* ---- FAQ toggle ---- */
+  var faqItems = document.querySelectorAll('.faq-item');
+  for (var k = 0; k < faqItems.length; k++) {
+    faqItems[k].querySelector('.faq-q').addEventListener('click', function() {
+      this.parentElement.classList.toggle('open');
+    });
+  }
+
+  /* ---- Charts ---- */
+  var sectorLabels = ['Technology', 'Real Estate', 'Cons. Disc.', 'Healthcare', 'Cons. Staples', 'Industrials', 'Comm. Svcs', 'Utilities', 'Materials', 'Financials', 'Energy'];
+  var sectorEV = [25, 18.5, 18, 16, 14.5, 14, 13, 12, 10.5, 10, 6];
+  var sectorGrowth = [14, 5, 10, 8, 4, 6, 7, 3, 4, 5, 2];
+  var sectorColors = [
+    'rgba(74,143,231,0.85)', 'rgba(168,85,247,0.85)', 'rgba(245,158,11,0.85)',
+    'rgba(16,185,129,0.85)', 'rgba(99,102,241,0.85)', 'rgba(236,72,153,0.85)',
+    'rgba(14,165,233,0.85)', 'rgba(34,197,94,0.85)', 'rgba(251,146,60,0.85)',
+    'rgba(139,92,246,0.85)', 'rgba(239,68,68,0.85)'
+  ];
+
+  /* Horizontal Bar */
+  var ctxBar = document.getElementById('chart-sector-bar');
+  if (ctxBar) {
+    new Chart(ctxBar.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: sectorLabels,
+        datasets: [{
+          label: 'Avg EV/EBITDA',
+          data: sectorEV,
+          backgroundColor: sectorColors,
+          borderRadius: 4,
+          barThickness: 24
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            ticks: { color: '#9aa0a6', callback: function(v) { return v + 'x'; } }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: '#c9d1d9', font: { size: 13 } }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ctx.parsed.x + 'x EV/EBITDA'; }
+            }
+          }
+        }
+      }
+    });
+    ctxBar.parentElement.style.height = '420px';
+  }
+
+  /* Scatter: EV/EBITDA vs Revenue Growth */
+  var scatterData = [];
+  for (var s = 0; s < sectorLabels.length; s++) {
+    scatterData.push({ x: sectorGrowth[s], y: sectorEV[s], label: sectorLabels[s] });
+  }
+
+  var ctxScatter = document.getElementById('chart-scatter');
+  if (ctxScatter) {
+    new Chart(ctxScatter.getContext('2d'), {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Sectors',
+          data: scatterData,
+          backgroundColor: sectorColors,
+          pointRadius: 10,
+          pointHoverRadius: 13
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: { display: true, text: 'Revenue Growth (%)', color: '#9aa0a6' },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            ticks: { color: '#9aa0a6', callback: function(v) { return v + '%'; } }
+          },
+          y: {
+            title: { display: true, text: 'EV/EBITDA Multiple', color: '#9aa0a6' },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            ticks: { color: '#9aa0a6', callback: function(v) { return v + 'x'; } }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                var pt = ctx.raw;
+                return pt.label + ': ' + pt.y + 'x EV/EBITDA, ' + pt.x + '% growth';
+              }
+            }
+          }
+        }
+      }
+    });
+    ctxScatter.parentElement.style.height = '420px';
+  }
+})();
+</script>
+
+</SiteLayout>

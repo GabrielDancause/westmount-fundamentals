@@ -1,0 +1,615 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Asset Allocation Calculator by Age — Portfolio Rebalancing Tool | Westmount Fundamentals",
+  description: "Free asset allocation calculator. Find the ideal portfolio allocation by age, compare 60/40 portfolio vs 3 fund portfolio, and use our rebalancing calculator to optimize your investments.",
+  category: "study",
+  published: "2026-03-20"
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Asset Allocation Calculator by Age — Portfolio Rebalancing Tool",
+    "description": meta.description,
+    "datePublished": "2026-03-20",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the best asset allocation by age?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A common rule of thumb is the '100 minus age' rule: subtract your age from 100 to get your stock allocation percentage. A 30-year-old would hold 70% stocks and 30% bonds. More aggressive investors use '110 minus age' or '120 minus age' instead." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is a 60/40 portfolio still a good strategy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The 60/40 portfolio (60% stocks, 40% bonds) has historically returned about 8.7% annually with lower volatility than an all-stock portfolio. While it underperformed in the 2022 rising-rate environment, it remains a solid baseline for moderate-risk investors seeking balance between growth and stability." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a 3 fund portfolio?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A 3 fund portfolio, popularized by Bogleheads, consists of three index funds: a total US stock market fund (VTI), an international stock fund (VXUS), and a total bond market fund (BND). This simple approach provides broad diversification at minimal cost, typically with expense ratios under 0.10%." }
+      },
+      {
+        "@type": "Question",
+        "name": "How often should I rebalance my portfolio?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Most financial advisors recommend rebalancing once or twice per year, or whenever your allocation drifts more than 5% from your target. Our portfolio rebalancing calculator helps you determine exactly what to buy and sell to get back to your target asset allocation." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Ray Dalio's All-Weather portfolio?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ray Dalio's All-Weather portfolio is designed to perform well in any economic environment. It allocates 30% stocks, 40% long-term bonds, 15% intermediate-term bonds, 7.5% gold, and 7.5% commodities. It has historically delivered steady returns with significantly lower drawdowns than a traditional stock-heavy portfolio." }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/asset-allocation-calculator/" schema={schema}>
+
+<style is:inline>
+  :root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --bg-card: #0d1117; --border: #30363d; }
+  .aa-hero { text-align: center; padding: 3rem 1rem 2rem; background: linear-gradient(135deg, rgba(74,143,231,0.08), rgba(74,143,231,0.02)); border-bottom: 1px solid rgba(74,143,231,0.15); }
+  .aa-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #e8eaed; }
+  .aa-hero .subtitle { color: #9aa0a6; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+  .aa-container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .stat-row { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; }
+  .stat-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; min-width: 160px; text-align: center; flex: 1; max-width: 260px; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.8rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+
+  .section-title { font-size: 1.6rem; color: #e8eaed; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(74,143,231,0.3); }
+  .section-desc { color: #9aa0a6; margin-bottom: 1.5rem; line-height: 1.7; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.5rem 0; }
+  @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .calc-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .calc-panel h3 { color: #e8eaed; margin: 0 0 1rem; font-size: 1.1rem; }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; color: #9aa0a6; font-size: 0.85rem; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .form-group input, .form-group select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.8rem; color: #e8eaed; font-size: 0.95rem; box-sizing: border-box; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(74,143,231,0.2); }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-size: 0.95rem; cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
+  .btn-primary:hover { background: #3a7fd7; }
+
+  .result-box { background: rgba(74,143,231,0.08); border: 1px solid rgba(74,143,231,0.2); border-radius: 10px; padding: 1.2rem; margin-top: 1rem; display: none; }
+  .result-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); color: #e8eaed; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .label { color: #9aa0a6; }
+  .result-row .value { font-weight: 600; }
+
+  .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .chart-container canvas { max-height: 350px; width: 100% !important; }
+
+  .presets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .preset-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; }
+  .preset-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .preset-card.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(74,143,231,0.15); }
+  .preset-card h4 { color: #e8eaed; margin: 0 0 0.5rem; font-size: 0.95rem; }
+  .preset-card p { color: #9aa0a6; font-size: 0.82rem; margin: 0; line-height: 1.5; }
+
+  .tradeoff-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1rem 0; }
+  .tradeoff-table thead th { background: rgba(74,143,231,0.1); padding: 0.8rem 0.6rem; text-align: left; color: #9aa0a6; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid rgba(74,143,231,0.3); white-space: nowrap; }
+  .tradeoff-table tbody td { padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--border); color: #e8eaed; }
+  .tradeoff-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .positive { color: var(--positive); }
+  .negative { color: var(--negative); }
+
+  .fund-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+  @media (max-width: 768px) { .fund-grid { grid-template-columns: 1fr; } }
+  .fund-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; text-align: center; }
+  .fund-card .ticker { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+  .fund-card .fund-name { color: #9aa0a6; font-size: 0.82rem; margin: 0.3rem 0; }
+  .fund-card .fund-er { color: #6b7280; font-size: 0.75rem; }
+
+  .insights-list { list-style: none; padding: 0; margin: 1.5rem 0; }
+  .insights-list li { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; color: #e8eaed; line-height: 1.6; }
+  .insights-list li strong { color: var(--accent); }
+
+  .edu-section { color: #c8d0de; line-height: 1.8; font-size: 1rem; }
+  .edu-section h3 { color: #e8eaed; margin-top: 1.5rem; }
+  .edu-section p { margin-bottom: 1rem; }
+
+  .faq-section { margin: 2rem 0; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.8rem; overflow: hidden; }
+  .faq-q { padding: 1rem 1.2rem; color: #e8eaed; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q:hover { background: rgba(255,255,255,0.03); }
+  .faq-a { padding: 0 1.2rem 1rem; color: #9aa0a6; line-height: 1.7; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-arrow { transition: transform 0.2s; font-size: 0.8rem; color: #9aa0a6; }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+  .rebal-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 0.8rem; align-items: center; margin-bottom: 0.6rem; }
+  @media (max-width: 600px) { .rebal-row { grid-template-columns: 1fr 1fr; } }
+  .rebal-row label { color: #9aa0a6; font-size: 0.85rem; }
+  .rebal-result { font-weight: 600; }
+
+  .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 16px 24px 0; font-size: 13px; color: #94a3b8; }
+  .breadcrumb a { color: #94a3b8; text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+</style>
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a><span class="sep">›</span>
+  <a href="/study/">Study</a><span class="sep">›</span>
+  <span style="color:#c8d0de">Asset Allocation Calculator</span>
+</nav>
+
+<div class="aa-hero">
+  <h1>Asset Allocation Calculator</h1>
+  <p class="subtitle">Find your ideal portfolio allocation by age and risk tolerance. Compare the 60/40 portfolio, 3 fund portfolio, and more — with a built-in rebalancing calculator.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="aa-container">
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-value">8.7%</div><div class="stat-label">60/40 Annual Return</div></div>
+    <div class="stat-card"><div class="stat-value">10.2%</div><div class="stat-label">S&P 500 Average</div></div>
+    <div class="stat-card"><div class="stat-value">−33%</div><div class="stat-label">Max Drawdown 60/40</div></div>
+    <div class="stat-card"><div class="stat-value">0.03%</div><div class="stat-label">VTI Expense Ratio</div></div>
+  </div>
+
+  <!-- Asset Allocation Calculator -->
+  <h2 class="section-title" id="calculator">Asset Allocation by Age Calculator</h2>
+  <p class="section-desc">Enter your age, risk tolerance, and portfolio value to get a personalized asset allocation recommendation. Our calculator uses the "100 minus age" rule as a baseline, adjusted for your risk profile.</p>
+
+  <div class="calc-grid">
+    <div class="calc-panel">
+      <h3>📊 Your Details</h3>
+      <div class="form-group">
+        <label for="calc-age">Your Age</label>
+        <input type="number" id="calc-age" placeholder="e.g. 35" min="18" max="95" value="35">
+      </div>
+      <div class="form-group">
+        <label for="calc-risk">Risk Tolerance</label>
+        <select id="calc-risk">
+          <option value="conservative">Conservative</option>
+          <option value="moderate" selected>Moderate</option>
+          <option value="aggressive">Aggressive</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="calc-value">Total Portfolio Value ($)</label>
+        <input type="number" id="calc-value" placeholder="e.g. 100000" value="100000">
+      </div>
+      <button class="btn-primary" id="calc-btn" onclick="calculateAllocation()">Calculate My Allocation</button>
+      <div class="result-box" id="calc-results">
+        <div class="result-row"><span class="label">Stocks</span><span class="value" id="res-stocks">—</span></div>
+        <div class="result-row"><span class="label">Bonds</span><span class="value" id="res-bonds">—</span></div>
+        <div class="result-row"><span class="label">Cash</span><span class="value" id="res-cash">—</span></div>
+        <div style="margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.1)">
+          <div class="result-row"><span class="label">Stocks $</span><span class="value" id="res-stocks-dollar">—</span></div>
+          <div class="result-row"><span class="label">Bonds $</span><span class="value" id="res-bonds-dollar">—</span></div>
+          <div class="result-row"><span class="label">Cash $</span><span class="value" id="res-cash-dollar">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="calc-panel" style="display:flex;align-items:center;justify-content:center;">
+      <div style="width:100%;max-width:320px;">
+        <canvas id="doughnut-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Allocation Presets -->
+  <h2 class="section-title" id="presets">Popular Asset Allocation Strategies</h2>
+  <p class="section-desc">Click any preset to see how it compares. These are the most widely-used asset allocation models recommended by financial advisors.</p>
+
+  <div class="presets-grid">
+    <div class="preset-card" onclick="applyPreset('100-age')">
+      <h4>100 Minus Age</h4>
+      <p>Classic rule: Stock % = 100 − your age. Simple and age-adjusted.</p>
+    </div>
+    <div class="preset-card" onclick="applyPreset('60-40')">
+      <h4>60/40 Portfolio</h4>
+      <p>60% stocks, 40% bonds. The traditional balanced portfolio benchmark.</p>
+    </div>
+    <div class="preset-card" onclick="applyPreset('80-20')">
+      <h4>80/20 Growth</h4>
+      <p>80% stocks, 20% bonds. For growth-oriented investors with longer time horizons.</p>
+    </div>
+    <div class="preset-card" onclick="applyPreset('3fund')">
+      <h4>Bogleheads 3-Fund</h4>
+      <p>VTI + VXUS + BND. Total market exposure at minimal cost.</p>
+    </div>
+    <div class="preset-card" onclick="applyPreset('allweather')">
+      <h4>All-Weather (Dalio)</h4>
+      <p>30% stocks, 55% bonds, 7.5% gold, 7.5% commodities. Built for any environment.</p>
+    </div>
+  </div>
+
+  <!-- Doughnut chart already above; Age-based allocation chart -->
+  <h2 class="section-title" id="age-chart">Recommended Stock Allocation by Age</h2>
+  <p class="section-desc">This chart illustrates how your recommended stock percentage decreases as you age, based on the "100 minus age" rule with risk-tolerance adjustments for conservative (−10%), moderate (baseline), and aggressive (+10%) investors.</p>
+  <div class="chart-container">
+    <canvas id="age-alloc-chart"></canvas>
+  </div>
+
+  <!-- Historical Performance Chart -->
+  <h2 class="section-title" id="performance">Historical Performance by Allocation (30 Years)</h2>
+  <p class="section-desc">Compare how $10,000 invested in 1994 would have grown under different stock/bond allocations. The 100/0 portfolio delivered the highest returns but with significantly more volatility.</p>
+  <div class="chart-container">
+    <canvas id="perf-chart"></canvas>
+  </div>
+
+  <!-- Risk/Return Tradeoff Table -->
+  <h2 class="section-title" id="risk-return">Risk &amp; Return Tradeoff Table</h2>
+  <p class="section-desc">Historical performance data for different asset allocation models, based on US stock and bond returns from 1994–2024.</p>
+  <div style="overflow-x:auto">
+    <table class="tradeoff-table">
+      <thead>
+        <tr><th>Allocation</th><th>Avg. Annual Return</th><th>Best Year</th><th>Worst Year</th><th>Max Drawdown</th><th>Std. Deviation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>100/0</strong> (All Stock)</td><td class="positive">10.2%</td><td class="positive">+33.4%</td><td class="negative">−37.0%</td><td class="negative">−50.9%</td><td>15.2%</td></tr>
+        <tr><td><strong>80/20</strong></td><td class="positive">9.4%</td><td class="positive">+28.1%</td><td class="negative">−28.5%</td><td class="negative">−40.6%</td><td>12.1%</td></tr>
+        <tr><td><strong>60/40</strong></td><td class="positive">8.7%</td><td class="positive">+22.8%</td><td class="negative">−20.1%</td><td class="negative">−33.1%</td><td>9.5%</td></tr>
+        <tr><td><strong>40/60</strong></td><td class="positive">7.5%</td><td class="positive">+19.2%</td><td class="negative">−11.8%</td><td class="negative">−21.3%</td><td>6.8%</td></tr>
+        <tr><td><strong>All-Weather</strong></td><td class="positive">7.8%</td><td class="positive">+17.6%</td><td class="negative">−3.9%</td><td class="negative">−12.1%</td><td>5.9%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Rebalancing Calculator -->
+  <h2 class="section-title" id="rebalancing">Portfolio Rebalancing Calculator</h2>
+  <p class="section-desc">Enter your current holdings and target allocation to see exactly what trades are needed to rebalance. A portfolio rebalancing calculator helps you maintain your target asset allocation over time.</p>
+
+  <div class="calc-panel" style="max-width:700px;">
+    <h3>🔄 Rebalance Your Portfolio</h3>
+    <div class="form-group">
+      <label for="rebal-total">Total Portfolio Value ($)</label>
+      <input type="number" id="rebal-total" value="100000">
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;">
+      <span style="color:#9aa0a6;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;">Asset Class</span>
+      <span style="color:#9aa0a6;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;">Current ($)</span>
+      <span style="color:#9aa0a6;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;">Target (%)</span>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+      <span style="color:#e8eaed;padding:0.5rem 0;">Stocks</span>
+      <input type="number" id="rebal-stocks-cur" value="70000" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+      <input type="number" id="rebal-stocks-tgt" value="60" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+      <span style="color:#e8eaed;padding:0.5rem 0;">Bonds</span>
+      <input type="number" id="rebal-bonds-cur" value="20000" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+      <input type="number" id="rebal-bonds-tgt" value="35" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
+      <span style="color:#e8eaed;padding:0.5rem 0;">Cash</span>
+      <input type="number" id="rebal-cash-cur" value="10000" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+      <input type="number" id="rebal-cash-tgt" value="5" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:6px;padding:0.5rem;color:#e8eaed;">
+    </div>
+    <button class="btn-primary" onclick="calculateRebalance()">Calculate Rebalance</button>
+    <div class="result-box" id="rebal-results">
+      <div class="result-row"><span class="label">Stocks</span><span class="value" id="rebal-stocks-action">—</span></div>
+      <div class="result-row"><span class="label">Bonds</span><span class="value" id="rebal-bonds-action">—</span></div>
+      <div class="result-row"><span class="label">Cash</span><span class="value" id="rebal-cash-action">—</span></div>
+    </div>
+  </div>
+
+  <!-- 3-Fund Portfolio Section -->
+  <h2 class="section-title" id="three-fund">3 Fund Portfolio — The Bogleheads Way</h2>
+  <p class="section-desc">The 3 fund portfolio is the simplest way to build a diversified, low-cost investment portfolio. Popularized by the Bogleheads community, it uses just three total-market index funds to capture virtually the entire global stock and bond market.</p>
+
+  <div class="fund-grid">
+    <div class="fund-card">
+      <div class="ticker">VTI</div>
+      <div class="fund-name">Vanguard Total Stock Market ETF</div>
+      <div class="fund-er">Expense Ratio: 0.03%</div>
+    </div>
+    <div class="fund-card">
+      <div class="ticker">VXUS</div>
+      <div class="fund-name">Vanguard Total International Stock ETF</div>
+      <div class="fund-er">Expense Ratio: 0.07%</div>
+    </div>
+    <div class="fund-card">
+      <div class="ticker">BND</div>
+      <div class="fund-name">Vanguard Total Bond Market ETF</div>
+      <div class="fund-er">Expense Ratio: 0.03%</div>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto">
+    <table class="tradeoff-table">
+      <thead>
+        <tr><th>Age Range</th><th>VTI (US Stocks)</th><th>VXUS (Intl Stocks)</th><th>BND (Bonds)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>20–30</td><td>54%</td><td>36%</td><td>10%</td></tr>
+        <tr><td>30–40</td><td>48%</td><td>32%</td><td>20%</td></tr>
+        <tr><td>40–50</td><td>39%</td><td>21%</td><td>40%</td></tr>
+        <tr><td>50–60</td><td>30%</td><td>20%</td><td>50%</td></tr>
+        <tr><td>60+</td><td>24%</td><td>16%</td><td>60%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Key Insights -->
+  <h2 class="section-title" id="insights">5 Key Asset Allocation Insights</h2>
+  <ul class="insights-list">
+    <li><strong>1. Time horizon matters more than risk tolerance.</strong> A 25-year-old "conservative" investor can still hold mostly stocks because they have 40+ years to recover from downturns. Asset allocation by age works because time heals volatility.</li>
+    <li><strong>2. The 60/40 portfolio isn't dead — it's evolving.</strong> While critics declared the 60/40 portfolio obsolete after 2022's dual decline, its 30-year track record of 8.7% annual returns with moderate drawdowns makes it a durable strategy for most investors.</li>
+    <li><strong>3. Rebalancing adds about 0.5% annual return.</strong> Studies show that systematic portfolio rebalancing (selling winners, buying losers) can add 0.4–0.7% in annual returns through a disciplined buy-low, sell-high mechanism.</li>
+    <li><strong>4. International diversification reduces risk without sacrificing returns.</strong> Adding international stocks (VXUS) to a US-only portfolio has historically reduced volatility by 1–2% annually while maintaining similar long-term returns.</li>
+    <li><strong>5. Simplicity beats complexity for most investors.</strong> The Bogleheads 3 fund portfolio consistently matches or outperforms the majority of actively managed multi-asset funds, with expense ratios 10–50x lower.</li>
+  </ul>
+
+  <!-- Educational Section -->
+  <h2 class="section-title" id="what-is">What Is Asset Allocation?</h2>
+  <div class="edu-section">
+    <p><strong>Asset allocation</strong> is the process of dividing your investment portfolio among different asset categories — primarily stocks, bonds, and cash equivalents. It is widely considered the single most important decision an investor makes, with studies suggesting it accounts for over 90% of a portfolio's return variability.</p>
+
+    <h3>Why Asset Allocation Matters</h3>
+    <p>Different asset classes behave differently under various economic conditions. Stocks tend to outperform during economic expansions, while bonds often provide stability during recessions. By combining assets that don't move in perfect lockstep (low correlation), you can build a portfolio that delivers more consistent returns with lower risk.</p>
+
+    <h3>Strategic vs. Tactical Asset Allocation</h3>
+    <p><strong>Strategic asset allocation</strong> sets a long-term target mix (like a 60/40 portfolio) and rebalances periodically to maintain it. <strong>Tactical asset allocation</strong> actively adjusts the mix based on market conditions — for example, reducing stock exposure when valuations appear stretched. Most individual investors benefit from a strategic, rules-based approach using an asset allocation calculator.</p>
+
+    <h3>The Role of Age in Asset Allocation</h3>
+    <p>Your age is the primary input in most asset allocation models because it determines your investment time horizon. Younger investors can afford more volatility (and thus more stocks) because they have decades to recover from market downturns. The classic "100 minus age" rule provides a simple starting point: a 30-year-old would hold 70% stocks and 30% bonds. Modern variants use "110 minus age" or "120 minus age" to account for longer life expectancies and lower bond yields.</p>
+
+    <h3>Asset Allocation vs. Diversification</h3>
+    <p>While often confused, asset allocation and diversification are distinct concepts. Asset allocation is the high-level split between asset classes (stocks vs. bonds vs. cash). Diversification is spreading investments <em>within</em> each class — for example, holding both US and international stocks, or both corporate and government bonds. A well-designed portfolio employs both strategies, which is exactly what the 3 fund portfolio achieves.</p>
+  </div>
+
+  <!-- FAQ Section -->
+  <h2 class="section-title" id="faq">Frequently Asked Questions</h2>
+  <div class="faq-section">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the best asset allocation by age? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">A common rule of thumb is the "100 minus age" rule: subtract your age from 100 to get your stock allocation percentage. A 30-year-old would hold 70% stocks and 30% bonds. More aggressive investors use "110 minus age" or "120 minus age" instead. Our asset allocation calculator adjusts for your specific risk tolerance.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is a 60/40 portfolio still a good strategy? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">The 60/40 portfolio (60% stocks, 40% bonds) has historically returned about 8.7% annually with lower volatility than an all-stock portfolio. While it underperformed in the 2022 rising-rate environment, it remains a solid baseline for moderate-risk investors seeking balance between growth and stability.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a 3 fund portfolio? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">A 3 fund portfolio, popularized by Bogleheads, consists of three index funds: a total US stock market fund (VTI), an international stock fund (VXUS), and a total bond market fund (BND). This simple approach provides broad diversification at minimal cost, typically with expense ratios under 0.10%.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How often should I rebalance my portfolio? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Most financial advisors recommend rebalancing once or twice per year, or whenever your allocation drifts more than 5% from your target. Our portfolio rebalancing calculator helps you determine exactly what to buy and sell to get back to your target asset allocation.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is Ray Dalio's All-Weather portfolio? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Ray Dalio's All-Weather portfolio is designed to perform well in any economic environment. It allocates 30% stocks, 40% long-term bonds, 15% intermediate-term bonds, 7.5% gold, and 7.5% commodities. It has historically delivered steady returns with significantly lower drawdowns than a traditional stock-heavy portfolio.</div>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+  var doughnutChart = null;
+  var perfChart = null;
+  var ageChart = null;
+
+  function formatDollar(n) {
+    return "$" + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function calculateAllocation() {
+    var age = parseInt(document.getElementById("calc-age").value) || 35;
+    var risk = document.getElementById("calc-risk").value;
+    var total = parseFloat(document.getElementById("calc-value").value) || 100000;
+
+    var stockPct = 100 - age;
+    if (risk === "conservative") stockPct = stockPct - 10;
+    if (risk === "aggressive") stockPct = stockPct + 10;
+    if (stockPct > 95) stockPct = 95;
+    if (stockPct < 15) stockPct = 15;
+
+    var cashPct = 5;
+    var bondPct = 100 - stockPct - cashPct;
+    if (bondPct < 0) { bondPct = 0; cashPct = 100 - stockPct; }
+
+    document.getElementById("res-stocks").textContent = stockPct + "%";
+    document.getElementById("res-bonds").textContent = bondPct + "%";
+    document.getElementById("res-cash").textContent = cashPct + "%";
+    document.getElementById("res-stocks-dollar").textContent = formatDollar(total * stockPct / 100);
+    document.getElementById("res-bonds-dollar").textContent = formatDollar(total * bondPct / 100);
+    document.getElementById("res-cash-dollar").textContent = formatDollar(total * cashPct / 100);
+    document.getElementById("calc-results").style.display = "block";
+
+    updateDoughnut(stockPct, bondPct, cashPct);
+  }
+
+  function updateDoughnut(stocks, bonds, cash) {
+    var ctx = document.getElementById("doughnut-chart").getContext("2d");
+    if (doughnutChart) doughnutChart.destroy();
+    doughnutChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Stocks " + stocks + "%", "Bonds " + bonds + "%", "Cash " + cash + "%"],
+        datasets: [{
+          data: [stocks, bonds, cash],
+          backgroundColor: ["#4a8fe7", "#10b981", "#f59e0b"],
+          borderColor: "#0d1117",
+          borderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom", labels: { color: "#9aa0a6", padding: 16, font: { size: 13 } } }
+        },
+        cutout: "60%"
+      }
+    });
+  }
+
+  function applyPreset(name) {
+    var cards = document.querySelectorAll(".preset-card");
+    for (var i = 0; i < cards.length; i++) cards[i].className = "preset-card";
+
+    var stocks = 60, bonds = 35, cash = 5;
+    if (name === "100-age") {
+      var age = parseInt(document.getElementById("calc-age").value) || 35;
+      stocks = 100 - age;
+      bonds = age - 5;
+      cash = 5;
+    } else if (name === "60-40") {
+      stocks = 60; bonds = 40; cash = 0;
+    } else if (name === "80-20") {
+      stocks = 80; bonds = 20; cash = 0;
+    } else if (name === "3fund") {
+      stocks = 80; bonds = 20; cash = 0;
+    } else if (name === "allweather") {
+      stocks = 30; bonds = 55; cash = 15;
+    }
+
+    var total = parseFloat(document.getElementById("calc-value").value) || 100000;
+    document.getElementById("res-stocks").textContent = stocks + "%";
+    document.getElementById("res-bonds").textContent = bonds + "%";
+    document.getElementById("res-cash").textContent = cash + "%";
+    document.getElementById("res-stocks-dollar").textContent = formatDollar(total * stocks / 100);
+    document.getElementById("res-bonds-dollar").textContent = formatDollar(total * bonds / 100);
+    document.getElementById("res-cash-dollar").textContent = formatDollar(total * cash / 100);
+    document.getElementById("calc-results").style.display = "block";
+    updateDoughnut(stocks, bonds, cash);
+  }
+
+  function calculateRebalance() {
+    var total = parseFloat(document.getElementById("rebal-total").value) || 100000;
+    var sCur = parseFloat(document.getElementById("rebal-stocks-cur").value) || 0;
+    var bCur = parseFloat(document.getElementById("rebal-bonds-cur").value) || 0;
+    var cCur = parseFloat(document.getElementById("rebal-cash-cur").value) || 0;
+    var sTgt = parseFloat(document.getElementById("rebal-stocks-tgt").value) || 0;
+    var bTgt = parseFloat(document.getElementById("rebal-bonds-tgt").value) || 0;
+    var cTgt = parseFloat(document.getElementById("rebal-cash-tgt").value) || 0;
+
+    var sTarget = total * sTgt / 100;
+    var bTarget = total * bTgt / 100;
+    var cTarget = total * cTgt / 100;
+
+    var sDiff = sTarget - sCur;
+    var bDiff = bTarget - bCur;
+    var cDiff = cTarget - cCur;
+
+    function fmtAction(diff) {
+      if (diff > 0) return "Buy " + formatDollar(diff);
+      if (diff < 0) return "Sell " + formatDollar(Math.abs(diff));
+      return "No change";
+    }
+
+    document.getElementById("rebal-stocks-action").textContent = fmtAction(sDiff);
+    document.getElementById("rebal-stocks-action").style.color = sDiff >= 0 ? "#10b981" : "#ef4444";
+    document.getElementById("rebal-bonds-action").textContent = fmtAction(bDiff);
+    document.getElementById("rebal-bonds-action").style.color = bDiff >= 0 ? "#10b981" : "#ef4444";
+    document.getElementById("rebal-cash-action").textContent = fmtAction(cDiff);
+    document.getElementById("rebal-cash-action").style.color = cDiff >= 0 ? "#10b981" : "#ef4444";
+    document.getElementById("rebal-results").style.display = "block";
+  }
+
+  function toggleFaq(el) {
+    var item = el.parentElement;
+    var isOpen = item.className.indexOf("open") !== -1;
+    item.className = isOpen ? "faq-item" : "faq-item open";
+  }
+
+  function initCharts() {
+    // Age-based allocation chart
+    var ageLabels = [];
+    var modData = [];
+    var conData = [];
+    var aggData = [];
+    for (var a = 20; a <= 80; a += 5) {
+      ageLabels.push("Age " + a);
+      var base = 100 - a;
+      modData.push(base);
+      conData.push(Math.max(base - 10, 15));
+      aggData.push(Math.min(base + 10, 95));
+    }
+
+    var ageCtx = document.getElementById("age-alloc-chart").getContext("2d");
+    ageChart = new Chart(ageCtx, {
+      type: "line",
+      data: {
+        labels: ageLabels,
+        datasets: [
+          { label: "Aggressive", data: aggData, borderColor: "#ef4444", backgroundColor: "rgba(239,68,68,0.1)", fill: false, tension: 0.3, pointRadius: 4 },
+          { label: "Moderate", data: modData, borderColor: "#4a8fe7", backgroundColor: "rgba(74,143,231,0.1)", fill: false, tension: 0.3, pointRadius: 4 },
+          { label: "Conservative", data: conData, borderColor: "#10b981", backgroundColor: "rgba(16,185,129,0.1)", fill: false, tension: 0.3, pointRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6", font: { size: 13 } } },
+          tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ": " + ctx.parsed.y + "% stocks"; } } }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { min: 0, max: 100, ticks: { color: "#9aa0a6", callback: function(v) { return v + "%"; } }, grid: { color: "rgba(255,255,255,0.05)" }, title: { display: true, text: "Stock Allocation %", color: "#9aa0a6" } }
+        }
+      }
+    });
+
+    // Historical performance chart (simulated growth of $10,000 over 30 years)
+    var years = [];
+    for (var y = 1994; y <= 2024; y++) years.push(y);
+
+    var annualReturns100 = [0.013, 0.376, 0.230, 0.333, 0.286, 0.210, -0.091, -0.119, -0.221, 0.287, 0.109, 0.049, 0.158, 0.055, -0.370, 0.265, 0.151, 0.021, 0.160, 0.323, 0.137, 0.014, 0.120, 0.217, -0.044, 0.314, 0.183, 0.285, -0.181, 0.263, 0.250];
+    var annualReturnsBond = [-0.029, 0.184, 0.036, 0.096, 0.087, -0.008, 0.116, 0.084, 0.101, 0.042, 0.044, 0.024, 0.044, 0.070, 0.053, 0.059, 0.065, 0.078, 0.042, -0.020, 0.060, 0.006, 0.026, 0.035, 0.001, 0.087, 0.074, -0.016, -0.131, 0.055, 0.017];
+
+    function generateGrowth(stockWeight) {
+      var bondWeight = 1 - stockWeight;
+      var values = [10000];
+      for (var i = 0; i < annualReturns100.length; i++) {
+        var ret = stockWeight * annualReturns100[i] + bondWeight * annualReturnsBond[i];
+        values.push(Math.round(values[values.length - 1] * (1 + ret)));
+      }
+      return values;
+    }
+
+    var perfCtx = document.getElementById("perf-chart").getContext("2d");
+    perfChart = new Chart(perfCtx, {
+      type: "line",
+      data: {
+        labels: years,
+        datasets: [
+          { label: "100/0 (All Stock)", data: generateGrowth(1.0), borderColor: "#4a8fe7", fill: false, tension: 0.2, pointRadius: 0, borderWidth: 2.5 },
+          { label: "80/20", data: generateGrowth(0.8), borderColor: "#8b5cf6", fill: false, tension: 0.2, pointRadius: 0, borderWidth: 2 },
+          { label: "60/40", data: generateGrowth(0.6), borderColor: "#10b981", fill: false, tension: 0.2, pointRadius: 0, borderWidth: 2 },
+          { label: "40/60", data: generateGrowth(0.4), borderColor: "#f59e0b", fill: false, tension: 0.2, pointRadius: 0, borderWidth: 2 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6", font: { size: 13 } } },
+          tooltip: { mode: "index", intersect: false, callbacks: { label: function(ctx) { return ctx.dataset.label + ": $" + ctx.parsed.y.toLocaleString(); } } }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6", maxTicksLimit: 10 }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { color: "#9aa0a6", callback: function(v) { return "$" + (v/1000).toFixed(0) + "k"; } }, grid: { color: "rgba(255,255,255,0.05)" }, title: { display: true, text: "Portfolio Value", color: "#9aa0a6" } }
+        },
+        interaction: { mode: "index", intersect: false }
+      }
+    });
+
+    // Initialize doughnut with default values
+    updateDoughnut(65, 30, 5);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCharts);
+  } else {
+    initCharts();
+  }
+</script>
+
+</SiteLayout>

@@ -1,0 +1,1066 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "WACC Calculator | Weighted Average Cost of Capital Formula", description: "Free WACC calculator with CAPM cost of equity, after-tax cost of debt, capital structure charts, sensitivity analysis, and industry benchmarks. Learn how to calculate your discount rate.", category: "study", published: "2026-03-20" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "WACC Calculator — Weighted Average Cost of Capital",
+      "description": meta.description,
+      "datePublished": "2026-03-20",
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is WACC and why does it matter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "WACC (Weighted Average Cost of Capital) represents the blended rate of return a company must earn on its existing assets to satisfy both its debt holders and equity investors. It is the most commonly used discount rate in DCF (Discounted Cash Flow) valuation and is essential for capital budgeting decisions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you calculate WACC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "WACC is calculated using the formula: WACC = (E/V × Re) + (D/V × Rd × (1 − T)), where E is equity value, D is debt value, V is total value (E+D), Re is cost of equity, Rd is cost of debt, and T is the corporate tax rate. The cost of equity is typically estimated using the CAPM model."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the CAPM formula for cost of equity?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Capital Asset Pricing Model (CAPM) calculates cost of equity as: Re = Rf + β × (Rm − Rf), where Rf is the risk-free rate (typically the 10-year Treasury yield), β (beta) measures the stock's volatility relative to the market, and Rm is the expected market return."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is debt cheaper than equity?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Debt is cheaper than equity for two main reasons: (1) interest payments on debt are tax-deductible, creating a 'tax shield' that lowers the effective cost, and (2) debt holders have priority claim on assets in bankruptcy, so they accept a lower required return compared to equity investors who bear more risk."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good WACC for a company?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There is no universal 'good' WACC — it varies by industry, risk profile, and capital structure. Utilities typically have WACC of 5–7% due to stable cash flows, while technology companies range from 8–12% reflecting higher growth risk. Generally, a lower WACC indicates cheaper capital and a higher company valuation, all else being equal."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+const faqItems = schema["@graph"][1].mainEntity;
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/wacc-calculator/" schema={JSON.stringify(schema)}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/tools/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Tools</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">WACC Calculator</span></nav>
+    <span>7 min read</span>
+  </div>
+  <div class="page-content">
+    <h1>WACC Calculator — Weighted Average Cost of Capital</h1>
+    <p>
+      The Weighted Average Cost of Capital (WACC) is the minimum return a company must earn to satisfy all capital providers. It blends the cost of equity and the after-tax cost of debt, weighted by their share of the capital structure. Use our free WACC calculator below to estimate your discount rate for DCF analysis and capital budgeting.
+    </p>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid-4">
+      <div class="stat-card-top">
+        <div class="stat-card-top-label">Avg S&P 500 WACC</div>
+        <div class="stat-card-top-value accent">8.5%</div>
+        <div class="stat-card-top-sub">Across all sectors</div>
+      </div>
+      <div class="stat-card-top">
+        <div class="stat-card-top-label">US 10-Yr Treasury</div>
+        <div class="stat-card-top-value positive">4.25%</div>
+        <div class="stat-card-top-sub">Common risk-free rate</div>
+      </div>
+      <div class="stat-card-top">
+        <div class="stat-card-top-label">Avg Equity Risk Premium</div>
+        <div class="stat-card-top-value accent">5.5%</div>
+        <div class="stat-card-top-sub">Market return − Rf</div>
+      </div>
+      <div class="stat-card-top">
+        <div class="stat-card-top-label">Corporate Tax Rate (US)</div>
+        <div class="stat-card-top-value">21%</div>
+        <div class="stat-card-top-sub">Federal statutory rate</div>
+      </div>
+    </div>
+
+    <!-- ============ MAIN WACC CALCULATOR ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">WACC Calculator</h2>
+      <p class="section-sub">Enter your company's capital structure and costs to calculate the weighted average cost of capital.</p>
+      <div class="formula-box">
+        <code>WACC = (E/V × Re) + (D/V × Rd × (1 − T))</code>
+      </div>
+      <form id="wacc-form">
+        <div class="input-row">
+          <div class="input-group">
+            <label for="equity-value">Market Value of Equity (E)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="equity-value" min="0" step="1000000" value="800000000" required></div>
+          </div>
+          <div class="input-group">
+            <label for="debt-value">Market Value of Debt (D)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="debt-value" min="0" step="1000000" value="200000000" required></div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="cost-equity">Cost of Equity (Re)</label>
+            <div class="input-wrapper"><input type="number" id="cost-equity" min="0" max="100" step="0.1" value="10.0" required><span class="suffix">%</span></div>
+          </div>
+          <div class="input-group">
+            <label for="cost-debt">Pre-tax Cost of Debt (Rd)</label>
+            <div class="input-wrapper"><input type="number" id="cost-debt" min="0" max="100" step="0.1" value="5.0" required><span class="suffix">%</span></div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="tax-rate">Corporate Tax Rate (T)</label>
+            <div class="input-wrapper"><input type="number" id="tax-rate" min="0" max="100" step="0.1" value="21.0" required><span class="suffix">%</span></div>
+          </div>
+        </div>
+      </form>
+
+      <div class="calc-result">
+        <span class="calc-result-label">Weighted Average Cost of Capital</span>
+        <div class="calc-result-value" id="wacc-result">0.00%</div>
+      </div>
+
+      <div class="breakdown-grid">
+        <div class="stat-card">
+          <div class="stat-label">Equity Weight (E/V)</div>
+          <div class="stat-value" id="equity-weight">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Debt Weight (D/V)</div>
+          <div class="stat-value" id="debt-weight">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">After-tax Cost of Debt</div>
+          <div class="stat-value" id="after-tax-debt">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Equity Contribution</div>
+          <div class="stat-value" id="equity-contribution">0%</div>
+        </div>
+      </div>
+
+      <!-- Capital Structure Doughnut -->
+      <div class="chart-container" style="max-width:400px;margin:2rem auto 0">
+        <h3 class="chart-title">Capital Structure</h3>
+        <canvas id="structure-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- ============ CAPM COST OF EQUITY ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">Cost of Equity Calculator (CAPM)</h2>
+      <p class="section-sub">Use the Capital Asset Pricing Model to estimate the required return on equity.</p>
+      <div class="formula-box">
+        <code>Re = Rf + β × (Rm − Rf)</code>
+      </div>
+      <form id="capm-form">
+        <div class="input-row">
+          <div class="input-group">
+            <label for="risk-free">Risk-Free Rate (Rf)</label>
+            <div class="input-wrapper"><input type="number" id="risk-free" min="0" max="100" step="0.01" value="4.25" required><span class="suffix">%</span></div>
+          </div>
+          <div class="input-group">
+            <label for="beta">Beta (β)</label>
+            <div class="input-wrapper"><input type="number" id="beta" min="0" max="10" step="0.01" value="1.20" required></div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label for="market-return">Expected Market Return (Rm)</label>
+            <div class="input-wrapper"><input type="number" id="market-return" min="0" max="100" step="0.1" value="9.75" required><span class="suffix">%</span></div>
+          </div>
+        </div>
+      </form>
+      <div class="calc-result">
+        <span class="calc-result-label">Estimated Cost of Equity</span>
+        <div class="calc-result-value" id="capm-result">0.00%</div>
+      </div>
+      <div class="breakdown-grid">
+        <div class="stat-card">
+          <div class="stat-label">Equity Risk Premium</div>
+          <div class="stat-value" id="erp-value">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Beta-Adjusted Premium</div>
+          <div class="stat-value" id="beta-premium">0%</div>
+        </div>
+      </div>
+      <button type="button" class="use-btn" id="use-capm-btn">↑ Use this Cost of Equity in WACC Calculator</button>
+    </div>
+
+    <!-- ============ AFTER-TAX COST OF DEBT ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">After-Tax Cost of Debt Calculator</h2>
+      <p class="section-sub">See how the tax shield reduces the effective cost of debt financing.</p>
+      <div class="formula-box">
+        <code>After-tax Rd = Rd × (1 − T)</code>
+      </div>
+      <form id="debt-form">
+        <div class="input-row">
+          <div class="input-group">
+            <label for="pretax-debt">Pre-tax Cost of Debt</label>
+            <div class="input-wrapper"><input type="number" id="pretax-debt" min="0" max="100" step="0.1" value="5.0" required><span class="suffix">%</span></div>
+          </div>
+          <div class="input-group">
+            <label for="debt-tax-rate">Tax Rate</label>
+            <div class="input-wrapper"><input type="number" id="debt-tax-rate" min="0" max="100" step="0.1" value="21.0" required><span class="suffix">%</span></div>
+          </div>
+        </div>
+      </form>
+      <div class="calc-result">
+        <span class="calc-result-label">After-Tax Cost of Debt</span>
+        <div class="calc-result-value" id="aftertax-result">0.00%</div>
+      </div>
+      <div class="breakdown-grid">
+        <div class="stat-card">
+          <div class="stat-label">Tax Shield Savings</div>
+          <div class="stat-value" id="tax-shield-value">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Effective Rate Reduction</div>
+          <div class="stat-value" id="rate-reduction">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SENSITIVITY TABLE ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">WACC Sensitivity Analysis</h2>
+      <p class="section-sub">See how WACC changes across different debt-to-equity ratios and cost of equity assumptions.</p>
+      <div class="table-wrapper">
+        <table id="sensitivity-table" class="data-table">
+          <thead>
+            <tr>
+              <th>Debt %</th>
+              <th>Re = 8%</th>
+              <th>Re = 10%</th>
+              <th>Re = 12%</th>
+              <th>Re = 14%</th>
+            </tr>
+          </thead>
+          <tbody id="sensitivity-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ WACC vs DEBT % CHART ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">Optimal Capital Structure</h2>
+      <p class="section-sub">How WACC changes as debt percentage increases — the U-shaped curve reveals the optimal mix where capital cost is minimized.</p>
+      <div class="chart-container">
+        <canvas id="wacc-curve-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- ============ INDUSTRY WACC ============ -->
+    <div class="calculator-card">
+      <h2 class="section-heading">WACC by Industry</h2>
+      <p class="section-sub">Typical WACC ranges vary significantly across sectors based on risk profile, capital intensity, and business stability.</p>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr><th>Industry</th><th>WACC Range</th><th>Typical Midpoint</th><th>Risk Level</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Utilities</td><td>5.0% – 7.0%</td><td>6.0%</td><td><span class="badge positive">Low</span></td></tr>
+            <tr><td>Consumer Staples</td><td>6.0% – 8.0%</td><td>7.0%</td><td><span class="badge positive">Low</span></td></tr>
+            <tr><td>Healthcare</td><td>8.0% – 10.0%</td><td>9.0%</td><td><span class="badge warning">Medium</span></td></tr>
+            <tr><td>Industrials</td><td>7.5% – 9.5%</td><td>8.5%</td><td><span class="badge warning">Medium</span></td></tr>
+            <tr><td>Energy</td><td>7.0% – 10.0%</td><td>8.5%</td><td><span class="badge warning">Medium</span></td></tr>
+            <tr><td>Financials</td><td>8.0% – 11.0%</td><td>9.5%</td><td><span class="badge warning">Medium</span></td></tr>
+            <tr><td>Technology</td><td>8.0% – 12.0%</td><td>10.0%</td><td><span class="badge negative">High</span></td></tr>
+            <tr><td>Biotech / Pharma</td><td>9.0% – 13.0%</td><td>11.0%</td><td><span class="badge negative">High</span></td></tr>
+            <tr><td>Real Estate (REITs)</td><td>5.5% – 8.0%</td><td>6.5%</td><td><span class="badge positive">Low</span></td></tr>
+            <tr><td>Telecom</td><td>6.0% – 8.5%</td><td>7.0%</td><td><span class="badge warning">Medium</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-container" style="margin-top:2rem">
+        <h3 class="chart-title">Industry WACC Ranges</h3>
+        <canvas id="industry-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- ============ EDUCATIONAL CONTENT ============ -->
+    <div class="content-section">
+      <h2>What Is WACC? The Weighted Average Cost of Capital Explained</h2>
+      <p>
+        The Weighted Average Cost of Capital (WACC) is a fundamental concept in corporate finance that represents the average rate of return a company must generate to compensate all of its capital providers — both equity shareholders and debt holders. It serves as the <strong>discount rate</strong> in Discounted Cash Flow (DCF) models, the <strong>hurdle rate</strong> for investment decisions, and the benchmark against which project returns are measured.
+      </p>
+      <p>
+        When a company raises capital, it does so from two primary sources: equity (selling ownership stakes) and debt (borrowing money). Each source demands a different return. Equity investors bear more risk because they are last in line during liquidation, so they demand a higher return. Debt holders accept lower returns because their claims are senior and interest payments are contractually obligated. WACC blends these costs proportionally.
+      </p>
+
+      <h3>The WACC Formula Breakdown</h3>
+      <div class="formula-box">
+        <code>WACC = (E/V × Re) + (D/V × Rd × (1 − T))</code>
+      </div>
+      <ul>
+        <li><strong>E</strong> = Market value of equity</li>
+        <li><strong>D</strong> = Market value of debt</li>
+        <li><strong>V</strong> = Total value (E + D)</li>
+        <li><strong>Re</strong> = Cost of equity (typically from CAPM)</li>
+        <li><strong>Rd</strong> = Pre-tax cost of debt</li>
+        <li><strong>T</strong> = Corporate tax rate</li>
+      </ul>
+      <p>
+        The <code>(1 − T)</code> factor on the debt component reflects the <strong>tax shield</strong> — since interest payments are tax-deductible, the effective cost of debt is lower than its stated rate. This is one of the key advantages of debt financing and a major reason why most companies maintain some level of leverage.
+      </p>
+
+      <h3>Why WACC Matters for DCF Valuation</h3>
+      <p>
+        In a DCF model, future free cash flows are discounted back to present value using WACC as the discount rate. A higher WACC means future cash flows are worth less today, resulting in a lower company valuation. Conversely, a lower WACC increases the present value of future earnings. This makes WACC one of the most <strong>sensitive inputs</strong> in any valuation — a 1% change in WACC can shift a company's implied value by 10-20%.
+      </p>
+
+      <h3>WACC vs Hurdle Rate vs IRR</h3>
+      <p>
+        These three concepts are closely related but serve distinct purposes in capital budgeting:
+      </p>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h4>WACC</h4>
+          <p>The company's blended cost of capital. Represents the minimum return the firm must earn on existing assets. Used as the discount rate in DCF valuation.</p>
+        </div>
+        <div class="comparison-card">
+          <h4>Hurdle Rate</h4>
+          <p>The minimum acceptable return for a specific project. Often set equal to WACC, but may be adjusted upward for riskier projects or downward for safer ones.</p>
+        </div>
+        <div class="comparison-card">
+          <h4>Internal Rate of Return (IRR)</h4>
+          <p>The actual expected return of a specific investment. If IRR > WACC (or hurdle rate), the project creates value and should be accepted.</p>
+        </div>
+      </div>
+
+      <h3>How to Calculate Cost of Equity Using CAPM</h3>
+      <p>
+        The Capital Asset Pricing Model (CAPM) is the most widely used method for estimating the cost of equity. It calculates the expected return based on systematic (non-diversifiable) risk:
+      </p>
+      <div class="formula-box">
+        <code>Re = Rf + β × (Rm − Rf)</code>
+      </div>
+      <p>
+        <strong>Risk-free rate (Rf)</strong> is typically the yield on 10-year US Treasury bonds. <strong>Beta (β)</strong> measures how much the stock moves relative to the overall market — a beta of 1.0 means the stock moves in lockstep, above 1.0 means more volatile, below 1.0 means less volatile. The <strong>equity risk premium (Rm − Rf)</strong> represents the extra return investors demand for holding stocks instead of risk-free bonds.
+      </p>
+
+      <h3>Understanding the Tax Shield on Debt</h3>
+      <p>
+        The tax deductibility of interest payments is a powerful incentive for companies to use debt. If a company pays 5% interest on its debt and faces a 21% tax rate, the effective after-tax cost of debt is only 3.95% (5% × (1 − 0.21)). This tax shield effectively transfers part of the interest cost to the government, making debt the cheaper form of financing. However, excessive debt increases bankruptcy risk and can ultimately raise the cost of both debt and equity.
+      </p>
+
+      <!-- Key Insights -->
+      <h2>5 Key Insights About WACC</h2>
+      <div class="insights-list">
+        <div class="insight-item">
+          <span class="insight-num">1</span>
+          <div>
+            <strong>WACC is the most sensitive DCF input.</strong> A small change in WACC can dramatically swing your valuation. Always run sensitivity analysis across a range of discount rates before making investment decisions.
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">2</span>
+          <div>
+            <strong>There's an optimal capital structure.</strong> Too little debt means you're not leveraging the tax shield. Too much debt increases financial distress risk. Most firms target 20-40% debt in their capital structure to minimize WACC.
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">3</span>
+          <div>
+            <strong>Industry matters enormously.</strong> A utility company with stable, regulated cash flows will have a WACC of 5-7%, while a high-growth tech startup might face 12%+ — comparing across industries is meaningless without adjusting for risk.
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">4</span>
+          <div>
+            <strong>Beta is backward-looking.</strong> CAPM uses historical beta, but a company's risk profile can change. Use adjusted beta or forward-looking estimates for companies undergoing significant strategic shifts.
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">5</span>
+          <div>
+            <strong>WACC assumes a stable capital structure.</strong> If a company plans to significantly deleverage (pay down debt) or take on more leverage, the current WACC may not reflect the future cost of capital. Consider using Adjusted Present Value (APV) in such scenarios.
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-container">
+        {faqItems.map((faq) => (
+          <details class="faq-details">
+            <summary class="faq-summary">{faq.name}</summary>
+            <div class="faq-answer">
+              <p>{faq.acceptedAnswer.text}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Sources -->
+  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+    <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
+      <h3 style="font-size:16px;color:var(--text-bright,#fff);margin-bottom:12px">Data Sources & Methodology</h3>
+      <p style="font-size:14px;color:var(--text-dim,#94a3b8);line-height:1.7;margin:0">WACC calculations use standard corporate finance formulas. Industry WACC ranges are based on aggregated data from Damodaran Online, S&P Capital IQ, and Bloomberg terminal averages. Risk-free rate references the US 10-Year Treasury yield. All results are estimates for educational purposes only.</p>
+    </div>
+  </section>
+
+  <!-- Related Pages -->
+  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+    <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      <a href="/real-return-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Real Return Calculator: Inflation-Adjusted Returns</a>
+      <a href="/options-profit-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Options Profit Calculator</a>
+      <a href="/annuity-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Annuity Payout Calculator</a>
+      <a href="/amortization-schedule-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Amortization Schedule Calculator</a>
+    </div>
+  </section>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+  (function() {
+    function initWACCPage() {
+      var form = document.getElementById('wacc-form');
+      if (!form || form.dataset.initialized) return;
+      form.dataset.initialized = 'true';
+
+      // ============ UTILITY ============
+      function fmt(v, d) { return (v * 100).toFixed(d || 2) + '%'; }
+      function fmtNum(v) { return v.toFixed(2) + '%'; }
+
+      // ============ WACC CALCULATOR ============
+      var eqVal = document.getElementById('equity-value');
+      var debtVal = document.getElementById('debt-value');
+      var costEq = document.getElementById('cost-equity');
+      var costDebt = document.getElementById('cost-debt');
+      var taxRate = document.getElementById('tax-rate');
+
+      var structureChart = null;
+
+      function calcWACC() {
+        var E = parseFloat(eqVal.value) || 0;
+        var D = parseFloat(debtVal.value) || 0;
+        var Re = parseFloat(costEq.value) / 100 || 0;
+        var Rd = parseFloat(costDebt.value) / 100 || 0;
+        var T = parseFloat(taxRate.value) / 100 || 0;
+        var V = E + D;
+        if (V === 0) return;
+
+        var wE = E / V;
+        var wD = D / V;
+        var afterTaxRd = Rd * (1 - T);
+        var wacc = (wE * Re) + (wD * afterTaxRd);
+
+        document.getElementById('wacc-result').textContent = fmtNum(wacc * 100);
+        document.getElementById('equity-weight').textContent = fmt(wE);
+        document.getElementById('debt-weight').textContent = fmt(wD);
+        document.getElementById('after-tax-debt').textContent = fmt(afterTaxRd);
+        document.getElementById('equity-contribution').textContent = fmt(wE * Re);
+
+        // Update doughnut
+        if (structureChart) {
+          structureChart.data.datasets[0].data = [E, D];
+          structureChart.update();
+        }
+      }
+
+      [eqVal, debtVal, costEq, costDebt, taxRate].forEach(function(el) {
+        el.addEventListener('input', calcWACC);
+      });
+
+      // Doughnut chart
+      var ctx1 = document.getElementById('structure-chart');
+      if (ctx1) {
+        structureChart = new Chart(ctx1.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Equity', 'Debt'],
+            datasets: [{
+              data: [800000000, 200000000],
+              backgroundColor: ['#4a8fe7', '#ef4444'],
+              borderColor: ['#4a8fe7', '#ef4444'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#c8d0de', padding: 16 } },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    var total = ctx.dataset.data[0] + ctx.dataset.data[1];
+                    var pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : '0';
+                    return ctx.label + ': ' + pct + '%';
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      calcWACC();
+
+      // ============ CAPM ============
+      var rfInput = document.getElementById('risk-free');
+      var betaInput = document.getElementById('beta');
+      var mrInput = document.getElementById('market-return');
+
+      function calcCAPM() {
+        var rf = parseFloat(rfInput.value) / 100 || 0;
+        var beta = parseFloat(betaInput.value) || 0;
+        var rm = parseFloat(mrInput.value) / 100 || 0;
+        var erp = rm - rf;
+        var re = rf + beta * erp;
+        document.getElementById('capm-result').textContent = fmtNum(re * 100);
+        document.getElementById('erp-value').textContent = fmt(erp);
+        document.getElementById('beta-premium').textContent = fmt(beta * erp);
+      }
+
+      [rfInput, betaInput, mrInput].forEach(function(el) {
+        el.addEventListener('input', calcCAPM);
+      });
+      calcCAPM();
+
+      // Use CAPM result in WACC
+      var useCAPMBtn = document.getElementById('use-capm-btn');
+      if (useCAPMBtn) {
+        useCAPMBtn.addEventListener('click', function() {
+          var rf = parseFloat(rfInput.value) / 100 || 0;
+          var beta = parseFloat(betaInput.value) || 0;
+          var rm = parseFloat(mrInput.value) / 100 || 0;
+          var re = rf + beta * (rm - rf);
+          costEq.value = (re * 100).toFixed(2);
+          calcWACC();
+          eqVal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+
+      // ============ AFTER-TAX COST OF DEBT ============
+      var pretaxDebt = document.getElementById('pretax-debt');
+      var debtTaxRate = document.getElementById('debt-tax-rate');
+
+      function calcAfterTaxDebt() {
+        var rd = parseFloat(pretaxDebt.value) / 100 || 0;
+        var t = parseFloat(debtTaxRate.value) / 100 || 0;
+        var afterTax = rd * (1 - t);
+        var shield = rd * t;
+        document.getElementById('aftertax-result').textContent = fmtNum(afterTax * 100);
+        document.getElementById('tax-shield-value').textContent = fmt(shield);
+        document.getElementById('rate-reduction').textContent = fmt(t);
+      }
+
+      [pretaxDebt, debtTaxRate].forEach(function(el) {
+        el.addEventListener('input', calcAfterTaxDebt);
+      });
+      calcAfterTaxDebt();
+
+      // ============ SENSITIVITY TABLE ============
+      var sensBody = document.getElementById('sensitivity-body');
+      if (sensBody) {
+        var debtPcts = [0, 10, 20, 30, 40, 50, 60, 70, 80];
+        var reAssumptions = [0.08, 0.10, 0.12, 0.14];
+        var rdBase = 0.05;
+        var tBase = 0.21;
+
+        debtPcts.forEach(function(dp) {
+          var row = document.createElement('tr');
+          var cell0 = document.createElement('td');
+          cell0.textContent = dp + '%';
+          row.appendChild(cell0);
+
+          reAssumptions.forEach(function(re) {
+            var wD = dp / 100;
+            var wE = 1 - wD;
+            var wacc = (wE * re) + (wD * rdBase * (1 - tBase));
+            var cell = document.createElement('td');
+            cell.textContent = (wacc * 100).toFixed(2) + '%';
+            if (dp === 20 || dp === 30) cell.style.color = '#10b981';
+            row.appendChild(cell);
+          });
+          sensBody.appendChild(row);
+        });
+      }
+
+      // ============ WACC CURVE CHART ============
+      var ctx2 = document.getElementById('wacc-curve-chart');
+      if (ctx2) {
+        var labels2 = [];
+        var dataPoints = [];
+        var baseRe = 0.10;
+        var baseRd = 0.04;
+        for (var i = 0; i <= 90; i += 5) {
+          labels2.push(i + '%');
+          var wD2 = i / 100;
+          var wE2 = 1 - wD2;
+          // Cost of equity rises with leverage, cost of debt rises at high leverage
+          var leveragedRe = baseRe + (wD2 * 0.04); // equity risk increases with debt
+          var leveragedRd = baseRd + Math.max(0, (wD2 - 0.4) * 0.08); // debt cost spikes after 40%
+          var waccVal = (wE2 * leveragedRe) + (wD2 * leveragedRd * (1 - 0.21));
+          dataPoints.push((waccVal * 100).toFixed(2));
+        }
+
+        new Chart(ctx2.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: labels2,
+            datasets: [{
+              label: 'WACC (%)',
+              data: dataPoints,
+              borderColor: '#4a8fe7',
+              backgroundColor: 'rgba(74,143,231,0.1)',
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#4a8fe7',
+              pointRadius: 4,
+              pointHoverRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: { display: true, text: 'Debt as % of Total Capital', color: '#94a3b8' },
+                ticks: { color: '#94a3b8' },
+                grid: { color: 'rgba(48,54,61,0.5)' }
+              },
+              y: {
+                title: { display: true, text: 'WACC (%)', color: '#94a3b8' },
+                ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } },
+                grid: { color: 'rgba(48,54,61,0.5)' }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: '#c8d0de' } },
+              tooltip: { callbacks: { label: function(ctx) { return 'WACC: ' + ctx.raw + '%'; } } }
+            }
+          }
+        });
+      }
+
+      // ============ INDUSTRY CHART ============
+      var ctx3 = document.getElementById('industry-chart');
+      if (ctx3) {
+        var industries = ['Utilities', 'REITs', 'Consumer Staples', 'Telecom', 'Industrials', 'Energy', 'Healthcare', 'Financials', 'Technology', 'Biotech'];
+        var lowVals = [5.0, 5.5, 6.0, 6.0, 7.5, 7.0, 8.0, 8.0, 8.0, 9.0];
+        var highVals = [7.0, 8.0, 8.0, 8.5, 9.5, 10.0, 10.0, 11.0, 12.0, 13.0];
+        var rangeData = highVals.map(function(h, idx) { return h - lowVals[idx]; });
+
+        new Chart(ctx3.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: industries,
+            datasets: [
+              {
+                label: 'Min WACC',
+                data: lowVals,
+                backgroundColor: 'rgba(74,143,231,0.15)',
+                borderColor: 'transparent',
+                borderWidth: 0
+              },
+              {
+                label: 'Range',
+                data: rangeData,
+                backgroundColor: 'rgba(74,143,231,0.7)',
+                borderColor: '#4a8fe7',
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+              x: {
+                stacked: true,
+                title: { display: true, text: 'WACC (%)', color: '#94a3b8' },
+                ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } },
+                grid: { color: 'rgba(48,54,61,0.5)' },
+                min: 0,
+                max: 16
+              },
+              y: {
+                stacked: true,
+                ticks: { color: '#c8d0de' },
+                grid: { display: false }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    var idx = ctx.dataIndex;
+                    return industries[idx] + ': ' + lowVals[idx] + '% – ' + highVals[idx] + '%';
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initWACCPage);
+    document.addEventListener('astro:page-load', initWACCPage);
+  })();
+  </script>
+
+  <style is:inline>
+    .stats-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .stat-card-top {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .stat-card-top-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-card-top-value {
+      font-family: var(--font-mono, monospace);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #c8d0de;
+    }
+    .stat-card-top-value.accent { color: #4a8fe7; }
+    .stat-card-top-value.positive { color: #10b981; }
+    .stat-card-top-value.negative { color: #ef4444; }
+    .stat-card-top-sub {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    .calculator-card {
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .section-heading {
+      color: #c8d0de;
+      font-size: 1.4rem;
+      margin: 0 0 0.5rem 0;
+    }
+    .section-sub {
+      color: #94a3b8;
+      margin: 0 0 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .formula-box {
+      background: rgba(74,143,231,0.1);
+      border-left: 4px solid #4a8fe7;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .formula-box code {
+      color: #4a8fe7;
+      font-family: var(--font-mono, monospace);
+      font-size: 1.05rem;
+      font-weight: 600;
+      background: transparent;
+    }
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .input-group {
+      margin-bottom: 1.25rem;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #c8d0de;
+      font-size: 0.9rem;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .prefix {
+      position: absolute;
+      left: 0.75rem;
+      color: #94a3b8;
+      font-family: var(--font-mono, monospace);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .suffix {
+      position: absolute;
+      right: 0.75rem;
+      color: #94a3b8;
+      font-family: var(--font-mono, monospace);
+      pointer-events: none;
+    }
+    input[type="number"] {
+      width: 100%;
+      background: #010409;
+      border: 1px solid #30363d;
+      color: #c8d0de;
+      font-family: var(--font-mono, monospace);
+      font-size: 1rem;
+      padding: 0.7rem 0.75rem;
+      border-radius: 8px;
+      appearance: none;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #4a8fe7;
+    }
+    .input-wrapper .prefix ~ input { padding-left: 1.75rem; }
+    .input-wrapper input ~ .suffix { /* handled by suffix position */ }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .calc-result {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #30363d;
+      text-align: center;
+    }
+    .calc-result-label {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .calc-result-value {
+      font-family: var(--font-mono, monospace);
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: #4a8fe7;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .stat-card {
+      background: #010409;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-label {
+      color: #94a3b8;
+      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+    }
+    .stat-value {
+      font-family: var(--font-mono, monospace);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #c8d0de;
+    }
+
+    .chart-container { position: relative; margin: 0 auto; }
+    .chart-title {
+      color: #c8d0de;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .use-btn {
+      display: block;
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 0.75rem;
+      background: rgba(74,143,231,0.15);
+      border: 1px solid #4a8fe7;
+      color: #4a8fe7;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .use-btn:hover { background: rgba(74,143,231,0.25); }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .data-table th, .data-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid #30363d;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .data-table th {
+      background: #010409;
+      color: #94a3b8;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .data-table td { color: #c8d0de; }
+    .data-table tbody tr:hover { background: rgba(74,143,231,0.05); }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge.positive { background: rgba(16,185,129,0.15); color: #10b981; }
+    .badge.warning { background: rgba(234,179,8,0.15); color: #eab308; }
+    .badge.negative { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    .content-section { margin-top: 3rem; }
+    .content-section h2 { color: #c8d0de; margin-top: 2.5rem; margin-bottom: 1rem; }
+    .content-section h3 { color: #c8d0de; margin-top: 1.75rem; margin-bottom: 0.75rem; }
+    .content-section p { color: #94a3b8; line-height: 1.7; margin-bottom: 1.25rem; }
+    .content-section ul { color: #94a3b8; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+    .content-section li { margin-bottom: 0.5rem; line-height: 1.6; }
+    .content-section code { color: #4a8fe7; font-family: var(--font-mono, monospace); background: rgba(74,143,231,0.1); padding: 2px 6px; border-radius: 4px; }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .comparison-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .comparison-card h4 {
+      color: #4a8fe7;
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+    }
+    .comparison-card p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .insights-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+    .insight-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .insight-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 32px;
+      background: rgba(74,143,231,0.15);
+      color: #4a8fe7;
+      font-weight: 800;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .insight-item div { color: #94a3b8; line-height: 1.6; font-size: 0.9rem; }
+    .insight-item strong { color: #c8d0de; }
+
+    .faq-container { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+    .faq-details {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-summary {
+      padding: 1.25rem;
+      font-weight: 600;
+      color: #c8d0de;
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      padding-right: 3rem;
+    }
+    .faq-summary::-webkit-details-marker { display: none; }
+    .faq-summary::after {
+      content: '+';
+      position: absolute;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      color: #4a8fe7;
+    }
+    .faq-details[open] .faq-summary::after { content: '\2212'; }
+    .faq-answer {
+      padding: 0 1.25rem 1.25rem;
+      color: #94a3b8;
+      border-top: 1px solid #30363d;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      line-height: 1.7;
+    }
+    .faq-answer p:last-child { margin-bottom: 0; }
+
+    @media (max-width: 768px) {
+      .stats-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .input-row { grid-template-columns: 1fr; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .calculator-card { padding: 1.25rem; }
+      .calc-result-value { font-size: 2rem; }
+      .stat-card-top-value { font-size: 1.4rem; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid-4 { grid-template-columns: 1fr; }
+      .breakdown-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</SiteLayout>
