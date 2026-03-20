@@ -3,2326 +3,863 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 import registry from "../data/pages-registry.json";
 
 const page = (registry as any)["debt-to-equity"];
-export const meta = { title: "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...", description: "Some S&P 500 companies have debt ratios above 90x equity — and a few have negative equity entirely. See where your holdings rank.", category: "guide", published: "2026-03-15" };
+export const meta = { title: "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...", description: "Some S&P 500 companies have debt ratios above 90x equity — and a few have negative equity entirely. See where your holdings rank.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 Companies",
-  "author": {
-    "@type": "Organization",
-    "name": "Westmount Research"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Westmount Research",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://westmountfundamentals.com/favicon.svg"
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 Companies",
+      "author": { "@type": "Organization", "name": "Westmount Research" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Research",
+        "logo": { "@type": "ImageObject", "url": "https://westmountfundamentals.com/favicon.svg" }
+      },
+      "datePublished": "2026-03-08",
+      "dateModified": "2026-03-20"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a good debt-to-equity ratio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A good D/E ratio varies by industry. Capital-intensive sectors like utilities typically run 1.0–2.0+, while tech companies stay lower. Generally, below 1.0 is considered conservative — the company has more equity than debt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which S&P 500 companies have the most debt?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Telecom, utilities, and financial services companies tend to hold the largest absolute debt. But absolute debt must be compared to equity and cash flow. Some companies like Clorox and Masco actually have negative equity."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is high debt-to-equity always bad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Debt is often cheaper than equity financing due to tax-deductible interest. Companies with predictable cash flows (utilities) can safely handle higher leverage. But in rising-rate environments, highly leveraged companies face refinancing risk."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does negative equity mean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Negative equity means a company's liabilities exceed its assets. This often results from aggressive share buybacks or accumulated losses. The traditional D/E ratio becomes meaningless — these companies are effectively infinitely leveraged."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does debt-to-equity affect stock price?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "High leverage amplifies both gains and losses. When business is good, debt boosts return on equity. When it slows, interest payments can wipe out profits — leading to higher volatility and downside risk."
+          }
+        }
+      ]
     }
-  },
-  "datePublished": "2026-03-08",
-  "dateModified": "2026-03-08"
+  ]
 };
-
 ---
 
- · Updated March 2026<SiteLayout
+<SiteLayout
   site="westmount"
   title={page.title}
   description={page.description}
-  canonical={`https://westmountfundamentals.com/${page.slug}/`} schema={schema}
+  canonical={`https://westmountfundamentals.com/${page.slug}/`}
+  schema={schema}
 >
   <style>
-:root {
-            --negative: #ef4444;
+    :root {
+      --de-green: #22c55e;
+      --de-yellow: #eab308;
+      --de-orange: #f97316;
+      --de-red: #ef4444;
+      --de-purple: #a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--bg-color); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    h1 { font-size: 2.75rem; font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .subtitle { font-size: 1.15rem; color: var(--text-secondary); max-width: 800px; margin-bottom: 32px; }
+    .content-section { margin-bottom: 56px; }
+    h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); }
+    h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; color: var(--text-primary); }
 
-}
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: center; }
+    .stat-value { font-size: 1.75rem; font-weight: 700; color: var(--accent-color); margin-bottom: 4px; font-family: var(--font-mono); }
+    .stat-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
+    .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; font-family: var(--font-mono); }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    /* Calculator */
+    .calc-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; margin-bottom: 40px; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .calc-inputs { display: flex; flex-direction: column; gap: 16px; }
+    .calc-field label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+    .calc-field input { width: 100%; padding: 12px 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1rem; font-family: var(--font-mono); outline: none; transition: border-color 0.2s; }
+    .calc-field input:focus { border-color: var(--accent-color); }
+    .calc-result { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .calc-ratio { font-size: 3.5rem; font-weight: 800; font-family: var(--font-mono); margin-bottom: 8px; }
+    .calc-interpretation { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 12px; }
+    .calc-rank { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+    .calc-gauge { width: 100%; height: 8px; background: var(--bg-color); border-radius: 4px; margin-top: 12px; position: relative; overflow: visible; }
+    .calc-gauge-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+    .calc-gauge-marker { position: absolute; top: -4px; width: 3px; height: 16px; background: #fff; border-radius: 2px; transition: left 0.4s ease; transform: translateX(-50%); }
+    .calc-gauge-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 6px; }
 
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
+    /* Insights */
+    .insights-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+    .insight-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+    .insight-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .insight-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+    .insight-text { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
 
-        a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
+    /* Charts */
+    .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+    .chart-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
+    .chart-card h3 { margin-bottom: 16px; }
+    .chart-card canvas { width: 100% !important; max-height: 400px; }
 
-        a:hover {
-            text-decoration: underline;
-        }
+    /* Interactive Table */
+    .table-controls { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .table-controls input { flex: 1; min-width: 200px; padding: 10px 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; outline: none; }
+    .table-controls input:focus { border-color: var(--accent-color); }
+    .table-controls select { padding: 10px 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; outline: none; cursor: pointer; }
+    .result-count { font-size: 0.85rem; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+    .table-container { overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: rgba(21,32,64,0.5); padding: 14px 16px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 600; border-bottom: 1px solid var(--border-color); white-space: nowrap; cursor: pointer; user-select: none; }
+    th:hover { color: var(--text-primary); }
+    th .sort-arrow { margin-left: 4px; font-size: 0.65rem; opacity: 0.4; }
+    th.sorted .sort-arrow { opacity: 1; color: var(--accent-color); }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background: rgba(255,255,255,0.02); }
+    .company-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+    .company-ticker { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); display: flex; align-items: center; gap: 6px; }
+    .sector-tag { background: rgba(100,116,139,0.1); color: var(--text-secondary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-sans); }
+    .flag { background: rgba(239,68,68,0.1); color: var(--de-red); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+    .num { font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+    .de-badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; }
+    .de-green { background: rgba(34,197,94,0.12); color: var(--de-green); }
+    .de-yellow { background: rgba(234,179,8,0.12); color: var(--de-yellow); }
+    .de-orange { background: rgba(249,115,22,0.12); color: var(--de-orange); }
+    .de-red { background: rgba(239,68,68,0.12); color: var(--de-red); }
+    .de-purple { background: rgba(168,85,247,0.12); color: var(--de-purple); }
+    .show-more-btn { display: block; width: 100%; padding: 14px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0 0 12px 12px; color: var(--accent-color); font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; transition: background 0.2s; }
+    .show-more-btn:hover { background: rgba(255,255,255,0.03); }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    /* FAQ */
+    .faq-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+    .faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .faq-question { font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; }
+    .faq-answer { color: var(--text-secondary); font-size: 0.95rem; }
 
-        header {
-            padding: 80px 0 40px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 40px;
-        }
+    /* Methodology */
+    .methodology { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 28px; margin-bottom: 40px; font-size: 0.9rem; color: var(--text-secondary); }
+    .methodology h3 { color: var(--text-primary); margin-bottom: 14px; font-size: 1.15rem; }
+    .methodology ul { margin-left: 20px; margin-bottom: 14px; }
+    .methodology li { margin-bottom: 6px; }
 
-        .breadcrumb {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
+    /* Color legend */
+    .color-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; font-size: 0.8rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
-        h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
-        }
+    /* SEO fallback table */
+    .seo-table { display: none; }
 
-        .subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 800px;
-            margin-bottom: 30px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin-bottom: 8px;
-            font-family: var(--font-mono);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .content-section {
-            margin-bottom: 60px;
-        }
-
-        h2 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: var(--text-primary);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background-color: rgba(21, 32, 64, 0.5);
-            padding: 16px 20px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.02);
-        }
-
-        .company-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-        }
-
-        .company-ticker {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sector-tag {
-            background-color: rgba(100, 116, 139, 0.1);
-            color: var(--text-secondary);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-family: var(--font-sans);
-        }
-
-        .flag {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: var(--negative);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-family: var(--font-sans);
-            font-weight: 600;
-        }
-
-        .num {
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        .negative-equity td {
-            background-color: rgba(239, 68, 68, 0.02);
-        }
-
-        .faq-item {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .faq-question {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .faq-answer {
-            color: var(--text-secondary);
-        }
-
-        .methodology {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 40px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .methodology h3 {
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            font-size: 1.25rem;
-        }
-
-        .methodology ul {
-            margin-left: 20px;
-            margin-bottom: 16px;
-        }
-
-        .methodology li {
-            margin-bottom: 8px;
-        }
-
-        footer {
-            padding: 40px 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.25rem;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            td, th {
-                padding: 12px 16px;
-            }
-        }
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .calc-grid { grid-template-columns: 1fr; }
+      .calc-ratio { font-size: 2.5rem; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .chart-row { grid-template-columns: 1fr; }
+      td, th { padding: 10px 12px; }
+      .table-controls { flex-direction: column; }
+      .result-count { margin-left: 0; }
+    }
   </style>
 
 <div class="container">
+  <main>
+    <section class="content-section">
+      <h1>{page.h1}</h1>
+      <p class="subtitle">Some S&amp;P 500 companies have debt ratios above 20× equity — and a few have negative equity entirely. Use the calculator below, explore interactive charts, or search the full rankings to see where any company stands.</p>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-value" id="statAvg">—</div><div class="stat-label">Average D/E Ratio</div><div class="stat-sub" id="statAvgSub"></div></div>
+        <div class="stat-card"><div class="stat-value" id="statMax">—</div><div class="stat-label">Most Leveraged</div><div class="stat-sub" id="statMaxSub"></div></div>
+        <div class="stat-card"><div class="stat-value" id="statMin">—</div><div class="stat-label">Least Leveraged</div><div class="stat-sub" id="statMinSub"></div></div>
+        <div class="stat-card"><div class="stat-value" id="statNeg">—</div><div class="stat-label">Negative Equity</div><div class="stat-sub">Companies with liabilities &gt; assets</div></div>
+      </div>
+    </section>
+
+    <!-- D/E Calculator -->
+    <section class="content-section">
+      <h2>📊 Debt-to-Equity Calculator</h2>
+      <p style="color:var(--text-secondary);margin-bottom:20px;">Enter a company's total debt and total equity to instantly calculate its D/E ratio and see how it compares to S&amp;P 500 companies.</p>
+      <div class="calc-card">
+        <div class="calc-grid">
+          <div class="calc-inputs">
+            <div class="calc-field">
+              <label for="calcDebt">Total Debt ($)</label>
+              <input type="text" id="calcDebt" placeholder="e.g. 5000000000" inputmode="numeric">
+            </div>
+            <div class="calc-field">
+              <label for="calcEquity">Total Equity ($)</label>
+              <input type="text" id="calcEquity" placeholder="e.g. 2000000000" inputmode="numeric">
+            </div>
+          </div>
+          <div class="calc-result">
+            <div class="calc-ratio" id="calcRatio">—</div>
+            <div class="calc-interpretation" id="calcInterp">Enter values to calculate</div>
+            <div class="calc-rank" id="calcRank"></div>
+            <div class="calc-gauge" id="calcGauge" style="display:none;">
+              <div class="calc-gauge-fill" id="calcGaugeFill"></div>
+              <div class="calc-gauge-marker" id="calcGaugeMarker"></div>
+            </div>
+            <div class="calc-gauge-labels" id="calcGaugeLabels" style="display:none;">
+              <span>0</span><span>1</span><span>2</span><span>5</span><span>10+</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Insights -->
+    <section class="content-section">
+      <h2>Key Insights</h2>
+      <div class="insights-grid" id="insightsGrid"></div>
+    </section>
+
+    <!-- Charts -->
+    <section class="content-section">
+      <h2>Sector Leverage Analysis</h2>
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>Average D/E by Sector</h3>
+          <canvas id="sectorChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>D/E Distribution</h3>
+          <canvas id="distChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Table -->
+    <section class="content-section">
+      <h2>S&amp;P 500 Debt-to-Equity Rankings</h2>
+      <div class="table-controls">
+        <input type="text" id="searchInput" placeholder="Search by ticker or company name…">
+        <select id="sectorFilter"><option value="">All Sectors</option></select>
+        <span class="result-count" id="resultCount"></span>
+      </div>
+      <div class="color-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--de-green)"></div> &lt;0.5 (Low)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--de-yellow)"></div> 0.5–1.0</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--de-orange)"></div> 1.0–2.0</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--de-red)"></div> &gt;2.0 (High)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--de-purple)"></div> Negative Equity</div>
+      </div>
+      <div class="table-container">
+        <table id="deTable">
+          <thead>
+            <tr>
+              <th data-col="rank"># <span class="sort-arrow">▼</span></th>
+              <th data-col="company">Company <span class="sort-arrow">▼</span></th>
+              <th data-col="sector">Sector <span class="sort-arrow">▼</span></th>
+              <th data-col="deRatio">D/E Ratio <span class="sort-arrow">▼</span></th>
+              <th data-col="totalDebt">Total Debt <span class="sort-arrow">▼</span></th>
+              <th data-col="totalEquity">Total Equity <span class="sort-arrow">▼</span></th>
+            </tr>
+          </thead>
+          <tbody id="deTableBody"></tbody>
+        </table>
+      </div>
+      <button class="show-more-btn" id="showMoreBtn">Show More</button>
+    </section>
+
+    <!-- SEO Fallback Table (hidden when JS active) -->
+    <noscript>
+    <section class="content-section seo-table" style="display:block;">
+      <h2>Top 150 Most Leveraged S&amp;P 500 Companies</h2>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Rank</th><th>Company</th><th>D/E Ratio</th><th>Total Debt</th><th>Total Equity</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>The Clorox Company (CLX)</td><td>N/A (Neg Equity)</td><td>$3.2B</td><td>-$125.0M</td></tr>
+            <tr><td>2</td><td>Masco Corporation (MAS)</td><td>N/A (Neg Equity)</td><td>$3.2B</td><td>-$184.5M</td></tr>
+            <tr><td>3</td><td>Colgate-Palmolive (CL)</td><td>23.44</td><td>$8.6B</td><td>$53.7M</td></tr>
+            <tr><td>4</td><td>GoDaddy Inc. (GDDY)</td><td>17.96</td><td>$3.9B</td><td>$212.8M</td></tr>
+            <tr><td>5</td><td>Verisk Analytics (VRSK)</td><td>15.82</td><td>$4.9B</td><td>$308.0M</td></tr>
+            <tr><td>6</td><td>DaVita Inc. (DVA)</td><td>N/A (Neg Equity)</td><td>$12.9B</td><td>-$634.9M</td></tr>
+            <tr><td>7</td><td>Seagate Technology (STX)</td><td>10.47</td><td>$4.8B</td><td>$471.3M</td></tr>
+            <tr><td>8</td><td>Gartner, Inc. (IT)</td><td>10.47</td><td>$3.3B</td><td>$318.1M</td></tr>
+            <tr><td>9</td><td>The Boeing Company (BA)</td><td>10.33</td><td>$56.4B</td><td>$5.5B</td></tr>
+            <tr><td>10</td><td>NRG Energy (NRG)</td><td>9.89</td><td>$16.6B</td><td>$1.2B</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    </noscript>
+
+    <!-- Editorial Content -->
+    <section class="content-section">
+      <h2>Understanding Debt-to-Equity Ratios</h2>
+      <div style="color:var(--text-secondary);max-width:800px;line-height:1.7;">
+        <p style="margin-bottom:16px;">The debt-to-equity ratio is one of the most fundamental measures of a company's financial leverage. It tells you how much debt a company uses to finance its operations relative to shareholder equity. A D/E of 2.0 means the company has $2 of debt for every $1 of equity.</p>
+        <p style="margin-bottom:16px;">But context matters enormously. A utility with a D/E of 1.8 is perfectly normal — utilities have stable, regulated cash flows that can reliably service debt. A tech startup with the same ratio would be a red flag. This is why the sector comparison chart above is critical: you need to compare apples to apples.</p>
+        <p style="margin-bottom:16px;"><strong>Negative equity</strong> is the extreme case. Companies like Clorox and Masco have bought back so many shares that total equity has gone negative. The traditional D/E formula breaks down here — these companies are technically infinitely leveraged, though they may still be operationally sound with strong cash flows.</p>
+        <p>When evaluating leverage, consider the D/E ratio alongside interest coverage, debt maturity schedule, and the interest rate environment. A high D/E ratio in a low-rate environment is very different from the same ratio when refinancing at 6%+.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <div class="faq-question">What is a good debt-to-equity ratio?</div>
+        <div class="faq-answer">A "good" ratio varies by industry. Capital-intensive sectors like utilities typically run 1.0–2.0+, while tech companies stay lower. Generally, below 1.0 is considered conservative — the company has more equity than debt. Use the calculator above to see how any D/E ratio compares to S&amp;P 500 averages.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Which S&amp;P 500 companies have the most debt?</div>
+        <div class="faq-answer">By absolute debt, financial services companies like JPMorgan ($0+ in direct debt but massive balance sheet), Citigroup ($777B), and Goldman Sachs ($748B) lead. But absolute debt must be compared to equity — Colgate-Palmolive has "only" $8.6B in debt but just $53.7M in equity, giving it a D/E of 23.44×.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Is high debt-to-equity always bad?</div>
+        <div class="faq-answer">No. Debt is often cheaper than equity financing due to tax-deductible interest. Companies with predictable cash flows (utilities, consumer staples) can safely handle higher leverage. However, in rising-rate environments, companies with high leverage and upcoming refinancing needs face significant risk.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">What does negative equity mean for investors?</div>
+        <div class="faq-answer">Negative equity means accumulated buybacks or losses have pushed total equity below zero. This doesn't automatically mean the company is failing — Clorox has strong brands and cash flow. But it does mean the company is entirely debt-financed and has zero equity cushion if things go wrong.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How does debt-to-equity affect stock price?</div>
+        <div class="faq-answer">High leverage amplifies both gains and losses for shareholders. When business is good, debt boosts return on equity. When it slows, high interest payments can wipe out profits — leading to higher stock price volatility and greater downside risk. This is why highly leveraged stocks tend to be more volatile.</div>
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="methodology">
+      <h3>Methodology &amp; Data</h3>
+      <p>Data was collected for S&amp;P 500 components as of March 2026. The analysis focuses on the 150 most leveraged companies.</p>
+      <ul>
+        <li><strong>Debt-to-Equity (D/E):</strong> Total Debt ÷ Total Shareholder Equity.</li>
+        <li><strong>Negative Equity:</strong> Companies where buybacks or losses pushed equity below zero. D/E is not meaningful for these firms.</li>
+        <li><strong>Ranking:</strong> Negative equity companies rank first (highest leverage), followed by descending D/E ratio.</li>
+      </ul>
+      <p><em>Disclaimer: This site provides data and analysis for informational purposes only. Nothing here constitutes investment advice. Do your own research.</em></p>
+    </section>
+
+    <section style="max-width:800px;margin:40px auto;padding:0 24px">
+      <div style="background:var(--card-bg);border:1px solid var(--border-color);border-radius:12px;padding:24px">
+        <h3 style="font-size:14px;color:var(--text-dim,#94a3b8);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Cite This Page</h3>
+        <code style="display:block;background:var(--bg-color);padding:16px;border-radius:8px;font-size:13px;color:var(--text-primary);font-family:monospace;white-space:pre-wrap;word-break:break-all">Westmount Fundamentals. "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 Companies." westmountfundamentals.com/debt-to-equity, 2026.</code>
+      </div>
+    </section>
+
+    <section style="max-width:800px;margin:40px auto;padding:0 24px">
+      <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+        <a href="/how-to-pay-off-debt/" style="display:block;padding:16px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;text-decoration:none;color:var(--text-primary);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">How to Pay Off Debt Fast: Proven Strategies and The Math Behind Them</a>
+        <a href="/equity-risk-premium/" style="display:block;padding:16px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;text-decoration:none;color:var(--text-primary);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Earnings Yield vs Bond Yield: Is the Stock Market Fairly Valued?</a>
+        <a href="/home-equity-calculator/" style="display:block;padding:16px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;text-decoration:none;color:var(--text-primary);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Home Equity Calculator</a>
+        <a href="/debt-to-income-ratio-calculator/" style="display:block;padding:16px;background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;text-decoration:none;color:var(--text-primary);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Debt-to-Income Ratio Calculator</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script is:inline>
+(function() {
+  const DE_DATA = [
+    {ticker:'CLX',company:'The Clorox Company',sector:'Consumer Defensive',deRatio:null,totalDebt:3.2e9,totalEquity:-125e6},
+    {ticker:'MAS',company:'Masco Corporation',sector:'Industrials',deRatio:null,totalDebt:3.2e9,totalEquity:-184.5e6},
+    {ticker:'CL',company:'Colgate-Palmolive Company',sector:'Consumer Defensive',deRatio:23.44,totalDebt:8.6e9,totalEquity:53.7e6},
+    {ticker:'GDDY',company:'GoDaddy Inc.',sector:'Technology',deRatio:17.96,totalDebt:3.9e9,totalEquity:212.8e6},
+    {ticker:'VRSK',company:'Verisk Analytics, Inc.',sector:'Industrials',deRatio:15.82,totalDebt:4.9e9,totalEquity:308e6},
+    {ticker:'DVA',company:'DaVita Inc.',sector:'Healthcare',deRatio:null,totalDebt:12.9e9,totalEquity:-634.9e6},
+    {ticker:'STX',company:'Seagate Technology Holdings plc',sector:'Technology',deRatio:10.47,totalDebt:4.8e9,totalEquity:471.3e6},
+    {ticker:'IT',company:'Gartner, Inc.',sector:'Technology',deRatio:10.47,totalDebt:3.3e9,totalEquity:318.1e6},
+    {ticker:'BA',company:'The Boeing Company',sector:'Industrials',deRatio:10.33,totalDebt:56.4e9,totalEquity:5.5e9},
+    {ticker:'NRG',company:'NRG Energy, Inc.',sector:'Utilities',deRatio:9.89,totalDebt:16.6e9,totalEquity:1.2e9},
+    {ticker:'MGM',company:'MGM Resorts International',sector:'Consumer Cyclical',deRatio:9.63,totalDebt:31.6e9,totalEquity:2.4e9},
+    {ticker:'LVS',company:'Las Vegas Sands Corp.',sector:'Consumer Cyclical',deRatio:8.29,totalDebt:16e9,totalEquity:1.6e9},
+    {ticker:'TPR',company:'Tapestry, Inc.',sector:'Consumer Cyclical',deRatio:7.15,totalDebt:3.9e9,totalEquity:550.5e6},
+    {ticker:'NCLH',company:'Norwegian Cruise Line Holdings Ltd.',sector:'Consumer Cyclical',deRatio:7.03,totalDebt:15.5e9,totalEquity:2.2e9},
+    {ticker:'AMGN',company:'Amgen Inc.',sector:'Healthcare',deRatio:6.4,totalDebt:55.4e9,totalEquity:8.7e9},
+    {ticker:'SYY',company:'Sysco Corporation',sector:'Consumer Defensive',deRatio:6.4,totalDebt:15e9,totalEquity:2.3e9},
+    {ticker:'HAS',company:'Hasbro, Inc.',sector:'Consumer Cyclical',deRatio:6.01,totalDebt:3.4e9,totalEquity:539.7e6},
+    {ticker:'GS',company:'The Goldman Sachs Group, Inc.',sector:'Financial Services',deRatio:5.96,totalDebt:747.6e9,totalEquity:105.8e9},
+    {ticker:'LYV',company:'Live Nation Entertainment, Inc.',sector:'Communication Services',deRatio:5.72,totalDebt:10.4e9,totalEquity:271.9e6},
+    {ticker:'TRGP',company:'Targa Resources Corp.',sector:'Energy',deRatio:5.49,totalDebt:17.5e9,totalEquity:3.1e9},
+    {ticker:'HD',company:'The Home Depot, Inc.',sector:'Consumer Cyclical',deRatio:5.1,totalDebt:65.4e9,totalEquity:12.8e9},
+    {ticker:'CHTR',company:'Charter Communications, Inc.',sector:'Communication Services',deRatio:4.82,totalDebt:99e9,totalEquity:16.1e9},
+    {ticker:'COR',company:'Cencora, Inc.',sector:'Healthcare',deRatio:4.73,totalDebt:9.9e9,totalEquity:1.9e9},
+    {ticker:'KMB',company:'Kimberly-Clark Corporation',sector:'Consumer Defensive',deRatio:4.65,totalDebt:7.6e9,totalEquity:1.5e9},
+    {ticker:'F',company:'Ford Motor Company',sector:'Consumer Cyclical',deRatio:4.61,totalDebt:165.7e9,totalEquity:35.3e9},
+    {ticker:'MS',company:'Morgan Stanley',sector:'Financial Services',deRatio:4.56,totalDebt:513.4e9,totalEquity:102.2e9},
+    {ticker:'SPG',company:'Simon Property Group, Inc.',sector:'Real Estate',deRatio:4.35,totalDebt:29.2e9,totalEquity:5.2e9},
+    {ticker:'AMT',company:'American Tower Corporation',sector:'Real Estate',deRatio:4.34,totalDebt:45e9,totalEquity:3.7e9},
+    {ticker:'ORCL',company:'Oracle Corporation',sector:'Technology',deRatio:4.33,totalDebt:131.7e9,totalEquity:30e9},
+    {ticker:'KR',company:'The Kroger Co.',sector:'Consumer Defensive',deRatio:4.16,totalDebt:24.7e9,totalEquity:7.8e9},
+    {ticker:'C',company:'Citigroup Inc.',sector:'Financial Services',deRatio:4.04,totalDebt:777.2e9,totalEquity:192.4e9},
+    {ticker:'MSI',company:'Motorola Solutions, Inc.',sector:'Technology',deRatio:4.02,totalDebt:9.8e9,totalEquity:2.4e9},
+    {ticker:'DRI',company:'Darden Restaurants, Inc.',sector:'Consumer Cyclical',deRatio:4.01,totalDebt:8.3e9,totalEquity:2.1e9},
+    {ticker:'VST',company:'Vistra Corp.',sector:'Utilities',deRatio:4.0,totalDebt:20.4e9,totalEquity:2.6e9},
+    {ticker:'GEN',company:'Gen Digital Inc.',sector:'Technology',deRatio:3.63,totalDebt:8.5e9,totalEquity:2.3e9},
+    {ticker:'LMT',company:'Lockheed Martin Corporation',sector:'Industrials',deRatio:3.39,totalDebt:22.8e9,totalEquity:6.8e9},
+    {ticker:'SHW',company:'The Sherwin-Williams Company',sector:'Basic Materials',deRatio:3.06,totalDebt:14.1e9,totalEquity:4.6e9},
+    {ticker:'JPM',company:'JPMorgan Chase & Co.',sector:'Financial Services',deRatio:3.0,totalDebt:0,totalEquity:342.5e9},
+    {ticker:'ITW',company:'Illinois Tool Works Inc.',sector:'Industrials',deRatio:2.86,totalDebt:9.2e9,totalEquity:3.2e9},
+    {ticker:'ZTS',company:'Zoetis Inc.',sector:'Healthcare',deRatio:2.8,totalDebt:9.3e9,totalEquity:3.3e9},
+    {ticker:'BAC',company:'Bank of America Corporation',sector:'Financial Services',deRatio:2.78,totalDebt:767.1e9,totalEquity:275.9e9},
+    {ticker:'MMM',company:'3M Company',sector:'Industrials',deRatio:2.77,totalDebt:13.1e9,totalEquity:4.7e9},
+    {ticker:'WFC',company:'Wells Fargo & Company',sector:'Financial Services',deRatio:2.7,totalDebt:443.5e9,totalEquity:164.1e9},
+    {ticker:'AES',company:'The AES Corporation',sector:'Utilities',deRatio:2.59,totalDebt:30.9e9,totalEquity:4.1e9},
+    {ticker:'PEP',company:'PepsiCo, Inc.',sector:'Consumer Defensive',deRatio:2.58,totalDebt:53e9,totalEquity:20.4e9},
+    {ticker:'MA',company:'Mastercard Incorporated',sector:'Financial Services',deRatio:2.56,totalDebt:19.8e9,totalEquity:7.7e9},
+    {ticker:'JBL',company:'Jabil Inc.',sector:'Technology',deRatio:2.56,totalDebt:3.4e9,totalEquity:1.3e9},
+    {ticker:'BMY',company:'Bristol-Myers Squibb Company',sector:'Healthcare',deRatio:2.55,totalDebt:47.2e9,totalEquity:18.5e9},
+    {ticker:'EXPE',company:'Expedia Group, Inc.',sector:'Consumer Cyclical',deRatio:2.55,totalDebt:6.5e9,totalEquity:1.2e9},
+    {ticker:'IQV',company:'IQVIA Holdings Inc.',sector:'Healthcare',deRatio:2.46,totalDebt:16.3e9,totalEquity:6.5e9},
+    {ticker:'CPAY',company:'Corpay, Inc.',sector:'Technology',deRatio:2.43,totalDebt:10.3e9,totalEquity:3.9e9},
+    {ticker:'DE',company:'Deere & Company',sector:'Industrials',deRatio:2.4,totalDebt:63.2e9,totalEquity:26.3e9},
+    {ticker:'WM',company:'Waste Management, Inc.',sector:'Industrials',deRatio:2.39,totalDebt:23.9e9,totalEquity:10e9},
+    {ticker:'CDW',company:'CDW Corporation',sector:'Technology',deRatio:2.37,totalDebt:6.2e9,totalEquity:2.6e9},
+    {ticker:'HON',company:'Honeywell International Inc.',sector:'Industrials',deRatio:2.37,totalDebt:35.6e9,totalEquity:13.9e9},
+    {ticker:'NTAP',company:'NetApp, Inc.',sector:'Technology',deRatio:2.36,totalDebt:2.7e9,totalEquity:1.2e9},
+    {ticker:'EL',company:'The Estée Lauder Companies Inc.',sector:'Consumer Defensive',deRatio:2.33,totalDebt:9.4e9,totalEquity:2.8e9},
+    {ticker:'STT',company:'State Street Corporation',sector:'Financial Services',deRatio:2.3,totalDebt:55.9e9,totalEquity:24.3e9},
+    {ticker:'TSCO',company:'Tractor Supply Company',sector:'Consumer Cyclical',deRatio:2.3,totalDebt:5.9e9,totalEquity:2.6e9},
+    {ticker:'CCL',company:'Carnival Corporation & plc',sector:'Consumer Cyclical',deRatio:2.28,totalDebt:28e9,totalEquity:11.6e9},
+    {ticker:'BXP',company:'BXP, Inc.',sector:'Real Estate',deRatio:2.26,totalDebt:17.4e9,totalEquity:5.1e9},
+    {ticker:'MET',company:'MetLife, Inc.',sector:'Financial Services',deRatio:2.26,totalDebt:65.4e9,totalEquity:28.3e9},
+    {ticker:'LW',company:'Lamb Weston Holdings, Inc.',sector:'Consumer Defensive',deRatio:2.25,totalDebt:3.9e9,totalEquity:1.8e9},
+    {ticker:'DLTR',company:'Dollar Tree, Inc.',sector:'Consumer Defensive',deRatio:2.21,totalDebt:7.7e9,totalEquity:3.4e9},
+    {ticker:'EIX',company:'Edison International',sector:'Utilities',deRatio:2.16,totalDebt:41.5e9,totalEquity:17.1e9},
+    {ticker:'RCL',company:'Royal Caribbean Cruises Ltd.',sector:'Consumer Cyclical',deRatio:2.15,totalDebt:22e9,totalEquity:10e9},
+    {ticker:'DTE',company:'DTE Energy Company',sector:'Utilities',deRatio:2.14,totalDebt:26.3e9,totalEquity:12.3e9},
+    {ticker:'TMUS',company:'T-Mobile US, Inc.',sector:'Communication Services',deRatio:2.09,totalDebt:123.6e9,totalEquity:58.9e9},
+    {ticker:'GM',company:'General Motors Company',sector:'Consumer Cyclical',deRatio:2.08,totalDebt:131.6e9,totalEquity:61.1e9},
+    {ticker:'CAT',company:'Caterpillar Inc.',sector:'Industrials',deRatio:2.07,totalDebt:44.1e9,totalEquity:21.3e9},
+    {ticker:'CNP',company:'CenterPoint Energy, Inc.',sector:'Utilities',deRatio:2.07,totalDebt:23e9,totalEquity:11.2e9},
+    {ticker:'UAL',company:'United Airlines Holdings, Inc.',sector:'Industrials',deRatio:2.03,totalDebt:31e9,totalEquity:15.3e9},
+    {ticker:'PNW',company:'Pinnacle West Capital Corporation',sector:'Utilities',deRatio:2.02,totalDebt:14.3e9,totalEquity:7e9},
+    {ticker:'DG',company:'Dollar General Corporation',sector:'Consumer Defensive',deRatio:2.02,totalDebt:16.5e9,totalEquity:8.2e9},
+    {ticker:'BK',company:'The Bank of New York Mellon Corporation',sector:'Financial Services',deRatio:2.01,totalDebt:79.2e9,totalEquity:39.5e9},
+    {ticker:'IBM',company:'International Business Machines Corporation',sector:'Technology',deRatio:1.97,totalDebt:64.6e9,totalEquity:32.7e9},
+    {ticker:'WMB',company:'The Williams Companies, Inc.',sector:'Energy',deRatio:1.97,totalDebt:29.5e9,totalEquity:12.8e9},
+    {ticker:'CMS',company:'CMS Energy Corporation',sector:'Utilities',deRatio:1.95,totalDebt:18.9e9,totalEquity:8.9e9},
+    {ticker:'FE',company:'FirstEnergy Corp.',sector:'Utilities',deRatio:1.93,totalDebt:26.8e9,totalEquity:12.5e9},
+    {ticker:'AXP',company:'American Express Company',sector:'Financial Services',deRatio:1.91,totalDebt:63.9e9,totalEquity:33.5e9},
+    {ticker:'SO',company:'The Southern Company',sector:'Utilities',deRatio:1.91,totalDebt:74.1e9,totalEquity:36e9},
+    {ticker:'PCG',company:'PG&E Corporation',sector:'Utilities',deRatio:1.87,totalDebt:61.3e9,totalEquity:31e9},
+    {ticker:'ES',company:'Eversource Energy',sector:'Utilities',deRatio:1.85,totalDebt:30.2e9,totalEquity:16.2e9},
+    {ticker:'CPB',company:"The Campbell's Company",sector:'Consumer Defensive',deRatio:1.85,totalDebt:7.3e9,totalEquity:4e9},
+    {ticker:'ETR',company:'Entergy Corporation',sector:'Utilities',deRatio:1.82,totalDebt:31.3e9,totalEquity:16.9e9},
+    {ticker:'CMG',company:'Chipotle Mexican Grill, Inc.',sector:'Consumer Cyclical',deRatio:1.79,totalDebt:5.1e9,totalEquity:2.8e9},
+    {ticker:'UNP',company:'Union Pacific Corporation',sector:'Industrials',deRatio:1.78,totalDebt:32.8e9,totalEquity:18.5e9},
+    {ticker:'MCO',company:"Moody's Corporation",sector:'Financial Services',deRatio:1.77,totalDebt:7.4e9,totalEquity:4e9},
+    {ticker:'AVY',company:'Avery Dennison Corporation',sector:'Consumer Cyclical',deRatio:1.76,totalDebt:4e9,totalEquity:2.2e9},
+    {ticker:'UPS',company:'United Parcel Service, Inc.',sector:'Industrials',deRatio:1.76,totalDebt:28.6e9,totalEquity:14.2e9},
+    {ticker:'VZ',company:'Verizon Communications Inc.',sector:'Communication Services',deRatio:1.75,totalDebt:184.8e9,totalEquity:104.5e9},
+    {ticker:'URI',company:'United Rentals, Inc.',sector:'Industrials',deRatio:1.75,totalDebt:15.7e9,totalEquity:9e9},
+    {ticker:'EXC',company:'Exelon Corporation',sector:'Utilities',deRatio:1.74,totalDebt:50.2e9,totalEquity:28.8e9},
+    {ticker:'DUK',company:'Duke Energy Corporation',sector:'Utilities',deRatio:1.72,totalDebt:91.1e9,totalEquity:50.8e9},
+    {ticker:'APP',company:'AppLovin Corporation',sector:'Communication Services',deRatio:1.72,totalDebt:3.7e9,totalEquity:1.9e9},
+    {ticker:'AON',company:'Aon plc',sector:'Financial Services',deRatio:1.68,totalDebt:16.1e9,totalEquity:9.4e9},
+    {ticker:'LNT',company:'Alliant Energy Corporation',sector:'Utilities',deRatio:1.68,totalDebt:12.3e9,totalEquity:7.3e9},
+    {ticker:'AVGO',company:'Broadcom Inc.',sector:'Technology',deRatio:1.66,totalDebt:40.5e9,totalEquity:280.8e9},
+    {ticker:'LLY',company:'Eli Lilly and Company',sector:'Healthcare',deRatio:1.65,totalDebt:43.9e9,totalEquity:26.5e9},
+    {ticker:'ARES',company:'Ares Management Corporation',sector:'Financial Services',deRatio:1.63,totalDebt:14.2e9,totalEquity:2.8e9},
+    {ticker:'EQIX',company:'Equinix, Inc.',sector:'Real Estate',deRatio:1.6,totalDebt:22.7e9,totalEquity:14.2e9},
+    {ticker:'BAX',company:'Baxter International Inc.',sector:'Healthcare',deRatio:1.6,totalDebt:9.8e9,totalEquity:6.1e9},
+    {ticker:'WEC',company:'WEC Energy Group, Inc.',sector:'Utilities',deRatio:1.59,totalDebt:22.4e9,totalEquity:13.6e9},
+    {ticker:'GPC',company:'Genuine Parts Company',sector:'Consumer Cyclical',deRatio:1.56,totalDebt:6.9e9,totalEquity:4.4e9},
+    {ticker:'EBAY',company:'eBay Inc.',sector:'Consumer Cyclical',deRatio:1.56,totalDebt:7.2e9,totalEquity:4.6e9},
+    {ticker:'AEP',company:'American Electric Power Company, Inc.',sector:'Utilities',deRatio:1.54,totalDebt:49.7e9,totalEquity:31.1e9},
+    {ticker:'XEL',company:'Xcel Energy Inc.',sector:'Utilities',deRatio:1.53,totalDebt:36.1e9,totalEquity:23.6e9},
+    {ticker:'LII',company:'Lennox International Inc.',sector:'Industrials',deRatio:1.52,totalDebt:1.8e9,totalEquity:1.2e9},
+    {ticker:'NTRS',company:'Northern Trust Corporation',sector:'Financial Services',deRatio:1.52,totalDebt:18.3e9,totalEquity:12e9},
+    {ticker:'D',company:'Dominion Energy, Inc.',sector:'Utilities',deRatio:1.5,totalDebt:50.2e9,totalEquity:28.1e9},
+    {ticker:'EVRG',company:'Evergy, Inc.',sector:'Utilities',deRatio:1.5,totalDebt:15.4e9,totalEquity:10.2e9},
+    {ticker:'CSX',company:'CSX Corporation',sector:'Industrials',deRatio:1.48,totalDebt:19.5e9,totalEquity:13.2e9},
+    {ticker:'GIS',company:'General Mills, Inc.',sector:'Consumer Defensive',deRatio:1.47,totalDebt:13.7e9,totalEquity:9.3e9},
+    {ticker:'AEE',company:'Ameren Corporation',sector:'Utilities',deRatio:1.47,totalDebt:19.9e9,totalEquity:13.4e9},
+    {ticker:'AWK',company:'American Water Works Company, Inc.',sector:'Utilities',deRatio:1.47,totalDebt:15.9e9,totalEquity:10.8e9},
+    {ticker:'OKE',company:'ONEOK, Inc.',sector:'Energy',deRatio:1.46,totalDebt:33.1e9,totalEquity:22.5e9},
+    {ticker:'NEE',company:'NextEra Energy, Inc.',sector:'Utilities',deRatio:1.46,totalDebt:97.2e9,totalEquity:54.6e9},
+    {ticker:'UDR',company:'UDR, Inc.',sector:'Real Estate',deRatio:1.45,totalDebt:6e9,totalEquity:3.2e9},
+    {ticker:'LYB',company:'LyondellBasell Industries N.V.',sector:'Basic Materials',deRatio:1.44,totalDebt:14.7e9,totalEquity:10.1e9},
+    {ticker:'FRT',company:'Federal Realty Investment Trust',sector:'Real Estate',deRatio:1.44,totalDebt:5e9,totalEquity:3.1e9},
+    {ticker:'SJM',company:'The J. M. Smucker Company',sector:'Consumer Defensive',deRatio:1.43,totalDebt:7.5e9,totalEquity:5.2e9},
+    {ticker:'PEG',company:'Public Service Enterprise Group Incorporated',sector:'Utilities',deRatio:1.43,totalDebt:24.2e9,totalEquity:17e9},
+    {ticker:'MPC',company:'Marathon Petroleum Corporation',sector:'Energy',deRatio:1.43,totalDebt:34.4e9,totalEquity:17.3e9},
+    {ticker:'USB',company:'U.S. Bancorp',sector:'Financial Services',deRatio:1.42,totalDebt:82.7e9,totalEquity:58.3e9},
+    {ticker:'MRSH',company:'Marsh & McLennan Companies, Inc.',sector:'Financial Services',deRatio:1.4,totalDebt:21.4e9,totalEquity:15.1e9},
+    {ticker:'KO',company:'The Coca-Cola Company',sector:'Consumer Defensive',deRatio:1.4,totalDebt:47.9e9,totalEquity:32.2e9},
+    {ticker:'BBY',company:'Best Buy Co., Inc.',sector:'Consumer Cyclical',deRatio:1.39,totalDebt:4.1e9,totalEquity:3e9},
+    {ticker:'NI',company:'NiSource Inc.',sector:'Utilities',deRatio:1.39,totalDebt:16.2e9,totalEquity:9.5e9},
+    {ticker:'AMCR',company:'Amcor plc',sector:'Consumer Cyclical',deRatio:1.39,totalDebt:16.2e9,totalEquity:11.6e9},
+    {ticker:'HOOD',company:'Robinhood Markets, Inc.',sector:'Financial Services',deRatio:1.36,totalDebt:12.4e9,totalEquity:8e9},
+    {ticker:'BALL',company:'Ball Corporation',sector:'Consumer Cyclical',deRatio:1.36,totalDebt:7.4e9,totalEquity:5.4e9},
+    {ticker:'STZ',company:'Constellation Brands, Inc.',sector:'Consumer Defensive',deRatio:1.33,totalDebt:10.7e9,totalEquity:7.7e9},
+    {ticker:'CVNA',company:'Carvana Co.',sector:'Consumer Cyclical',deRatio:1.33,totalDebt:5.6e9,totalEquity:2.8e9},
+    {ticker:'TJX',company:'The TJX Companies, Inc.',sector:'Consumer Cyclical',deRatio:1.32,totalDebt:13.5e9,totalEquity:10.1e9},
+    {ticker:'PPL',company:'PPL Corporation',sector:'Utilities',deRatio:1.31,totalDebt:19.5e9,totalEquity:14.9e9},
+    {ticker:'PAYX',company:'Paychex, Inc.',sector:'Technology',deRatio:1.3,totalDebt:5e9,totalEquity:3.9e9},
+    {ticker:'POOL',company:'Pool Corporation',sector:'Industrials',deRatio:1.3,totalDebt:1.5e9,totalEquity:1.2e9},
+    {ticker:'TGT',company:'Target Corporation',sector:'Consumer Defensive',deRatio:1.26,totalDebt:20.3e9,totalEquity:16.2e9},
+    {ticker:'PRU',company:'Prudential Financial, Inc.',sector:'Financial Services',deRatio:1.24,totalDebt:44.3e9,totalEquity:32.4e9},
+    {ticker:'IBKR',company:'Interactive Brokers Group, Inc.',sector:'Financial Services',deRatio:1.24,totalDebt:25.5e9,totalEquity:5.4e9},
+    {ticker:'T',company:'AT&T Inc.',sector:'Communication Services',deRatio:1.24,totalDebt:159.6e9,totalEquity:110e9},
+    {ticker:'HSY',company:'The Hershey Company',sector:'Consumer Defensive',deRatio:1.24,totalDebt:5.7e9,totalEquity:3.4e9},
+    {ticker:'TFC',company:'Truist Financial Corporation',sector:'Financial Services',deRatio:1.22,totalDebt:72.9e9,totalEquity:59.6e9},
+    {ticker:'DOC',company:'Healthpeak Properties, Inc.',sector:'Real Estate',deRatio:1.22,totalDebt:10.1e9,totalEquity:7.5e9},
+    {ticker:'NXPI',company:'NXP Semiconductors N.V.',sector:'Technology',deRatio:1.2,totalDebt:12.5e9,totalEquity:10e9},
+    {ticker:'ESS',company:'Essex Property Trust, Inc.',sector:'Real Estate',deRatio:1.19,totalDebt:6.9e9,totalEquity:5.5e9},
+    {ticker:'APH',company:'Amphenol Corporation',sector:'Technology',deRatio:1.19,totalDebt:16.1e9,totalEquity:13.4e9},
+    {ticker:'ED',company:'Consolidated Edison, Inc.',sector:'Utilities',deRatio:1.17,totalDebt:28.4e9,totalEquity:24.2e9},
+    {ticker:'BLDR',company:'Builders FirstSource, Inc.',sector:'Industrials',deRatio:1.17,totalDebt:5.1e9,totalEquity:4.4e9},
+    {ticker:'BR',company:'Broadridge Financial Solutions, Inc.',sector:'Technology',deRatio:1.17,totalDebt:3.4e9,totalEquity:2.9e9}
+  ];
+
+  // Utility functions
+  function fmt$(n) {
+    if (n === 0) return '$0';
+    var abs = Math.abs(n);
+    var prefix = n < 0 ? '-$' : '$';
+    if (abs >= 1e12) return prefix + (abs/1e12).toFixed(1) + 'T';
+    if (abs >= 1e9) return prefix + (abs/1e9).toFixed(1) + 'B';
+    if (abs >= 1e6) return prefix + (abs/1e6).toFixed(1) + 'M';
+    if (abs >= 1e3) return prefix + (abs/1e3).toFixed(0) + 'K';
+    return prefix + abs.toFixed(0);
+  }
+
+  function deColor(ratio) {
+    if (ratio === null) return 'de-purple';
+    if (ratio < 0.5) return 'de-green';
+    if (ratio <= 1.0) return 'de-yellow';
+    if (ratio <= 2.0) return 'de-orange';
+    return 'de-red';
+  }
+
+  function deColorHex(ratio) {
+    if (ratio === null) return '#a855f7';
+    if (ratio < 0.5) return '#22c55e';
+    if (ratio <= 1.0) return '#eab308';
+    if (ratio <= 2.0) return '#f97316';
+    return '#ef4444';
+  }
+
+  function sortVal(d, col) {
+    if (col === 'rank') return d._rank;
+    if (col === 'company') return d.company.toLowerCase();
+    if (col === 'sector') return d.sector.toLowerCase();
+    if (col === 'deRatio') return d.deRatio === null ? 9999 : d.deRatio;
+    if (col === 'totalDebt') return d.totalDebt;
+    if (col === 'totalEquity') return d.totalEquity;
+    return 0;
+  }
+
+  // Assign ranks
+  DE_DATA.forEach(function(d,i) { d._rank = i + 1; });
+
+  // Stats
+  var withRatio = DE_DATA.filter(function(d) { return d.deRatio !== null; });
+  var negEquity = DE_DATA.filter(function(d) { return d.totalEquity < 0; });
+  var avgDE = withRatio.reduce(function(s,d) { return s + d.deRatio; }, 0) / withRatio.length;
+  var maxDE = withRatio.reduce(function(a,b) { return a.deRatio > b.deRatio ? a : b; });
+  var minDE = withRatio.reduce(function(a,b) { return a.deRatio < b.deRatio ? a : b; });
+
+  document.getElementById('statAvg').textContent = avgDE.toFixed(2) + '×';
+  document.getElementById('statAvgSub').textContent = 'Across ' + withRatio.length + ' companies';
+  document.getElementById('statMax').textContent = maxDE.deRatio.toFixed(2) + '×';
+  document.getElementById('statMaxSub').textContent = maxDE.ticker + ' (' + maxDE.company.split(' ').slice(0,3).join(' ') + ')';
+  document.getElementById('statMin').textContent = minDE.deRatio.toFixed(2) + '×';
+  document.getElementById('statMinSub').textContent = minDE.ticker + ' (' + minDE.company.split(' ').slice(0,3).join(' ') + ')';
+  document.getElementById('statNeg').textContent = negEquity.length;
+
+  // Key Insights
+  var sectors = {};
+  withRatio.forEach(function(d) {
+    if (!sectors[d.sector]) sectors[d.sector] = [];
+    sectors[d.sector].push(d.deRatio);
+  });
+  var sectorAvgs = Object.keys(sectors).map(function(s) {
+    var avg = sectors[s].reduce(function(a,b){return a+b;},0) / sectors[s].length;
+    return {sector: s, avg: avg, count: sectors[s].length};
+  }).sort(function(a,b) { return b.avg - a.avg; });
+
+  var highLev = DE_DATA.filter(function(d) { return d.deRatio === null || d.deRatio > 2; }).length;
+  var pctHigh = ((highLev / DE_DATA.length) * 100).toFixed(0);
+
+  var insights = [
+    {icon:'⚡', title: sectorAvgs[0].sector + ' leads in leverage', text: 'With an average D/E of ' + sectorAvgs[0].avg.toFixed(2) + '×, ' + sectorAvgs[0].sector + ' is the most leveraged sector among the top 150 companies. This reflects ' + (sectorAvgs[0].sector === 'Utilities' ? 'regulated, stable cash flows that support higher debt loads.' : 'capital-intensive business models.')},
+    {icon:'🟣', title: negEquity.length + ' companies have negative equity', text: 'Companies like ' + negEquity.map(function(d){return d.ticker;}).join(', ') + ' have bought back so many shares (or accumulated losses) that total equity is below zero — making them technically infinitely leveraged.'},
+    {icon:'📊', title: pctHigh + '% of top 150 have D/E above 2.0', text: highLev + ' out of ' + DE_DATA.length + ' companies carry debt exceeding twice their equity. These companies are more sensitive to interest rate changes and economic downturns.'},
+    {icon:'🏢', title: sectorAvgs[sectorAvgs.length-1].sector + ' is least leveraged', text: 'With an average D/E of just ' + sectorAvgs[sectorAvgs.length-1].avg.toFixed(2) + '×, ' + sectorAvgs[sectorAvgs.length-1].sector + ' companies tend to run leaner balance sheets.'},
+    {icon:'💰', title: 'Median D/E is ' + withRatio[Math.floor(withRatio.length/2)].deRatio.toFixed(2) + '×', text: 'Half of the ranked companies have a D/E ratio below ' + withRatio[Math.floor(withRatio.length/2)].deRatio.toFixed(2) + '× — significantly lower than the average of ' + avgDE.toFixed(2) + '×, showing that a few extreme outliers pull the average up.'}
+  ];
+
+  var insightsHtml = '';
+  insights.forEach(function(ins) {
+    insightsHtml += '<div class="insight-card"><div class="insight-icon">' + ins.icon + '</div><div class="insight-title">' + ins.title + '</div><div class="insight-text">' + ins.text + '</div></div>';
+  });
+  document.getElementById('insightsGrid').innerHTML = insightsHtml;
+
+  // Calculator
+  var calcDebt = document.getElementById('calcDebt');
+  var calcEquity = document.getElementById('calcEquity');
+
+  function parseNum(s) {
+    s = s.replace(/[^0-9.\-]/g, '');
+    return parseFloat(s) || 0;
+  }
+
+  function updateCalc() {
+    var debt = parseNum(calcDebt.value);
+    var equity = parseNum(calcEquity.value);
+    var ratioEl = document.getElementById('calcRatio');
+    var interpEl = document.getElementById('calcInterp');
+    var rankEl = document.getElementById('calcRank');
+    var gauge = document.getElementById('calcGauge');
+    var gaugeFill = document.getElementById('calcGaugeFill');
+    var gaugeMarker = document.getElementById('calcGaugeMarker');
+    var gaugeLabels = document.getElementById('calcGaugeLabels');
+
+    if (!debt && !equity) {
+      ratioEl.textContent = '—';
+      ratioEl.style.color = '';
+      interpEl.textContent = 'Enter values to calculate';
+      rankEl.textContent = '';
+      gauge.style.display = 'none';
+      gaugeLabels.style.display = 'none';
+      return;
+    }
+
+    if (equity <= 0) {
+      ratioEl.textContent = equity < 0 ? 'N/A' : '∞';
+      ratioEl.style.color = '#a855f7';
+      interpEl.textContent = equity < 0 ? 'Negative equity — company is entirely debt-financed' : 'Zero equity — infinite leverage';
+      var negCount = DE_DATA.filter(function(d){return d.totalEquity <= 0;}).length;
+      rankEl.textContent = 'Joins ' + negCount + ' S&P 500 companies with negative or zero equity';
+      gauge.style.display = 'block';
+      gaugeLabels.style.display = 'flex';
+      gaugeFill.style.width = '100%';
+      gaugeFill.style.background = '#a855f7';
+      gaugeMarker.style.left = '100%';
+      return;
+    }
+
+    var ratio = debt / equity;
+    ratioEl.textContent = ratio.toFixed(2) + '×';
+    ratioEl.style.color = deColorHex(ratio);
+
+    if (ratio < 0.5) interpEl.textContent = 'Low leverage — conservative balance sheet';
+    else if (ratio <= 1.0) interpEl.textContent = 'Moderate leverage — well balanced';
+    else if (ratio <= 2.0) interpEl.textContent = 'Above average leverage — watch interest costs';
+    else if (ratio <= 5.0) interpEl.textContent = 'High leverage — significant debt load';
+    else interpEl.textContent = 'Extreme leverage — very high risk profile';
+
+    // Rank
+    var rank = 1;
+    DE_DATA.forEach(function(d) {
+      var dRatio = d.deRatio === null ? 9999 : d.deRatio;
+      if (ratio < dRatio) rank++;
+    });
+    rank = DE_DATA.length + 1 - rank + 1;
+    rankEl.textContent = 'A D/E of ' + ratio.toFixed(2) + '× would rank #' + Math.min(rank, DE_DATA.length) + ' out of ' + DE_DATA.length + ' S&P 500 companies';
+
+    // Gauge
+    gauge.style.display = 'block';
+    gaugeLabels.style.display = 'flex';
+    var pct = Math.min(ratio / 10, 1) * 100;
+    gaugeFill.style.width = pct + '%';
+    gaugeFill.style.background = 'linear-gradient(to right, #22c55e, #eab308, #f97316, #ef4444)';
+    gaugeMarker.style.left = pct + '%';
+  }
+
+  calcDebt.addEventListener('input', updateCalc);
+  calcEquity.addEventListener('input', updateCalc);
+
+  // Sector Chart
+  var sectorCtx = document.getElementById('sectorChart').getContext('2d');
+  var sortedSectors = sectorAvgs.sort(function(a,b){return a.avg - b.avg;});
+  new Chart(sectorCtx, {
+    type: 'bar',
+    data: {
+      labels: sortedSectors.map(function(s){return s.sector + ' (' + s.count + ')';}),
+      datasets: [{
+        data: sortedSectors.map(function(s){return parseFloat(s.avg.toFixed(2));}),
+        backgroundColor: sortedSectors.map(function(s){return deColorHex(s.avg);}),
+        borderRadius: 4,
+        barThickness: 20
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.raw + '× avg D/E'; } } } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+        y: { grid: { display: false }, ticks: { color: '#c8d0de', font: { size: 11 } } }
+      }
+    }
+  });
+
+  // Distribution Chart
+  var bins = [
+    {label: 'Neg Equity', min: -Infinity, max: -0.001, count: 0},
+    {label: '0–0.5', min: 0, max: 0.5, count: 0},
+    {label: '0.5–1.0', min: 0.5, max: 1.0, count: 0},
+    {label: '1.0–2.0', min: 1.0, max: 2.0, count: 0},
+    {label: '2.0–5.0', min: 2.0, max: 5.0, count: 0},
+    {label: '5.0+', min: 5.0, max: Infinity, count: 0}
+  ];
+  DE_DATA.forEach(function(d) {
+    if (d.deRatio === null || d.totalEquity < 0) { bins[0].count++; return; }
+    for (var i = 1; i < bins.length; i++) {
+      if (d.deRatio >= bins[i].min && (d.deRatio < bins[i].max || (i === bins.length-1 && d.deRatio >= bins[i].min))) {
+        bins[i].count++;
+        break;
+      }
+    }
+  });
+  var binColors = ['#a855f7','#22c55e','#eab308','#f97316','#ef4444','#dc2626'];
+  var distCtx = document.getElementById('distChart').getContext('2d');
+  new Chart(distCtx, {
+    type: 'bar',
+    data: {
+      labels: bins.map(function(b){return b.label;}),
+      datasets: [{
+        data: bins.map(function(b){return b.count;}),
+        backgroundColor: binColors,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { return ctx.raw + ' companies'; } } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#c8d0de' } },
+        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+      }
+    }
+  });
+
+  // Interactive Table
+  var SHOW_INCREMENT = 50;
+  var showCount = SHOW_INCREMENT;
+  var currentSort = {col: 'rank', asc: true};
+  var filtered = DE_DATA.slice();
+
+  // Populate sector filter
+  var sectorNames = [];
+  DE_DATA.forEach(function(d) { if (sectorNames.indexOf(d.sector) === -1) sectorNames.push(d.sector); });
+  sectorNames.sort();
+  var sectorSelect = document.getElementById('sectorFilter');
+  sectorNames.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    sectorSelect.appendChild(opt);
+  });
+
+  function renderTable() {
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var sector = sectorSelect.value;
+
+    filtered = DE_DATA.filter(function(d) {
+      if (sector && d.sector !== sector) return false;
+      if (search && d.company.toLowerCase().indexOf(search) === -1 && d.ticker.toLowerCase().indexOf(search) === -1) return false;
+      return true;
+    });
+
+    // Sort
+    filtered.sort(function(a,b) {
+      var va = sortVal(a, currentSort.col);
+      var vb = sortVal(b, currentSort.col);
+      if (typeof va === 'string') return currentSort.asc ? va.localeCompare(vb) : vb.localeCompare(va);
+      return currentSort.asc ? va - vb : vb - va;
+    });
+
+    var visible = filtered.slice(0, showCount);
+    var tbody = document.getElementById('deTableBody');
+    var html = '';
+    visible.forEach(function(d) {
+      var deDisplay = d.deRatio === null ? 'N/A (Neg)' : d.deRatio.toFixed(2) + '×';
+      var colorClass = deColor(d.deRatio);
+      var negFlag = d.totalEquity < 0 ? ' <span class="flag">Neg Equity</span>' : '';
+      html += '<tr>' +
+        '<td class="num">' + d._rank + '</td>' +
+        '<td><div class="company-name">' + d.company + '</div><div class="company-ticker">' + d.ticker + ' <span class="sector-tag">' + d.sector + '</span>' + negFlag + '</div></td>' +
+        '<td class="num" style="display:none;">' + d.sector + '</td>' +
+        '<td><span class="de-badge ' + colorClass + '">' + deDisplay + '</span></td>' +
+        '<td class="num">' + fmt$(d.totalDebt) + '</td>' +
+        '<td class="num">' + fmt$(d.totalEquity) + '</td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = html;
+
+    document.getElementById('resultCount').textContent = filtered.length + ' companies' + (search || sector ? ' (filtered)' : '');
+    
+    var btn = document.getElementById('showMoreBtn');
+    if (showCount >= filtered.length) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = 'block';
+      btn.textContent = 'Show More (' + Math.min(SHOW_INCREMENT, filtered.length - showCount) + ' more of ' + filtered.length + ')';
+    }
+  }
+
+  // Hide the sector column header from display (sector shown inline with company)
+  // Keep the data-col for sorting
+  document.querySelector('th[data-col="sector"]').style.display = 'none';
+
+  document.getElementById('searchInput').addEventListener('input', function() { showCount = SHOW_INCREMENT; renderTable(); });
+  sectorSelect.addEventListener('change', function() { showCount = SHOW_INCREMENT; renderTable(); });
+  document.getElementById('showMoreBtn').addEventListener('click', function() { showCount += SHOW_INCREMENT; renderTable(); });
+
+  // Column sorting
+  document.querySelectorAll('#deTable th[data-col]').forEach(function(th) {
+    th.addEventListener('click', function() {
+      var col = this.getAttribute('data-col');
+      if (col === 'sector') return; // sector is hidden
+      if (currentSort.col === col) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort = {col: col, asc: col === 'company' || col === 'sector'};
+      }
+      // Update arrows
+      document.querySelectorAll('#deTable th').forEach(function(h) { h.classList.remove('sorted'); });
+      this.classList.add('sorted');
+      this.querySelector('.sort-arrow').textContent = currentSort.asc ? '▲' : '▼';
+      renderTable();
+    });
+  });
+
+  renderTable();
+})();
+</script>
 
-        <main>
-            <section class="content-section">
-    <h1>{page.h1}</h1>
-
-                <h2>Top 150 Most Leveraged Companies</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 20px;">Companies are ranked by their Debt-to-Equity ratio. Companies flagged with "Negative Equity" have liabilities exceeding their assets, making the traditional D/E ratio less meaningful.</p>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Company</th>
-                                <th>D/E Ratio</th>
-                                <th>Total Debt</th>
-                                <th>Total Equity</th>
-                                <th>Net Debt</th>
-                                <th>Current Ratio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-      <tr class="negative-equity">
-        <td>1</td>
-        <td>
-          <div class="company-name">The Clorox Company</div>
-          <div class="company-ticker">CLX <span class="sector-tag">Consumer Defensive</span> <span class="flag">Negative Equity</span></div>
-        </td>
-        <td class="num">N/A (Neg)</td>
-        <td class="num">$3.2B</td>
-        <td class="num">-$125.0M</td>
-        <td class="num">$3.0B</td>
-        <td class="num">0.74</td>
-      </tr>
-
-      <tr class="negative-equity">
-        <td>2</td>
-        <td>
-          <div class="company-name">Masco Corporation</div>
-          <div class="company-ticker">MAS <span class="sector-tag">Industrials</span> <span class="flag">Negative Equity</span></div>
-        </td>
-        <td class="num">N/A (Neg)</td>
-        <td class="num">$3.2B</td>
-        <td class="num">-$184.5M</td>
-        <td class="num">$2.6B</td>
-        <td class="num">1.81</td>
-      </tr>
-
-      <tr class="">
-        <td>3</td>
-        <td>
-          <div class="company-name">Colgate-Palmolive Company</div>
-          <div class="company-ticker">CL <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">23.44</td>
-        <td class="num">$8.6B</td>
-        <td class="num">$53.7M</td>
-        <td class="num">$7.2B</td>
-        <td class="num">0.83</td>
-      </tr>
-
-      <tr class="">
-        <td>4</td>
-        <td>
-          <div class="company-name">GoDaddy Inc.</div>
-          <div class="company-ticker">GDDY <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">17.96</td>
-        <td class="num">$3.9B</td>
-        <td class="num">$212.8M</td>
-        <td class="num">$2.7B</td>
-        <td class="num">0.62</td>
-      </tr>
-
-      <tr class="">
-        <td>5</td>
-        <td>
-          <div class="company-name">Verisk Analytics, Inc.</div>
-          <div class="company-ticker">VRSK <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">15.82</td>
-        <td class="num">$4.9B</td>
-        <td class="num">$308.0M</td>
-        <td class="num">$2.7B</td>
-        <td class="num">1.20</td>
-      </tr>
-
-      <tr class="negative-equity">
-        <td>6</td>
-        <td>
-          <div class="company-name">DaVita Inc.</div>
-          <div class="company-ticker">DVA <span class="sector-tag">Healthcare</span> <span class="flag">Negative Equity</span></div>
-        </td>
-        <td class="num">N/A (Neg)</td>
-        <td class="num">$12.9B</td>
-        <td class="num">-$634.9M</td>
-        <td class="num">$12.2B</td>
-        <td class="num">1.29</td>
-      </tr>
-
-      <tr class="">
-        <td>7</td>
-        <td>
-          <div class="company-name">Seagate Technology Holdings plc</div>
-          <div class="company-ticker">STX <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">10.47</td>
-        <td class="num">$4.8B</td>
-        <td class="num">$471.3M</td>
-        <td class="num">$3.8B</td>
-        <td class="num">1.12</td>
-      </tr>
-
-      <tr class="">
-        <td>8</td>
-        <td>
-          <div class="company-name">Gartner, Inc.</div>
-          <div class="company-ticker">IT <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">10.47</td>
-        <td class="num">$3.3B</td>
-        <td class="num">$318.1M</td>
-        <td class="num">$1.6B</td>
-        <td class="num">1.00</td>
-      </tr>
-
-      <tr class="">
-        <td>9</td>
-        <td>
-          <div class="company-name">The Boeing Company</div>
-          <div class="company-ticker">BA <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">10.33</td>
-        <td class="num">$56.4B</td>
-        <td class="num">$5.5B</td>
-        <td class="num">$27.7B</td>
-        <td class="num">1.19</td>
-      </tr>
-
-      <tr class="">
-        <td>10</td>
-        <td>
-          <div class="company-name">NRG Energy, Inc.</div>
-          <div class="company-ticker">NRG <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">9.89</td>
-        <td class="num">$16.6B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">$11.9B</td>
-        <td class="num">1.64</td>
-      </tr>
-
-      <tr class="">
-        <td>11</td>
-        <td>
-          <div class="company-name">MGM Resorts International</div>
-          <div class="company-ticker">MGM <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">9.63</td>
-        <td class="num">$31.6B</td>
-        <td class="num">$2.4B</td>
-        <td class="num">$29.3B</td>
-        <td class="num">1.23</td>
-      </tr>
-
-      <tr class="">
-        <td>12</td>
-        <td>
-          <div class="company-name">Las Vegas Sands Corp.</div>
-          <div class="company-ticker">LVS <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">8.29</td>
-        <td class="num">$16.0B</td>
-        <td class="num">$1.6B</td>
-        <td class="num">$12.2B</td>
-        <td class="num">1.14</td>
-      </tr>
-
-      <tr class="">
-        <td>13</td>
-        <td>
-          <div class="company-name">Tapestry, Inc.</div>
-          <div class="company-ticker">TPR <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">7.15</td>
-        <td class="num">$3.9B</td>
-        <td class="num">$550.5M</td>
-        <td class="num">$2.9B</td>
-        <td class="num">1.63</td>
-      </tr>
-
-      <tr class="">
-        <td>14</td>
-        <td>
-          <div class="company-name">Norwegian Cruise Line Holdings Ltd.</div>
-          <div class="company-ticker">NCLH <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">7.03</td>
-        <td class="num">$15.5B</td>
-        <td class="num">$2.2B</td>
-        <td class="num">$15.3B</td>
-        <td class="num">0.21</td>
-      </tr>
-
-      <tr class="">
-        <td>15</td>
-        <td>
-          <div class="company-name">Amgen Inc.</div>
-          <div class="company-ticker">AMGN <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">6.40</td>
-        <td class="num">$55.4B</td>
-        <td class="num">$8.7B</td>
-        <td class="num">$46.3B</td>
-        <td class="num">1.14</td>
-      </tr>
-
-      <tr class="">
-        <td>16</td>
-        <td>
-          <div class="company-name">Sysco Corporation</div>
-          <div class="company-ticker">SYY <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">6.40</td>
-        <td class="num">$15.0B</td>
-        <td class="num">$2.3B</td>
-        <td class="num">$13.7B</td>
-        <td class="num">1.30</td>
-      </tr>
-
-      <tr class="">
-        <td>17</td>
-        <td>
-          <div class="company-name">Hasbro, Inc.</div>
-          <div class="company-ticker">HAS <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">6.01</td>
-        <td class="num">$3.4B</td>
-        <td class="num">$539.7M</td>
-        <td class="num">$2.5B</td>
-        <td class="num">1.38</td>
-      </tr>
-
-      <tr class="">
-        <td>18</td>
-        <td>
-          <div class="company-name">The Goldman Sachs Group, Inc.</div>
-          <div class="company-ticker">GS <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">5.96</td>
-        <td class="num">$747.6B</td>
-        <td class="num">$105.8B</td>
-        <td class="num">-$249.0B</td>
-        <td class="num">1.53</td>
-      </tr>
-
-      <tr class="">
-        <td>19</td>
-        <td>
-          <div class="company-name">Live Nation Entertainment, Inc.</div>
-          <div class="company-ticker">LYV <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">5.72</td>
-        <td class="num">$10.4B</td>
-        <td class="num">$271.9M</td>
-        <td class="num">$3.3B</td>
-        <td class="num">1.00</td>
-      </tr>
-
-      <tr class="">
-        <td>20</td>
-        <td>
-          <div class="company-name">Targa Resources Corp.</div>
-          <div class="company-ticker">TRGP <span class="sector-tag">Energy</span> </div>
-        </td>
-        <td class="num">5.49</td>
-        <td class="num">$17.5B</td>
-        <td class="num">$3.1B</td>
-        <td class="num">$17.4B</td>
-        <td class="num">0.67</td>
-      </tr>
-
-      <tr class="">
-        <td>21</td>
-        <td>
-          <div class="company-name">The Home Depot, Inc.</div>
-          <div class="company-ticker">HD <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">5.10</td>
-        <td class="num">$65.4B</td>
-        <td class="num">$12.8B</td>
-        <td class="num">$64.0B</td>
-        <td class="num">1.06</td>
-      </tr>
-
-      <tr class="">
-        <td>22</td>
-        <td>
-          <div class="company-name">Charter Communications, Inc.</div>
-          <div class="company-ticker">CHTR <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">4.82</td>
-        <td class="num">$99.0B</td>
-        <td class="num">$16.1B</td>
-        <td class="num">$98.5B</td>
-        <td class="num">0.39</td>
-      </tr>
-
-      <tr class="">
-        <td>23</td>
-        <td>
-          <div class="company-name">Cencora, Inc.</div>
-          <div class="company-ticker">COR <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">4.73</td>
-        <td class="num">$9.9B</td>
-        <td class="num">$1.9B</td>
-        <td class="num">$8.2B</td>
-        <td class="num">0.92</td>
-      </tr>
-
-      <tr class="">
-        <td>24</td>
-        <td>
-          <div class="company-name">Kimberly-Clark Corporation</div>
-          <div class="company-ticker">KMB <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">4.65</td>
-        <td class="num">$7.6B</td>
-        <td class="num">$1.5B</td>
-        <td class="num">$6.8B</td>
-        <td class="num">0.75</td>
-      </tr>
-
-      <tr class="">
-        <td>25</td>
-        <td>
-          <div class="company-name">Ford Motor Company</div>
-          <div class="company-ticker">F <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">4.61</td>
-        <td class="num">$165.7B</td>
-        <td class="num">$35.3B</td>
-        <td class="num">$137.3B</td>
-        <td class="num">1.08</td>
-      </tr>
-
-      <tr class="">
-        <td>26</td>
-        <td>
-          <div class="company-name">Morgan Stanley</div>
-          <div class="company-ticker">MS <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">4.56</td>
-        <td class="num">$513.4B</td>
-        <td class="num">$102.2B</td>
-        <td class="num">-$87.0B</td>
-        <td class="num">2.05</td>
-      </tr>
-
-      <tr class="">
-        <td>27</td>
-        <td>
-          <div class="company-name">Simon Property Group, Inc.</div>
-          <div class="company-ticker">SPG <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">4.35</td>
-        <td class="num">$29.2B</td>
-        <td class="num">$5.2B</td>
-        <td class="num">$28.4B</td>
-        <td class="num">0.24</td>
-      </tr>
-
-      <tr class="">
-        <td>28</td>
-        <td>
-          <div class="company-name">American Tower Corporation</div>
-          <div class="company-ticker">AMT <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">4.34</td>
-        <td class="num">$45.0B</td>
-        <td class="num">$3.7B</td>
-        <td class="num">$43.5B</td>
-        <td class="num">0.40</td>
-      </tr>
-
-      <tr class="">
-        <td>29</td>
-        <td>
-          <div class="company-name">Oracle Corporation</div>
-          <div class="company-ticker">ORCL <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">4.33</td>
-        <td class="num">$131.7B</td>
-        <td class="num">$30.0B</td>
-        <td class="num">$112.0B</td>
-        <td class="num">0.91</td>
-      </tr>
-
-      <tr class="">
-        <td>30</td>
-        <td>
-          <div class="company-name">The Kroger Co.</div>
-          <div class="company-ticker">KR <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">4.16</td>
-        <td class="num">$24.7B</td>
-        <td class="num">$7.8B</td>
-        <td class="num">$21.3B</td>
-        <td class="num">0.80</td>
-      </tr>
-
-      <tr class="">
-        <td>31</td>
-        <td>
-          <div class="company-name">Citigroup Inc.</div>
-          <div class="company-ticker">C <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">4.04</td>
-        <td class="num">$777.2B</td>
-        <td class="num">$192.4B</td>
-        <td class="num">-$212.5B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>32</td>
-        <td>
-          <div class="company-name">Motorola Solutions, Inc.</div>
-          <div class="company-ticker">MSI <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">4.02</td>
-        <td class="num">$9.8B</td>
-        <td class="num">$2.4B</td>
-        <td class="num">$8.6B</td>
-        <td class="num">1.04</td>
-      </tr>
-
-      <tr class="">
-        <td>33</td>
-        <td>
-          <div class="company-name">Darden Restaurants, Inc.</div>
-          <div class="company-ticker">DRI <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">4.01</td>
-        <td class="num">$8.3B</td>
-        <td class="num">$2.1B</td>
-        <td class="num">$8.1B</td>
-        <td class="num">0.39</td>
-      </tr>
-
-      <tr class="">
-        <td>34</td>
-        <td>
-          <div class="company-name">Vistra Corp.</div>
-          <div class="company-ticker">VST <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">4.00</td>
-        <td class="num">$20.4B</td>
-        <td class="num">$2.6B</td>
-        <td class="num">$19.6B</td>
-        <td class="num">0.78</td>
-      </tr>
-
-      <tr class="">
-        <td>35</td>
-        <td>
-          <div class="company-name">Gen Digital Inc.</div>
-          <div class="company-ticker">GEN <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">3.63</td>
-        <td class="num">$8.5B</td>
-        <td class="num">$2.3B</td>
-        <td class="num">$7.9B</td>
-        <td class="num">0.47</td>
-      </tr>
-
-      <tr class="">
-        <td>36</td>
-        <td>
-          <div class="company-name">Lockheed Martin Corporation</div>
-          <div class="company-ticker">LMT <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">3.39</td>
-        <td class="num">$22.8B</td>
-        <td class="num">$6.8B</td>
-        <td class="num">$18.6B</td>
-        <td class="num">1.09</td>
-      </tr>
-
-      <tr class="">
-        <td>37</td>
-        <td>
-          <div class="company-name">The Sherwin-Williams Company</div>
-          <div class="company-ticker">SHW <span class="sector-tag">Basic Materials</span> </div>
-        </td>
-        <td class="num">3.06</td>
-        <td class="num">$14.1B</td>
-        <td class="num">$4.6B</td>
-        <td class="num">$13.9B</td>
-        <td class="num">0.87</td>
-      </tr>
-
-      <tr class="">
-        <td>38</td>
-        <td>
-          <div class="company-name">JPMorgan Chase & Co.</div>
-          <div class="company-ticker">JPM <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">3.00</td>
-        <td class="num">$1.0T</td>
-        <td class="num">$342.5B</td>
-        <td class="num">-$261.7B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>39</td>
-        <td>
-          <div class="company-name">Illinois Tool Works Inc.</div>
-          <div class="company-ticker">ITW <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.86</td>
-        <td class="num">$9.2B</td>
-        <td class="num">$3.2B</td>
-        <td class="num">$8.4B</td>
-        <td class="num">1.21</td>
-      </tr>
-
-      <tr class="">
-        <td>40</td>
-        <td>
-          <div class="company-name">Zoetis Inc.</div>
-          <div class="company-ticker">ZTS <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">2.80</td>
-        <td class="num">$9.3B</td>
-        <td class="num">$3.3B</td>
-        <td class="num">$7.0B</td>
-        <td class="num">3.03</td>
-      </tr>
-
-      <tr class="">
-        <td>41</td>
-        <td>
-          <div class="company-name">Bank of America Corporation</div>
-          <div class="company-ticker">BAC <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.78</td>
-        <td class="num">$767.1B</td>
-        <td class="num">$275.9B</td>
-        <td class="num">-$3.1B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>42</td>
-        <td>
-          <div class="company-name">3M Company</div>
-          <div class="company-ticker">MMM <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.77</td>
-        <td class="num">$13.1B</td>
-        <td class="num">$4.7B</td>
-        <td class="num">$5.2B</td>
-        <td class="num">1.71</td>
-      </tr>
-
-      <tr class="">
-        <td>43</td>
-        <td>
-          <div class="company-name">Wells Fargo & Company</div>
-          <div class="company-ticker">WFC <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.70</td>
-        <td class="num">$443.5B</td>
-        <td class="num">$164.1B</td>
-        <td class="num">-$5.7B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>44</td>
-        <td>
-          <div class="company-name">The AES Corporation</div>
-          <div class="company-ticker">AES <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">2.59</td>
-        <td class="num">$30.9B</td>
-        <td class="num">$4.1B</td>
-        <td class="num">$29.4B</td>
-        <td class="num">0.77</td>
-      </tr>
-
-      <tr class="">
-        <td>45</td>
-        <td>
-          <div class="company-name">PepsiCo, Inc.</div>
-          <div class="company-ticker">PEP <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">2.58</td>
-        <td class="num">$53.0B</td>
-        <td class="num">$20.4B</td>
-        <td class="num">$43.5B</td>
-        <td class="num">0.85</td>
-      </tr>
-
-      <tr class="">
-        <td>46</td>
-        <td>
-          <div class="company-name">Mastercard Incorporated</div>
-          <div class="company-ticker">MA <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.56</td>
-        <td class="num">$19.8B</td>
-        <td class="num">$7.7B</td>
-        <td class="num">$8.9B</td>
-        <td class="num">1.04</td>
-      </tr>
-
-      <tr class="">
-        <td>47</td>
-        <td>
-          <div class="company-name">Jabil Inc.</div>
-          <div class="company-ticker">JBL <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">2.56</td>
-        <td class="num">$3.4B</td>
-        <td class="num">$1.3B</td>
-        <td class="num">$1.9B</td>
-        <td class="num">0.99</td>
-      </tr>
-
-      <tr class="">
-        <td>48</td>
-        <td>
-          <div class="company-name">Bristol-Myers Squibb Company</div>
-          <div class="company-ticker">BMY <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">2.55</td>
-        <td class="num">$47.2B</td>
-        <td class="num">$18.5B</td>
-        <td class="num">$36.5B</td>
-        <td class="num">1.26</td>
-      </tr>
-
-      <tr class="">
-        <td>49</td>
-        <td>
-          <div class="company-name">Expedia Group, Inc.</div>
-          <div class="company-ticker">EXPE <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">2.55</td>
-        <td class="num">$6.5B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">$754.0M</td>
-        <td class="num">0.73</td>
-      </tr>
-
-      <tr class="">
-        <td>50</td>
-        <td>
-          <div class="company-name">IQVIA Holdings Inc.</div>
-          <div class="company-ticker">IQV <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">2.46</td>
-        <td class="num">$16.3B</td>
-        <td class="num">$6.5B</td>
-        <td class="num">$14.2B</td>
-        <td class="num">0.75</td>
-      </tr>
-
-      <tr class="">
-        <td>51</td>
-        <td>
-          <div class="company-name">Corpay, Inc.</div>
-          <div class="company-ticker">CPAY <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">2.43</td>
-        <td class="num">$10.3B</td>
-        <td class="num">$3.9B</td>
-        <td class="num">$7.9B</td>
-        <td class="num">0.98</td>
-      </tr>
-
-      <tr class="">
-        <td>52</td>
-        <td>
-          <div class="company-name">Deere & Company</div>
-          <div class="company-ticker">DE <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.40</td>
-        <td class="num">$63.2B</td>
-        <td class="num">$26.3B</td>
-        <td class="num">$57.9B</td>
-        <td class="num">2.25</td>
-      </tr>
-
-      <tr class="">
-        <td>53</td>
-        <td>
-          <div class="company-name">Waste Management, Inc.</div>
-          <div class="company-ticker">WM <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.39</td>
-        <td class="num">$23.9B</td>
-        <td class="num">$10.0B</td>
-        <td class="num">$23.7B</td>
-        <td class="num">0.89</td>
-      </tr>
-
-      <tr class="">
-        <td>54</td>
-        <td>
-          <div class="company-name">CDW Corporation</div>
-          <div class="company-ticker">CDW <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">2.37</td>
-        <td class="num">$6.2B</td>
-        <td class="num">$2.6B</td>
-        <td class="num">$5.6B</td>
-        <td class="num">1.18</td>
-      </tr>
-
-      <tr class="">
-        <td>55</td>
-        <td>
-          <div class="company-name">Honeywell International Inc.</div>
-          <div class="company-ticker">HON <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.37</td>
-        <td class="num">$35.6B</td>
-        <td class="num">$13.9B</td>
-        <td class="num">$22.6B</td>
-        <td class="num">1.30</td>
-      </tr>
-
-      <tr class="">
-        <td>56</td>
-        <td>
-          <div class="company-name">NetApp, Inc.</div>
-          <div class="company-ticker">NTAP <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">2.36</td>
-        <td class="num">$2.7B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">-$281.0M</td>
-        <td class="num">1.39</td>
-      </tr>
-
-      <tr class="">
-        <td>57</td>
-        <td>
-          <div class="company-name">The Estée Lauder Companies Inc.</div>
-          <div class="company-ticker">EL <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">2.33</td>
-        <td class="num">$9.4B</td>
-        <td class="num">$2.8B</td>
-        <td class="num">$6.3B</td>
-        <td class="num">1.36</td>
-      </tr>
-
-      <tr class="">
-        <td>58</td>
-        <td>
-          <div class="company-name">State Street Corporation</div>
-          <div class="company-ticker">STT <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.30</td>
-        <td class="num">$55.9B</td>
-        <td class="num">$24.3B</td>
-        <td class="num">-$87.3B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>59</td>
-        <td>
-          <div class="company-name">Tractor Supply Company</div>
-          <div class="company-ticker">TSCO <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">2.30</td>
-        <td class="num">$5.9B</td>
-        <td class="num">$2.6B</td>
-        <td class="num">$5.7B</td>
-        <td class="num">1.34</td>
-      </tr>
-
-      <tr class="">
-        <td>60</td>
-        <td>
-          <div class="company-name">Carnival Corporation & plc</div>
-          <div class="company-ticker">CCL <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">2.28</td>
-        <td class="num">$28.0B</td>
-        <td class="num">$11.6B</td>
-        <td class="num">$26.1B</td>
-        <td class="num">0.32</td>
-      </tr>
-
-      <tr class="">
-        <td>61</td>
-        <td>
-          <div class="company-name">BXP, Inc.</div>
-          <div class="company-ticker">BXP <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">2.26</td>
-        <td class="num">$17.4B</td>
-        <td class="num">$5.1B</td>
-        <td class="num">$15.9B</td>
-        <td class="num">0.92</td>
-      </tr>
-
-      <tr class="">
-        <td>62</td>
-        <td>
-          <div class="company-name">MetLife, Inc.</div>
-          <div class="company-ticker">MET <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.26</td>
-        <td class="num">$65.4B</td>
-        <td class="num">$28.3B</td>
-        <td class="num">$39.7B</td>
-        <td class="num">1.90</td>
-      </tr>
-
-      <tr class="">
-        <td>63</td>
-        <td>
-          <div class="company-name">Lamb Weston Holdings, Inc.</div>
-          <div class="company-ticker">LW <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">2.25</td>
-        <td class="num">$3.9B</td>
-        <td class="num">$1.8B</td>
-        <td class="num">$3.9B</td>
-        <td class="num">1.43</td>
-      </tr>
-
-      <tr class="">
-        <td>64</td>
-        <td>
-          <div class="company-name">Dollar Tree, Inc.</div>
-          <div class="company-ticker">DLTR <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">2.21</td>
-        <td class="num">$7.7B</td>
-        <td class="num">$3.4B</td>
-        <td class="num">$7.1B</td>
-        <td class="num">0.96</td>
-      </tr>
-
-      <tr class="">
-        <td>65</td>
-        <td>
-          <div class="company-name">Edison International</div>
-          <div class="company-ticker">EIX <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">2.16</td>
-        <td class="num">$41.5B</td>
-        <td class="num">$17.1B</td>
-        <td class="num">$41.4B</td>
-        <td class="num">0.73</td>
-      </tr>
-
-      <tr class="">
-        <td>66</td>
-        <td>
-          <div class="company-name">Royal Caribbean Cruises Ltd.</div>
-          <div class="company-ticker">RCL <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">2.15</td>
-        <td class="num">$22.0B</td>
-        <td class="num">$10.0B</td>
-        <td class="num">$21.2B</td>
-        <td class="num">0.18</td>
-      </tr>
-
-      <tr class="">
-        <td>67</td>
-        <td>
-          <div class="company-name">DTE Energy Company</div>
-          <div class="company-ticker">DTE <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">2.14</td>
-        <td class="num">$26.3B</td>
-        <td class="num">$12.3B</td>
-        <td class="num">$26.1B</td>
-        <td class="num">0.80</td>
-      </tr>
-
-      <tr class="">
-        <td>68</td>
-        <td>
-          <div class="company-name">T-Mobile US, Inc.</div>
-          <div class="company-ticker">TMUS <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">2.09</td>
-        <td class="num">$123.6B</td>
-        <td class="num">$58.9B</td>
-        <td class="num">$118.0B</td>
-        <td class="num">1.00</td>
-      </tr>
-
-      <tr class="">
-        <td>69</td>
-        <td>
-          <div class="company-name">General Motors Company</div>
-          <div class="company-ticker">GM <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">2.08</td>
-        <td class="num">$131.6B</td>
-        <td class="num">$61.1B</td>
-        <td class="num">$103.9B</td>
-        <td class="num">1.17</td>
-      </tr>
-
-      <tr class="">
-        <td>70</td>
-        <td>
-          <div class="company-name">Caterpillar Inc.</div>
-          <div class="company-ticker">CAT <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.07</td>
-        <td class="num">$44.1B</td>
-        <td class="num">$21.3B</td>
-        <td class="num">$34.7B</td>
-        <td class="num">1.44</td>
-      </tr>
-
-      <tr class="">
-        <td>71</td>
-        <td>
-          <div class="company-name">CenterPoint Energy, Inc.</div>
-          <div class="company-ticker">CNP <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">2.07</td>
-        <td class="num">$23.0B</td>
-        <td class="num">$11.2B</td>
-        <td class="num">$22.5B</td>
-        <td class="num">0.91</td>
-      </tr>
-
-      <tr class="">
-        <td>72</td>
-        <td>
-          <div class="company-name">United Airlines Holdings, Inc.</div>
-          <div class="company-ticker">UAL <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">2.03</td>
-        <td class="num">$31.0B</td>
-        <td class="num">$15.3B</td>
-        <td class="num">$18.8B</td>
-        <td class="num">0.65</td>
-      </tr>
-
-      <tr class="">
-        <td>73</td>
-        <td>
-          <div class="company-name">Pinnacle West Capital Corporation</div>
-          <div class="company-ticker">PNW <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">2.02</td>
-        <td class="num">$14.3B</td>
-        <td class="num">$7.0B</td>
-        <td class="num">$14.3B</td>
-        <td class="num">0.54</td>
-      </tr>
-
-      <tr class="">
-        <td>74</td>
-        <td>
-          <div class="company-name">Dollar General Corporation</div>
-          <div class="company-ticker">DG <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">2.02</td>
-        <td class="num">$16.5B</td>
-        <td class="num">$8.2B</td>
-        <td class="num">$15.3B</td>
-        <td class="num">1.17</td>
-      </tr>
-
-      <tr class="">
-        <td>75</td>
-        <td>
-          <div class="company-name">The Bank of New York Mellon Corporation</div>
-          <div class="company-ticker">BK <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">2.01</td>
-        <td class="num">$79.2B</td>
-        <td class="num">$39.5B</td>
-        <td class="num">-$109.0B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>76</td>
-        <td>
-          <div class="company-name">International Business Machines Corporation</div>
-          <div class="company-ticker">IBM <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.97</td>
-        <td class="num">$64.6B</td>
-        <td class="num">$32.7B</td>
-        <td class="num">$50.2B</td>
-        <td class="num">0.96</td>
-      </tr>
-
-      <tr class="">
-        <td>77</td>
-        <td>
-          <div class="company-name">The Williams Companies, Inc.</div>
-          <div class="company-ticker">WMB <span class="sector-tag">Energy</span> </div>
-        </td>
-        <td class="num">1.97</td>
-        <td class="num">$29.5B</td>
-        <td class="num">$12.8B</td>
-        <td class="num">$29.5B</td>
-        <td class="num">0.53</td>
-      </tr>
-
-      <tr class="">
-        <td>78</td>
-        <td>
-          <div class="company-name">CMS Energy Corporation</div>
-          <div class="company-ticker">CMS <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.95</td>
-        <td class="num">$18.9B</td>
-        <td class="num">$8.9B</td>
-        <td class="num">$18.4B</td>
-        <td class="num">0.98</td>
-      </tr>
-
-      <tr class="">
-        <td>79</td>
-        <td>
-          <div class="company-name">FirstEnergy Corp.</div>
-          <div class="company-ticker">FE <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.93</td>
-        <td class="num">$26.8B</td>
-        <td class="num">$12.5B</td>
-        <td class="num">$26.8B</td>
-        <td class="num">0.57</td>
-      </tr>
-
-      <tr class="">
-        <td>80</td>
-        <td>
-          <div class="company-name">American Express Company</div>
-          <div class="company-ticker">AXP <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.91</td>
-        <td class="num">$63.9B</td>
-        <td class="num">$33.5B</td>
-        <td class="num">$16.3B</td>
-        <td class="num">1.41</td>
-      </tr>
-
-      <tr class="">
-        <td>81</td>
-        <td>
-          <div class="company-name">The Southern Company</div>
-          <div class="company-ticker">SO <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.91</td>
-        <td class="num">$74.1B</td>
-        <td class="num">$36.0B</td>
-        <td class="num">$72.4B</td>
-        <td class="num">0.65</td>
-      </tr>
-
-      <tr class="">
-        <td>82</td>
-        <td>
-          <div class="company-name">PG&E Corporation</div>
-          <div class="company-ticker">PCG <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.87</td>
-        <td class="num">$61.3B</td>
-        <td class="num">$31.0B</td>
-        <td class="num">$60.6B</td>
-        <td class="num">0.97</td>
-      </tr>
-
-      <tr class="">
-        <td>83</td>
-        <td>
-          <div class="company-name">Eversource Energy</div>
-          <div class="company-ticker">ES <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.85</td>
-        <td class="num">$30.2B</td>
-        <td class="num">$16.2B</td>
-        <td class="num">$30.1B</td>
-        <td class="num">0.65</td>
-      </tr>
-
-      <tr class="">
-        <td>84</td>
-        <td>
-          <div class="company-name">The Campbell's Company</div>
-          <div class="company-ticker">CPB <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.85</td>
-        <td class="num">$7.3B</td>
-        <td class="num">$4.0B</td>
-        <td class="num">$7.1B</td>
-        <td class="num">0.82</td>
-      </tr>
-
-      <tr class="">
-        <td>85</td>
-        <td>
-          <div class="company-name">Entergy Corporation</div>
-          <div class="company-ticker">ETR <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.82</td>
-        <td class="num">$31.3B</td>
-        <td class="num">$16.9B</td>
-        <td class="num">$29.4B</td>
-        <td class="num">0.74</td>
-      </tr>
-
-      <tr class="">
-        <td>86</td>
-        <td>
-          <div class="company-name">Chipotle Mexican Grill, Inc.</div>
-          <div class="company-ticker">CMG <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.79</td>
-        <td class="num">$5.1B</td>
-        <td class="num">$2.8B</td>
-        <td class="num">$4.0B</td>
-        <td class="num">1.24</td>
-      </tr>
-
-      <tr class="">
-        <td>87</td>
-        <td>
-          <div class="company-name">Union Pacific Corporation</div>
-          <div class="company-ticker">UNP <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.78</td>
-        <td class="num">$32.8B</td>
-        <td class="num">$18.5B</td>
-        <td class="num">$31.3B</td>
-        <td class="num">0.91</td>
-      </tr>
-
-      <tr class="">
-        <td>88</td>
-        <td>
-          <div class="company-name">Moody's Corporation</div>
-          <div class="company-ticker">MCO <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.77</td>
-        <td class="num">$7.4B</td>
-        <td class="num">$4.0B</td>
-        <td class="num">$5.0B</td>
-        <td class="num">1.74</td>
-      </tr>
-
-      <tr class="">
-        <td>89</td>
-        <td>
-          <div class="company-name">Avery Dennison Corporation</div>
-          <div class="company-ticker">AVY <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.76</td>
-        <td class="num">$4.0B</td>
-        <td class="num">$2.2B</td>
-        <td class="num">$3.7B</td>
-        <td class="num">1.13</td>
-      </tr>
-
-      <tr class="">
-        <td>90</td>
-        <td>
-          <div class="company-name">United Parcel Service, Inc.</div>
-          <div class="company-ticker">UPS <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.76</td>
-        <td class="num">$28.6B</td>
-        <td class="num">$14.2B</td>
-        <td class="num">$22.7B</td>
-        <td class="num">1.22</td>
-      </tr>
-
-      <tr class="">
-        <td>91</td>
-        <td>
-          <div class="company-name">Verizon Communications Inc.</div>
-          <div class="company-ticker">VZ <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">1.75</td>
-        <td class="num">$184.8B</td>
-        <td class="num">$104.5B</td>
-        <td class="num">$165.8B</td>
-        <td class="num">0.91</td>
-      </tr>
-
-      <tr class="">
-        <td>92</td>
-        <td>
-          <div class="company-name">United Rentals, Inc.</div>
-          <div class="company-ticker">URI <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.75</td>
-        <td class="num">$15.7B</td>
-        <td class="num">$9.0B</td>
-        <td class="num">$15.2B</td>
-        <td class="num">0.95</td>
-      </tr>
-
-      <tr class="">
-        <td>93</td>
-        <td>
-          <div class="company-name">Exelon Corporation</div>
-          <div class="company-ticker">EXC <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.74</td>
-        <td class="num">$50.2B</td>
-        <td class="num">$28.8B</td>
-        <td class="num">$49.6B</td>
-        <td class="num">0.92</td>
-      </tr>
-
-      <tr class="">
-        <td>94</td>
-        <td>
-          <div class="company-name">Duke Energy Corporation</div>
-          <div class="company-ticker">DUK <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.72</td>
-        <td class="num">$91.1B</td>
-        <td class="num">$50.8B</td>
-        <td class="num">$90.9B</td>
-        <td class="num">0.55</td>
-      </tr>
-
-      <tr class="">
-        <td>95</td>
-        <td>
-          <div class="company-name">AppLovin Corporation</div>
-          <div class="company-ticker">APP <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">1.72</td>
-        <td class="num">$3.7B</td>
-        <td class="num">$1.9B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">3.32</td>
-      </tr>
-
-      <tr class="">
-        <td>96</td>
-        <td>
-          <div class="company-name">Aon plc</div>
-          <div class="company-ticker">AON <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.68</td>
-        <td class="num">$16.1B</td>
-        <td class="num">$9.4B</td>
-        <td class="num">$13.5B</td>
-        <td class="num">1.11</td>
-      </tr>
-
-      <tr class="">
-        <td>97</td>
-        <td>
-          <div class="company-name">Alliant Energy Corporation</div>
-          <div class="company-ticker">LNT <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.68</td>
-        <td class="num">$12.3B</td>
-        <td class="num">$7.3B</td>
-        <td class="num">$11.8B</td>
-        <td class="num">0.80</td>
-      </tr>
-
-      <tr class="">
-        <td>98</td>
-        <td>
-          <div class="company-name">Broadcom Inc.</div>
-          <div class="company-ticker">AVGO <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.66</td>
-        <td class="num">$40.5B</td>
-        <td class="num">$280.8B</td>
-        <td class="num">$29.4B</td>
-        <td class="num">1.90</td>
-      </tr>
-
-      <tr class="">
-        <td>99</td>
-        <td>
-          <div class="company-name">Eli Lilly and Company</div>
-          <div class="company-ticker">LLY <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">1.65</td>
-        <td class="num">$43.9B</td>
-        <td class="num">$26.5B</td>
-        <td class="num">$36.6B</td>
-        <td class="num">1.58</td>
-      </tr>
-
-      <tr class="">
-        <td>100</td>
-        <td>
-          <div class="company-name">Ares Management Corporation</div>
-          <div class="company-ticker">ARES <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.63</td>
-        <td class="num">$14.2B</td>
-        <td class="num">$2.8B</td>
-        <td class="num">$12.8B</td>
-        <td class="num">0.47</td>
-      </tr>
-
-      <tr class="">
-        <td>101</td>
-        <td>
-          <div class="company-name">Equinix, Inc.</div>
-          <div class="company-ticker">EQIX <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">1.60</td>
-        <td class="num">$22.7B</td>
-        <td class="num">$14.2B</td>
-        <td class="num">$21.0B</td>
-        <td class="num">1.32</td>
-      </tr>
-
-      <tr class="">
-        <td>102</td>
-        <td>
-          <div class="company-name">Baxter International Inc.</div>
-          <div class="company-ticker">BAX <span class="sector-tag">Healthcare</span> </div>
-        </td>
-        <td class="num">1.60</td>
-        <td class="num">$9.8B</td>
-        <td class="num">$6.1B</td>
-        <td class="num">$7.8B</td>
-        <td class="num">2.31</td>
-      </tr>
-
-      <tr class="">
-        <td>103</td>
-        <td>
-          <div class="company-name">WEC Energy Group, Inc.</div>
-          <div class="company-ticker">WEC <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.59</td>
-        <td class="num">$22.4B</td>
-        <td class="num">$13.6B</td>
-        <td class="num">$22.4B</td>
-        <td class="num">0.59</td>
-      </tr>
-
-      <tr class="">
-        <td>104</td>
-        <td>
-          <div class="company-name">Genuine Parts Company</div>
-          <div class="company-ticker">GPC <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.56</td>
-        <td class="num">$6.9B</td>
-        <td class="num">$4.4B</td>
-        <td class="num">$6.5B</td>
-        <td class="num">1.08</td>
-      </tr>
-
-      <tr class="">
-        <td>105</td>
-        <td>
-          <div class="company-name">eBay Inc.</div>
-          <div class="company-ticker">EBAY <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.56</td>
-        <td class="num">$7.2B</td>
-        <td class="num">$4.6B</td>
-        <td class="num">$4.3B</td>
-        <td class="num">1.10</td>
-      </tr>
-
-      <tr class="">
-        <td>106</td>
-        <td>
-          <div class="company-name">American Electric Power Company, Inc.</div>
-          <div class="company-ticker">AEP <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.54</td>
-        <td class="num">$49.7B</td>
-        <td class="num">$31.1B</td>
-        <td class="num">$49.3B</td>
-        <td class="num">0.46</td>
-      </tr>
-
-      <tr class="">
-        <td>107</td>
-        <td>
-          <div class="company-name">Xcel Energy Inc.</div>
-          <div class="company-ticker">XEL <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.53</td>
-        <td class="num">$36.1B</td>
-        <td class="num">$23.6B</td>
-        <td class="num">$35.8B</td>
-        <td class="num">0.71</td>
-      </tr>
-
-      <tr class="">
-        <td>108</td>
-        <td>
-          <div class="company-name">Lennox International Inc.</div>
-          <div class="company-ticker">LII <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.52</td>
-        <td class="num">$1.8B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">$1.7B</td>
-        <td class="num">1.60</td>
-      </tr>
-
-      <tr class="">
-        <td>109</td>
-        <td>
-          <div class="company-name">Northern Trust Corporation</div>
-          <div class="company-ticker">NTRS <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.52</td>
-        <td class="num">$18.3B</td>
-        <td class="num">$12.0B</td>
-        <td class="num">$7.3B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>110</td>
-        <td>
-          <div class="company-name">Dominion Energy, Inc.</div>
-          <div class="company-ticker">D <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.50</td>
-        <td class="num">$50.2B</td>
-        <td class="num">$28.1B</td>
-        <td class="num">$49.9B</td>
-        <td class="num">0.77</td>
-      </tr>
-
-      <tr class="">
-        <td>111</td>
-        <td>
-          <div class="company-name">Evergy, Inc.</div>
-          <div class="company-ticker">EVRG <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.50</td>
-        <td class="num">$15.4B</td>
-        <td class="num">$10.2B</td>
-        <td class="num">$15.4B</td>
-        <td class="num">0.49</td>
-      </tr>
-
-      <tr class="">
-        <td>112</td>
-        <td>
-          <div class="company-name">CSX Corporation</div>
-          <div class="company-ticker">CSX <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.48</td>
-        <td class="num">$19.5B</td>
-        <td class="num">$13.2B</td>
-        <td class="num">$18.8B</td>
-        <td class="num">0.81</td>
-      </tr>
-
-      <tr class="">
-        <td>113</td>
-        <td>
-          <div class="company-name">General Mills, Inc.</div>
-          <div class="company-ticker">GIS <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.47</td>
-        <td class="num">$13.7B</td>
-        <td class="num">$9.3B</td>
-        <td class="num">$13.1B</td>
-        <td class="num">0.66</td>
-      </tr>
-
-      <tr class="">
-        <td>114</td>
-        <td>
-          <div class="company-name">Ameren Corporation</div>
-          <div class="company-ticker">AEE <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.47</td>
-        <td class="num">$19.9B</td>
-        <td class="num">$13.4B</td>
-        <td class="num">$19.9B</td>
-        <td class="num">0.66</td>
-      </tr>
-
-      <tr class="">
-        <td>115</td>
-        <td>
-          <div class="company-name">American Water Works Company, Inc.</div>
-          <div class="company-ticker">AWK <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.47</td>
-        <td class="num">$15.9B</td>
-        <td class="num">$10.8B</td>
-        <td class="num">$15.8B</td>
-        <td class="num">0.46</td>
-      </tr>
-
-      <tr class="">
-        <td>116</td>
-        <td>
-          <div class="company-name">ONEOK, Inc.</div>
-          <div class="company-ticker">OKE <span class="sector-tag">Energy</span> </div>
-        </td>
-        <td class="num">1.46</td>
-        <td class="num">$33.1B</td>
-        <td class="num">$22.5B</td>
-        <td class="num">$33.0B</td>
-        <td class="num">0.71</td>
-      </tr>
-
-      <tr class="">
-        <td>117</td>
-        <td>
-          <div class="company-name">NextEra Energy, Inc.</div>
-          <div class="company-ticker">NEE <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.46</td>
-        <td class="num">$97.2B</td>
-        <td class="num">$54.6B</td>
-        <td class="num">$94.4B</td>
-        <td class="num">0.60</td>
-      </tr>
-
-      <tr class="">
-        <td>118</td>
-        <td>
-          <div class="company-name">UDR, Inc.</div>
-          <div class="company-ticker">UDR <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">1.45</td>
-        <td class="num">$6.0B</td>
-        <td class="num">$3.2B</td>
-        <td class="num">$6.0B</td>
-        <td class="num">0.16</td>
-      </tr>
-
-      <tr class="">
-        <td>119</td>
-        <td>
-          <div class="company-name">LyondellBasell Industries N.V.</div>
-          <div class="company-ticker">LYB <span class="sector-tag">Basic Materials</span> </div>
-        </td>
-        <td class="num">1.44</td>
-        <td class="num">$14.7B</td>
-        <td class="num">$10.1B</td>
-        <td class="num">$11.3B</td>
-        <td class="num">1.77</td>
-      </tr>
-
-      <tr class="">
-        <td>120</td>
-        <td>
-          <div class="company-name">Federal Realty Investment Trust</div>
-          <div class="company-ticker">FRT <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">1.44</td>
-        <td class="num">$5.0B</td>
-        <td class="num">$3.1B</td>
-        <td class="num">$4.9B</td>
-        <td class="num">0.37</td>
-      </tr>
-
-      <tr class="">
-        <td>121</td>
-        <td>
-          <div class="company-name">The J. M. Smucker Company</div>
-          <div class="company-ticker">SJM <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.43</td>
-        <td class="num">$7.5B</td>
-        <td class="num">$5.2B</td>
-        <td class="num">$7.4B</td>
-        <td class="num">0.84</td>
-      </tr>
-
-      <tr class="">
-        <td>122</td>
-        <td>
-          <div class="company-name">Public Service Enterprise Group Incorporated</div>
-          <div class="company-ticker">PEG <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.43</td>
-        <td class="num">$24.2B</td>
-        <td class="num">$17.0B</td>
-        <td class="num">$24.1B</td>
-        <td class="num">0.80</td>
-      </tr>
-
-      <tr class="">
-        <td>123</td>
-        <td>
-          <div class="company-name">Marathon Petroleum Corporation</div>
-          <div class="company-ticker">MPC <span class="sector-tag">Energy</span> </div>
-        </td>
-        <td class="num">1.43</td>
-        <td class="num">$34.4B</td>
-        <td class="num">$17.3B</td>
-        <td class="num">$30.7B</td>
-        <td class="num">1.26</td>
-      </tr>
-
-      <tr class="">
-        <td>124</td>
-        <td>
-          <div class="company-name">U.S. Bancorp</div>
-          <div class="company-ticker">USB <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.42</td>
-        <td class="num">$82.7B</td>
-        <td class="num">$58.3B</td>
-        <td class="num">$32.2B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>125</td>
-        <td>
-          <div class="company-name">Marsh & McLennan Companies, Inc.</div>
-          <div class="company-ticker">MRSH <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.40</td>
-        <td class="num">$21.4B</td>
-        <td class="num">$15.1B</td>
-        <td class="num">$18.8B</td>
-        <td class="num">1.10</td>
-      </tr>
-
-      <tr class="">
-        <td>126</td>
-        <td>
-          <div class="company-name">The Coca-Cola Company</div>
-          <div class="company-ticker">KO <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.40</td>
-        <td class="num">$47.9B</td>
-        <td class="num">$32.2B</td>
-        <td class="num">$32.1B</td>
-        <td class="num">1.46</td>
-      </tr>
-
-      <tr class="">
-        <td>127</td>
-        <td>
-          <div class="company-name">Best Buy Co., Inc.</div>
-          <div class="company-ticker">BBY <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.39</td>
-        <td class="num">$4.1B</td>
-        <td class="num">$3.0B</td>
-        <td class="num">$2.4B</td>
-        <td class="num">1.11</td>
-      </tr>
-
-      <tr class="">
-        <td>128</td>
-        <td>
-          <div class="company-name">NiSource Inc.</div>
-          <div class="company-ticker">NI <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.39</td>
-        <td class="num">$16.2B</td>
-        <td class="num">$9.5B</td>
-        <td class="num">$16.1B</td>
-        <td class="num">0.69</td>
-      </tr>
-
-      <tr class="">
-        <td>129</td>
-        <td>
-          <div class="company-name">Amcor plc</div>
-          <div class="company-ticker">AMCR <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.39</td>
-        <td class="num">$16.2B</td>
-        <td class="num">$11.6B</td>
-        <td class="num">$15.1B</td>
-        <td class="num">1.30</td>
-      </tr>
-
-      <tr class="">
-        <td>130</td>
-        <td>
-          <div class="company-name">Robinhood Markets, Inc.</div>
-          <div class="company-ticker">HOOD <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.36</td>
-        <td class="num">$12.4B</td>
-        <td class="num">$8.0B</td>
-        <td class="num">-$197.0M</td>
-        <td class="num">1.13</td>
-      </tr>
-
-      <tr class="">
-        <td>131</td>
-        <td>
-          <div class="company-name">Ball Corporation</div>
-          <div class="company-ticker">BALL <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.36</td>
-        <td class="num">$7.4B</td>
-        <td class="num">$5.4B</td>
-        <td class="num">$6.2B</td>
-        <td class="num">1.11</td>
-      </tr>
-
-      <tr class="">
-        <td>132</td>
-        <td>
-          <div class="company-name">Constellation Brands, Inc.</div>
-          <div class="company-ticker">STZ <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.33</td>
-        <td class="num">$10.7B</td>
-        <td class="num">$7.7B</td>
-        <td class="num">$10.5B</td>
-        <td class="num">1.34</td>
-      </tr>
-
-      <tr class="">
-        <td>133</td>
-        <td>
-          <div class="company-name">Carvana Co.</div>
-          <div class="company-ticker">CVNA <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.33</td>
-        <td class="num">$5.6B</td>
-        <td class="num">$2.8B</td>
-        <td class="num">$2.8B</td>
-        <td class="num">4.31</td>
-      </tr>
-
-      <tr class="">
-        <td>134</td>
-        <td>
-          <div class="company-name">The TJX Companies, Inc.</div>
-          <div class="company-ticker">TJX <span class="sector-tag">Consumer Cyclical</span> </div>
-        </td>
-        <td class="num">1.32</td>
-        <td class="num">$13.5B</td>
-        <td class="num">$10.1B</td>
-        <td class="num">$7.3B</td>
-        <td class="num">1.14</td>
-      </tr>
-
-      <tr class="">
-        <td>135</td>
-        <td>
-          <div class="company-name">PPL Corporation</div>
-          <div class="company-ticker">PPL <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.31</td>
-        <td class="num">$19.5B</td>
-        <td class="num">$14.9B</td>
-        <td class="num">$18.4B</td>
-        <td class="num">0.87</td>
-      </tr>
-
-      <tr class="">
-        <td>136</td>
-        <td>
-          <div class="company-name">Paychex, Inc.</div>
-          <div class="company-ticker">PAYX <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.30</td>
-        <td class="num">$5.0B</td>
-        <td class="num">$3.9B</td>
-        <td class="num">$3.5B</td>
-        <td class="num">1.27</td>
-      </tr>
-
-      <tr class="">
-        <td>137</td>
-        <td>
-          <div class="company-name">Pool Corporation</div>
-          <div class="company-ticker">POOL <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.30</td>
-        <td class="num">$1.5B</td>
-        <td class="num">$1.2B</td>
-        <td class="num">$1.4B</td>
-        <td class="num">2.24</td>
-      </tr>
-
-      <tr class="">
-        <td>138</td>
-        <td>
-          <div class="company-name">Target Corporation</div>
-          <div class="company-ticker">TGT <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.26</td>
-        <td class="num">$20.3B</td>
-        <td class="num">$16.2B</td>
-        <td class="num">$14.8B</td>
-        <td class="num">0.94</td>
-      </tr>
-
-      <tr class="">
-        <td>139</td>
-        <td>
-          <div class="company-name">Prudential Financial, Inc.</div>
-          <div class="company-ticker">PRU <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.24</td>
-        <td class="num">$44.3B</td>
-        <td class="num">$32.4B</td>
-        <td class="num">$3.3B</td>
-        <td class="num">0.92</td>
-      </tr>
-
-      <tr class="">
-        <td>140</td>
-        <td>
-          <div class="company-name">Interactive Brokers Group, Inc.</div>
-          <div class="company-ticker">IBKR <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.24</td>
-        <td class="num">$25.5B</td>
-        <td class="num">$5.4B</td>
-        <td class="num">-$80.1B</td>
-        <td class="num">1.11</td>
-      </tr>
-
-      <tr class="">
-        <td>141</td>
-        <td>
-          <div class="company-name">AT&T Inc.</div>
-          <div class="company-ticker">T <span class="sector-tag">Communication Services</span> </div>
-        </td>
-        <td class="num">1.24</td>
-        <td class="num">$159.6B</td>
-        <td class="num">$110.0B</td>
-        <td class="num">$141.3B</td>
-        <td class="num">0.91</td>
-      </tr>
-
-      <tr class="">
-        <td>142</td>
-        <td>
-          <div class="company-name">The Hershey Company</div>
-          <div class="company-ticker">HSY <span class="sector-tag">Consumer Defensive</span> </div>
-        </td>
-        <td class="num">1.24</td>
-        <td class="num">$5.7B</td>
-        <td class="num">$3.4B</td>
-        <td class="num">$4.8B</td>
-        <td class="num">1.19</td>
-      </tr>
-
-      <tr class="">
-        <td>143</td>
-        <td>
-          <div class="company-name">Truist Financial Corporation</div>
-          <div class="company-ticker">TFC <span class="sector-tag">Financial Services</span> </div>
-        </td>
-        <td class="num">1.22</td>
-        <td class="num">$72.9B</td>
-        <td class="num">$59.6B</td>
-        <td class="num">$26.2B</td>
-        <td class="num">N/A</td>
-      </tr>
-
-      <tr class="">
-        <td>144</td>
-        <td>
-          <div class="company-name">Healthpeak Properties, Inc.</div>
-          <div class="company-ticker">DOC <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">1.22</td>
-        <td class="num">$10.1B</td>
-        <td class="num">$7.5B</td>
-        <td class="num">$9.7B</td>
-        <td class="num">1.22</td>
-      </tr>
-
-      <tr class="">
-        <td>145</td>
-        <td>
-          <div class="company-name">NXP Semiconductors N.V.</div>
-          <div class="company-ticker">NXPI <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.20</td>
-        <td class="num">$12.5B</td>
-        <td class="num">$10.0B</td>
-        <td class="num">$9.2B</td>
-        <td class="num">2.05</td>
-      </tr>
-
-      <tr class="">
-        <td>146</td>
-        <td>
-          <div class="company-name">Essex Property Trust, Inc.</div>
-          <div class="company-ticker">ESS <span class="sector-tag">Real Estate</span> </div>
-        </td>
-        <td class="num">1.19</td>
-        <td class="num">$6.9B</td>
-        <td class="num">$5.5B</td>
-        <td class="num">$6.8B</td>
-        <td class="num">0.15</td>
-      </tr>
-
-      <tr class="">
-        <td>147</td>
-        <td>
-          <div class="company-name">Amphenol Corporation</div>
-          <div class="company-ticker">APH <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.19</td>
-        <td class="num">$16.1B</td>
-        <td class="num">$13.4B</td>
-        <td class="num">$4.6B</td>
-        <td class="num">2.98</td>
-      </tr>
-
-      <tr class="">
-        <td>148</td>
-        <td>
-          <div class="company-name">Consolidated Edison, Inc.</div>
-          <div class="company-ticker">ED <span class="sector-tag">Utilities</span> </div>
-        </td>
-        <td class="num">1.17</td>
-        <td class="num">$28.4B</td>
-        <td class="num">$24.2B</td>
-        <td class="num">$26.8B</td>
-        <td class="num">1.02</td>
-      </tr>
-
-      <tr class="">
-        <td>149</td>
-        <td>
-          <div class="company-name">Builders FirstSource, Inc.</div>
-          <div class="company-ticker">BLDR <span class="sector-tag">Industrials</span> </div>
-        </td>
-        <td class="num">1.17</td>
-        <td class="num">$5.1B</td>
-        <td class="num">$4.4B</td>
-        <td class="num">$4.9B</td>
-        <td class="num">1.86</td>
-      </tr>
-
-      <tr class="">
-        <td>150</td>
-        <td>
-          <div class="company-name">Broadridge Financial Solutions, Inc.</div>
-          <div class="company-ticker">BR <span class="sector-tag">Technology</span> </div>
-        </td>
-        <td class="num">1.17</td>
-        <td class="num">$3.4B</td>
-        <td class="num">$2.9B</td>
-        <td class="num">$3.0B</td>
-        <td class="num">0.97</td>
-      </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="content-section">
-                <h2>Frequently Asked Questions</h2>
-
-                <div class="faq-item">
-                    <div class="faq-question">What is a good debt-to-equity ratio?</div>
-                    <div class="faq-answer">A "good" debt-to-equity ratio varies heavily by industry. Capital-intensive industries like utilities and manufacturing typically have higher ratios (often 1.0 to 2.0 or more), while technology companies usually have lower ratios. Generally, a ratio below 1.0 is considered relatively safe, meaning a company has more equity than debt.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Which companies have the most debt?</div>
-                    <div class="faq-answer">Companies in the telecommunications, utilities, and financial sectors often hold the largest absolute amounts of debt. However, absolute debt must be compared to equity and cash flow to determine true leverage. In our analysis, The Clorox Company (CLX) screen as having the highest standard D/E ratio among positive-equity companies.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">Is high debt-to-equity always bad?</div>
-                    <div class="faq-answer">No. Debt is often cheaper than equity financing due to tax-deductible interest payments. Companies with highly predictable cash flows (like utilities) can safely handle higher debt loads. However, in a high-interest-rate environment, companies with high leverage and variable-rate debt or upcoming refinancing needs face significant risk.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">What sector has the highest leverage?</div>
-                    <div class="faq-answer">Utilities, Real Estate, and Consumer Defensive typically exhibit higher leverage ratios due to their stable cash flows and capital-intensive nature, which allows them to comfortably service higher debt loads.</div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">How does debt-to-equity affect stock price?</div>
-                    <div class="faq-answer">High leverage amplifies both gains and losses for shareholders. When business is good, debt boosts return on equity. When business slows, high interest payments can quickly wipe out profits, leading to higher stock price volatility and potential downside risk.</div>
-                </div>
-            </section>
-
-            <section class="methodology">
-                <h3>Methodology & Data</h3>
-                <p>Data was collected for 485 S&P 500 components as of 2026. The analysis excludes companies where total debt or market capitalization data was entirely unavailable.</p>
-                <ul>
-                    <li><strong>Debt-to-Equity (D/E):</strong> Calculated as Total Debt divided by Total Shareholder Equity.</li>
-                    <li><strong>Negative Equity:</strong> Companies where accumulated deficits or massive share buybacks have pushed Total Equity below zero. For these firms, traditional D/E ratios are not meaningful, but they are highly levered.</li>
-                    <li><strong>Net Debt:</strong> Total Debt minus Cash and Cash Equivalents.</li>
-                </ul>
-                <p><em>Disclaimer: This site provides data and analysis for informational purposes only. Nothing here constitutes investment advice. Do your own research.</em></p>
-            </section>
-        
-  
-  <section style="max-width:800px;margin:40px auto;padding:0 24px">
-    <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
-      <h3 style="font-size:14px;color:var(--text-dim,#94a3b8);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Cite This Page</h3>
-      <code style="display:block;background:var(--bg-color,#060a12);padding:16px;border-radius:8px;font-size:13px;color:var(--text-primary,#c8d0de);font-family:monospace;white-space:pre-wrap;word-break:break-all">Westmount Fundamentals. "Debt-to-Equity Rankings: Most & Least Leveraged S&P 500 C...." westmountfundamentals.com/debt-to-equity, 2026.</code>
-    </div>
-  </section>
-
-  <section style="max-width:800px;margin:40px auto;padding:0 24px">
-    <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-      <a href="/how-to-pay-off-debt/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">How to Pay Off Debt Fast: Proven Strategies and The Math Beh</a>
-      <a href="/equity-risk-premium/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Earnings Yield vs Bond Yield: Is the Stock Market Fairly ...</a>
-      <a href="/home-equity-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Home Equity Calculator</a>
-      <a href="/debt-to-income-ratio-calculator/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Debt-to-Income Ratio Calculator</a>
-    </div>
-  </section>
-</main>
-
-    </div>
 </SiteLayout>
