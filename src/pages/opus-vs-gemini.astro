@@ -60,12 +60,23 @@ for (const t of allTickers) {
     ocm: op.competitiveMomentum?.score ?? null,
     omd: op.moatDurability?.score ?? null,
     osc: op.sentimentCatalyst?.score ?? null,
+    avg: (g.overallScore != null && o.overallScore != null) ? Math.round((g.overallScore + o.overallScore) / 2) : (g.overallScore ?? o.overallScore ?? null),
   });
+}
+
+// Add consensus verdict
+for (const r of rows) {
+  if (r.avg != null) {
+    r.cv = r.avg >= 75 ? 'Strong Prospect' : r.avg >= 50 ? 'Moderate Prospect' : r.avg >= 30 ? 'Weak Prospect' : 'Poor Prospect';
+  } else {
+    r.cv = '';
+  }
 }
 
 const both = rows.filter(r => r.gs != null && r.os != null);
 const gAvg = (both.reduce((s, r) => s + r.gs, 0) / both.length).toFixed(1);
 const oAvg = (both.reduce((s, r) => s + r.os, 0) / both.length).toFixed(1);
+const consensusAvg = (both.reduce((s, r) => s + r.avg, 0) / both.length).toFixed(1);
 const agrees = both.filter(r => r.gv === r.ov).length;
 const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.length).toFixed(1);
 ---
@@ -132,6 +143,7 @@ const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.leng
     <div class="stat-card"><div class="stat-value opus-color">{Object.keys(opus).length}</div><div class="stat-label">Opus Scores</div></div>
     <div class="stat-card"><div class="stat-value gemini-color">{gAvg}</div><div class="stat-label">Gemini Avg</div></div>
     <div class="stat-card"><div class="stat-value opus-color">{oAvg}</div><div class="stat-label">Opus Avg</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:#eab308">{consensusAvg}</div><div class="stat-label">Consensus Avg</div></div>
     <div class="stat-card"><div class="stat-value positive">{agrees}</div><div class="stat-label">Verdict Agreement</div></div>
     <div class="stat-card"><div class="stat-value negative">{both.length - agrees}</div><div class="stat-label">Disagreements</div></div>
     <div class="stat-card"><div class="stat-value">{avgDiff}</div><div class="stat-label">Avg |Diff|</div></div>
@@ -160,7 +172,8 @@ const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.leng
       <option value="t">Ticker</option>
       <option value="gs">Gemini Score</option>
       <option value="os">Opus Score</option>
-      <option value="diff" selected>Difference</option>
+      <option value="avg" selected>Consensus Avg</option>
+      <option value="diff">Difference</option>
       <option value="c">Company</option>
     </select>
     <select id="sortDir">
@@ -181,8 +194,8 @@ const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.leng
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>Ticker</th><th>Company</th><th>Gemini</th><th>Opus</th><th>Diff</th>
-        <th>G Verdict</th><th>O Verdict</th>
+        <th>Ticker</th><th>Company</th><th>Gemini</th><th>Opus</th><th>Avg</th><th>Diff</th>
+        <th>Consensus</th><th>G Verdict</th><th>O Verdict</th>
         <th>G Mom</th><th>G Moat</th><th>G Sent</th>
         <th>O Mom</th><th>O Moat</th><th>O Sent</th>
       </tr></thead>
@@ -239,6 +252,9 @@ const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.leng
         if (col === 'diff') {
           av = (a.os != null && a.gs != null) ? a.os - a.gs : -999;
           bv = (b.os != null && b.gs != null) ? b.os - b.gs : -999;
+        } else if (col === 'avg') {
+          av = a.avg != null ? a.avg : -1;
+          bv = b.avg != null ? b.avg : -1;
         } else {
           av = a[col] != null ? a[col] : '';
           bv = b[col] != null ? b[col] : '';
@@ -258,7 +274,9 @@ const avgDiff = (both.reduce((s, r) => s + Math.abs(r.os - r.gs), 0) / both.leng
           '<td>' + r.c + '</td>' +
           '<td>' + scoreBar(r.gs, 100, '#9333EA') + '</td>' +
           '<td>' + scoreBar(r.os, 100, '#4a8fe7') + '</td>' +
+          '<td>' + scoreBar(r.avg, 100, '#eab308') + '</td>' +
           '<td>' + diffHtml(diff) + '</td>' +
+          '<td><span class="verdict-badge ' + verdictClass(r.cv) + '">' + (r.cv || '—') + '</span></td>' +
           '<td><span class="verdict-badge ' + verdictClass(r.gv) + '">' + (r.gv || '—') + '</span></td>' +
           '<td><span class="verdict-badge ' + verdictClass(r.ov) + '">' + (r.ov || '—') + '</span></td>' +
           '<td>' + (r.gcm != null ? r.gcm + '/35' : '—') + '</td>' +
