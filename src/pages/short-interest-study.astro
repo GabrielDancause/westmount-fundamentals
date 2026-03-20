@@ -1,0 +1,840 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import currentData from "../data/short-interest/current.json";
+import sectorBreakdown from "../data/short-interest/sector-breakdown.json";
+
+const { meta: studyMeta, stocks } = currentData;
+
+const highSqueezeStocks = stocks.filter(s => s.squeezeScore >= 60);
+const moderateSqueezeStocks = stocks.filter(s => s.squeezeRating === "Moderate");
+
+const maxSectorAvg = Math.max(...sectorBreakdown.map(s => s.avgShortPercent));
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Short Interest Study: What Happens When Wall Street Bets Against a Stock?",
+      "description": "Original research analyzing 65+ heavily shorted US stocks with proprietary Squeeze Score rankings.",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Research"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Research",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://westmountfundamentals.com/favicon.svg"
+        }
+      },
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What are the most shorted stocks right now?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": `As of March 2026, the most heavily shorted US stocks include ${studyMeta.mostShortedTicker} at ${studyMeta.maxShortPercent}% short interest of float, along with LCID, NTLA, MARA, and MPW, all above 30%. Our interactive Squeeze Tracker table tracks ${studyMeta.totalStocksAnalyzed} stocks ranked by short interest and squeeze potential.`
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you predict a short squeeze?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our proprietary Squeeze Score (0-100) combines five factors: Short % of Float (0-30 pts), Days to Cover (0-20 pts), Price Momentum (0-20 pts), Short Interest Change (0-15 pts), and Institutional Support (0-15 pts). Stocks scoring above 60 have the highest squeeze potential based on historical patterns."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do heavily shorted stocks outperform the market?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not consistently. While short squeezes can produce dramatic short-term gains, heavily shorted stocks are often shorted for fundamental reasons — declining revenue, high debt, or competitive threats. Our data shows most heavily shorted stocks underperform the broader market over 3-12 month periods. The exceptions tend to be stocks with improving fundamentals that the short thesis hasn't caught up to."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is considered a high short interest percentage?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Short interest above 10% of float is considered elevated, above 20% is high, and above 30% is extreme. For context, the average S&P 500 stock has roughly 2-3% short interest. In our study of 65 stocks, 39 have short interest above 10%, and 15 stocks exceed 30% — territory where short squeezes become a real risk for bearish traders."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often is short interest data updated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FINRA requires brokers to report short interest positions twice per month (mid-month and end-of-month), with data published approximately 10 days after each reporting date. Our Short Interest Study is updated monthly with fresh data from Yahoo Finance and SEC EDGAR filings, including recalculated Squeeze Scores."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+export const meta = {
+  title: "Short Interest Study: What Happens When Wall Street Bets Against a Stock?",
+  description: "Original research analyzing 65+ heavily shorted US stocks with proprietary Squeeze Score rankings.",
+  category: "study",
+  published: "2026-03-20",
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Short Interest Study: What Happens When Wall Street Bets Against a Stock?"
+  description="Original research analyzing 65+ heavily shorted US stocks. Proprietary Squeeze Score ranks short squeeze potential using short interest, days to cover, momentum, and institutional data."
+  canonical="https://westmountfundamentals.com/short-interest-study"
+  schema={schema}
+>
+  <style>
+    :root {
+      --positive: #10b981;
+      --negative: #ef4444;
+      --warning: #f59e0b;
+      --squeeze-high: #10b981;
+      --squeeze-moderate: #f59e0b;
+      --squeeze-low: #f97316;
+      --squeeze-minimal: #6b7280;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent-color); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* Hero */
+    .hero { padding: 80px 0 50px; border-bottom: 1px solid var(--border-color); margin-bottom: 50px; }
+    .hero-eyebrow { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-color); font-weight: 600; margin-bottom: 16px; }
+    .hero h1 { font-size: 2.75rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; max-width: 900px; }
+    .hero .subtitle { font-size: 1.2rem; color: var(--text-secondary); max-width: 800px; margin-bottom: 36px; line-height: 1.7; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+    .stat-value .ticker-highlight {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* Sections */
+    .content-section { margin-bottom: 64px; }
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    p.body-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 16px;
+      max-width: 800px;
+    }
+
+    /* Methodology box */
+    .methodology {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+    .methodology h3 { color: var(--text-primary); margin-bottom: 16px; font-size: 1.15rem; }
+    .methodology p { color: var(--text-secondary); font-size: 0.925rem; line-height: 1.7; margin-bottom: 12px; }
+    .methodology ul { margin-left: 20px; margin-bottom: 16px; }
+    .methodology li { margin-bottom: 8px; color: var(--text-secondary); font-size: 0.925rem; }
+
+    /* Tracker controls */
+    .tracker-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent-color); }
+    .search-input::placeholder { color: var(--text-muted); }
+    .sector-select {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+      outline: none;
+      cursor: pointer;
+      min-width: 180px;
+    }
+    .sector-select:focus { border-color: var(--accent-color); }
+    .result-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th {
+      background-color: rgba(21, 32, 64, 0.5);
+      padding: 14px 16px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+    th:hover { color: var(--accent-color); }
+    th .sort-arrow {
+      margin-left: 4px;
+      font-size: 0.65rem;
+      opacity: 0.4;
+    }
+    th.sort-active .sort-arrow { opacity: 1; color: var(--accent-color); }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background-color: rgba(255, 255, 255, 0.02); }
+    .company-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+    .company-ticker {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sector-tag {
+      background-color: rgba(100, 116, 139, 0.15);
+      color: var(--text-secondary);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+    }
+    .num { font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+    .positive { color: var(--positive); }
+    .negative { color: var(--negative); }
+
+    /* Short % color coding */
+    .short-extreme { color: #ef4444; font-weight: 600; }
+    .short-high { color: #f97316; font-weight: 600; }
+    .short-elevated { color: #f59e0b; }
+    .short-normal { color: var(--text-secondary); }
+
+    /* Squeeze badges */
+    .squeeze-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+    .squeeze-high { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .squeeze-moderate { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .squeeze-low { background: rgba(249, 115, 22, 0.12); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.25); }
+    .squeeze-minimal { background: rgba(107, 114, 128, 0.12); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.25); }
+
+    /* Sector bar chart */
+    .sector-chart { margin-bottom: 30px; }
+    .sector-bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    .sector-bar-label {
+      width: 180px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .sector-bar-track {
+      flex: 1;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .sector-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--accent-color), #6db3f8);
+      transition: width 0.6s ease;
+      min-width: 2px;
+    }
+    .sector-bar-value {
+      width: 60px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .sector-bar-count {
+      width: 70px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Scoring breakdown */
+    .scoring-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .score-component {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .score-component-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .score-component-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .score-component-pts {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+    .score-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .score-bar-fg {
+      height: 100%;
+      background: var(--accent-color);
+      border-radius: 3px;
+    }
+    .score-component-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Key findings */
+    .finding-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .finding-card h3 { margin-bottom: 10px; font-size: 1.1rem; }
+    .finding-card p { color: var(--text-secondary); font-size: 0.925rem; line-height: 1.7; }
+
+    /* FAQ */
+    .faq-item {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .faq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .faq-question { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+    .faq-answer { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
+    .faq-answer a { color: var(--accent-color); }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .disclaimer strong { color: var(--text-secondary); }
+    .disclaimer p { margin-bottom: 10px; }
+    .disclaimer p:last-child { margin-bottom: 0; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero h1 { font-size: 2rem; }
+      .sector-bar-label { width: 120px; font-size: 0.78rem; }
+      .scoring-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.75rem; }
+      .hero { padding: 50px 0 30px; }
+      td, th { padding: 10px 12px; }
+      .tracker-controls { flex-direction: column; }
+      .search-input, .sector-select { width: 100%; }
+      .sector-bar-row { gap: 8px; }
+      .sector-bar-label { width: 90px; font-size: 0.72rem; }
+      .sector-bar-count { display: none; }
+    }
+  </style>
+
+  <div class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">Original Research · March 2026</div>
+      <h1>What Happens When Wall Street Bets Against a Stock?</h1>
+      <p class="subtitle">
+        We analyzed {studyMeta.totalStocksAnalyzed} stocks with significant short interest to find out which ones are primed for a squeeze — and which ones deserve the bearish bet.
+      </p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{studyMeta.totalStocksAnalyzed}</div>
+          <div class="stat-label">Stocks Analyzed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{studyMeta.heavilyShortedCount}</div>
+          <div class="stat-label">Heavily Shorted (&gt;10% Float)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{studyMeta.maxShortPercent}%<span class="ticker-highlight">{studyMeta.mostShortedTicker}</span></div>
+          <div class="stat-label">Highest Short Interest</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{studyMeta.avgShortPercent}%</div>
+          <div class="stat-label">Average Short % of Float</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METHODOLOGY (brief) -->
+    <section class="content-section">
+      <h2>Methodology</h2>
+      <div class="methodology">
+        <h3>How We Built This Study</h3>
+        <p>
+          We aggregated short interest data from <strong>Yahoo Finance</strong> and <strong>SEC EDGAR</strong> filings for {studyMeta.totalStocksAnalyzed} US-listed stocks with notable short positions. Each stock is scored using our proprietary <strong>Squeeze Score</strong> — a composite metric (0-100) that weighs five factors to estimate short squeeze potential.
+        </p>
+        <p>
+          The study covers a mix of mega-caps, mid-caps, and small-caps across all major sectors. Short interest data reflects the most recent FINRA reporting period, with momentum and price data pulled on {studyMeta.dateGenerated}.
+        </p>
+        <ul>
+          <li><strong>Data sources:</strong> Yahoo Finance API, SEC EDGAR, FINRA short interest reports</li>
+          <li><strong>Update frequency:</strong> Monthly (aligned with FINRA's bi-monthly short interest reporting cycle)</li>
+          <li><strong>Scoring model:</strong> 5-factor weighted composite — see <a href="#scoring-methodology">detailed methodology</a> below</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SQUEEZE TRACKER TABLE -->
+    <section class="content-section" id="squeeze-tracker">
+      <h2>The Squeeze Tracker</h2>
+      <p class="body-text" style="margin-bottom: 24px;">
+        Our flagship ranking table. Sort by any column, search by ticker, or filter by sector. The <strong>Squeeze Score</strong> is our proprietary composite — the higher the score, the more conditions are aligned for a potential short squeeze.
+      </p>
+
+      <div class="tracker-controls">
+        <input type="text" class="search-input" id="stockSearch" placeholder="Search ticker or company..." />
+        <select class="sector-select" id="sectorFilter">
+          <option value="all">All Sectors</option>
+        </select>
+        <span class="result-count" id="resultCount"></span>
+      </div>
+
+      <div class="table-container">
+        <table id="stockTable">
+          <thead>
+            <tr>
+              <th data-col="rank"># <span class="sort-arrow">▼</span></th>
+              <th data-col="company">Company <span class="sort-arrow">▼</span></th>
+              <th data-col="shortPercent">Short % <span class="sort-arrow">▼</span></th>
+              <th data-col="shortRatio">Days to Cover <span class="sort-arrow">▼</span></th>
+              <th data-col="momentum1m">1M Mom. <span class="sort-arrow">▼</span></th>
+              <th data-col="momentum3m">3M Mom. <span class="sort-arrow">▼</span></th>
+              <th data-col="squeezeScore">Squeeze Score <span class="sort-arrow">▼</span></th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTOR BREAKDOWN -->
+    <section class="content-section">
+      <h2>Short Interest by Sector</h2>
+      <p class="body-text" style="margin-bottom: 28px;">
+        Average short interest as a percentage of float, broken down by sector. Energy and Real Estate lead the pack — both sectors facing structural headwinds that attract bearish bets.
+      </p>
+
+      <div class="sector-chart">
+        {sectorBreakdown.sort((a, b) => b.avgShortPercent - a.avgShortPercent).map(sector => (
+          <div class="sector-bar-row">
+            <div class="sector-bar-label">{sector.sector}</div>
+            <div class="sector-bar-track">
+              <div class="sector-bar-fill" style={`width: ${(sector.avgShortPercent / maxSectorAvg) * 100}%`}></div>
+            </div>
+            <div class="sector-bar-value">{sector.avgShortPercent.toFixed(1)}%</div>
+            <div class="sector-bar-count">{sector.stockCount} stocks</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- SQUEEZE SCORE METHODOLOGY -->
+    <section class="content-section" id="scoring-methodology">
+      <h2>How the Squeeze Score Works</h2>
+      <p class="body-text" style="margin-bottom: 28px;">
+        The Squeeze Score is a weighted composite of five measurable factors. Each factor contributes a maximum number of points, for a total possible score of 100. Here's what goes into it:
+      </p>
+
+      <div class="scoring-grid">
+        <div class="score-component">
+          <div class="score-component-header">
+            <span class="score-component-name">Short % of Float</span>
+            <span class="score-component-pts">0–30 pts</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width: 30%"></div></div>
+          <div class="score-component-desc">The foundation. Higher short interest means more shares that must eventually be bought back. Above 30% is extreme; above 20% is high.</div>
+        </div>
+
+        <div class="score-component">
+          <div class="score-component-header">
+            <span class="score-component-name">Days to Cover</span>
+            <span class="score-component-pts">0–20 pts</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width: 20%"></div></div>
+          <div class="score-component-desc">Short ratio = shares short ÷ avg daily volume. Higher DTC means shorts need more days to exit — increasing squeeze pressure if the price moves against them.</div>
+        </div>
+
+        <div class="score-component">
+          <div class="score-component-header">
+            <span class="score-component-name">Price Momentum</span>
+            <span class="score-component-pts">0–20 pts</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width: 20%"></div></div>
+          <div class="score-component-desc">Positive 1-month and 3-month momentum suggest the tide is turning against shorts. Stocks already rallying put maximum pressure on bearish positions.</div>
+        </div>
+
+        <div class="score-component">
+          <div class="score-component-header">
+            <span class="score-component-name">Short Interest Change</span>
+            <span class="score-component-pts">0–15 pts</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width: 15%"></div></div>
+          <div class="score-component-desc">Month-over-month change in shares shorted. Declining short interest signals a potential covering rally already underway — or increasing short interest building future fuel.</div>
+        </div>
+
+        <div class="score-component">
+          <div class="score-component-header">
+            <span class="score-component-name">Institutional Support</span>
+            <span class="score-component-pts">0–15 pts</span>
+          </div>
+          <div class="score-bar-bg"><div class="score-bar-fg" style="width: 15%"></div></div>
+          <div class="score-component-desc">High institutional ownership provides a floor for the stock price and indicates smart money sees value. When institutions hold tight, shorts have fewer shares to borrow.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY FINDINGS -->
+    <section class="content-section">
+      <h2>Key Findings</h2>
+
+      <div class="finding-card">
+        <h3>Energy & Healthcare: Two Different Stories</h3>
+        <p>
+          Energy stocks like <strong>PBF Energy</strong> (31.7% short) carry high short interest but also strong positive momentum (+80.7% over 3 months) — suggesting the market may be caught off-guard by the sector's recovery. Healthcare/Biotech dominates our list with 14 stocks, largely because clinical-stage companies are natural short targets due to binary drug trial outcomes. <strong>NTLA</strong> and <strong>IOVA</strong> stand out with high squeeze scores driven by positive momentum despite heavy short positions.
+        </p>
+      </div>
+
+      <div class="finding-card">
+        <h3>The Momentum-Short Interest Disconnect</h3>
+        <p>
+          Several stocks show a fascinating divergence: high short interest paired with strong positive momentum. <strong>PBF</strong> (+80.7% 3M), <strong>IOVA</strong> (+39.2% 3M), <strong>SEDG</strong> (+47.7% 3M), and <strong>MRNA</strong> (+50.1% 3M) are all heavily shorted yet rallying — classic squeeze conditions. When price rises despite heavy shorting, it forces short sellers to either cover (fueling the rally) or increase their margin requirements.
+        </p>
+      </div>
+
+      <div class="finding-card">
+        <h3>Meme Stocks: The Short Interest Graveyard</h3>
+        <p>
+          The original meme stocks — <strong>GME</strong> (16%), <strong>AMC</strong> (23.5%), and <strong>BYND</strong> (31.9%) — still carry elevated short interest but with Squeeze Scores under 25. All three show negative 3-month momentum and declining market caps. The market has moved on, but shorts remain cautious, creating a persistent but low-quality short interest profile. These are stocks where the short thesis is likely correct.
+        </p>
+      </div>
+
+      <div class="finding-card">
+        <h3>Crypto-Adjacent Stocks: Maximum Volatility</h3>
+        <p>
+          Bitcoin miners and crypto platforms — <strong>CLSK</strong> (46.5%), <strong>MARA</strong> (38.6%), <strong>RIOT</strong> (13.4%), <strong>COIN</strong> (12%) — collectively represent some of the highest short interest in our study. These stocks are proxies for Bitcoin sentiment, and their extreme betas (MARA has a 5.42 beta) make them volatile battlegrounds between bulls and bears. However, their Squeeze Scores remain moderate-to-low because momentum remains mixed.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="methodology">
+        <div class="faq-item">
+          <div class="faq-question">What are the most shorted stocks right now?</div>
+          <div class="faq-answer">
+            As of March 2026, the most heavily shorted US stocks include <strong>{studyMeta.mostShortedTicker}</strong> at {studyMeta.maxShortPercent}% short interest of float, followed by LCID (42.5%), NTLA (42.0%), MARA (38.6%), and MPW (36.1%). Our <a href="#squeeze-tracker">interactive Squeeze Tracker</a> above ranks all {studyMeta.totalStocksAnalyzed} stocks by short interest and squeeze potential. For a focused list, see our <a href="/most-shorted-stocks-march-2026">most shorted stocks</a> breakdown.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">How do you predict a short squeeze?</div>
+          <div class="faq-answer">
+            Our proprietary <strong>Squeeze Score</strong> (0-100) combines five factors: Short % of Float (0-30 pts), Days to Cover (0-20 pts), Price Momentum (0-20 pts), Short Interest Change (0-15 pts), and Institutional Support (0-15 pts). Stocks scoring above 60 historically show the highest squeeze probability — they combine high short interest with positive momentum and institutional backing that constrains share supply. No single factor is sufficient; the power is in the combination.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Do heavily shorted stocks outperform the market?</div>
+          <div class="faq-answer">
+            Not consistently. While short squeezes can produce dramatic short-term returns (GME in 2021 gained 1,700% in three weeks), the average heavily shorted stock underperforms the S&P 500 over 3-12 month periods. Stocks are usually shorted for fundamental reasons — declining revenue, unsustainable debt, or competitive threats. The edge comes from identifying the <em>exceptions</em>: stocks where the bearish thesis is weakening while short interest remains elevated. That's exactly what our Squeeze Score attempts to quantify.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">What is considered a high short interest percentage?</div>
+          <div class="faq-answer">
+            The average S&P 500 stock has roughly 2-3% short interest as a percentage of float. Here are the thresholds we use: <strong>Below 5%</strong> — normal range. <strong>5-10%</strong> — elevated, worth monitoring. <strong>10-20%</strong> — high, indicates significant bearish sentiment. <strong>20-30%</strong> — very high, squeeze risk escalates. <strong>Above 30%</strong> — extreme, historically rare and associated with maximum short squeeze potential. In our study, {studyMeta.heavilyShortedCount} of {studyMeta.totalStocksAnalyzed} stocks exceed the 10% threshold.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">How often is short interest data updated?</div>
+          <div class="faq-answer">
+            FINRA requires brokers to report short positions twice per month — around the 15th and the last business day — with data published roughly 10 days after each settlement date. Our Short Interest Study is updated monthly with fresh data from Yahoo Finance and SEC EDGAR. We recalculate all Squeeze Scores with each update. For real-time short data, institutional traders use services like S3 Partners or Ortex, which estimate intraday short interest from securities lending data.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA & DISCLAIMER -->
+    <section class="content-section">
+      <h2>Data Sources & Disclaimer</h2>
+      <div class="disclaimer">
+        <p><strong>Data Sources:</strong> Yahoo Finance, SEC EDGAR filings, FINRA short interest reports. Market data as of {studyMeta.dateGenerated}.</p>
+        <p><strong>Last Updated:</strong> {studyMeta.dateGenerated}</p>
+        <p><strong>Disclaimer:</strong> This study is for informational and educational purposes only. It does not constitute financial advice, investment recommendations, or an offer to buy or sell securities. Short interest data is inherently delayed (FINRA reporting lag), and the Squeeze Score is a proprietary research tool — not a trading signal. Past patterns do not guarantee future results. Always consult a licensed financial advisor before making investment decisions.</p>
+        <p><strong>Related Research:</strong> <a href="/beta-volatility">Beta & Volatility Rankings</a> · <a href="/short-interest">Short Interest Guide</a> · <a href="/most-shorted-stocks-march-2026">Most Shorted Stocks (March 2026)</a></p>
+      </div>
+    </section>
+  </div>
+
+  <script define:vars={{ stocksJson: JSON.stringify(stocks) }}>
+    (function() {
+      const stocks = JSON.parse(stocksJson);
+      const tableBody = document.getElementById('stockTableBody');
+      const searchInput = document.getElementById('stockSearch');
+      const sectorFilter = document.getElementById('sectorFilter');
+      const resultCount = document.getElementById('resultCount');
+
+      // Populate sector dropdown
+      const sectors = [...new Set(stocks.map(s => s.sector))].sort();
+      sectors.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        sectorFilter.appendChild(opt);
+      });
+
+      let sortCol = 'squeezeScore';
+      let sortDir = -1; // descending
+
+      function getShortClass(pct) {
+        if (pct >= 30) return 'short-extreme';
+        if (pct >= 20) return 'short-high';
+        if (pct >= 10) return 'short-elevated';
+        return 'short-normal';
+      }
+
+      function getSqueezeClass(rating) {
+        switch (rating) {
+          case 'High': return 'squeeze-high';
+          case 'Moderate': return 'squeeze-moderate';
+          case 'Low': return 'squeeze-low';
+          default: return 'squeeze-minimal';
+        }
+      }
+
+      function momStr(v) {
+        const sign = v >= 0 ? '+' : '';
+        return sign + v.toFixed(1) + '%';
+      }
+
+      function momClass(v) {
+        return v >= 0 ? 'positive' : 'negative';
+      }
+
+      function sortVal(stock) {
+        switch (sortCol) {
+          case 'rank': return stock.shortPercentOfFloat;
+          case 'company': return stock.company.toLowerCase();
+          case 'shortPercent': return stock.shortPercentOfFloat;
+          case 'shortRatio': return stock.shortRatio;
+          case 'momentum1m': return stock.momentum1m;
+          case 'momentum3m': return stock.momentum3m;
+          case 'squeezeScore': return stock.squeezeScore;
+          default: return 0;
+        }
+      }
+
+      function render() {
+        const query = searchInput.value.toLowerCase().trim();
+        const sector = sectorFilter.value;
+
+        let filtered = stocks.filter(s => {
+          if (sector !== 'all' && s.sector !== sector) return false;
+          if (query && !s.ticker.toLowerCase().includes(query) && !s.company.toLowerCase().includes(query)) return false;
+          return true;
+        });
+
+        // Sort
+        filtered.sort((a, b) => {
+          const va = sortVal(a);
+          const vb = sortVal(b);
+          if (typeof va === 'string') {
+            return sortDir * va.localeCompare(vb);
+          }
+          return sortDir * (vb - va);
+        });
+
+        // Rank default by short % descending when rank col is active
+        let html = '';
+        filtered.forEach((s, i) => {
+          html += `<tr>
+            <td class="num">${i + 1}</td>
+            <td>
+              <div class="company-name">${s.company}</div>
+              <div class="company-ticker">${s.ticker} <span class="sector-tag">${s.sector}</span></div>
+            </td>
+            <td class="num ${getShortClass(s.shortPercentOfFloat)}">${s.shortPercentOfFloat.toFixed(1)}%</td>
+            <td class="num">${s.shortRatio.toFixed(1)}</td>
+            <td class="num ${momClass(s.momentum1m)}">${momStr(s.momentum1m)}</td>
+            <td class="num ${momClass(s.momentum3m)}">${momStr(s.momentum3m)}</td>
+            <td><span class="squeeze-badge ${getSqueezeClass(s.squeezeRating)}">${s.squeezeScore.toFixed(0)}</span></td>
+          </tr>`;
+        });
+
+        tableBody.innerHTML = html;
+        resultCount.textContent = filtered.length + ' of ' + stocks.length + ' stocks';
+      }
+
+      // Header click sorting
+      document.querySelectorAll('#stockTable th[data-col]').forEach(th => {
+        th.addEventListener('click', function() {
+          const col = this.dataset.col;
+          if (sortCol === col) {
+            sortDir *= -1;
+          } else {
+            sortCol = col;
+            sortDir = -1;
+          }
+          // Update active state
+          document.querySelectorAll('#stockTable th').forEach(h => h.classList.remove('sort-active'));
+          this.classList.add('sort-active');
+          const arrow = this.querySelector('.sort-arrow');
+          if (arrow) arrow.textContent = sortDir === -1 ? '▼' : '▲';
+          render();
+        });
+      });
+
+      searchInput.addEventListener('input', render);
+      sectorFilter.addEventListener('change', render);
+
+      // Set initial sort indicator
+      const defaultTh = document.querySelector('#stockTable th[data-col="squeezeScore"]');
+      if (defaultTh) defaultTh.classList.add('sort-active');
+
+      render();
+    })();
+  </script>
+</SiteLayout>
