@@ -1,0 +1,920 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "QQQ ETF Analysis 2026: Invesco QQQ Holdings, Performance & Portfolio Review", description: "Complete QQQ ETF analysis — Invesco QQQ holdings, performance history, expense ratio, QQQ vs SPY comparison, Nasdaq 100 sector breakdown, and interactive growth calculator.", category: "study", published: "2026-03-20" };
+
+var schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "QQQ ETF Analysis 2026: Invesco QQQ Holdings, Performance & Portfolio Review",
+      "description": "Complete QQQ ETF analysis — Invesco QQQ holdings, performance history, expense ratio, QQQ vs SPY comparison, Nasdaq 100 sector breakdown, and interactive growth calculator.",
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "datePublished": "2026-03-20",
+      "mainEntityOfPage": "https://westmountfundamentals.com/qqq-etf-analysis/"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the QQQ ETF?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The Invesco QQQ Trust (ticker: QQQ) is an exchange-traded fund that tracks the Nasdaq-100 Index, which includes the 100 largest non-financial companies listed on the Nasdaq stock exchange. It is one of the most traded ETFs in the world with over $310 billion in assets under management." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the QQQ expense ratio?",
+          "acceptedAnswer": { "@type": "Answer", "text": "QQQ has an expense ratio of 0.20%, which means you pay $20 annually for every $10,000 invested. While not the cheapest Nasdaq-100 ETF available (QQQM charges 0.15%), it remains competitive given its exceptional liquidity and tight bid-ask spreads." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is QQQ better than SPY?",
+          "acceptedAnswer": { "@type": "Answer", "text": "QQQ and SPY serve different purposes. QQQ is concentrated in tech and growth stocks (Nasdaq-100), while SPY tracks the broader S&P 500 across all sectors. QQQ has historically delivered higher returns but with greater volatility. Many investors hold both for diversified exposure." }
+        },
+        {
+          "@type": "Question",
+          "name": "What are the top holdings in QQQ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "As of early 2026, QQQ's top 10 holdings are Apple (AAPL) ~8.9%, Microsoft (MSFT) ~8.1%, NVIDIA (NVDA) ~7.5%, Amazon (AMZN) ~5.4%, Meta Platforms (META) ~5.0%, Broadcom (AVGO) ~4.2%, Alphabet (GOOGL) ~3.8%, Costco (COST) ~2.8%, Tesla (TSLA) ~2.7%, and Netflix (NFLX) ~2.4%. Together they represent roughly 50% of the fund." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the average annual return of QQQ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Since its inception in 1999, QQQ has delivered an annualized return of approximately 14%, though this includes the dot-com crash of 2000-2002. Over the last 10 years (2016-2025), QQQ has returned roughly 18% annualized, significantly outperforming the S&P 500." }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="QQQ ETF Analysis 2026: Invesco QQQ Holdings, Performance & Portfolio Review"
+  description="Complete QQQ ETF analysis — Invesco QQQ holdings, performance history, expense ratio, QQQ vs SPY comparison, Nasdaq 100 sector breakdown, and interactive growth calculator."
+  canonical="https://westmountfundamentals.com/qqq-etf-analysis/"
+  schema={schema}
+>
+
+<style is:inline>
+  .qqq-hero {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .qqq-hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #f0f0f0;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+  .qqq-hero .subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .qqq-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 1.5rem 3rem;
+  }
+  .qqq-section {
+    margin-bottom: 3rem;
+  }
+  .qqq-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #1e40af;
+  }
+  .qqq-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin: 1.5rem 0 0.75rem;
+  }
+  .qqq-section p, .qqq-section li {
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+  .qqq-section ul {
+    padding-left: 1.25rem;
+  }
+  .qqq-section li {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Stat Cards */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: #3b82f6;
+  }
+  .stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #60a5fa;
+    display: block;
+  }
+  .stat-card .stat-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+    display: block;
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+  .dash-item {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .dash-item .dash-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    display: block;
+  }
+  .dash-item .dash-lbl {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+  }
+
+  /* Chart container */
+  .chart-wrap {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .chart-wrap canvas {
+    width: 100% !important;
+    max-height: 400px;
+  }
+
+  /* Calculator */
+  .calc-box {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .calc-field label {
+    display: block;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+  .calc-field input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: #f0f0f0;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .calc-field input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  .calc-btn {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .calc-btn:hover {
+    opacity: 0.9;
+  }
+  .calc-result {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    display: none;
+  }
+  .calc-result .res-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #34d399;
+    display: block;
+  }
+  .calc-result .res-detail {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+
+  /* Comparison Table */
+  .comp-table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    border: 1px solid #334155;
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .comp-table th {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .comp-table td {
+    padding: 0.75rem 1rem;
+    color: #94a3b8;
+    border-top: 1px solid #1e293b;
+  }
+  .comp-table tr:hover td {
+    background: rgba(59, 130, 246, 0.05);
+  }
+  .comp-table .highlight {
+    color: #60a5fa;
+    font-weight: 600;
+  }
+
+  /* Holdings */
+  .holdings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+  .holding-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s;
+  }
+  .holding-card:hover {
+    border-color: #3b82f6;
+  }
+  .holding-card .h-name {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+  }
+  .holding-card .h-ticker {
+    color: #64748b;
+    font-size: 0.8rem;
+  }
+  .holding-card .h-weight {
+    font-weight: 700;
+    color: #60a5fa;
+    font-size: 1.1rem;
+  }
+
+  /* Insights */
+  .insights-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+  .insights-list li {
+    background: #0f172a;
+    border-left: 3px solid #3b82f6;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0 8px 8px 0;
+    color: #cbd5e1;
+  }
+  .insights-list li strong {
+    color: #60a5fa;
+  }
+
+  /* Pros/Cons */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pros-col, .cons-col {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .pros-col {
+    border: 1px solid #166534;
+  }
+  .cons-col {
+    border: 1px solid #991b1b;
+  }
+  .pros-col h3 {
+    color: #34d399;
+    margin-top: 0;
+  }
+  .cons-col h3 {
+    color: #f87171;
+    margin-top: 0;
+  }
+  .pros-col li {
+    color: #94a3b8;
+  }
+  .cons-col li {
+    color: #94a3b8;
+  }
+
+  /* FAQ */
+  .faq-item {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .faq-item h3 {
+    color: #e2e8f0;
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+  }
+  .faq-item p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 640px) {
+    .qqq-hero h1 { font-size: 1.6rem; }
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    .pros-cons { grid-template-columns: 1fr; }
+    .holdings-grid { grid-template-columns: 1fr; }
+    .calc-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="qqq-hero">
+  <h1>QQQ ETF Analysis: The Complete Guide to Invesco QQQ Trust</h1>
+  <p class="subtitle">Everything you need to know about the Nasdaq 100 ETF — holdings, performance, QQQ vs SPY, expense ratio, and whether QQQ belongs in your portfolio.</p>
+</div>
+
+<div class="qqq-container">
+
+  <!-- Stat Cards -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <span class="stat-value">~$485</span>
+      <span class="stat-label">Current Price</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">$310B</span>
+      <span class="stat-label">Assets Under Management</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">~14%</span>
+      <span class="stat-label">Annualized Return (Since 1999)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">0.20%</span>
+      <span class="stat-label">Expense Ratio</span>
+    </div>
+  </div>
+
+  <!-- QQQ Overview Dashboard -->
+  <div class="qqq-section">
+    <h2>QQQ Overview Dashboard</h2>
+    <p>The <strong>Invesco QQQ Trust</strong> (NASDAQ: QQQ) is one of the world's most popular ETFs, tracking the <strong>Nasdaq-100 Index</strong>. Launched in 1999, QQQ gives investors concentrated exposure to the largest non-financial companies on the Nasdaq — predominantly technology, communication, and consumer discretionary giants.</p>
+
+    <div class="dashboard-grid">
+      <div class="dash-item">
+        <span class="dash-val">~$485</span>
+        <span class="dash-lbl">Price</span>
+      </div>
+      <div class="dash-item">
+        <span class="dash-val">0.20%</span>
+        <span class="dash-lbl">Expense Ratio</span>
+      </div>
+      <div class="dash-item">
+        <span class="dash-val">~0.55%</span>
+        <span class="dash-lbl">Dividend Yield</span>
+      </div>
+      <div class="dash-item">
+        <span class="dash-val">$310B</span>
+        <span class="dash-lbl">AUM</span>
+      </div>
+      <div class="dash-item">
+        <span class="dash-val">1999</span>
+        <span class="dash-lbl">Inception</span>
+      </div>
+      <div class="dash-item">
+        <span class="dash-val">Nasdaq-100</span>
+        <span class="dash-lbl">Benchmark</span>
+      </div>
+    </div>
+
+    <p>With over <strong>$310 billion in AUM</strong>, QQQ is the second-largest ETF in the United States. Its low expense ratio of 0.20% and extremely tight bid-ask spreads make it a favorite among both institutional and retail investors looking for <strong>Nasdaq 100 ETF</strong> exposure.</p>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="qqq-section">
+    <h2>5 Key Insights About QQQ</h2>
+    <ul class="insights-list">
+      <li><strong>Tech-Dominated Portfolio:</strong> Over 60% of QQQ is allocated to technology stocks, making it one of the most tech-concentrated major ETFs available.</li>
+      <li><strong>Magnificent Seven Exposure:</strong> QQQ holds massive positions in Apple, Microsoft, NVIDIA, Amazon, Meta, Alphabet, and Tesla — giving you direct access to the AI and cloud computing revolution.</li>
+      <li><strong>Higher Returns, Higher Volatility:</strong> QQQ has outperformed SPY by roughly 4% annually over the last decade, but dropped 32.6% in 2022 compared to SPY's 18.1% decline.</li>
+      <li><strong>Not a Full Market ETF:</strong> QQQ excludes financial sector companies entirely and only tracks Nasdaq-listed stocks, which creates a natural growth bias but also significant sector risk.</li>
+      <li><strong>Liquidity King:</strong> With average daily trading volume exceeding $15 billion, QQQ is one of the most liquid ETFs in the world — ideal for active traders and long-term investors alike.</li>
+    </ul>
+  </div>
+
+  <!-- Growth Calculator -->
+  <div class="qqq-section">
+    <h2>Interactive QQQ Growth Calculator</h2>
+    <p>See how your investment in QQQ could grow over time based on its historical annualized return of approximately 14% since inception. Adjust your initial investment, monthly contribution, and time horizon.</p>
+
+    <div class="calc-box">
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="calcInitial">Initial Investment ($)</label>
+          <input type="number" id="calcInitial" value="10000" min="0" />
+        </div>
+        <div class="calc-field">
+          <label for="calcMonthly">Monthly Contribution ($)</label>
+          <input type="number" id="calcMonthly" value="500" min="0" />
+        </div>
+        <div class="calc-field">
+          <label for="calcYears">Investment Period (Years)</label>
+          <input type="number" id="calcYears" value="20" min="1" max="50" />
+        </div>
+        <div class="calc-field">
+          <label for="calcReturn">Annual Return (%)</label>
+          <input type="number" id="calcReturn" value="14" min="0" max="50" step="0.1" />
+        </div>
+      </div>
+      <button class="calc-btn" id="calcBtn" onclick="calculateQQQGrowth()">Calculate Growth</button>
+
+      <div class="calc-result" id="calcResult">
+        <span class="res-val" id="calcTotal"></span>
+        <div class="res-detail" id="calcDetail"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- $10K Growth Chart -->
+  <div class="qqq-section">
+    <h2>$10,000 Invested in QQQ Since 1999</h2>
+    <p>This chart shows the growth of a hypothetical $10,000 investment in QQQ from its March 1999 inception through early 2026 — capturing the dot-com crash, the 2008 financial crisis, the COVID recovery, and the AI boom.</p>
+    <div class="chart-wrap">
+      <canvas id="growthChart"></canvas>
+    </div>
+    <p>Despite the devastating dot-com bust (QQQ lost ~80% from peak to trough), an investor who held from 1999 would have seen their $10,000 grow to approximately <strong>$100,000+</strong> by 2026. Patience and time in the market proved essential.</p>
+  </div>
+
+  <!-- QQQ vs SPY vs VGT -->
+  <div class="qqq-section">
+    <h2>QQQ vs SPY vs VGT: Head-to-Head Comparison</h2>
+    <p>How does QQQ stack up against the S&P 500 (SPY) and Vanguard Information Technology ETF (VGT)? Here's a detailed comparison of these three popular ETFs.</p>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th class="highlight">QQQ</th>
+            <th>SPY</th>
+            <th>VGT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Benchmark</td>
+            <td class="highlight">Nasdaq-100</td>
+            <td>S&P 500</td>
+            <td>MSCI US IMI Info Tech</td>
+          </tr>
+          <tr>
+            <td>Expense Ratio</td>
+            <td class="highlight">0.20%</td>
+            <td>0.0945%</td>
+            <td>0.10%</td>
+          </tr>
+          <tr>
+            <td>AUM</td>
+            <td class="highlight">~$310B</td>
+            <td>~$560B</td>
+            <td>~$75B</td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td class="highlight">Top 100 Nasdaq (ex-financials)</td>
+            <td>Broad US large-cap</td>
+            <td>US info technology sector</td>
+          </tr>
+          <tr>
+            <td>Dividend Yield</td>
+            <td class="highlight">~0.55%</td>
+            <td>~1.3%</td>
+            <td>~0.6%</td>
+          </tr>
+          <tr>
+            <td>5-Year Return</td>
+            <td class="highlight">~140%</td>
+            <td>~85%</td>
+            <td>~155%</td>
+          </tr>
+          <tr>
+            <td>10-Year Return</td>
+            <td class="highlight">~430%</td>
+            <td>~220%</td>
+            <td>~500%</td>
+          </tr>
+          <tr>
+            <td>Number of Holdings</td>
+            <td class="highlight">101</td>
+            <td>503</td>
+            <td>316</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>Key takeaway:</strong> QQQ sits between SPY and VGT in terms of tech concentration. SPY offers broad diversification, VGT is a pure tech play, and QQQ blends heavy tech exposure with consumer discretionary and communication services stocks.</p>
+  </div>
+
+  <!-- Annual Returns Bar Chart -->
+  <div class="qqq-section">
+    <h2>QQQ Annual Returns (2015–2025)</h2>
+    <p>QQQ's year-by-year performance shows the potential for outsized gains — and painful drawdowns. The fund posted nearly 55% in 2023 during the AI-driven rally, but lost over 32% in 2022 during the rate-hiking cycle.</p>
+    <div class="chart-wrap">
+      <canvas id="annualChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Top 10 Holdings -->
+  <div class="qqq-section">
+    <h2>QQQ Top 10 Holdings</h2>
+    <p>These 10 companies make up approximately <strong>50% of QQQ's total portfolio</strong>. The fund is heavily weighted toward mega-cap technology and communication stocks.</p>
+
+    <div class="holdings-grid">
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Apple</div>
+          <div class="h-ticker">AAPL</div>
+        </div>
+        <div class="h-weight">8.9%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Microsoft</div>
+          <div class="h-ticker">MSFT</div>
+        </div>
+        <div class="h-weight">8.1%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">NVIDIA</div>
+          <div class="h-ticker">NVDA</div>
+        </div>
+        <div class="h-weight">7.5%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Amazon</div>
+          <div class="h-ticker">AMZN</div>
+        </div>
+        <div class="h-weight">5.4%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Meta Platforms</div>
+          <div class="h-ticker">META</div>
+        </div>
+        <div class="h-weight">5.0%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Broadcom</div>
+          <div class="h-ticker">AVGO</div>
+        </div>
+        <div class="h-weight">4.2%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Alphabet</div>
+          <div class="h-ticker">GOOGL</div>
+        </div>
+        <div class="h-weight">3.8%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Costco</div>
+          <div class="h-ticker">COST</div>
+        </div>
+        <div class="h-weight">2.8%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Tesla</div>
+          <div class="h-ticker">TSLA</div>
+        </div>
+        <div class="h-weight">2.7%</div>
+      </div>
+      <div class="holding-card">
+        <div>
+          <div class="h-name">Netflix</div>
+          <div class="h-ticker">NFLX</div>
+        </div>
+        <div class="h-weight">2.4%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sector Allocation Doughnut -->
+  <div class="qqq-section">
+    <h2>QQQ Sector Allocation</h2>
+    <p>QQQ's sector breakdown reveals its heavy technology tilt. Understanding this allocation is critical for managing your overall portfolio balance.</p>
+    <div class="chart-wrap" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+      <canvas id="sectorChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Concentration Risk -->
+  <div class="qqq-section">
+    <h2>QQQ Concentration Risk: What Investors Should Know</h2>
+    <p>While QQQ's concentration in mega-cap tech has fueled impressive returns, it also creates meaningful <strong>concentration risk</strong> that every investor should understand before allocating heavily to this fund.</p>
+
+    <h3>The Top-Heavy Problem</h3>
+    <p>QQQ's top 10 holdings represent approximately <strong>50% of the entire fund</strong>. This means half of your investment is riding on just 10 stocks. If Apple, Microsoft, and NVIDIA were to face simultaneous headwinds — regulatory action, earnings misses, or a sector rotation — QQQ would feel the impact disproportionately.</p>
+
+    <h3>Tech-Heavy Means Volatility-Heavy</h3>
+    <p>With roughly 60% in technology and another 15% in communication services (which includes Meta and Alphabet), QQQ is essentially a leveraged bet on the tech sector. In 2022, when the Fed aggressively hiked rates, QQQ dropped <strong>32.6%</strong> — nearly double the S&P 500's decline. Investors in QQQ must have the stomach for these drawdowns.</p>
+
+    <h3>Missing Sectors</h3>
+    <p>QQQ completely excludes financial companies and underrepresents energy, utilities, and materials. This isn't necessarily bad, but it means QQQ alone is <strong>not a diversified portfolio</strong>. Pairing it with value-oriented or sector-balanced ETFs can help reduce overall risk.</p>
+  </div>
+
+  <!-- Pros and Cons -->
+  <div class="qqq-section">
+    <h2>QQQ Pros and Cons</h2>
+    <div class="pros-cons">
+      <div class="pros-col">
+        <h3>✅ Pros</h3>
+        <ul>
+          <li>Outstanding long-term returns (~14% annualized since 1999)</li>
+          <li>Exceptional liquidity — tight spreads, massive volume</li>
+          <li>Exposure to the world's most innovative companies</li>
+          <li>Strong track record through multiple market cycles</li>
+          <li>Simple way to access the AI / cloud computing megatrend</li>
+        </ul>
+      </div>
+      <div class="cons-col">
+        <h3>❌ Cons</h3>
+        <ul>
+          <li>Heavy tech concentration — ~60% in one sector</li>
+          <li>Top 10 holdings = ~50% of fund (single-stock risk)</li>
+          <li>Higher expense ratio (0.20%) than alternatives like QQQM (0.15%)</li>
+          <li>No financial sector exposure, underweight energy/utilities</li>
+          <li>Significant drawdowns during rate hikes and tech selloffs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="qqq-section">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <h3>What is the QQQ ETF?</h3>
+      <p>The Invesco QQQ Trust (ticker: QQQ) is an exchange-traded fund that tracks the Nasdaq-100 Index, which includes the 100 largest non-financial companies listed on the Nasdaq stock exchange. It is one of the most traded ETFs in the world with over $310 billion in assets under management.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is the QQQ expense ratio?</h3>
+      <p>QQQ has an expense ratio of 0.20%, which means you pay $20 annually for every $10,000 invested. While not the cheapest Nasdaq-100 ETF available (QQQM charges 0.15%), it remains competitive given its exceptional liquidity and tight bid-ask spreads.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>Is QQQ better than SPY?</h3>
+      <p>QQQ and SPY serve different purposes. QQQ is concentrated in tech and growth stocks (Nasdaq-100), while SPY tracks the broader S&P 500 across all sectors. QQQ has historically delivered higher returns but with greater volatility. Many investors hold both for diversified exposure.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What are the top holdings in QQQ?</h3>
+      <p>As of early 2026, QQQ's top 10 holdings are Apple (~8.9%), Microsoft (~8.1%), NVIDIA (~7.5%), Amazon (~5.4%), Meta (~5.0%), Broadcom (~4.2%), Alphabet (~3.8%), Costco (~2.8%), Tesla (~2.7%), and Netflix (~2.4%). Together they represent roughly 50% of the fund.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is the average annual return of QQQ?</h3>
+      <p>Since its inception in 1999, QQQ has delivered an annualized return of approximately 14%, though this includes the dot-com crash of 2000-2002. Over the last 10 years (2016-2025), QQQ has returned roughly 18% annualized, significantly outperforming the S&P 500.</p>
+    </div>
+  </div>
+
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script is:inline>
+  /* QQQ Growth Calculator */
+  function calculateQQQGrowth() {
+    var initial = parseFloat(document.getElementById("calcInitial").value) || 0;
+    var monthly = parseFloat(document.getElementById("calcMonthly").value) || 0;
+    var years = parseInt(document.getElementById("calcYears").value) || 20;
+    var annualReturn = parseFloat(document.getElementById("calcReturn").value) || 14;
+    var monthlyRate = annualReturn / 100 / 12;
+    var months = years * 12;
+    var total = initial;
+    for (var i = 0; i < months; i++) {
+      total = total * (1 + monthlyRate) + monthly;
+    }
+    var totalContributed = initial + (monthly * months);
+    var growth = total - totalContributed;
+    var el = document.getElementById("calcResult");
+    el.style.display = "block";
+    document.getElementById("calcTotal").textContent = "$" + Math.round(total).toLocaleString();
+    document.getElementById("calcDetail").innerHTML =
+      "Total contributed: <strong>$" + Math.round(totalContributed).toLocaleString() + "</strong> &nbsp;|&nbsp; " +
+      "Investment growth: <strong>$" + Math.round(growth).toLocaleString() + "</strong> &nbsp;|&nbsp; " +
+      "Return: <strong>" + ((total / totalContributed - 1) * 100).toFixed(0) + "%</strong>";
+  }
+
+  /* $10K Growth Line Chart */
+  (function() {
+    var labels = ["1999","2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
+    var values = [10000, 8940, 5350, 2780, 4170, 4560, 4620, 5000, 5960, 3580, 5260, 6210, 6290, 7370, 9990, 11950, 13090, 14020, 18600, 18580, 25810, 38340, 48850, 32910, 50960, 64000, 60800];
+    var ctx = document.getElementById("growthChart").getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "$10K Invested in QQQ",
+          data: values,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59, 130, 246, 0.1)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          pointBackgroundColor: "#3b82f6",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: "#94a3b8" } },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return "$" + ctx.parsed.y.toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#64748b" }, grid: { color: "rgba(51,65,85,0.3)" } },
+          y: {
+            ticks: {
+              color: "#64748b",
+              callback: function(v) { return "$" + (v / 1000) + "K"; }
+            },
+            grid: { color: "rgba(51,65,85,0.3)" }
+          }
+        }
+      }
+    });
+  })();
+
+  /* Annual Returns Bar Chart */
+  (function() {
+    var years = ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025 YTD"];
+    var returns = [9.5, 7.1, 32.7, -0.1, 38.9, 48.6, 27.4, -32.6, 54.8, 25.6, -5.0];
+    var colors = [];
+    for (var i = 0; i < returns.length; i++) {
+      colors.push(returns[i] >= 0 ? "#34d399" : "#f87171");
+    }
+    var ctx2 = document.getElementById("annualChart").getContext("2d");
+    new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: years,
+        datasets: [{
+          label: "Annual Return (%)",
+          data: returns,
+          backgroundColor: colors,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: "#94a3b8" } },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.parsed.y.toFixed(1) + "%";
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#64748b" }, grid: { color: "rgba(51,65,85,0.3)" } },
+          y: {
+            ticks: {
+              color: "#64748b",
+              callback: function(v) { return v + "%"; }
+            },
+            grid: { color: "rgba(51,65,85,0.3)" }
+          }
+        }
+      }
+    });
+  })();
+
+  /* Sector Allocation Doughnut */
+  (function() {
+    var ctx3 = document.getElementById("sectorChart").getContext("2d");
+    new Chart(ctx3, {
+      type: "doughnut",
+      data: {
+        labels: ["Technology", "Communication Services", "Consumer Discretionary", "Healthcare", "Consumer Staples", "Industrials", "Other"],
+        datasets: [{
+          data: [60, 15, 12, 6, 3, 2.5, 1.5],
+          backgroundColor: ["#3b82f6", "#8b5cf6", "#f59e0b", "#34d399", "#ec4899", "#64748b", "#475569"],
+          borderColor: "#0f172a",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { color: "#94a3b8", padding: 12, font: { size: 13 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                return ctx.label + ": " + ctx.parsed + "%";
+              }
+            }
+          }
+        }
+      }
+    });
+  })();
+</script>
+
+</SiteLayout>

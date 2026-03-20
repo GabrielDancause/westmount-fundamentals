@@ -1,0 +1,675 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Portfolio Performance Tracker — Calculate Returns, Risk & Alpha | Westmount Fundamentals",
+  description: "Free portfolio performance tracker with return calculators, time-weighted returns, benchmark comparison, and interactive charts. Analyze your investment portfolio analytics instantly.",
+  category: "study",
+  published: "2026-03-20"
+};
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Portfolio Performance Tracker — Calculate Returns, Risk & Alpha",
+      "description": meta.description,
+      "datePublished": "2026-03-20",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals",
+        "url": "https://westmountfundamentals.com"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Fundamentals"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the best way to track portfolio performance?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The best way to track portfolio performance is to calculate time-weighted returns (TWR) for each holding and your overall portfolio, then compare against a relevant benchmark like the S&P 500. This removes the distortion caused by deposits and withdrawals, giving you a true measure of investment skill."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between time-weighted and money-weighted returns?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Time-weighted return (TWR) measures the compound growth rate of one dollar invested and eliminates the impact of cash flows, making it ideal for comparing against benchmarks. Money-weighted return (MWR), also called internal rate of return (IRR), accounts for the timing and size of deposits and withdrawals, reflecting your actual experience as an investor."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you calculate portfolio alpha?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Portfolio alpha is calculated by subtracting the benchmark return from your portfolio return. For example, if your portfolio returned 12% and the S&P 500 returned 10%, your alpha is +2%. A positive alpha means you outperformed the benchmark after accounting for market movements."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good portfolio return?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A good portfolio return depends on your risk level and time horizon. Historically, the S&P 500 has returned roughly 10% annually before inflation. Beating this benchmark consistently after fees is considered excellent performance. Most professional fund managers fail to outperform the index over 15+ year periods."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often should I review my investment portfolio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most experts recommend reviewing your portfolio quarterly for performance and annually for rebalancing. Checking too frequently can lead to emotional trading decisions. Focus on long-term trends rather than daily fluctuations, and ensure your asset allocation still aligns with your goals and risk tolerance."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/portfolio-performance-tracker/"
+  schema={schema}
+>
+<style is:inline>
+  .ppt-wrap{max-width:1200px;margin:0 auto;padding:0 1.25rem 3rem}
+  .ppt-hero{text-align:center;padding:3rem 1rem 2rem;background:linear-gradient(135deg,rgba(74,143,231,0.10),rgba(74,143,231,0.02));border-bottom:1px solid rgba(74,143,231,0.15)}
+  .ppt-hero h1{font-size:2.2rem;color:#e8eaed;margin-bottom:0.5rem;line-height:1.2}
+  .ppt-hero .sub{color:#9aa0a6;font-size:1.05rem;max-width:680px;margin:0 auto}
+  .stat-row{display:flex;gap:1.25rem;justify-content:center;flex-wrap:wrap;margin:2rem 0}
+  .stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:12px;padding:1.2rem 1.5rem;min-width:160px;text-align:center;flex:1;max-width:260px}
+  .stat-card .sv{font-size:1.9rem;font-weight:700;color:#4a8fe7}
+  .stat-card .sl{font-size:0.78rem;color:#9aa0a6;text-transform:uppercase;letter-spacing:0.05em;margin-top:0.25rem}
+  .section-title{font-size:1.5rem;color:#e8eaed;margin:2.5rem 0 0.75rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .section-title span{color:#4a8fe7}
+  .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+  .card h3{color:#e8eaed;margin-top:0;font-size:1.15rem}
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem;margin-bottom:1rem}
+  .form-grid label{display:flex;flex-direction:column;gap:0.3rem;color:#9aa0a6;font-size:0.82rem}
+  .form-grid input,.form-grid select{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.55rem 0.75rem;color:#e8eaed;font-size:0.92rem}
+  .form-grid input:focus{outline:none;border-color:#4a8fe7}
+  .btn{background:#4a8fe7;color:#fff;border:none;border-radius:8px;padding:0.65rem 1.5rem;font-size:0.95rem;cursor:pointer;font-weight:600;transition:background 0.2s}
+  .btn:hover{background:#3a7fd7}
+  .btn-row{display:flex;gap:0.75rem;flex-wrap:wrap;margin:1rem 0}
+  .btn-secondary{background:rgba(255,255,255,0.08);color:#e8eaed;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.55rem 1.2rem;cursor:pointer;font-size:0.88rem}
+  .btn-secondary:hover{background:rgba(255,255,255,0.12)}
+  .holdings-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem}
+  .holdings-table th{text-align:left;padding:0.6rem;color:#9aa0a6;font-size:0.75rem;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.1)}
+  .holdings-table td{padding:0.6rem;color:#e8eaed;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .holdings-table .pos{color:#34d399}
+  .holdings-table .neg{color:#f87171}
+  .result-box{background:rgba(74,143,231,0.08);border:1px solid rgba(74,143,231,0.2);border-radius:10px;padding:1.25rem;margin:1rem 0}
+  .result-box h4{margin:0 0 0.75rem;color:#4a8fe7;font-size:1rem}
+  .result-row{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid rgba(255,255,255,0.05);color:#e8eaed;font-size:0.92rem}
+  .result-row:last-child{border-bottom:none}
+  .result-row .label{color:#9aa0a6}
+  .chart-container{position:relative;width:100%;max-width:700px;margin:1.5rem auto;background:rgba(0,0,0,0.2);border-radius:12px;padding:1rem}
+  .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0}
+  @media(max-width:768px){.chart-row{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+  .insights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin:1.5rem 0}
+  .insight-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.25rem}
+  .insight-card .num{font-size:1.5rem;font-weight:700;color:#4a8fe7;margin-bottom:0.25rem}
+  .insight-card h4{color:#e8eaed;margin:0 0 0.5rem;font-size:1rem}
+  .insight-card p{color:#9aa0a6;font-size:0.88rem;margin:0;line-height:1.5}
+  .edu-section{color:#c8d0de;line-height:1.7;font-size:0.95rem}
+  .edu-section h3{color:#e8eaed;margin-top:1.5rem}
+  .edu-section ul{padding-left:1.25rem}
+  .edu-section li{margin-bottom:0.5rem;color:#b0b8c4}
+  .mistake-card{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+  .mistake-card h4{color:#f87171;margin:0 0 0.5rem}
+  .mistake-card p{color:#b0b8c4;margin:0;font-size:0.9rem;line-height:1.6}
+  .faq-section details{border-bottom:1px solid rgba(255,255,255,0.08);padding:1rem 0}
+  .faq-section summary{cursor:pointer;color:#e8eaed;font-weight:600;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  .faq-section summary::after{content:"+";color:#4a8fe7;font-size:1.3rem;font-weight:700}
+  .faq-section details[open] summary::after{content:"−"}
+  .faq-section .faq-a{color:#9aa0a6;line-height:1.6;padding-top:0.75rem;font-size:0.92rem}
+  .remove-btn{background:none;border:none;color:#f87171;cursor:pointer;font-size:1.1rem;padding:0 0.3rem}
+  .remove-btn:hover{color:#ef4444}
+  .breadcrumb{max-width:1200px;margin:0 auto;padding:16px 24px 0;font-size:13px;color:#94a3b8}
+  .breadcrumb a{color:#94a3b8;text-decoration:none}
+  .breadcrumb a:hover{color:#e8eaed}
+  .overflow-x{overflow-x:auto}
+</style>
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a> <span style="margin:0 6px;opacity:0.5">›</span>
+  <a href="/studies/">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span>
+  <span style="color:#c8d0de">Portfolio Performance Tracker</span>
+</nav>
+
+<div class="ppt-hero">
+  <h1>Portfolio Performance <span style="color:#4a8fe7">Tracker</span></h1>
+  <p class="sub">Calculate returns, measure alpha, and analyze your investment portfolio with interactive charts and risk metrics. Free portfolio analytics for serious investors.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="ppt-wrap">
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="sv">10.2%</div>
+      <div class="sl">S&P 500 Avg Annual Return</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">86%</div>
+      <div class="sl">Funds Underperform Index</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">TWR</div>
+      <div class="sl">Gold Standard Metric</div>
+    </div>
+    <div class="stat-card">
+      <div class="sv">15+</div>
+      <div class="sl">Years for Reliable Alpha</div>
+    </div>
+  </div>
+
+  <!-- 1. Portfolio Return Calculator -->
+  <h2 class="section-title">📊 <span>Portfolio Return Calculator</span></h2>
+  <div class="card">
+    <h3>Add Your Holdings</h3>
+    <div class="form-grid" id="holdingForm">
+      <label>Ticker / Name<input type="text" id="hTicker" placeholder="AAPL"></label>
+      <label>Buy Date<input type="date" id="hDate"></label>
+      <label>Buy Price ($)<input type="number" id="hBuyPrice" step="0.01" placeholder="150.00"></label>
+      <label>Shares<input type="number" id="hShares" step="0.01" placeholder="10"></label>
+      <label>Current Price ($)<input type="number" id="hCurPrice" step="0.01" placeholder="185.00"></label>
+      <label>Beta (optional)<input type="number" id="hBeta" step="0.01" placeholder="1.15"></label>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="addHolding()">+ Add Holding</button>
+      <button class="btn-secondary" onclick="loadSample()">Load Sample Portfolio</button>
+      <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+    </div>
+    <div class="overflow-x">
+      <table class="holdings-table" id="holdingsTable">
+        <thead><tr><th>Ticker</th><th>Buy Date</th><th>Buy Price</th><th>Shares</th><th>Current</th><th>Value</th><th>Gain/Loss</th><th>Return %</th><th>Ann. Return</th><th></th></tr></thead>
+        <tbody id="holdingsBody"></tbody>
+      </table>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="calcPortfolio()">Calculate Portfolio Performance</button></div>
+    <div id="portfolioResults" style="display:none">
+      <div class="result-box">
+        <h4>Portfolio Summary</h4>
+        <div id="portfolioSummary"></div>
+      </div>
+      <div id="statsBox" class="result-box" style="display:none">
+        <h4>Portfolio Statistics</h4>
+        <div id="statsContent"></div>
+      </div>
+      <div id="riskBox" class="result-box" style="display:none">
+        <h4>Risk Metrics</h4>
+        <div id="riskContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <h2 class="section-title">📈 <span>Portfolio Visualizations</span></h2>
+  <div class="chart-row">
+    <div class="chart-container">
+      <canvas id="barChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="doughnutChart"></canvas>
+    </div>
+  </div>
+  <div class="chart-container" style="max-width:900px">
+    <canvas id="lineChart"></canvas>
+  </div>
+
+  <!-- 2. TWR Calculator -->
+  <h2 class="section-title">⏱️ <span>Time-Weighted Return (TWR) Calculator</span></h2>
+  <div class="card">
+    <h3>Calculate TWR Across Sub-Periods</h3>
+    <p style="color:#9aa0a6;font-size:0.9rem;margin-bottom:1rem">Enter each sub-period return (between cash flows). TWR links these returns to eliminate the distortion of deposits and withdrawals.</p>
+    <div id="twrPeriods">
+      <div class="form-grid" style="grid-template-columns:1fr 1fr auto;align-items:end">
+        <label>Period Label<input type="text" class="twr-label" placeholder="Q1 2025"></label>
+        <label>Sub-Period Return (%)<input type="number" class="twr-return" step="0.01" placeholder="3.50"></label>
+        <button class="remove-btn" onclick="removeTwrRow(this)" title="Remove">✕</button>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="addTwrRow()">+ Add Period</button>
+      <button class="btn" onclick="calcTWR()">Calculate TWR</button>
+    </div>
+    <div id="twrResult" style="display:none" class="result-box">
+      <h4>TWR Result</h4>
+      <div id="twrContent"></div>
+    </div>
+  </div>
+
+  <!-- 3. Benchmark Comparison -->
+  <h2 class="section-title">🏆 <span>Portfolio vs Benchmark Comparison</span></h2>
+  <div class="card">
+    <h3>Measure Your Alpha</h3>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <label>Portfolio Return (%)<input type="number" id="bPort" step="0.01" placeholder="14.5"></label>
+      <label>S&P 500 Return (%)<input type="number" id="bBench" step="0.01" placeholder="10.2"></label>
+      <label>Tracking Error (%, optional)<input type="number" id="bTE" step="0.01" placeholder="4.5"></label>
+    </div>
+    <div class="btn-row"><button class="btn" onclick="calcBenchmark()">Compare</button></div>
+    <div id="benchResult" style="display:none" class="result-box">
+      <h4>Benchmark Comparison</h4>
+      <div id="benchContent"></div>
+    </div>
+  </div>
+
+  <!-- 5 Key Insights -->
+  <h2 class="section-title">💡 <span>Key Insights for Portfolio Tracking</span></h2>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="num">01</div>
+      <h4>Use Time-Weighted Returns</h4>
+      <p>TWR is the industry standard for comparing portfolio performance against benchmarks. It strips out the effect of deposits and withdrawals so you can measure true investment skill, not just timing of cash flows.</p>
+    </div>
+    <div class="insight-card">
+      <div class="num">02</div>
+      <h4>Benchmark Against the Right Index</h4>
+      <p>A tech-heavy portfolio should be compared to the NASDAQ, not the S&P 500. Choosing the wrong benchmark can make poor performance look good — or make great performance look mediocre.</p>
+    </div>
+    <div class="insight-card">
+      <div class="num">03</div>
+      <h4>Account for All Costs</h4>
+      <p>Commissions, spreads, management fees, and taxes all erode returns. A portfolio showing 12% gross may only deliver 9% net. Always track after-fee performance for the real picture.</p>
+    </div>
+    <div class="insight-card">
+      <div class="num">04</div>
+      <h4>Monitor Concentration Risk</h4>
+      <p>The Herfindahl-Hirschman Index (HHI) measures how concentrated your portfolio is. An HHI above 2,500 signals high concentration risk — a single stock crash could devastate your returns.</p>
+    </div>
+    <div class="insight-card">
+      <div class="num">05</div>
+      <h4>Review Quarterly, Rebalance Annually</h4>
+      <p>Checking performance daily leads to emotional decisions. The sweet spot: review metrics quarterly, rebalance annually, and only make changes when your allocation drifts more than 5% from target.</p>
+    </div>
+  </div>
+
+  <!-- Educational Section -->
+  <h2 class="section-title">📚 <span>How to Track Portfolio Performance</span></h2>
+  <div class="card edu-section">
+    <h3>Why Portfolio Performance Tracking Matters</h3>
+    <p>Every serious investor needs a systematic approach to tracking portfolio performance. Without it, you are flying blind — unable to tell whether your strategy is working, whether you are beating the market, or whether your risk-adjusted returns justify your approach. A portfolio tracker transforms raw numbers into actionable investment analytics.</p>
+
+    <h3>Step 1: Record Every Transaction</h3>
+    <p>The foundation of any portfolio performance tracker is complete transaction data. For each holding, record the ticker or name, purchase date, purchase price, number of shares, and any associated fees. This data feeds every calculation — from simple return percentages to sophisticated risk-adjusted metrics.</p>
+
+    <h3>Step 2: Calculate Holding-Level Returns</h3>
+    <p>For each position, compute both the total return (percentage gain or loss) and the annualized return. Total return tells you how much you made; annualized return tells you how fast. A 50% gain over 5 years is very different from a 50% gain over 6 months.</p>
+    <ul>
+      <li><strong>Total Return:</strong> (Current Value - Cost Basis) / Cost Basis × 100</li>
+      <li><strong>Annualized Return:</strong> ((1 + Total Return) ^ (365 / Days Held)) - 1</li>
+      <li><strong>Dollar Gain/Loss:</strong> (Current Price - Buy Price) × Shares</li>
+    </ul>
+
+    <h3>Step 3: Aggregate Portfolio-Level Metrics</h3>
+    <p>Once individual holdings are calculated, roll everything up to the portfolio level. Total portfolio value, total cost basis, weighted average return, and portfolio-level statistics like best performer, worst performer, and average holding period give you the big picture of your investment portfolio analytics.</p>
+
+    <h3>Step 4: Calculate Time-Weighted Returns</h3>
+    <p>If you have added or withdrawn cash during the measurement period, simple returns are misleading. Time-weighted return (TWR) breaks your portfolio into sub-periods (between each cash flow), calculates the return for each sub-period, then geometrically links them. This is how professional fund managers report performance and how you should track portfolio performance for benchmark comparison.</p>
+
+    <h3>Step 5: Compare Against Benchmarks</h3>
+    <p>Alpha — the excess return above a benchmark — is the ultimate measure of active management skill. Calculate alpha by subtracting the benchmark return from your portfolio return. Tracking error measures how consistently you deviate from the benchmark. Low tracking error with positive alpha is the holy grail of portfolio management.</p>
+
+    <h3>Step 6: Assess Risk Metrics</h3>
+    <p>Returns mean nothing without context. A portfolio that returned 15% with extreme volatility may be inferior to one that returned 12% with low volatility. Key risk metrics for your portfolio tracker include:</p>
+    <ul>
+      <li><strong>Portfolio Beta:</strong> Weighted average of individual stock betas — measures market sensitivity</li>
+      <li><strong>Concentration (HHI):</strong> Sum of squared weight percentages — higher means more concentrated</li>
+      <li><strong>Number of Holdings:</strong> Simple diversification measure — research suggests 20-30 stocks captures most diversification benefits</li>
+    </ul>
+  </div>
+
+  <!-- Common Mistakes -->
+  <h2 class="section-title">⚠️ <span>Common Portfolio Tracking Mistakes</span></h2>
+  <div class="mistake-card">
+    <h4>1. Ignoring Fees and Transaction Costs</h4>
+    <p>Many investors calculate returns before fees, giving themselves an inflated picture of performance. Trading commissions, fund expense ratios, advisory fees, and tax drag can shave 1-3% off annual returns. Always track net-of-fee performance. Your portfolio return calculator should factor in every cost that reduces your actual take-home return.</p>
+  </div>
+  <div class="mistake-card">
+    <h4>2. Survivorship Bias in Your Track Record</h4>
+    <p>If you only track current holdings, you are ignoring the losers you already sold. This survivorship bias makes your portfolio look better than it actually performed. A proper investment portfolio tracker records every trade — winners and losers — for a complete picture of your decision-making quality over time.</p>
+  </div>
+  <div class="mistake-card">
+    <h4>3. Confusing Time-Weighted vs Money-Weighted Returns</h4>
+    <p>Using simple returns when you have made deposits or withdrawals gives misleading results. If you added $50,000 right before a 10% market drop, your money-weighted return will look terrible — even if your stock picks were sound. Use TWR to evaluate investment skill and MWR to understand your actual dollar experience.</p>
+  </div>
+  <div class="mistake-card">
+    <h4>4. Benchmarking Against the Wrong Index</h4>
+    <p>Comparing a bond-heavy portfolio to the S&P 500 is meaningless. Comparing a small-cap portfolio to the Dow Jones is equally misleading. Choose a benchmark that matches your asset allocation, market cap, and geographic exposure. Better yet, create a blended benchmark that reflects your target allocation.</p>
+  </div>
+  <div class="mistake-card">
+    <h4>5. Checking Too Frequently</h4>
+    <p>Daily performance monitoring leads to anxiety-driven trading. Studies show that investors who check their portfolio less frequently earn higher returns because they avoid panic selling during normal volatility. Set a quarterly review schedule and stick to it.</p>
+  </div>
+
+  <!-- FAQ Section -->
+  <h2 class="section-title">❓ <span>Frequently Asked Questions</span></h2>
+  <div class="faq-section">
+    <details>
+      <summary>What is the best way to track portfolio performance?</summary>
+      <p class="faq-a">The best way to track portfolio performance is to calculate time-weighted returns (TWR) for each holding and your overall portfolio, then compare against a relevant benchmark like the S&P 500. This removes the distortion caused by deposits and withdrawals, giving you a true measure of investment skill.</p>
+    </details>
+    <details>
+      <summary>What is the difference between time-weighted and money-weighted returns?</summary>
+      <p class="faq-a">Time-weighted return (TWR) measures the compound growth rate of one dollar invested and eliminates the impact of cash flows, making it ideal for comparing against benchmarks. Money-weighted return (MWR), also called internal rate of return (IRR), accounts for the timing and size of deposits and withdrawals, reflecting your actual dollar experience.</p>
+    </details>
+    <details>
+      <summary>How do you calculate portfolio alpha?</summary>
+      <p class="faq-a">Portfolio alpha is calculated by subtracting the benchmark return from your portfolio return. If your portfolio returned 12% and the S&P 500 returned 10%, your alpha is +2%. A positive alpha means you outperformed the benchmark. For risk-adjusted alpha, use Jensen's Alpha, which also accounts for portfolio beta.</p>
+    </details>
+    <details>
+      <summary>What is a good portfolio return?</summary>
+      <p class="faq-a">A good return depends on risk level and time horizon. The S&P 500 has historically returned about 10% annually before inflation (~7% real). Consistently beating this after fees is excellent. Most professional fund managers fail to outperform over 15+ year periods, which is why index funds are popular.</p>
+    </details>
+    <details>
+      <summary>How often should I review my investment portfolio?</summary>
+      <p class="faq-a">Most experts recommend quarterly reviews for performance analysis and annual rebalancing. Checking too frequently leads to emotional trading. Focus on long-term trends, and only rebalance when your allocation drifts more than 5% from your target — not in response to short-term market noise.</p>
+    </details>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+  var holdings = [];
+  var barChartInstance = null;
+  var doughnutInstance = null;
+  var lineInstance = null;
+
+  function addHolding() {
+    var ticker = document.getElementById("hTicker").value.trim().toUpperCase();
+    var date = document.getElementById("hDate").value;
+    var buyPrice = parseFloat(document.getElementById("hBuyPrice").value);
+    var shares = parseFloat(document.getElementById("hShares").value);
+    var curPrice = parseFloat(document.getElementById("hCurPrice").value);
+    var beta = parseFloat(document.getElementById("hBeta").value);
+    if (!ticker || isNaN(buyPrice) || isNaN(shares) || isNaN(curPrice)) {
+      alert("Please fill in Ticker, Buy Price, Shares, and Current Price.");
+      return;
+    }
+    holdings.push({
+      ticker: ticker,
+      date: date || "",
+      buyPrice: buyPrice,
+      shares: shares,
+      curPrice: curPrice,
+      beta: isNaN(beta) ? null : beta
+    });
+    document.getElementById("hTicker").value = "";
+    document.getElementById("hDate").value = "";
+    document.getElementById("hBuyPrice").value = "";
+    document.getElementById("hShares").value = "";
+    document.getElementById("hCurPrice").value = "";
+    document.getElementById("hBeta").value = "";
+    renderTable();
+  }
+
+  function loadSample() {
+    holdings = [
+      { ticker: "AAPL", date: "2024-01-15", buyPrice: 185.50, shares: 20, curPrice: 242.00, beta: 1.21 },
+      { ticker: "MSFT", date: "2024-03-01", buyPrice: 410.00, shares: 10, curPrice: 458.00, beta: 0.93 },
+      { ticker: "GOOGL", date: "2024-06-10", buyPrice: 178.00, shares: 15, curPrice: 195.00, beta: 1.08 },
+      { ticker: "AMZN", date: "2024-02-20", buyPrice: 170.00, shares: 12, curPrice: 215.00, beta: 1.17 },
+      { ticker: "NVDA", date: "2024-07-01", buyPrice: 120.00, shares: 25, curPrice: 148.00, beta: 1.65 },
+      { ticker: "JNJ", date: "2023-11-05", buyPrice: 155.00, shares: 18, curPrice: 148.00, beta: 0.55 }
+    ];
+    renderTable();
+  }
+
+  function clearAll() {
+    holdings = [];
+    renderTable();
+    document.getElementById("portfolioResults").style.display = "none";
+    if (barChartInstance) { barChartInstance.destroy(); barChartInstance = null; }
+    if (doughnutInstance) { doughnutInstance.destroy(); doughnutInstance = null; }
+    if (lineInstance) { lineInstance.destroy(); lineInstance = null; }
+  }
+
+  function removeHolding(i) {
+    holdings.splice(i, 1);
+    renderTable();
+  }
+
+  function renderTable() {
+    var body = document.getElementById("holdingsBody");
+    var html = "";
+    for (var i = 0; i < holdings.length; i++) {
+      var h = holdings[i];
+      var costBasis = h.buyPrice * h.shares;
+      var curVal = h.curPrice * h.shares;
+      var gain = curVal - costBasis;
+      var retPct = ((h.curPrice - h.buyPrice) / h.buyPrice * 100);
+      var annRet = "";
+      if (h.date) {
+        var days = Math.max(1, (new Date() - new Date(h.date)) / 86400000);
+        var ar = (Math.pow(1 + retPct / 100, 365 / days) - 1) * 100;
+        annRet = ar.toFixed(2) + "%";
+      }
+      var cls = gain >= 0 ? "pos" : "neg";
+      html += "<tr><td>" + h.ticker + "</td><td>" + (h.date || "—") + "</td><td>$" + h.buyPrice.toFixed(2) + "</td><td>" + h.shares + "</td><td>$" + h.curPrice.toFixed(2) + "</td><td>$" + curVal.toFixed(2) + "</td><td class='" + cls + "'>$" + gain.toFixed(2) + "</td><td class='" + cls + "'>" + retPct.toFixed(2) + "%</td><td>" + (annRet || "—") + "</td><td><button class='remove-btn' onclick='removeHolding(" + i + ")'>✕</button></td></tr>";
+    }
+    body.innerHTML = html;
+  }
+
+  function calcPortfolio() {
+    if (holdings.length === 0) { alert("Add at least one holding."); return; }
+    var totalCost = 0;
+    var totalVal = 0;
+    var best = { ticker: "", ret: -Infinity };
+    var worst = { ticker: "", ret: Infinity };
+    var totalDays = 0;
+    var daysCount = 0;
+    var weightedBeta = 0;
+    var hasBeta = false;
+    var weights = [];
+
+    for (var i = 0; i < holdings.length; i++) {
+      var h = holdings[i];
+      var cost = h.buyPrice * h.shares;
+      var val = h.curPrice * h.shares;
+      totalCost += cost;
+      totalVal += val;
+      var ret = (h.curPrice - h.buyPrice) / h.buyPrice * 100;
+      if (ret > best.ret) { best = { ticker: h.ticker, ret: ret }; }
+      if (ret < worst.ret) { worst = { ticker: h.ticker, ret: ret }; }
+      if (h.date) {
+        var d = Math.max(1, (new Date() - new Date(h.date)) / 86400000);
+        totalDays += d;
+        daysCount++;
+      }
+      weights.push(val);
+      if (h.beta !== null) { hasBeta = true; }
+    }
+
+    var totalGain = totalVal - totalCost;
+    var totalRetPct = (totalGain / totalCost * 100);
+    var avgDays = daysCount > 0 ? totalDays / daysCount : 0;
+    var annReturn = avgDays > 0 ? (Math.pow(1 + totalRetPct / 100, 365 / avgDays) - 1) * 100 : 0;
+
+    var sumHtml = "";
+    sumHtml += "<div class='result-row'><span class='label'>Total Portfolio Value</span><span>$" + totalVal.toFixed(2) + "</span></div>";
+    sumHtml += "<div class='result-row'><span class='label'>Total Cost Basis</span><span>$" + totalCost.toFixed(2) + "</span></div>";
+    sumHtml += "<div class='result-row'><span class='label'>Total Gain/Loss</span><span style='color:" + (totalGain >= 0 ? "#34d399" : "#f87171") + "'>$" + totalGain.toFixed(2) + "</span></div>";
+    sumHtml += "<div class='result-row'><span class='label'>Total Return</span><span style='color:" + (totalRetPct >= 0 ? "#34d399" : "#f87171") + "'>" + totalRetPct.toFixed(2) + "%</span></div>";
+    if (avgDays > 0) {
+      sumHtml += "<div class='result-row'><span class='label'>Annualized Return</span><span>" + annReturn.toFixed(2) + "%</span></div>";
+    }
+    document.getElementById("portfolioSummary").innerHTML = sumHtml;
+    document.getElementById("portfolioResults").style.display = "block";
+
+    // Stats
+    var statsHtml = "";
+    statsHtml += "<div class='result-row'><span class='label'>Best Performer</span><span style='color:#34d399'>" + best.ticker + " (+" + best.ret.toFixed(2) + "%)</span></div>";
+    statsHtml += "<div class='result-row'><span class='label'>Worst Performer</span><span style='color:#f87171'>" + worst.ticker + " (" + worst.ret.toFixed(2) + "%)</span></div>";
+    statsHtml += "<div class='result-row'><span class='label'>Number of Holdings</span><span>" + holdings.length + "</span></div>";
+    if (daysCount > 0) {
+      statsHtml += "<div class='result-row'><span class='label'>Avg Holding Period</span><span>" + Math.round(avgDays) + " days</span></div>";
+    }
+    document.getElementById("statsContent").innerHTML = statsHtml;
+    document.getElementById("statsBox").style.display = "block";
+
+    // Risk metrics
+    var hhi = 0;
+    var portBeta = 0;
+    for (var j = 0; j < holdings.length; j++) {
+      var w = (weights[j] / totalVal) * 100;
+      hhi += w * w;
+      if (holdings[j].beta !== null) {
+        portBeta += (weights[j] / totalVal) * holdings[j].beta;
+      }
+    }
+    var riskHtml = "";
+    riskHtml += "<div class='result-row'><span class='label'>Concentration (HHI)</span><span>" + hhi.toFixed(0) + (hhi > 2500 ? " ⚠️ High" : hhi > 1500 ? " — Moderate" : " — Low") + "</span></div>";
+    riskHtml += "<div class='result-row'><span class='label'>Number of Holdings</span><span>" + holdings.length + "</span></div>";
+    if (hasBeta) {
+      riskHtml += "<div class='result-row'><span class='label'>Portfolio Beta</span><span>" + portBeta.toFixed(2) + "</span></div>";
+    }
+    document.getElementById("riskContent").innerHTML = riskHtml;
+    document.getElementById("riskBox").style.display = "block";
+
+    renderCharts();
+  }
+
+  function renderCharts() {
+    if (holdings.length === 0) return;
+
+    // Bar chart — gain/loss per holding, sorted
+    var barData = [];
+    for (var i = 0; i < holdings.length; i++) {
+      var h = holdings[i];
+      barData.push({ ticker: h.ticker, gain: (h.curPrice - h.buyPrice) * h.shares });
+    }
+    barData.sort(function(a, b) { return b.gain - a.gain; });
+    var barLabels = [];
+    var barValues = [];
+    var barColors = [];
+    for (var k = 0; k < barData.length; k++) {
+      barLabels.push(barData[k].ticker);
+      barValues.push(barData[k].gain);
+      barColors.push(barData[k].gain >= 0 ? "rgba(52,211,153,0.8)" : "rgba(248,113,113,0.8)");
+    }
+    if (barChartInstance) barChartInstance.destroy();
+    barChartInstance = new Chart(document.getElementById("barChart"), {
+      type: "bar",
+      data: { labels: barLabels, datasets: [{ label: "Gain/Loss ($)", data: barValues, backgroundColor: barColors, borderRadius: 6 }] },
+      options: { responsive: true, plugins: { title: { display: true, text: "Holding Performance (Gain/Loss)", color: "#e8eaed" }, legend: { display: false } }, scales: { y: { ticks: { color: "#9aa0a6", callback: function(v) { return "$" + v; } }, grid: { color: "rgba(255,255,255,0.05)" } }, x: { ticks: { color: "#9aa0a6" }, grid: { display: false } } } }
+    });
+
+    // Doughnut — allocation by value
+    var dLabels = [];
+    var dValues = [];
+    var dColors = ["#4a8fe7", "#34d399", "#f59e0b", "#f87171", "#a78bfa", "#fb923c", "#38bdf8", "#e879f9"];
+    for (var m = 0; m < holdings.length; m++) {
+      dLabels.push(holdings[m].ticker);
+      dValues.push(holdings[m].curPrice * holdings[m].shares);
+    }
+    if (doughnutInstance) doughnutInstance.destroy();
+    doughnutInstance = new Chart(document.getElementById("doughnutChart"), {
+      type: "doughnut",
+      data: { labels: dLabels, datasets: [{ data: dValues, backgroundColor: dColors.slice(0, dValues.length), borderWidth: 0 }] },
+      options: { responsive: true, plugins: { title: { display: true, text: "Portfolio Allocation by Value", color: "#e8eaed" }, legend: { position: "bottom", labels: { color: "#9aa0a6", padding: 12 } } } }
+    });
+
+    // Line chart — hypothetical growth of $10,000
+    var totalCostB = 0;
+    var totalValB = 0;
+    for (var n = 0; n < holdings.length; n++) {
+      totalCostB += holdings[n].buyPrice * holdings[n].shares;
+      totalValB += holdings[n].curPrice * holdings[n].shares;
+    }
+    var totalRetB = (totalValB - totalCostB) / totalCostB;
+    var pts = 13;
+    var lineLabels = [];
+    var lineData = [];
+    for (var p = 0; p < pts; p++) {
+      lineLabels.push("Month " + p);
+      var frac = p / (pts - 1);
+      lineData.push(Math.round(10000 * (1 + totalRetB * frac)));
+    }
+    if (lineInstance) lineInstance.destroy();
+    lineInstance = new Chart(document.getElementById("lineChart"), {
+      type: "line",
+      data: { labels: lineLabels, datasets: [{ label: "Portfolio Value ($10K invested)", data: lineData, borderColor: "#4a8fe7", backgroundColor: "rgba(74,143,231,0.1)", fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: "#4a8fe7" }] },
+      options: { responsive: true, plugins: { title: { display: true, text: "Hypothetical Growth of $10,000", color: "#e8eaed" }, legend: { labels: { color: "#9aa0a6" } } }, scales: { y: { ticks: { color: "#9aa0a6", callback: function(v) { return "$" + v.toLocaleString(); } }, grid: { color: "rgba(255,255,255,0.05)" } }, x: { ticks: { color: "#9aa0a6" }, grid: { display: false } } } }
+    });
+  }
+
+  // TWR Calculator
+  function addTwrRow() {
+    var container = document.getElementById("twrPeriods");
+    var div = document.createElement("div");
+    div.className = "form-grid";
+    div.style.gridTemplateColumns = "1fr 1fr auto";
+    div.style.alignItems = "end";
+    div.innerHTML = '<label>Period Label<input type="text" class="twr-label" placeholder="Q2 2025"></label><label>Sub-Period Return (%)<input type="number" class="twr-return" step="0.01" placeholder="2.10"></label><button class="remove-btn" onclick="removeTwrRow(this)" title="Remove">✕</button>';
+    container.appendChild(div);
+  }
+
+  function removeTwrRow(btn) {
+    var rows = document.querySelectorAll("#twrPeriods .form-grid");
+    if (rows.length > 1) btn.parentElement.remove();
+  }
+
+  function calcTWR() {
+    var labels = document.querySelectorAll(".twr-label");
+    var returns = document.querySelectorAll(".twr-return");
+    var product = 1;
+    var parts = [];
+    for (var i = 0; i < returns.length; i++) {
+      var r = parseFloat(returns[i].value);
+      if (isNaN(r)) continue;
+      product *= (1 + r / 100);
+      parts.push((labels[i].value || "Period " + (i + 1)) + ": " + r + "%");
+    }
+    if (parts.length === 0) { alert("Enter at least one sub-period return."); return; }
+    var twr = (product - 1) * 100;
+    var annualized = parts.length >= 4 ? ((Math.pow(product, 4 / parts.length) - 1) * 100) : null;
+    var html = "";
+    for (var j = 0; j < parts.length; j++) {
+      html += "<div class='result-row'><span class='label'>" + parts[j].split(":")[0] + "</span><span>" + parts[j].split(":")[1] + "</span></div>";
+    }
+    html += "<div class='result-row' style='border-top:2px solid rgba(74,143,231,0.3);padding-top:0.5rem;margin-top:0.25rem'><span class='label' style='color:#4a8fe7;font-weight:600'>Time-Weighted Return (TWR)</span><span style='font-weight:700;color:" + (twr >= 0 ? "#34d399" : "#f87171") + "'>" + twr.toFixed(2) + "%</span></div>";
+    if (annualized !== null) {
+      html += "<div class='result-row'><span class='label'>Annualized (assuming quarterly periods)</span><span>" + annualized.toFixed(2) + "%</span></div>";
+    }
+    document.getElementById("twrContent").innerHTML = html;
+    document.getElementById("twrResult").style.display = "block";
+  }
+
+  // Benchmark comparison
+  function calcBenchmark() {
+    var port = parseFloat(document.getElementById("bPort").value);
+    var bench = parseFloat(document.getElementById("bBench").value);
+    if (isNaN(port) || isNaN(bench)) { alert("Enter portfolio and benchmark returns."); return; }
+    var alpha = port - bench;
+    var te = parseFloat(document.getElementById("bTE").value);
+    var html = "";
+    html += "<div class='result-row'><span class='label'>Portfolio Return</span><span>" + port.toFixed(2) + "%</span></div>";
+    html += "<div class='result-row'><span class='label'>S&P 500 Return</span><span>" + bench.toFixed(2) + "%</span></div>";
+    html += "<div class='result-row' style='border-top:2px solid rgba(74,143,231,0.3);padding-top:0.5rem'><span class='label' style='color:#4a8fe7;font-weight:600'>Alpha</span><span style='font-weight:700;color:" + (alpha >= 0 ? "#34d399" : "#f87171") + "'>" + (alpha >= 0 ? "+" : "") + alpha.toFixed(2) + "%</span></div>";
+    if (!isNaN(te) && te > 0) {
+      var ir = alpha / te;
+      html += "<div class='result-row'><span class='label'>Tracking Error</span><span>" + te.toFixed(2) + "%</span></div>";
+      html += "<div class='result-row'><span class='label'>Information Ratio</span><span>" + ir.toFixed(2) + (ir > 0.5 ? " — Good" : ir > 0 ? " — Fair" : " — Poor") + "</span></div>";
+    }
+    if (alpha > 0) {
+      html += "<div style='margin-top:0.75rem;padding:0.75rem;background:rgba(52,211,153,0.08);border-radius:8px;color:#34d399;font-size:0.9rem'>✅ Your portfolio outperformed the S&P 500 by " + alpha.toFixed(2) + " percentage points.</div>";
+    } else if (alpha < 0) {
+      html += "<div style='margin-top:0.75rem;padding:0.75rem;background:rgba(248,113,113,0.08);border-radius:8px;color:#f87171;font-size:0.9rem'>⚠️ Your portfolio underperformed the S&P 500 by " + Math.abs(alpha).toFixed(2) + " percentage points.</div>";
+    }
+    document.getElementById("benchContent").innerHTML = html;
+    document.getElementById("benchResult").style.display = "block";
+  }
+</script>
+</SiteLayout>

@@ -1,0 +1,702 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Beta Calculator — Stock Beta, Portfolio Beta & Beta Formula | Westmount Fundamentals",
+  description: "Free beta calculator for stocks and portfolios. Calculate beta coefficient from returns data, estimate beta with standard deviation, and compute weighted portfolio beta. Learn the CAPM beta formula and how to use beta in investing.",
+  category: "study",
+  published: "2026-03-20"
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Beta Calculator — Stock Beta, Portfolio Beta & Beta Formula",
+    "description": meta.description,
+    "datePublished": "2026-03-20",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is beta in stocks?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Beta (β) measures a stock's volatility relative to the overall market (typically the S&P 500). A beta of 1.0 means the stock moves in line with the market. A beta above 1.0 indicates higher volatility — for example, a beta of 1.5 means the stock tends to move 50% more than the market. A beta below 1.0 indicates lower volatility." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate beta?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Beta is calculated as the covariance of stock returns and market returns divided by the variance of market returns: β = Cov(Rₛ, Rₘ) / Var(Rₘ). Alternatively, you can estimate beta as (Stock Std Dev / Market Std Dev) × Correlation. Regression analysis of historical returns is the most common method, typically using 36-60 months of data." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good beta for a stock?",
+        "acceptedAnswer": { "@type": "Answer", "text": "There is no universally 'good' beta — it depends on your investment goals. Conservative investors prefer low-beta stocks (0.5-0.8) like utilities and consumer staples for stability. Growth-oriented investors may favor high-beta stocks (1.2-1.5+) like tech stocks for amplified returns. A balanced portfolio often targets an overall beta near 1.0." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is portfolio beta and how do you calculate it?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Portfolio beta is the weighted average of the individual betas of all stocks in a portfolio. You calculate it by multiplying each stock's beta by its weight (proportion of portfolio value), then summing the results: Portfolio Beta = Σ(wᵢ × βᵢ). For example, a portfolio with 50% in a stock with beta 1.2 and 50% in a stock with beta 0.6 has a portfolio beta of 0.9." }
+      },
+      {
+        "@type": "Question",
+        "name": "What are the limitations of beta?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Beta has several limitations: it is backward-looking and based on historical data that may not predict future volatility; it changes over time as company fundamentals evolve; it assumes returns are normally distributed and doesn't capture tail risk or black swan events; and it only measures systematic (market) risk, ignoring company-specific risks like fraud or product failures." }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/beta-calculator/" schema={schema}>
+
+<style is:inline>
+  :root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --bg-card: #0d1117; --border: #30363d; }
+  .beta-hero { text-align: center; padding: 3rem 1rem 2rem; background: linear-gradient(135deg, rgba(74,143,231,0.08), rgba(74,143,231,0.02)); border-bottom: 1px solid rgba(74,143,231,0.15); }
+  .beta-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #e8eaed; }
+  .beta-hero .subtitle { color: #9aa0a6; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+  .beta-container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .stat-row { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; }
+  .stat-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; min-width: 160px; text-align: center; flex: 1; max-width: 260px; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.8rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+
+  .section-title { font-size: 1.6rem; color: #e8eaed; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid rgba(74,143,231,0.3); }
+  .section-desc { color: #9aa0a6; margin-bottom: 1.5rem; line-height: 1.7; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.5rem 0; }
+  @media (max-width: 768px) { .calc-grid { grid-template-columns: 1fr; } }
+
+  .calc-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .calc-panel h3 { color: #e8eaed; margin: 0 0 1rem; font-size: 1.1rem; }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; color: #9aa0a6; font-size: 0.85rem; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 0.8rem; color: #e8eaed; font-size: 0.95rem; box-sizing: border-box; font-family: inherit; }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(74,143,231,0.2); }
+
+  .btn-primary { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.5rem; font-size: 0.95rem; cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
+  .btn-primary:hover { background: #3a7fd7; }
+
+  .result-box { background: rgba(74,143,231,0.08); border: 1px solid rgba(74,143,231,0.2); border-radius: 10px; padding: 1.2rem; margin-top: 1rem; display: none; }
+  .result-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); color: #e8eaed; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .label { color: #9aa0a6; }
+  .result-row .value { font-weight: 600; }
+
+  .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .chart-container h3 { color: #e8eaed; margin: 0 0 1rem; font-size: 1.1rem; }
+  .chart-container canvas { max-height: 380px; width: 100% !important; }
+
+  .gauge-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; }
+  .gauge-wrap h3 { color: #e8eaed; margin: 0 0 1rem; font-size: 1.1rem; }
+  .gauge-bar { display: flex; border-radius: 8px; overflow: hidden; height: 36px; margin: 1rem 0 0.5rem; }
+  .gauge-seg { display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: #fff; padding: 0 4px; white-space: nowrap; }
+  .gauge-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: #9aa0a6; margin-top: 0.3rem; }
+  .gauge-pointer-wrap { position: relative; height: 20px; margin-top: -4px; }
+  .gauge-pointer { position: absolute; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid #e8eaed; transform: translateX(-8px); transition: left 0.4s ease; }
+
+  .portfolio-row { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 40px; gap: 0.6rem; align-items: center; margin-bottom: 0.5rem; }
+  @media (max-width: 600px) { .portfolio-row { grid-template-columns: 1fr 1fr; } .portfolio-row .remove-btn { grid-column: span 2; justify-self: end; } }
+  .portfolio-row input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.6rem; color: #e8eaed; font-size: 0.9rem; box-sizing: border-box; }
+  .portfolio-row input:focus { outline: none; border-color: var(--accent); }
+  .remove-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: #ef4444; cursor: pointer; font-size: 1.1rem; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; }
+  .remove-btn:hover { background: rgba(239,68,68,0.1); border-color: #ef4444; }
+  .add-stock-btn { background: rgba(74,143,231,0.1); border: 1px dashed var(--accent); border-radius: 8px; padding: 0.5rem; color: var(--accent); cursor: pointer; font-size: 0.9rem; width: 100%; margin-top: 0.5rem; }
+  .add-stock-btn:hover { background: rgba(74,143,231,0.18); }
+
+  .portfolio-header { display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 40px; gap: 0.6rem; margin-bottom: 0.4rem; font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.04em; }
+  @media (max-width: 600px) { .portfolio-header { display: none; } }
+
+  .insights-list { list-style: none; padding: 0; margin: 1.5rem 0; }
+  .insights-list li { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem; color: #e8eaed; line-height: 1.6; }
+  .insights-list li strong { color: var(--accent); }
+
+  .edu-section { color: #c8d0de; line-height: 1.8; font-size: 1rem; }
+  .edu-section h3 { color: #e8eaed; margin-top: 1.5rem; }
+  .edu-section p { margin-bottom: 1rem; }
+  .formula-box { background: rgba(74,143,231,0.06); border: 1px solid rgba(74,143,231,0.2); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; font-family: 'Georgia', serif; font-size: 1.1rem; color: #e8eaed; text-align: center; letter-spacing: 0.02em; }
+
+  .faq-section { margin: 2rem 0; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.8rem; overflow: hidden; }
+  .faq-q { padding: 1rem 1.2rem; color: #e8eaed; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q:hover { background: rgba(255,255,255,0.03); }
+  .faq-a { padding: 0 1.2rem 1rem; color: #9aa0a6; line-height: 1.7; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-arrow { transition: transform 0.2s; font-size: 0.8rem; color: #9aa0a6; }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+  .breadcrumb { max-width: 1200px; margin: 0 auto; padding: 16px 24px 0; font-size: 13px; color: #94a3b8; }
+  .breadcrumb a { color: #94a3b8; text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1.5rem 0; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a><span class="sep">›</span>
+  <a href="/study/">Study</a><span class="sep">›</span>
+  <span style="color:#c8d0de">Beta Calculator</span>
+</nav>
+
+<div class="beta-hero">
+  <h1>Beta Calculator</h1>
+  <p class="subtitle">Calculate stock beta from returns data, estimate beta quickly, and compute weighted portfolio beta. Understand the beta coefficient and how to use it in the CAPM model.</p>
+</div>
+
+<div class="beta-container">
+
+  <!-- Stat Cards -->
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-value">1.00</div><div class="stat-label">S&P 500 Beta</div></div>
+    <div class="stat-card"><div class="stat-value">~1.2</div><div class="stat-label">Avg Tech Sector Beta</div></div>
+    <div class="stat-card"><div class="stat-value">~0.4</div><div class="stat-label">Avg Utilities Beta</div></div>
+    <div class="stat-card"><div class="stat-value">36-60</div><div class="stat-label">Months Used Typically</div></div>
+  </div>
+
+  <!-- ============ STOCK BETA CALCULATOR ============ -->
+  <h2 class="section-title" id="stock-beta-calculator">Stock Beta Calculator</h2>
+  <p class="section-desc">Enter comma-separated monthly returns for both the stock and the market index (e.g., S&P 500). The calculator computes beta using covariance/variance, plus R-squared and Jensen's alpha.</p>
+
+  <div class="calc-grid">
+    <div class="calc-panel">
+      <h3>📈 Returns Data</h3>
+      <div class="form-group">
+        <label for="stock-returns">Stock Monthly Returns (%)</label>
+        <textarea id="stock-returns" placeholder="e.g. 2.1, -1.3, 4.5, -0.8, 3.2, -2.1, 1.5, 0.9, -3.4, 2.8, 1.1, -0.5" rows="3">2.1, -1.3, 4.5, -0.8, 3.2, -2.1, 1.5, 0.9, -3.4, 2.8, 1.1, -0.5</textarea>
+      </div>
+      <div class="form-group">
+        <label for="market-returns">Market Monthly Returns (%)</label>
+        <textarea id="market-returns" placeholder="e.g. 1.5, -0.9, 3.1, -0.4, 2.0, -1.5, 1.0, 0.6, -2.2, 1.8, 0.8, -0.3" rows="3">1.5, -0.9, 3.1, -0.4, 2.0, -1.5, 1.0, 0.6, -2.2, 1.8, 0.8, -0.3</textarea>
+      </div>
+      <button class="btn-primary" onclick="calcStockBeta()">Calculate Beta</button>
+    </div>
+    <div class="calc-panel">
+      <h3>📊 Results</h3>
+      <div id="stock-beta-result" class="result-box" style="display:block; opacity:0.5;">
+        <div class="result-row"><span class="label">Beta (β)</span><span class="value" id="res-beta">—</span></div>
+        <div class="result-row"><span class="label">R-squared</span><span class="value" id="res-r2">—</span></div>
+        <div class="result-row"><span class="label">Alpha (annualized)</span><span class="value" id="res-alpha">—</span></div>
+        <div class="result-row"><span class="label">Stock Avg Return</span><span class="value" id="res-stock-avg">—</span></div>
+        <div class="result-row"><span class="label">Market Avg Return</span><span class="value" id="res-mkt-avg">—</span></div>
+        <div class="result-row"><span class="label">Observations</span><span class="value" id="res-obs">—</span></div>
+      </div>
+      <div id="beta-gauge-mini" class="gauge-pointer-wrap" style="margin-top:1rem; display:none;">
+        <div class="gauge-bar" id="mini-gauge-bar"></div>
+        <div class="gauge-pointer" id="mini-gauge-ptr" style="left:50%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ QUICK BETA ESTIMATE ============ -->
+  <h2 class="section-title" id="quick-beta-estimate">Quick Beta Estimate</h2>
+  <p class="section-desc">Don't have raw returns data? Estimate beta using the shortcut formula: β = (σ_stock / σ_market) × ρ, where σ is standard deviation and ρ is the correlation coefficient.</p>
+
+  <div class="calc-grid">
+    <div class="calc-panel">
+      <h3>⚡ Quick Estimate Inputs</h3>
+      <div class="form-group">
+        <label for="quick-stock-sd">Stock Std Deviation (%)</label>
+        <input type="number" id="quick-stock-sd" placeholder="e.g. 25" step="0.1" value="25">
+      </div>
+      <div class="form-group">
+        <label for="quick-mkt-sd">Market Std Deviation (%)</label>
+        <input type="number" id="quick-mkt-sd" placeholder="e.g. 15" step="0.1" value="15">
+      </div>
+      <div class="form-group">
+        <label for="quick-corr">Correlation (ρ)</label>
+        <input type="number" id="quick-corr" placeholder="e.g. 0.75" step="0.01" min="-1" max="1" value="0.75">
+      </div>
+      <button class="btn-primary" onclick="calcQuickBeta()">Estimate Beta</button>
+    </div>
+    <div class="calc-panel">
+      <h3>📊 Quick Estimate Result</h3>
+      <div id="quick-result" class="result-box" style="display:block; opacity:0.5;">
+        <div class="result-row"><span class="label">Estimated Beta (β)</span><span class="value" id="quick-beta">—</span></div>
+        <div class="result-row"><span class="label">Volatility Ratio (σs/σm)</span><span class="value" id="quick-ratio">—</span></div>
+        <div class="result-row"><span class="label">Interpretation</span><span class="value" id="quick-interp">—</span></div>
+      </div>
+      <div class="formula-box" style="margin-top:1rem;">β = (σ<sub>stock</sub> / σ<sub>market</sub>) × ρ</div>
+    </div>
+  </div>
+
+  <!-- ============ BETA INTERPRETATION GAUGE ============ -->
+  <h2 class="section-title" id="beta-interpretation">Beta Interpretation Guide</h2>
+  <p class="section-desc">Beta tells you how volatile a stock is compared to the market. Use the gauge below to visualize where any beta value falls on the risk spectrum.</p>
+
+  <div class="gauge-wrap">
+    <h3>🎯 Beta Risk Spectrum</h3>
+    <div class="gauge-bar" id="main-gauge">
+      <div class="gauge-seg" style="flex:1; background:#6366f1;">&lt;0 Inverse</div>
+      <div class="gauge-seg" style="flex:1; background:#8b5cf6;">0–0.5 Low Vol</div>
+      <div class="gauge-seg" style="flex:1; background:#10b981;">0.5–1.0 Defensive</div>
+      <div class="gauge-seg" style="flex:0.3; background:#f59e0b;">1.0</div>
+      <div class="gauge-seg" style="flex:1; background:#f97316;">1.0–1.5 Aggressive</div>
+      <div class="gauge-seg" style="flex:1; background:#ef4444;">&gt;1.5 High Vol</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.8rem; justify-content:center; margin-top:1rem;">
+      <label style="color:#9aa0a6; font-size:0.85rem;">Enter Beta:</label>
+      <input type="number" id="gauge-input" value="1.0" step="0.1" min="-1" max="3" style="width:80px; background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; padding:0.5rem; color:#e8eaed; text-align:center; font-size:1rem;">
+      <span id="gauge-label" style="color:var(--accent); font-weight:600; font-size:0.95rem;">Market</span>
+    </div>
+    <div class="gauge-pointer-wrap" style="margin-top:0.5rem;">
+      <div class="gauge-bar" style="opacity:0; height:4px;">
+        <div style="flex:1;"></div><div style="flex:1;"></div><div style="flex:1;"></div><div style="flex:0.3;"></div><div style="flex:1;"></div><div style="flex:1;"></div>
+      </div>
+      <div class="gauge-pointer" id="main-gauge-ptr" style="left:61.5%;"></div>
+    </div>
+  </div>
+
+  <!-- ============ PORTFOLIO BETA CALCULATOR ============ -->
+  <h2 class="section-title" id="portfolio-beta-calculator">Portfolio Beta Calculator</h2>
+  <p class="section-desc">Enter up to 10 stocks with their portfolio weights and individual betas to calculate your portfolio's weighted beta. Portfolio Beta = Σ(weight × beta).</p>
+
+  <div class="calc-panel">
+    <h3>💼 Portfolio Holdings</h3>
+    <div class="portfolio-header">
+      <span>Stock / Ticker</span>
+      <span>Weight (%)</span>
+      <span>Beta</span>
+      <span></span>
+    </div>
+    <div id="portfolio-rows">
+      <div class="portfolio-row">
+        <input type="text" placeholder="e.g. AAPL" value="AAPL">
+        <input type="number" placeholder="Weight %" step="0.1" value="30">
+        <input type="number" placeholder="Beta" step="0.01" value="1.20">
+        <button class="remove-btn" onclick="removeRow(this)">×</button>
+      </div>
+      <div class="portfolio-row">
+        <input type="text" placeholder="e.g. MSFT" value="MSFT">
+        <input type="number" placeholder="Weight %" step="0.1" value="25">
+        <input type="number" placeholder="Beta" step="0.01" value="0.90">
+        <button class="remove-btn" onclick="removeRow(this)">×</button>
+      </div>
+      <div class="portfolio-row">
+        <input type="text" placeholder="e.g. JNJ" value="JNJ">
+        <input type="number" placeholder="Weight %" step="0.1" value="20">
+        <input type="number" placeholder="Beta" step="0.01" value="0.50">
+        <button class="remove-btn" onclick="removeRow(this)">×</button>
+      </div>
+      <div class="portfolio-row">
+        <input type="text" placeholder="e.g. PG" value="PG">
+        <input type="number" placeholder="Weight %" step="0.1" value="25">
+        <input type="number" placeholder="Beta" step="0.01" value="0.40">
+        <button class="remove-btn" onclick="removeRow(this)">×</button>
+      </div>
+    </div>
+    <button class="add-stock-btn" onclick="addRow()">+ Add Stock</button>
+    <button class="btn-primary" style="margin-top:1rem;" onclick="calcPortfolioBeta()">Calculate Portfolio Beta</button>
+    <div id="portfolio-result" class="result-box" style="display:block; opacity:0.5;">
+      <div class="result-row"><span class="label">Portfolio Beta</span><span class="value" id="pf-beta">—</span></div>
+      <div class="result-row"><span class="label">Total Weight</span><span class="value" id="pf-weight">—</span></div>
+      <div class="result-row"><span class="label">Interpretation</span><span class="value" id="pf-interp">—</span></div>
+      <div class="result-row"><span class="label">Number of Holdings</span><span class="value" id="pf-count">—</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SCATTER CHART: Beta vs Return ============ -->
+  <h2 class="section-title" id="beta-vs-return">Beta vs. Return — Major Stocks & Sectors</h2>
+  <p class="section-desc">This scatter plot shows the relationship between beta and annualized return for the Magnificent 7 stocks and key sector benchmarks. Higher beta generally implies higher expected returns — but also higher risk.</p>
+
+  <div class="chart-container">
+    <h3>📉 Beta vs. Annualized Return</h3>
+    <canvas id="scatterChart"></canvas>
+  </div>
+
+  <!-- ============ BAR CHART: Sector Betas ============ -->
+  <h2 class="section-title" id="sector-betas">Average Beta by S&P 500 Sector</h2>
+  <p class="section-desc">Different sectors carry different levels of systematic risk. Technology and Consumer Discretionary tend to have higher betas, while Utilities and Consumer Staples are typically defensive.</p>
+
+  <div class="chart-container">
+    <h3>📊 Average Sector Beta (S&P 500)</h3>
+    <canvas id="sectorChart"></canvas>
+  </div>
+
+  <!-- ============ WHAT IS BETA ============ -->
+  <h2 class="section-title" id="what-is-beta">What Is Beta in Stocks?</h2>
+  <div class="edu-section">
+    <p>Beta (β) is a measure of a stock's <strong>systematic risk</strong> — how much it tends to move relative to the overall market. It is a cornerstone of the <strong>Capital Asset Pricing Model (CAPM)</strong>, which describes the relationship between risk and expected return:</p>
+
+    <div class="formula-box">E(Rᵢ) = Rꜰ + βᵢ × (E(Rₘ) - Rꜰ)</div>
+
+    <p>Where E(Rᵢ) is the expected return of the stock, Rꜰ is the risk-free rate, βᵢ is the stock's beta, and E(Rₘ) is the expected market return. The term (E(Rₘ) - Rꜰ) is the <strong>equity risk premium</strong>.</p>
+
+    <h3>How to Calculate Beta (Beta Formula)</h3>
+    <p>Beta is mathematically defined as:</p>
+    <div class="formula-box">β = Cov(Rₛ, Rₘ) / Var(Rₘ)</div>
+    <p>This is equivalent to running a linear regression of stock returns against market returns. The slope of the regression line is beta. The <strong>R-squared</strong> value tells you how much of the stock's variance is explained by the market (systematic risk vs. unsystematic risk).</p>
+
+    <h3>Systematic vs. Unsystematic Risk</h3>
+    <p><strong>Systematic risk</strong> (market risk) affects all stocks — recessions, interest rate changes, geopolitical events. Beta measures this. <strong>Unsystematic risk</strong> (company-specific risk) includes things like management changes, product recalls, or lawsuits. Unsystematic risk can be diversified away; systematic risk cannot. This is why CAPM only rewards investors for bearing systematic risk.</p>
+  </div>
+
+  <!-- ============ BETA LIMITATIONS ============ -->
+  <h2 class="section-title" id="beta-limitations">Limitations of Beta</h2>
+  <div class="edu-section">
+    <p>While beta is widely used, it has important limitations that investors should understand:</p>
+    <ul style="padding-left:1.2rem; margin:1rem 0;">
+      <li style="margin-bottom:0.8rem;"><strong>Backward-looking:</strong> Beta is calculated from historical data (typically 36-60 months). Past volatility patterns may not persist, especially after major business changes, M&A activity, or shifts in company strategy.</li>
+      <li style="margin-bottom:0.8rem;"><strong>Changes over time:</strong> A company's beta can shift significantly as its business mix evolves. Tesla's beta has ranged from 1.5 to 2.5+ over different periods. Relying on a single point estimate can be misleading.</li>
+      <li style="margin-bottom:0.8rem;"><strong>Assumes normal distributions:</strong> Beta is derived from variance and covariance, which assume returns are normally distributed. In reality, stock returns exhibit fat tails — extreme events (crashes, squeezes) occur more frequently than a normal distribution predicts.</li>
+      <li style="margin-bottom:0.8rem;"><strong>Doesn't capture tail risk:</strong> A stock with a "moderate" beta of 1.0 could still lose 50% in a black swan event. Beta tells you about average co-movement, not worst-case scenarios.</li>
+      <li style="margin-bottom:0.8rem;"><strong>Benchmark dependency:</strong> Beta is always relative to a benchmark. A stock's beta against the S&P 500 will differ from its beta against the NASDAQ or a global index. The choice of benchmark matters.</li>
+    </ul>
+  </div>
+
+  <!-- ============ HOW TO USE BETA ============ -->
+  <h2 class="section-title" id="how-to-use-beta">How to Use Beta in Investing</h2>
+  <div class="edu-section">
+    <h3>Position Sizing</h3>
+    <p>Beta helps determine how much capital to allocate to a position. If you want equal risk contribution from each holding, allocate less to high-beta stocks and more to low-beta stocks. For example, a stock with beta 2.0 contributes twice the market risk of a stock with beta 1.0 — so you might hold half as much.</p>
+
+    <h3>Hedging</h3>
+    <p>To hedge a portfolio with futures or index puts, you need to know your portfolio beta. If your $100,000 portfolio has a beta of 1.3, you'd need $130,000 notional in S&P 500 short futures to be fully hedged — because your portfolio moves 1.3x the market.</p>
+
+    <h3>Portfolio Construction</h3>
+    <p>By combining high-beta and low-beta stocks, you can target a specific overall portfolio beta. A retiree might target a portfolio beta of 0.6 for lower volatility, while a young aggressive investor might accept a beta of 1.3+ for amplified returns. Our portfolio beta calculator above helps you fine-tune this.</p>
+  </div>
+
+  <!-- ============ KEY INSIGHTS ============ -->
+  <h2 class="section-title" id="key-insights">5 Key Beta Insights</h2>
+  <ul class="insights-list">
+    <li><strong>Beta of 1.0 is the benchmark.</strong> The S&P 500 always has a beta of 1.0 by definition. Every stock's beta is measured relative to it. A beta above 1.0 amplifies market moves; below 1.0 dampens them.</li>
+    <li><strong>High beta ≠ high quality.</strong> A stock with beta 2.0 will double your gains in a bull market — but also double your losses in a bear market. Tesla (β ~2.0) returned 1,100%+ from 2020-2021, then fell 65% in 2022.</li>
+    <li><strong>Sector matters more than you think.</strong> Over 60% of a stock's beta is explained by its sector. Utilities stocks almost always have low betas (0.3-0.5), while tech stocks cluster around 1.1-1.5, regardless of company-specific fundamentals.</li>
+    <li><strong>Negative beta is rare but real.</strong> Gold miners and certain inverse ETFs can have negative betas, meaning they tend to rise when the market falls. This makes them useful portfolio hedges, but they underperform in sustained bull markets.</li>
+    <li><strong>Blended Adjusted Beta provides a better forward estimate.</strong> Bloomberg and many analysts use "adjusted beta" = (0.67 × Raw Beta) + (0.33 × 1.0), which assumes betas revert toward 1.0 over time. This typically gives more accurate forward-looking estimates.</li>
+  </ul>
+
+  <!-- ============ FAQ ============ -->
+  <h2 class="section-title" id="faq">Frequently Asked Questions</h2>
+  <div class="faq-section">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is beta in stocks? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Beta (β) measures a stock's volatility relative to the overall market (typically the S&P 500). A beta of 1.0 means the stock moves in line with the market. A beta above 1.0 indicates higher volatility — for example, a beta of 1.5 means the stock tends to move 50% more than the market. A beta below 1.0 indicates lower volatility.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do you calculate beta? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Beta is calculated as the covariance of stock returns and market returns divided by the variance of market returns: β = Cov(Rₛ, Rₘ) / Var(Rₘ). Alternatively, you can estimate beta as (Stock Std Dev / Market Std Dev) × Correlation. Regression analysis of historical returns is the most common method, typically using 36-60 months of data.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a good beta for a stock? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">There is no universally "good" beta — it depends on your investment goals. Conservative investors prefer low-beta stocks (0.5-0.8) like utilities and consumer staples for stability. Growth-oriented investors may favor high-beta stocks (1.2-1.5+) like tech stocks for amplified returns. A balanced portfolio often targets an overall beta near 1.0.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is portfolio beta and how do you calculate it? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Portfolio beta is the weighted average of the individual betas of all stocks in a portfolio. You calculate it by multiplying each stock's beta by its weight (proportion of portfolio value), then summing the results: Portfolio Beta = Σ(wᵢ × βᵢ). For example, a portfolio with 50% in a stock with beta 1.2 and 50% in a stock with beta 0.6 has a portfolio beta of 0.9.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What are the limitations of beta? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Beta has several limitations: it is backward-looking and based on historical data that may not predict future volatility; it changes over time as company fundamentals evolve; it assumes returns are normally distributed and doesn't capture tail risk or black swan events; and it only measures systematic (market) risk, ignoring company-specific risks like fraud or product failures.</div>
+    </div>
+  </div>
+
+</div><!-- .beta-container -->
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+/* ============ UTILITY FUNCTIONS ============ */
+function parseCsv(str) {
+  var parts = str.split(",");
+  var arr = [];
+  for (var i = 0; i < parts.length; i++) {
+    var v = parseFloat(parts[i].trim());
+    if (!isNaN(v)) arr.push(v);
+  }
+  return arr;
+}
+
+function mean(arr) {
+  var s = 0;
+  for (var i = 0; i < arr.length; i++) s += arr[i];
+  return s / arr.length;
+}
+
+function covariance(a, b, ma, mb) {
+  var s = 0;
+  for (var i = 0; i < a.length; i++) s += (a[i] - ma) * (b[i] - mb);
+  return s / (a.length - 1);
+}
+
+function variance(arr, m) {
+  var s = 0;
+  for (var i = 0; i < arr.length; i++) s += (arr[i] - m) * (arr[i] - m);
+  return s / (arr.length - 1);
+}
+
+function interpretBeta(b) {
+  if (b < 0) return "Inverse / Negative";
+  if (b < 0.5) return "Low Volatility";
+  if (b < 1.0) return "Defensive";
+  if (b < 1.01 && b > 0.99) return "Market";
+  if (b < 1.5) return "Aggressive";
+  return "High Volatility";
+}
+
+/* ============ STOCK BETA CALCULATOR ============ */
+function calcStockBeta() {
+  var stockR = parseCsv(document.getElementById("stock-returns").value);
+  var mktR = parseCsv(document.getElementById("market-returns").value);
+  if (stockR.length < 3 || mktR.length < 3) { alert("Please enter at least 3 return values for each."); return; }
+  var n = Math.min(stockR.length, mktR.length);
+  stockR = stockR.slice(0, n);
+  mktR = mktR.slice(0, n);
+
+  var ms = mean(stockR);
+  var mm = mean(mktR);
+  var cov = covariance(stockR, mktR, ms, mm);
+  var varM = variance(mktR, mm);
+  var varS = variance(stockR, ms);
+  var beta = cov / varM;
+
+  var corr = cov / (Math.sqrt(varS) * Math.sqrt(varM));
+  var r2 = corr * corr;
+  var alpha = (ms - beta * mm) * 12;
+
+  document.getElementById("res-beta").textContent = beta.toFixed(4);
+  document.getElementById("res-r2").textContent = (r2 * 100).toFixed(2) + "%";
+  document.getElementById("res-alpha").textContent = (alpha >= 0 ? "+" : "") + alpha.toFixed(2) + "%";
+  document.getElementById("res-stock-avg").textContent = ms.toFixed(3) + "%";
+  document.getElementById("res-mkt-avg").textContent = mm.toFixed(3) + "%";
+  document.getElementById("res-obs").textContent = n;
+
+  var box = document.getElementById("stock-beta-result");
+  box.style.display = "block";
+  box.style.opacity = "1";
+
+  document.getElementById("res-alpha").style.color = alpha >= 0 ? "#10b981" : "#ef4444";
+}
+
+/* ============ QUICK BETA ESTIMATE ============ */
+function calcQuickBeta() {
+  var ss = parseFloat(document.getElementById("quick-stock-sd").value);
+  var sm = parseFloat(document.getElementById("quick-mkt-sd").value);
+  var corr = parseFloat(document.getElementById("quick-corr").value);
+  if (isNaN(ss) || isNaN(sm) || isNaN(corr) || sm === 0) { alert("Please enter valid values."); return; }
+
+  var ratio = ss / sm;
+  var beta = ratio * corr;
+
+  document.getElementById("quick-beta").textContent = beta.toFixed(4);
+  document.getElementById("quick-ratio").textContent = ratio.toFixed(3);
+  document.getElementById("quick-interp").textContent = interpretBeta(beta);
+
+  var box = document.getElementById("quick-result");
+  box.style.display = "block";
+  box.style.opacity = "1";
+}
+
+/* ============ PORTFOLIO BETA CALCULATOR ============ */
+function addRow() {
+  var container = document.getElementById("portfolio-rows");
+  if (container.children.length >= 10) { alert("Maximum 10 stocks."); return; }
+  var row = document.createElement("div");
+  row.className = "portfolio-row";
+  row.innerHTML = '<input type="text" placeholder="Ticker"><input type="number" placeholder="Weight %" step="0.1"><input type="number" placeholder="Beta" step="0.01"><button class="remove-btn" onclick="removeRow(this)">×</button>';
+  container.appendChild(row);
+}
+
+function removeRow(btn) {
+  var container = document.getElementById("portfolio-rows");
+  if (container.children.length <= 1) return;
+  btn.parentElement.remove();
+}
+
+function calcPortfolioBeta() {
+  var rows = document.getElementById("portfolio-rows").children;
+  var totalW = 0, totalBeta = 0, count = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var inputs = rows[i].querySelectorAll("input");
+    var w = parseFloat(inputs[1].value);
+    var b = parseFloat(inputs[2].value);
+    if (!isNaN(w) && !isNaN(b)) {
+      totalW += w;
+      totalBeta += (w / 100) * b;
+      count++;
+    }
+  }
+  if (count === 0) { alert("Please enter at least one stock."); return; }
+
+  var adjBeta = totalW > 0 ? totalBeta / (totalW / 100) : 0;
+
+  document.getElementById("pf-beta").textContent = adjBeta.toFixed(4);
+  document.getElementById("pf-weight").textContent = totalW.toFixed(1) + "%";
+  document.getElementById("pf-interp").textContent = interpretBeta(adjBeta);
+  document.getElementById("pf-count").textContent = count;
+
+  document.getElementById("pf-beta").style.color = adjBeta > 1.0 ? "#f97316" : (adjBeta < 0.8 ? "#10b981" : "#4a8fe7");
+
+  var box = document.getElementById("portfolio-result");
+  box.style.display = "block";
+  box.style.opacity = "1";
+}
+
+/* ============ GAUGE ============ */
+function updateGauge() {
+  var val = parseFloat(document.getElementById("gauge-input").value);
+  if (isNaN(val)) return;
+  var label = interpretBeta(val);
+  document.getElementById("gauge-label").textContent = label;
+
+  var pct;
+  if (val < 0) pct = Math.max(0, (1 + val) * 18.87);
+  else if (val < 0.5) pct = 18.87 + (val / 0.5) * 18.87;
+  else if (val < 1.0) pct = 37.74 + ((val - 0.5) / 0.5) * 18.87;
+  else if (val < 1.0001 && val > 0.9999) pct = 61.5;
+  else if (val < 1.5) pct = 62.0 + ((val - 1.0) / 0.5) * 18.87;
+  else pct = Math.min(100, 80.87 + ((val - 1.5) / 1.0) * 19.13);
+
+  document.getElementById("main-gauge-ptr").style.left = pct + "%";
+}
+
+document.getElementById("gauge-input").addEventListener("input", updateGauge);
+
+/* ============ FAQ TOGGLE ============ */
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var isOpen = item.className.indexOf("open") !== -1;
+  item.className = isOpen ? "faq-item" : "faq-item open";
+}
+
+/* ============ CHARTS ============ */
+document.addEventListener("DOMContentLoaded", function() {
+  /* Scatter: Beta vs Return */
+  var scatterCtx = document.getElementById("scatterChart").getContext("2d");
+  new Chart(scatterCtx, {
+    type: "scatter",
+    data: {
+      datasets: [
+        {
+          label: "Mag 7 Stocks",
+          data: [
+            { x: 1.20, y: 28.5, label: "AAPL" },
+            { x: 0.90, y: 25.2, label: "MSFT" },
+            { x: 1.70, y: 42.3, label: "NVDA" },
+            { x: 2.00, y: 38.1, label: "TSLA" },
+            { x: 1.10, y: 22.8, label: "AMZN" },
+            { x: 1.05, y: 21.5, label: "GOOGL" },
+            { x: 1.15, y: 26.4, label: "META" }
+          ],
+          backgroundColor: "rgba(74,143,231,0.8)",
+          borderColor: "#4a8fe7",
+          pointRadius: 8,
+          pointHoverRadius: 10
+        },
+        {
+          label: "Defensive Stocks",
+          data: [
+            { x: 0.50, y: 8.2, label: "JNJ" },
+            { x: 0.40, y: 7.5, label: "PG" },
+            { x: 0.35, y: 9.1, label: "KO" },
+            { x: 0.30, y: 8.8, label: "NEE" },
+            { x: 0.65, y: 10.4, label: "PFE" }
+          ],
+          backgroundColor: "rgba(16,185,129,0.8)",
+          borderColor: "#10b981",
+          pointRadius: 8,
+          pointHoverRadius: 10
+        },
+        {
+          label: "High Beta",
+          data: [
+            { x: 1.80, y: 18.5, label: "COIN" },
+            { x: 1.65, y: 15.2, label: "ROKU" },
+            { x: 1.55, y: 12.8, label: "SQ" }
+          ],
+          backgroundColor: "rgba(239,68,68,0.8)",
+          borderColor: "#ef4444",
+          pointRadius: 8,
+          pointHoverRadius: 10
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              var d = ctx.raw;
+              return (d.label || "") + ": Beta " + d.x + ", Return " + d.y + "%";
+            }
+          }
+        },
+        legend: { labels: { color: "#9aa0a6" } }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Beta (β)", color: "#9aa0a6" },
+          grid: { color: "rgba(255,255,255,0.06)" },
+          ticks: { color: "#9aa0a6" }
+        },
+        y: {
+          title: { display: true, text: "Annualized Return (%)", color: "#9aa0a6" },
+          grid: { color: "rgba(255,255,255,0.06)" },
+          ticks: { color: "#9aa0a6" }
+        }
+      }
+    }
+  });
+
+  /* Bar: Sector Betas */
+  var sectorCtx = document.getElementById("sectorChart").getContext("2d");
+  var sectorLabels = ["Technology", "Financials", "Energy", "Industrials", "Healthcare", "Cons. Disc.", "Comm. Svc.", "Materials", "Real Estate", "Cons. Staples", "Utilities"];
+  var sectorBetas = [1.20, 1.10, 1.10, 1.05, 0.80, 1.15, 0.95, 1.00, 0.75, 0.60, 0.40];
+  var sectorColors = sectorBetas.map(function(b) {
+    if (b >= 1.2) return "rgba(239,68,68,0.7)";
+    if (b >= 1.0) return "rgba(249,115,22,0.7)";
+    if (b >= 0.8) return "rgba(74,143,231,0.7)";
+    return "rgba(16,185,129,0.7)";
+  });
+
+  new Chart(sectorCtx, {
+    type: "bar",
+    data: {
+      labels: sectorLabels,
+      datasets: [{
+        label: "Average Beta",
+        data: sectorBetas,
+        backgroundColor: sectorColors,
+        borderColor: sectorColors.map(function(c) { return c.replace("0.7", "1"); }),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: "y",
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return "Beta: " + ctx.raw.toFixed(2); }
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Beta (β)", color: "#9aa0a6" },
+          grid: { color: "rgba(255,255,255,0.06)" },
+          ticks: { color: "#9aa0a6" },
+          min: 0,
+          max: 1.5
+        },
+        y: {
+          grid: { color: "rgba(255,255,255,0.04)" },
+          ticks: { color: "#9aa0a6" }
+        }
+      }
+    }
+  });
+});
+</script>
+
+</SiteLayout>
