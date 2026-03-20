@@ -1,0 +1,510 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Revenue Growth Calculator — YoY, CAGR & Revenue Projector", description: "Calculate revenue growth rate, CAGR, and project future revenue. Learn what revenue is, revenue vs profit vs income, gross vs net revenue, and key formulas.", category: "study", published: "2026-03-20" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Revenue Growth Calculator — YoY, CAGR & Revenue Projector",
+      "description": "Calculate revenue growth rate, CAGR, and project future revenue. Understand revenue vs profit vs income with interactive tools and visual breakdowns.",
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "datePublished": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is revenue?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Revenue is the total income a business earns from its core operations—selling goods or services—before any expenses are deducted. It sits at the top of the income statement and is often called the 'top line.'" }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between revenue and profit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Revenue is the total money earned from sales, while profit is what remains after subtracting all expenses. Gross profit deducts cost of goods sold (COGS), operating profit deducts operating expenses, and net profit (net income) deducts all expenses including taxes and interest." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you calculate revenue growth rate?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Revenue growth rate = ((Revenue Year 2 - Revenue Year 1) / Revenue Year 1) × 100. For multi-year periods, use CAGR: ((Ending Revenue / Starting Revenue) ^ (1 / Number of Years)) - 1." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between gross revenue and net revenue?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Gross revenue is the total sales before any deductions. Net revenue subtracts returns, discounts, and allowances from gross revenue. Net revenue gives a more accurate picture of money actually retained from sales." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good revenue growth rate?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A 'good' revenue growth rate depends on industry and company stage. Mature companies typically see 5–15% annual growth. High-growth startups may exceed 50–100%+ per year. The S&P 500 median revenue growth is roughly 5–8% annually." }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout
+  title={meta.title}
+  description={meta.description}
+  site="westmount"
+  canonical="https://westmountfundamentals.com/revenue-growth-calculator/"
+  schema={schema}
+>
+  <style>
+    :root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --bg-card: #0d1117; --border: #30363d; }
+    .hero { text-align: center; padding: 3rem 1rem 2rem; background: linear-gradient(135deg, rgba(74,143,231,0.08), rgba(74,143,231,0.02)); border-bottom: 1px solid rgba(74,143,231,0.15); }
+    .hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #e8eaed; }
+    .hero .subtitle { color: #9aa0a6; font-size: 1.1rem; max-width: 720px; margin: 0 auto 1.5rem; }
+    .stat-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+    .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem 1.5rem; min-width: 150px; text-align: center; }
+    .stat-card .val { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .stat-card .lbl { font-size: 0.78rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+    .content-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .section { margin-bottom: 3rem; }
+    .section h2 { font-size: 1.6rem; color: #e8eaed; margin-bottom: 1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block; }
+    .section h3 { font-size: 1.2rem; color: #c9d1d9; margin: 1.5rem 0 0.75rem; }
+    .section p, .section li { color: #9aa0a6; line-height: 1.7; }
+    .section ul { padding-left: 1.2rem; }
+    .section li { margin-bottom: 0.4rem; }
+    .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .calc-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .calc-box h3 { color: var(--accent); margin-top: 0; font-size: 1.15rem; }
+    .calc-box label { display: block; color: #c9d1d9; font-size: 0.88rem; margin-bottom: 0.3rem; margin-top: 0.8rem; }
+    .calc-box input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; color: #e8eaed; font-size: 1rem; box-sizing: border-box; }
+    .calc-box button { margin-top: 1rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.65rem 1.5rem; font-size: 0.95rem; cursor: pointer; font-weight: 600; }
+    .calc-box button:hover { opacity: 0.85; }
+    .calc-result { margin-top: 1rem; padding: 0.8rem 1rem; background: rgba(74,143,231,0.08); border: 1px solid rgba(74,143,231,0.2); border-radius: 8px; color: #e8eaed; font-size: 1.1rem; font-weight: 600; min-height: 1.5em; }
+    .proj-table-wrap { max-height: 300px; overflow-y: auto; margin-top: 1rem; }
+    .proj-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .proj-table th, .proj-table td { padding: 0.5rem 0.8rem; text-align: right; border-bottom: 1px solid var(--border); }
+    .proj-table th { color: var(--accent); font-weight: 600; position: sticky; top: 0; background: var(--bg-card); }
+    .proj-table td { color: #c9d1d9; }
+    .proj-table td:first-child, .proj-table th:first-child { text-align: left; }
+    .chart-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+    .chart-wrap canvas { max-height: 380px; }
+    .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+    .comp-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+    .comp-card h4 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+    .comp-card .tag { display: inline-block; font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: 600; margin-bottom: 0.5rem; }
+    .comp-card p { color: #9aa0a6; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+    .tag-blue { background: rgba(74,143,231,0.15); color: var(--accent); }
+    .tag-green { background: rgba(16,185,129,0.15); color: var(--positive); }
+    .tag-purple { background: rgba(168,85,247,0.15); color: #a855f7; }
+    .term-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .term-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; }
+    .term-card h4 { color: var(--accent); margin: 0 0 0.4rem; font-size: 1rem; }
+    .term-card p { color: #9aa0a6; font-size: 0.88rem; line-height: 1.6; margin: 0; }
+    .insight-list { list-style: none; padding: 0; counter-reset: ins; }
+    .insight-list li { counter-increment: ins; padding: 1rem 1rem 1rem 3.2rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.8rem; position: relative; color: #c9d1d9; line-height: 1.6; }
+    .insight-list li::before { content: counter(ins); position: absolute; left: 1rem; top: 1rem; width: 1.6rem; height: 1.6rem; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+    .faq-item summary { color: #e8eaed; font-weight: 600; cursor: pointer; font-size: 1.05rem; }
+    .faq-item p { color: #9aa0a6; margin: 0.5rem 0 0; line-height: 1.7; }
+    .formula-box { background: rgba(74,143,231,0.06); border: 1px solid rgba(74,143,231,0.15); border-radius: 8px; padding: 1rem 1.2rem; margin: 0.8rem 0; font-family: monospace; color: #e8eaed; font-size: 0.95rem; }
+    @media(max-width:600px) {
+      .hero h1 { font-size: 1.5rem; }
+      .calc-grid { grid-template-columns: 1fr; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .stat-card { min-width: 120px; padding: 0.8rem 1rem; }
+      .stat-card .val { font-size: 1.4rem; }
+    }
+  </style>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Revenue Growth Calculator</h1>
+    <p class="subtitle">Calculate year-over-year growth, CAGR, and project future revenue. Understand the difference between revenue, profit, and income with interactive tools.</p>
+    <div class="stat-row">
+      <div class="stat-card"><div class="val">$31.7T</div><div class="lbl">S&P 500 Total Revenue</div></div>
+      <div class="stat-card"><div class="val">5.8%</div><div class="lbl">Median Revenue Growth</div></div>
+      <div class="stat-card"><div class="val">11.2%</div><div class="lbl">Avg Net Margin</div></div>
+      <div class="stat-card"><div class="val">3 Tools</div><div class="lbl">Free Calculators</div></div>
+    </div>
+  </section>
+
+  <div class="content-wrap">
+
+    <!-- What is Revenue -->
+    <section class="section" id="what-is-revenue">
+      <h2>What Is Revenue?</h2>
+      <p>Revenue is the total amount of money a business earns from its primary operations — selling goods, providing services, or collecting subscription fees — before any costs or expenses are subtracted. Often called the <strong>"top line"</strong> because it appears first on the income statement, revenue is the starting point for all profitability analysis.</p>
+      <p>The basic <strong>revenue formula</strong> is straightforward:</p>
+      <div class="formula-box">Revenue = Price per Unit × Number of Units Sold</div>
+      <p>For service businesses, it becomes:</p>
+      <div class="formula-box">Revenue = Number of Customers × Average Revenue per Customer</div>
+      <p>Revenue tells you the scale of a business — how much demand exists for its products. But revenue alone doesn't tell you if a company is profitable. That's where understanding the difference between <strong>revenue vs profit</strong> and <strong>revenue vs income</strong> becomes critical.</p>
+    </section>
+
+    <!-- Calculators -->
+    <section class="section" id="calculators">
+      <h2>Revenue Growth Calculators</h2>
+      <div class="calc-grid">
+        <!-- YoY Calculator -->
+        <div class="calc-box">
+          <h3>📈 Year-over-Year Growth Rate</h3>
+          <p style="color:#9aa0a6;font-size:0.85rem;margin:0 0 0.5rem;">Calculate the percentage change in revenue between two years.</p>
+          <label for="yoy-r1">Revenue Year 1 ($)</label>
+          <input type="text" id="yoy-r1" placeholder="e.g. 500000" />
+          <label for="yoy-r2">Revenue Year 2 ($)</label>
+          <input type="text" id="yoy-r2" placeholder="e.g. 650000" />
+          <button onclick="calcYoY()">Calculate Growth</button>
+          <div class="calc-result" id="yoy-result">—</div>
+          <div class="formula-box" style="margin-top:0.8rem;font-size:0.82rem;">Growth Rate = ((Year 2 − Year 1) / Year 1) × 100</div>
+        </div>
+
+        <!-- CAGR Calculator -->
+        <div class="calc-box">
+          <h3>📊 Multi-Year CAGR</h3>
+          <p style="color:#9aa0a6;font-size:0.85rem;margin:0 0 0.5rem;">Compound Annual Growth Rate over multiple years.</p>
+          <label for="cagr-start">Starting Revenue ($)</label>
+          <input type="text" id="cagr-start" placeholder="e.g. 1000000" />
+          <label for="cagr-end">Ending Revenue ($)</label>
+          <input type="text" id="cagr-end" placeholder="e.g. 2500000" />
+          <label for="cagr-years">Number of Years</label>
+          <input type="text" id="cagr-years" placeholder="e.g. 5" />
+          <button onclick="calcCAGR()">Calculate CAGR</button>
+          <div class="calc-result" id="cagr-result">—</div>
+          <div class="formula-box" style="margin-top:0.8rem;font-size:0.82rem;">CAGR = (Ending / Starting)^(1/Years) − 1</div>
+        </div>
+
+        <!-- Revenue Projector -->
+        <div class="calc-box" style="grid-column: 1 / -1;">
+          <h3>🔮 Revenue Projector</h3>
+          <p style="color:#9aa0a6;font-size:0.85rem;margin:0 0 0.5rem;">Project future revenue based on a constant growth rate.</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.8rem;">
+            <div>
+              <label for="proj-rev">Current Revenue ($)</label>
+              <input type="text" id="proj-rev" placeholder="e.g. 1000000" />
+            </div>
+            <div>
+              <label for="proj-rate">Annual Growth Rate (%)</label>
+              <input type="text" id="proj-rate" placeholder="e.g. 15" />
+            </div>
+            <div>
+              <label for="proj-years">Years to Project</label>
+              <input type="text" id="proj-years" placeholder="e.g. 10" />
+            </div>
+          </div>
+          <button onclick="calcProjection()">Project Revenue</button>
+          <div class="proj-table-wrap" id="proj-table-wrap" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projection Chart -->
+    <div class="chart-wrap" id="proj-chart-wrap" style="display:none;">
+      <h3 style="color:#e8eaed;margin-top:0;">Revenue Projection</h3>
+      <canvas id="projChart"></canvas>
+    </div>
+
+    <!-- Revenue vs Profit vs Income -->
+    <section class="section" id="revenue-vs-profit">
+      <h2>Revenue vs Profit vs Income</h2>
+      <p>One of the most common questions in finance: <strong>what is the difference between revenue, profit, and income?</strong> While often used interchangeably in casual conversation, they represent fundamentally different stages on the income statement.</p>
+      <div class="comparison-grid">
+        <div class="comp-card">
+          <span class="tag tag-blue">Top Line</span>
+          <h4 style="color:var(--accent);">Revenue (Sales)</h4>
+          <p>Total money earned from core business operations before any deductions. Also called <strong>gross revenue</strong> or <strong>sales</strong>. This is the broadest measure of business activity — it tells you how much demand exists but nothing about efficiency or profitability.</p>
+        </div>
+        <div class="comp-card">
+          <span class="tag tag-green">Middle Line</span>
+          <h4 style="color:var(--positive);">Profit (Gross &amp; Operating)</h4>
+          <p><strong>Gross Profit</strong> = Revenue − COGS. <strong>Operating Profit</strong> = Gross Profit − Operating Expenses. Profit measures how efficiently a company converts revenue into earnings at various stages. The <strong>revenue vs earnings</strong> distinction matters because earnings factor in costs that revenue ignores.</p>
+        </div>
+        <div class="comp-card">
+          <span class="tag tag-purple">Bottom Line</span>
+          <h4 style="color:#a855f7;">Net Income</h4>
+          <p>The final profit after ALL expenses: COGS, operating costs, interest, taxes, and one-time charges. This is the <strong>"bottom line"</strong> — the actual money a company keeps. When people compare <strong>revenue vs income</strong>, net income is usually what they mean by "income."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Waterfall Chart -->
+    <section class="section">
+      <h2>From Revenue to Net Income — Visual Breakdown</h2>
+      <p>See how revenue flows through costs and expenses to arrive at net income. This waterfall-style chart shows each deduction step for a hypothetical company with $10M in revenue.</p>
+      <div class="chart-wrap">
+        <canvas id="waterfallChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Revenue Terminology Guide -->
+    <section class="section" id="terminology">
+      <h2>Revenue Terminology Guide</h2>
+      <p>Understanding the nuances between different revenue types is essential for accurate financial analysis.</p>
+      <div class="term-grid">
+        <div class="term-card">
+          <h4>Gross Revenue</h4>
+          <p>The total sales figure before any deductions for returns, discounts, or allowances. It represents the maximum revenue a business generated. Investors start here to gauge raw demand, but it can overstate actual cash received.</p>
+        </div>
+        <div class="term-card">
+          <h4>Net Revenue</h4>
+          <p>Gross revenue minus returns, discounts, and allowances. This is the revenue that actually sticks — the money a company truly earned from customers. Most income statements report net revenue as the top line.</p>
+        </div>
+        <div class="term-card">
+          <h4>Recurring Revenue</h4>
+          <p>Revenue that a company can expect to receive on a regular basis — subscriptions, contracts, retainers. It's the most predictable and valuable type of revenue because it provides visibility into future cash flows.</p>
+        </div>
+        <div class="term-card">
+          <h4>ARR (Annual Recurring Revenue)</h4>
+          <p>The annualized value of recurring subscription revenue. If a SaaS company has $5M in monthly subscriptions, its ARR is $60M. ARR is the gold-standard metric for valuing subscription businesses.</p>
+        </div>
+        <div class="term-card">
+          <h4>MRR (Monthly Recurring Revenue)</h4>
+          <p>The monthly equivalent of ARR. Useful for tracking short-term momentum and churn. MRR = ARR / 12. Investors watch MRR growth to assess whether a subscription business is accelerating or decelerating.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Insights -->
+    <section class="section" id="insights">
+      <h2>5 Key Revenue Insights</h2>
+      <ol class="insight-list">
+        <li><strong>Revenue growth is the strongest predictor of stock performance</strong> — Companies in the top quartile of revenue growth outperform the S&P 500 by an average of 8.3% annually. Consistent top-line growth signals real demand and pricing power.</li>
+        <li><strong>The revenue growth rate matters more than absolute size</strong> — A $50M company growing at 40% is often more valuable than a $500M company growing at 3%. Growth rate drives valuation multiples, which is why high-growth SaaS companies trade at 15–30x revenue.</li>
+        <li><strong>Net revenue retention above 120% is a superpower</strong> — When existing customers spend more over time (expansion revenue), a company can grow even without new customer acquisition. This metric separates good businesses from great ones.</li>
+        <li><strong>Revenue quality matters as much as quantity</strong> — Recurring revenue (subscriptions, contracts) is worth 2–4x more than one-time sales in valuation terms. A company with $10M ARR is typically valued higher than one with $15M in project-based revenue.</li>
+        <li><strong>The gap between revenue and net income reveals efficiency</strong> — Two companies with identical $1B revenue can have vastly different net incomes ($50M vs $200M). Tracking how revenue converts to profit tells you about competitive moats, cost discipline, and scalability.</li>
+      </ol>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>What is revenue?</summary>
+        <p>Revenue is the total income a business earns from its core operations — selling goods or services — before any expenses are deducted. It sits at the top of the income statement and is often called the "top line." Revenue tells you the scale of a business but not whether it's profitable.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is the difference between revenue and profit?</summary>
+        <p>Revenue is the total money earned from sales. Profit is what remains after subtracting costs. Gross profit = Revenue − Cost of Goods Sold (COGS). Operating profit = Gross Profit − Operating Expenses. Net profit (net income) = Operating Profit − Interest − Taxes. Revenue measures scale; profit measures efficiency.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How do you calculate revenue growth rate?</summary>
+        <p>For year-over-year growth: ((Revenue Year 2 − Revenue Year 1) / Revenue Year 1) × 100. For multi-year compound growth, use CAGR: ((Ending Revenue / Starting Revenue) ^ (1 / Number of Years)) − 1. CAGR smooths out volatility and gives the average annual growth rate.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is the difference between gross revenue and net revenue?</summary>
+        <p>Gross revenue is total sales before any deductions. Net revenue = Gross Revenue − Returns − Discounts − Allowances. Net revenue gives a more accurate picture of money actually retained from sales. Most financial statements report net revenue as the top line.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is a good revenue growth rate?</summary>
+        <p>It depends on industry and company maturity. Mature large-cap companies typically grow revenue 5–15% annually. High-growth startups may exceed 50–100%+ per year. The S&P 500 median revenue growth is roughly 5–8% annually. For SaaS companies, the "Rule of 40" suggests growth rate + profit margin should exceed 40%.</p>
+      </details>
+    </section>
+
+  </div>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    function parseNum(id) {
+      var el = document.getElementById(id);
+      if (!el) return NaN;
+      var v = el.value.replace(/[^0-9.\-]/g, '');
+      return parseFloat(v);
+    }
+
+    function fmt(n) {
+      if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+      if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+      if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+      if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+      return '$' + n.toFixed(2);
+    }
+
+    function calcYoY() {
+      var r1 = parseNum('yoy-r1');
+      var r2 = parseNum('yoy-r2');
+      var el = document.getElementById('yoy-result');
+      if (isNaN(r1) || isNaN(r2) || r1 === 0) { el.textContent = 'Please enter valid numbers (Year 1 cannot be 0).'; return; }
+      var growth = ((r2 - r1) / Math.abs(r1)) * 100;
+      var color = growth >= 0 ? 'var(--positive)' : 'var(--negative)';
+      el.innerHTML = 'YoY Growth Rate: <span style="color:' + color + '">' + growth.toFixed(2) + '%</span>';
+    }
+
+    function calcCAGR() {
+      var s = parseNum('cagr-start');
+      var e = parseNum('cagr-end');
+      var y = parseNum('cagr-years');
+      var el = document.getElementById('cagr-result');
+      if (isNaN(s) || isNaN(e) || isNaN(y) || s <= 0 || e <= 0 || y <= 0) { el.textContent = 'Please enter valid positive numbers.'; return; }
+      var cagr = (Math.pow(e / s, 1 / y) - 1) * 100;
+      var color = cagr >= 0 ? 'var(--positive)' : 'var(--negative)';
+      el.innerHTML = 'CAGR: <span style="color:' + color + '">' + cagr.toFixed(2) + '%</span>';
+    }
+
+    var projChartInstance = null;
+
+    function calcProjection() {
+      var rev = parseNum('proj-rev');
+      var rate = parseNum('proj-rate');
+      var years = parseNum('proj-years');
+      if (isNaN(rev) || isNaN(rate) || isNaN(years) || rev <= 0 || years <= 0 || years > 50) {
+        alert('Please enter valid inputs (max 50 years).');
+        return;
+      }
+      var data = [];
+      var labels = [];
+      var values = [];
+      var current = rev;
+      var multiplier = 1 + (rate / 100);
+      for (var i = 0; i <= years; i++) {
+        var yr = i === 0 ? 'Base' : 'Year ' + i;
+        var growth = i === 0 ? 0 : ((current - rev * Math.pow(multiplier, i - 1)) / (rev * Math.pow(multiplier, i - 1))) * 100;
+        data.push({ year: yr, revenue: current, cumGrowth: ((current / rev) - 1) * 100 });
+        labels.push(yr);
+        values.push(current);
+        current = current * multiplier;
+      }
+      /* Table */
+      var html = '<table class="proj-table"><thead><tr><th>Year</th><th>Projected Revenue</th><th>Cumulative Growth</th></tr></thead><tbody>';
+      for (var j = 0; j < data.length; j++) {
+        html += '<tr><td>' + data[j].year + '</td><td>' + fmt(data[j].revenue) + '</td><td>' + data[j].cumGrowth.toFixed(1) + '%</td></tr>';
+      }
+      html += '</tbody></table>';
+      var tw = document.getElementById('proj-table-wrap');
+      tw.innerHTML = html;
+      tw.style.display = 'block';
+      /* Chart */
+      var cw = document.getElementById('proj-chart-wrap');
+      cw.style.display = 'block';
+      var ctx = document.getElementById('projChart').getContext('2d');
+      if (projChartInstance) projChartInstance.destroy();
+      projChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Projected Revenue',
+            data: values,
+            borderColor: '#4a8fe7',
+            backgroundColor: 'rgba(74,143,231,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#4a8fe7',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#9aa0a6' } },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return fmt(ctx.parsed.y); }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: {
+              ticks: {
+                color: '#9aa0a6',
+                callback: function(v) { return fmt(v); }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
+    }
+
+    /* Waterfall Chart */
+    (function() {
+      var ctx = document.getElementById('waterfallChart');
+      if (!ctx) return;
+      var labels = ['Revenue', 'COGS', 'Gross Profit', 'OpEx', 'Operating Income', 'Tax & Interest', 'Net Income'];
+      var values = [10, -4, 6, -2.5, 3.5, -0.9, 2.6];
+      var running = [0, 10, 0, 6, 0, 3.5, 0];
+      /* Calculate bases for waterfall */
+      var bases = [];
+      var barColors = [];
+      var cumulative = 0;
+      for (var i = 0; i < values.length; i++) {
+        if (i === 0) {
+          bases.push(0);
+          cumulative = values[i];
+          barColors.push('#4a8fe7');
+        } else if (i === 2) {
+          bases.push(0);
+          cumulative = values[i];
+          barColors.push('#10b981');
+        } else if (i === 4) {
+          bases.push(0);
+          cumulative = values[i];
+          barColors.push('#10b981');
+        } else if (i === 6) {
+          bases.push(0);
+          barColors.push('#a855f7');
+        } else {
+          cumulative = cumulative + values[i];
+          bases.push(cumulative);
+          barColors.push('#ef4444');
+        }
+      }
+      /* Recalculate properly for waterfall */
+      var waterfallBases = [0, 6, 0, 3.5, 0, 2.6, 0];
+      var waterfallValues = [10, 4, 6, 2.5, 3.5, 0.9, 2.6];
+      var waterfallColors = ['#4a8fe7', '#ef4444', '#10b981', '#ef4444', '#10b981', '#ef4444', '#a855f7'];
+
+      new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Base',
+              data: waterfallBases,
+              backgroundColor: 'transparent',
+              borderWidth: 0,
+              barPercentage: 0.6
+            },
+            {
+              label: 'Amount',
+              data: waterfallValues,
+              backgroundColor: waterfallColors,
+              borderWidth: 0,
+              barPercentage: 0.6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(c) {
+                  if (c.datasetIndex === 0) return '';
+                  var lbl = c.label || '';
+                  var val = c.parsed.y;
+                  return lbl + ': $' + val.toFixed(1) + 'M';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              ticks: { color: '#9aa0a6' },
+              grid: { display: false }
+            },
+            y: {
+              stacked: true,
+              ticks: {
+                color: '#9aa0a6',
+                callback: function(v) { return '$' + v + 'M'; }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
+    })();
+  </script>
+</SiteLayout>

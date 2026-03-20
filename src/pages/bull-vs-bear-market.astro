@@ -1,0 +1,671 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+export const meta = {
+  title: 'Bull vs Bear Market: Definition, History & Current Status (2026)',
+  description: 'What is a bull market vs bear market? Interactive gauge showing current S&P 500 status, complete historical timeline since 1950, charts, strategies, and key statistics.',
+  category: 'study',
+  published: '2026-03-20',
+};
+
+const faqItems = [
+  {
+    question: 'What is a bull market?',
+    answer: 'A bull market is a period when stock prices rise 20% or more from a recent low. Bull markets are characterized by investor optimism, economic growth, and rising corporate earnings. The average bull market since 1950 has lasted about 4.4 years with a cumulative return of +155%.',
+  },
+  {
+    question: 'What is a bear market?',
+    answer: 'A bear market is a decline of 20% or more from a recent high in a broad market index like the S&P 500. Bear markets are driven by economic slowdowns, rising interest rates, or external shocks. The average bear market since 1950 has lasted about 11.3 months with an average loss of -34%.',
+  },
+  {
+    question: 'Are we currently in a bull or bear market?',
+    answer: 'As of early 2026, the S&P 500 is trading near 5,600. Based on its proximity to the 52-week high of approximately 6,144, the market is in a correction phase — down roughly 8-9% from its peak. A bear market would require a decline of 20% or more from the high.',
+  },
+  {
+    question: 'How long do bull and bear markets typically last?',
+    answer: 'Since 1950, the average bull market has lasted about 4.4 years (52 months) while the average bear market has lasted about 11.3 months. The longest bull market ran from 2009 to 2020 (131 months), and the shortest bear market was the COVID crash of 2020 (just 1 month).',
+  },
+  {
+    question: 'What should investors do during a bear market?',
+    answer: 'During a bear market, common strategies include dollar-cost averaging into quality stocks at lower prices, rebalancing your portfolio, avoiding panic selling, and maintaining an emergency fund. Historically, every bear market has been followed by a bull market, rewarding patient long-term investors.',
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(function(item) {
+    return {
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer,
+      },
+    };
+  }),
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": "2026-03-20",
+  "dateModified": "2026-03-20",
+  "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Westmount Fundamentals",
+    "url": "https://westmountfundamentals.com",
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://westmountfundamentals.com/bull-vs-bear-market/",
+  },
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/bull-vs-bear-market/"
+  schema={[faqSchema, articleSchema]}
+>
+  <style>
+    .bb-hero { text-align:center; padding:3rem 1rem 2rem; background:linear-gradient(135deg,rgba(74,143,231,0.08),rgba(74,143,231,0.02)); border-bottom:1px solid rgba(74,143,231,0.15); }
+    .bb-hero h1 { font-size:2.2rem; margin-bottom:0.5rem; color:#e8eaed; line-height:1.2; }
+    .bb-hero .subtitle { color:#9aa0a6; font-size:1.1rem; max-width:720px; margin:0 auto 1.5rem; }
+
+    .stat-row { display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap; margin:1.5rem auto; max-width:900px; }
+    .stat-card { background:rgba(255,255,255,0.05); border:1px solid #30363d; border-radius:12px; padding:1rem 1.5rem; min-width:170px; flex:1; text-align:center; }
+    .stat-card .stat-value { font-size:1.8rem; font-weight:700; color:#4a8fe7; }
+    .stat-card .stat-label { font-size:0.78rem; color:#9aa0a6; text-transform:uppercase; letter-spacing:0.05em; margin-top:0.25rem; }
+    .stat-card.positive .stat-value { color:#10b981; }
+    .stat-card.negative .stat-value { color:#ef4444; }
+
+    .bb-section { max-width:900px; margin:0 auto; padding:2.5rem 1rem; }
+    .bb-section h2 { font-size:1.6rem; color:#e8eaed; margin-bottom:1rem; border-bottom:2px solid #4a8fe7; padding-bottom:0.5rem; display:inline-block; }
+    .bb-section h3 { font-size:1.2rem; color:#e8eaed; margin:1.5rem 0 0.75rem; }
+    .bb-section p, .bb-section li { color:#c9d1d9; line-height:1.7; font-size:1rem; }
+    .bb-section ul, .bb-section ol { padding-left:1.5rem; margin:0.75rem 0; }
+    .bb-section li { margin-bottom:0.4rem; }
+
+    /* Gauge */
+    .gauge-wrap { text-align:center; margin:2rem auto; max-width:400px; }
+    .gauge-svg { width:100%; max-width:320px; }
+    .gauge-label { font-size:1.4rem; font-weight:700; margin-top:0.5rem; }
+    .gauge-detail { color:#9aa0a6; font-size:0.9rem; margin-top:0.25rem; }
+
+    /* Comparison table */
+    .compare-table { width:100%; border-collapse:collapse; margin:1.5rem 0; }
+    .compare-table th, .compare-table td { padding:0.75rem 1rem; text-align:left; border-bottom:1px solid #30363d; color:#c9d1d9; font-size:0.95rem; }
+    .compare-table th { color:#9aa0a6; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; background:rgba(255,255,255,0.03); }
+    .compare-table .bull-col { color:#10b981; font-weight:600; }
+    .compare-table .bear-col { color:#ef4444; font-weight:600; }
+
+    /* Chart containers */
+    .chart-wrap { background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:1.5rem; margin:1.5rem 0; overflow-x:auto; }
+    .chart-wrap canvas { max-width:100%; }
+
+    /* Timeline */
+    .timeline { position:relative; padding-left:2rem; margin:1.5rem 0; }
+    .timeline::before { content:''; position:absolute; left:0.5rem; top:0; bottom:0; width:2px; background:#30363d; }
+    .tl-item { position:relative; margin-bottom:1.2rem; }
+    .tl-item::before { content:''; position:absolute; left:-1.65rem; top:0.4rem; width:12px; height:12px; border-radius:50%; }
+    .tl-item.bull::before { background:#10b981; }
+    .tl-item.bear::before { background:#ef4444; }
+    .tl-item .tl-period { font-weight:700; color:#e8eaed; font-size:0.95rem; }
+    .tl-item .tl-detail { color:#9aa0a6; font-size:0.85rem; }
+    .tl-item.bull .tl-period { color:#10b981; }
+    .tl-item.bear .tl-period { color:#ef4444; }
+
+    /* Strategy cards */
+    .strat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.5rem 0; }
+    .strat-card { background:rgba(255,255,255,0.03); border:1px solid #30363d; border-radius:12px; padding:1.5rem; }
+    .strat-card h3 { margin-top:0; font-size:1.1rem; }
+    .strat-card.bull-strat { border-top:3px solid #10b981; }
+    .strat-card.bear-strat { border-top:3px solid #ef4444; }
+    .strat-card.bull-strat h3 { color:#10b981; }
+    .strat-card.bear-strat h3 { color:#ef4444; }
+
+    /* Insights */
+    .insight-list { list-style:none; padding:0; }
+    .insight-list li { background:rgba(74,143,231,0.06); border-left:3px solid #4a8fe7; padding:0.75rem 1rem; margin-bottom:0.75rem; border-radius:0 8px 8px 0; }
+
+    /* FAQ */
+    .faq-item { border:1px solid #30363d; border-radius:10px; margin-bottom:0.75rem; overflow:hidden; }
+    .faq-q { background:rgba(255,255,255,0.03); padding:1rem 1.25rem; cursor:pointer; color:#e8eaed; font-weight:600; font-size:1rem; display:flex; justify-content:space-between; align-items:center; }
+    .faq-q::after { content:'+'; font-size:1.3rem; color:#4a8fe7; transition:transform 0.2s; }
+    .faq-q.open::after { content:'\2212'; }
+    .faq-a { padding:0 1.25rem 1rem; color:#c9d1d9; line-height:1.7; display:none; }
+    .faq-a.open { display:block; }
+
+    @media(max-width:640px) {
+      .bb-hero h1 { font-size:1.5rem; }
+      .stat-card { min-width:140px; padding:0.75rem 1rem; }
+      .stat-card .stat-value { font-size:1.4rem; }
+      .strat-grid { grid-template-columns:1fr; }
+      .compare-table { font-size:0.85rem; }
+      .compare-table th, .compare-table td { padding:0.5rem 0.6rem; }
+    }
+  </style>
+
+  <!-- Hero -->
+  <section class="bb-hero">
+    <h1>Bull vs Bear Market: Complete Guide</h1>
+    <p class="subtitle">What defines a bull market and bear market? Interactive tools, historical data since 1950, and strategies for every market cycle.</p>
+  </section>
+
+  <!-- Stat Cards -->
+  <div class="stat-row">
+    <div class="stat-card" id="status-card">
+      <div class="stat-value" id="status-val">—</div>
+      <div class="stat-label">Current Market Status</div>
+    </div>
+    <div class="stat-card positive">
+      <div class="stat-value">131 mo</div>
+      <div class="stat-label">Longest Bull Market</div>
+    </div>
+    <div class="stat-card negative">
+      <div class="stat-value">-34%</div>
+      <div class="stat-label">Avg Bear Market Loss</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Bear Markets Since 1950</div>
+    </div>
+  </div>
+
+  <!-- Gauge: Are We In a Bull or Bear Market? -->
+  <section class="bb-section">
+    <h2>Are We In a Bull or Bear Market?</h2>
+    <p>The gauge below shows the current S&P 500 drawdown from its 52-week high. A drawdown under 10% suggests a <strong>bull market</strong>, 10-20% indicates a <strong>correction</strong>, and over 20% signals a <strong>bear market</strong>.</p>
+    <div class="gauge-wrap">
+      <svg class="gauge-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background arc -->
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#30363d" stroke-width="14" stroke-linecap="round"/>
+        <!-- Green zone: 0-10% (left portion) -->
+        <path d="M 20 100 A 80 80 0 0 1 60 32" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+        <!-- Yellow zone: 10-20% (middle) -->
+        <path d="M 60 32 A 80 80 0 0 1 140 32" fill="none" stroke="#eab308" stroke-width="14" opacity="0.3"/>
+        <!-- Red zone: 20%+ (right) -->
+        <path d="M 140 32 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+        <!-- Needle -->
+        <line id="gauge-needle" x1="100" y1="100" x2="100" y2="28" stroke="#e8eaed" stroke-width="2.5" stroke-linecap="round" transform="rotate(0, 100, 100)"/>
+        <circle cx="100" cy="100" r="5" fill="#e8eaed"/>
+        <!-- Labels -->
+        <text x="18" y="116" fill="#10b981" font-size="7" font-weight="600">Bull</text>
+        <text x="88" y="18" fill="#eab308" font-size="7" font-weight="600">Corr.</text>
+        <text x="168" y="116" fill="#ef4444" font-size="7" font-weight="600">Bear</text>
+      </svg>
+      <div class="gauge-label" id="gauge-label">—</div>
+      <div class="gauge-detail" id="gauge-detail">S&amp;P 500 drawdown from 52-week high</div>
+    </div>
+  </section>
+
+  <!-- What is a Bull Market -->
+  <section class="bb-section">
+    <h2>What Is a Bull Market?</h2>
+    <p>A <strong>bull market</strong> is defined as a sustained period during which stock prices rise <strong>20% or more</strong> from a recent low. Bull markets are driven by strong economic growth, rising corporate earnings, low unemployment, and investor confidence. The term "bullish" describes an optimistic outlook on stock prices.</p>
+    <p>Since 1950, there have been <strong>13 bull markets</strong> in the S&amp;P 500. The average bull market has lasted approximately <strong>4.4 years (52 months)</strong> and delivered a cumulative return of <strong>+155%</strong>. The longest bull run in history stretched from March 2009 to February 2020 — lasting an extraordinary 131 months with a total gain of +400%.</p>
+    <h3>Key Characteristics of a Bull Market</h3>
+    <ul>
+      <li><strong>Rising stock prices</strong> — broad indices gain 20%+ from recent lows</li>
+      <li><strong>Economic expansion</strong> — GDP growth, low unemployment, rising consumer spending</li>
+      <li><strong>High investor confidence</strong> — increased trading volume and IPO activity</li>
+      <li><strong>Falling or stable interest rates</strong> — accommodative monetary policy</li>
+      <li><strong>Strong corporate earnings</strong> — companies consistently beat expectations</li>
+    </ul>
+  </section>
+
+  <!-- What is a Bear Market -->
+  <section class="bb-section">
+    <h2>What Is a Bear Market?</h2>
+    <p>A <strong>bear market</strong> is defined as a decline of <strong>20% or more</strong> from a recent high in a major stock index like the S&amp;P 500. Bear markets are typically triggered by economic recessions, rising interest rates, geopolitical crises, or financial system shocks. The term "bearish" describes a pessimistic market outlook.</p>
+    <p>Since 1950, there have been <strong>12 bear markets</strong> in the S&amp;P 500. The average bear market has lasted approximately <strong>11.3 months</strong> with an average decline of <strong>-34%</strong>. The deepest bear market was the 2007-2009 financial crisis, which saw the S&amp;P 500 fall -57% over 17 months. The shortest was the COVID-19 crash of March 2020 — lasting just one month.</p>
+    <h3>Key Characteristics of a Bear Market</h3>
+    <ul>
+      <li><strong>Falling stock prices</strong> — broad indices decline 20%+ from recent highs</li>
+      <li><strong>Economic contraction</strong> — rising unemployment, falling GDP, reduced spending</li>
+      <li><strong>Investor fear and pessimism</strong> — flight to safe-haven assets like bonds and gold</li>
+      <li><strong>Rising volatility</strong> — VIX spikes, extreme daily swings</li>
+      <li><strong>Tightening credit conditions</strong> — banks restrict lending, spreads widen</li>
+    </ul>
+  </section>
+
+  <!-- Bull vs Bear Comparison Table -->
+  <section class="bb-section">
+    <h2>Bull vs Bear Market Comparison</h2>
+    <p>Here is a side-by-side comparison of the key differences between a bull market and a bear market based on S&amp;P 500 data since 1950.</p>
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Bull Market 📈</th>
+            <th>Bear Market 📉</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Definition</td>
+            <td class="bull-col">Rise of 20%+ from a low</td>
+            <td class="bear-col">Decline of 20%+ from a high</td>
+          </tr>
+          <tr>
+            <td>Average Duration</td>
+            <td class="bull-col">4.4 years (52 months)</td>
+            <td class="bear-col">11.3 months</td>
+          </tr>
+          <tr>
+            <td>Average Return</td>
+            <td class="bull-col">+155%</td>
+            <td class="bear-col">-34%</td>
+          </tr>
+          <tr>
+            <td>Occurrences Since 1950</td>
+            <td class="bull-col">13</td>
+            <td class="bear-col">12</td>
+          </tr>
+          <tr>
+            <td>Longest</td>
+            <td class="bull-col">131 months (2009–2020)</td>
+            <td class="bear-col">25 months (2000–2002)</td>
+          </tr>
+          <tr>
+            <td>Shortest</td>
+            <td class="bull-col">21 months (2020–2022)</td>
+            <td class="bear-col">1 month (2020)</td>
+          </tr>
+          <tr>
+            <td>Investor Sentiment</td>
+            <td class="bull-col">Optimistic / Greedy</td>
+            <td class="bear-col">Fearful / Pessimistic</td>
+          </tr>
+          <tr>
+            <td>Economy</td>
+            <td class="bull-col">Expanding GDP</td>
+            <td class="bear-col">Contracting GDP</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Historical Timeline -->
+  <section class="bb-section">
+    <h2>Historical Bull &amp; Bear Markets Since 1950</h2>
+    <p>Every bull and bear market cycle in the S&amp;P 500 since 1950, listed chronologically. Bull markets are shown in green, bear markets in red.</p>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <!-- Chart: Duration Bar Chart -->
+  <section class="bb-section">
+    <h2>Bull &amp; Bear Market Duration Chart</h2>
+    <p>This horizontal bar chart compares the duration in months of every bull and bear market since 1950. Notice how bull markets consistently last far longer than bear markets.</p>
+    <div class="chart-wrap">
+      <canvas id="durationChart" height="500"></canvas>
+    </div>
+  </section>
+
+  <!-- Chart: S&P 500 Line with Shading -->
+  <section class="bb-section">
+    <h2>S&amp;P 500 Bull &amp; Bear Market Periods</h2>
+    <p>A stylized view of S&amp;P 500 levels over time with green shading for bull markets and red shading for bear markets. This visualization shows how the market spends far more time rising than falling.</p>
+    <div class="chart-wrap">
+      <canvas id="spChart" height="350"></canvas>
+    </div>
+  </section>
+
+  <!-- Key Statistics -->
+  <section class="bb-section">
+    <h2>Key Bull vs Bear Market Statistics</h2>
+    <p>Understanding these numbers helps put market cycles in perspective. Bull markets are longer, stronger, and more frequent than the declines that separate them.</p>
+    <ul>
+      <li><strong>Average bull market duration:</strong> 4.4 years (+155% return)</li>
+      <li><strong>Average bear market duration:</strong> 11.3 months (-34% return)</li>
+      <li><strong>Longest bull market:</strong> 131 months, March 2009 – February 2020 (+400%)</li>
+      <li><strong>Deepest bear market:</strong> October 2007 – March 2009 (-57%)</li>
+      <li><strong>Shortest bear market:</strong> February – March 2020 (1 month, -34%)</li>
+      <li><strong>Bull markets since 1950:</strong> 13 (including current)</li>
+      <li><strong>Bear markets since 1950:</strong> 12</li>
+      <li><strong>Time spent in bull markets:</strong> ~78% of the time since 1950</li>
+    </ul>
+  </section>
+
+  <!-- Investment Strategies -->
+  <section class="bb-section">
+    <h2>What to Do in a Bull vs Bear Market</h2>
+    <p>Different market environments call for different investment strategies. Here is what seasoned investors typically do during each phase of the market cycle.</p>
+    <div class="strat-grid">
+      <div class="strat-card bull-strat">
+        <h3>Bull Market Strategies 📈</h3>
+        <ul>
+          <li><strong>Stay invested:</strong> Avoid the urge to time the top — bull markets often last years longer than expected</li>
+          <li><strong>Growth stocks:</strong> Tilt toward growth and cyclical sectors that benefit from economic expansion</li>
+          <li><strong>Rebalance periodically:</strong> Take some profits and rebalance to maintain your target allocation</li>
+          <li><strong>Maintain discipline:</strong> Stick to your plan — FOMO-driven overconcentration is a risk</li>
+          <li><strong>Build cash reserves:</strong> Gradually set aside dry powder for the next downturn</li>
+        </ul>
+      </div>
+      <div class="strat-card bear-strat">
+        <h3>Bear Market Strategies 📉</h3>
+        <ul>
+          <li><strong>Dollar-cost average:</strong> Invest consistently at lower prices to reduce your average cost basis</li>
+          <li><strong>Avoid panic selling:</strong> Selling at the bottom locks in losses — every bear market has ended</li>
+          <li><strong>Focus on quality:</strong> Favor companies with strong balance sheets, consistent earnings, and dividends</li>
+          <li><strong>Rebalance into equities:</strong> If stocks have fallen below your target allocation, rebalance</li>
+          <li><strong>Review your emergency fund:</strong> Ensure 3–6 months of expenses before investing more</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 Key Insights -->
+  <section class="bb-section">
+    <h2>5 Key Insights About Bull &amp; Bear Markets</h2>
+    <ol class="insight-list">
+      <li><strong>Bull markets last 4× longer than bear markets.</strong> Since 1950, the average bull market has lasted 52 months versus just 11.3 months for bears. The stock market spends roughly 78% of its time in bull territory.</li>
+      <li><strong>Bear markets are a normal part of investing.</strong> There have been 12 bear markets since 1950 — roughly one every 6 years. They are painful but temporary, and every single one has been followed by a new bull market.</li>
+      <li><strong>Missing the best days is costlier than riding out the worst.</strong> The market's best single-day gains often occur during bear markets. Investors who stay invested through downturns capture the recovery, while those who sell often miss the rebound.</li>
+      <li><strong>Bull market gains far exceed bear market losses.</strong> The average bull delivers +155% while the average bear takes back -34%. Over time, this asymmetry is why equities build wealth for patient investors.</li>
+      <li><strong>No one rings a bell at the top or bottom.</strong> Market timing is notoriously difficult. A consistent, disciplined investment approach — like dollar-cost averaging — has historically outperformed attempts to predict market turns.</li>
+    </ol>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="bb-section">
+    <h2>Frequently Asked Questions</h2>
+    {faqItems.map(function(item) {
+      return (
+        <div class="faq-item">
+          <div class="faq-q">{item.question}</div>
+          <div class="faq-a">{item.answer}</div>
+        </div>
+      );
+    })}
+  </section>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    /* ===== DATA ===== */
+    var bullMarkets = [
+      { period: "1949–1956", months: 86, ret: 267 },
+      { period: "1957–1961", months: 50, ret: 86 },
+      { period: "1962–1966", months: 44, ret: 80 },
+      { period: "1966–1968", months: 26, ret: 48 },
+      { period: "1970–1973", months: 31, ret: 74 },
+      { period: "1974–1980", months: 74, ret: 126 },
+      { period: "1982–1987", months: 60, ret: 229 },
+      { period: "1987–1990", months: 31, ret: 65 },
+      { period: "1990–2000", months: 113, ret: 417 },
+      { period: "2002–2007", months: 60, ret: 101 },
+      { period: "2009–2020", months: 131, ret: 400 },
+      { period: "2020–2022", months: 21, ret: 114 },
+      { period: "2022–present", months: 28, ret: null }
+    ];
+    var bearMarkets = [
+      { period: "1956–1957", months: 12, ret: -22 },
+      { period: "1961–1962", months: 6, ret: -28 },
+      { period: "1966", months: 8, ret: -22 },
+      { period: "1968–1970", months: 18, ret: -36 },
+      { period: "1973–1974", months: 21, ret: -48 },
+      { period: "1980–1982", months: 21, ret: -27 },
+      { period: "1987", months: 3, ret: -34 },
+      { period: "1990", months: 3, ret: -20 },
+      { period: "2000–2002", months: 25, ret: -49 },
+      { period: "2007–2009", months: 17, ret: -57 },
+      { period: "2020", months: 1, ret: -34 },
+      { period: "2022", months: 9, ret: -25 }
+    ];
+
+    /* ===== GAUGE ===== */
+    var sp500Current = 5600;
+    var sp500High = 6144;
+    var drawdown = ((sp500High - sp500Current) / sp500High) * 100;
+    var needleAngle = Math.min(drawdown / 30 * 180, 180) - 90;
+    var needle = document.getElementById("gauge-needle");
+    if (needle) { needle.setAttribute("transform", "rotate(" + needleAngle + ", 100, 100)"); }
+
+    var statusLabel = "Bull Market";
+    var statusColor = "#10b981";
+    if (drawdown >= 20) { statusLabel = "Bear Market"; statusColor = "#ef4444"; }
+    else if (drawdown >= 10) { statusLabel = "Correction"; statusColor = "#eab308"; }
+
+    var gLabel = document.getElementById("gauge-label");
+    if (gLabel) { gLabel.textContent = statusLabel; gLabel.style.color = statusColor; }
+    var gDetail = document.getElementById("gauge-detail");
+    if (gDetail) { gDetail.textContent = "S&P 500: " + sp500Current.toLocaleString() + " | Down " + drawdown.toFixed(1) + "% from 52-week high of " + sp500High.toLocaleString(); }
+
+    var statusVal = document.getElementById("status-val");
+    var statusCard = document.getElementById("status-card");
+    if (statusVal) { statusVal.textContent = statusLabel; statusVal.style.color = statusColor; }
+    if (statusCard && drawdown >= 20) { statusCard.className = "stat-card negative"; }
+    else if (statusCard && drawdown >= 10) { statusCard.className = "stat-card"; }
+    else if (statusCard) { statusCard.className = "stat-card positive"; }
+
+    /* ===== TIMELINE ===== */
+    var allCycles = [];
+    var bi = 0, bei = 0;
+    var timelineOrder = [
+      { type: "bull", idx: 0 }, { type: "bear", idx: 0 },
+      { type: "bull", idx: 1 }, { type: "bear", idx: 1 },
+      { type: "bull", idx: 2 }, { type: "bear", idx: 2 },
+      { type: "bull", idx: 3 }, { type: "bear", idx: 3 },
+      { type: "bull", idx: 4 }, { type: "bear", idx: 4 },
+      { type: "bull", idx: 5 }, { type: "bear", idx: 5 },
+      { type: "bull", idx: 6 }, { type: "bear", idx: 6 },
+      { type: "bull", idx: 7 }, { type: "bear", idx: 7 },
+      { type: "bull", idx: 8 }, { type: "bear", idx: 8 },
+      { type: "bull", idx: 9 }, { type: "bear", idx: 9 },
+      { type: "bull", idx: 10 }, { type: "bear", idx: 10 },
+      { type: "bull", idx: 11 }, { type: "bear", idx: 11 },
+      { type: "bull", idx: 12 }
+    ];
+    var tlEl = document.getElementById("timeline");
+    if (tlEl) {
+      for (var t = 0; t < timelineOrder.length; t++) {
+        var entry = timelineOrder[t];
+        var data = entry.type === "bull" ? bullMarkets[entry.idx] : bearMarkets[entry.idx];
+        if (!data) continue;
+        var div = document.createElement("div");
+        div.className = "tl-item " + entry.type;
+        var retStr = data.ret !== null ? (data.ret > 0 ? "+" + data.ret + "%" : data.ret + "%") : "Ongoing";
+        div.innerHTML = '<div class="tl-period">' + (entry.type === "bull" ? "📈 Bull: " : "📉 Bear: ") + data.period + '</div><div class="tl-detail">' + data.months + ' months | ' + retStr + '</div>';
+        tlEl.appendChild(div);
+      }
+    }
+
+    /* ===== CHART: Duration Bar ===== */
+    var durationLabels = [];
+    var durationData = [];
+    var durationColors = [];
+    for (var i = 0; i < timelineOrder.length; i++) {
+      var e = timelineOrder[i];
+      var d = e.type === "bull" ? bullMarkets[e.idx] : bearMarkets[e.idx];
+      if (!d) continue;
+      durationLabels.push((e.type === "bull" ? "Bull " : "Bear ") + d.period);
+      durationData.push(e.type === "bull" ? d.months : -d.months);
+      durationColors.push(e.type === "bull" ? "#10b981" : "#ef4444");
+    }
+
+    var dCtx = document.getElementById("durationChart");
+    if (dCtx) {
+      new Chart(dCtx.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: durationLabels,
+          datasets: [{
+            label: "Duration (months)",
+            data: durationData,
+            backgroundColor: durationColors,
+            borderRadius: 4,
+            barThickness: 16
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return Math.abs(ctx.raw) + " months"; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(255,255,255,0.06)" },
+              ticks: {
+                color: "#9aa0a6",
+                callback: function(v) { return Math.abs(v); }
+              },
+              title: { display: true, text: "Months", color: "#9aa0a6" }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: "#c9d1d9", font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    /* ===== CHART: S&P 500 Line with Bull/Bear shading ===== */
+    var spYears = [];
+    var spValues = [];
+    var yearStart = 1950;
+    var yearEnd = 2026;
+    var baseVal = 17;
+    for (var y = yearStart; y <= yearEnd; y++) {
+      spYears.push(y);
+      /* Rough S&P 500 path */
+      if (y <= 1956) { baseVal = baseVal * 1.17; }
+      else if (y <= 1957) { baseVal = baseVal * 0.87; }
+      else if (y <= 1961) { baseVal = baseVal * 1.14; }
+      else if (y <= 1962) { baseVal = baseVal * 0.78; }
+      else if (y <= 1966) { baseVal = baseVal * 1.13; }
+      else if (y == 1967) { baseVal = baseVal * 0.86; }
+      else if (y <= 1968) { baseVal = baseVal * 1.15; }
+      else if (y <= 1970) { baseVal = baseVal * 0.83; }
+      else if (y <= 1973) { baseVal = baseVal * 1.15; }
+      else if (y <= 1974) { baseVal = baseVal * 0.67; }
+      else if (y <= 1980) { baseVal = baseVal * 1.13; }
+      else if (y <= 1982) { baseVal = baseVal * 0.88; }
+      else if (y <= 1987) { baseVal = baseVal * 1.24; }
+      else if (y == 1988) { baseVal = baseVal * 0.72; baseVal = baseVal * 1.15; }
+      else if (y <= 1990) { baseVal = baseVal * 1.12; }
+      else if (y == 1991) { baseVal = baseVal * 0.90; baseVal = baseVal * 1.10; }
+      else if (y <= 2000) { baseVal = baseVal * 1.17; }
+      else if (y <= 2002) { baseVal = baseVal * 0.78; }
+      else if (y <= 2007) { baseVal = baseVal * 1.13; }
+      else if (y <= 2009) { baseVal = baseVal * 0.62; }
+      else if (y <= 2020) { baseVal = baseVal * 1.14; }
+      else if (y == 2021) { baseVal = baseVal * 1.27; }
+      else if (y == 2022) { baseVal = baseVal * 0.81; }
+      else if (y <= 2026) { baseVal = baseVal * 1.15; }
+      spValues.push(Math.round(baseVal));
+    }
+
+    /* Bear year ranges for red shading */
+    var bearRanges = [
+      [1956, 1957], [1961, 1962], [1966, 1966], [1968, 1970],
+      [1973, 1974], [1980, 1982], [1987, 1987], [1990, 1990],
+      [2000, 2002], [2007, 2009], [2020, 2020], [2022, 2022]
+    ];
+
+    function isBearYear(yr) {
+      for (var b = 0; b < bearRanges.length; b++) {
+        if (yr >= bearRanges[b][0] && yr <= bearRanges[b][1]) return true;
+      }
+      return false;
+    }
+
+    var bgColors = [];
+    for (var s = 0; s < spYears.length; s++) {
+      bgColors.push(isBearYear(spYears[s]) ? "rgba(239,68,68,0.15)" : "rgba(16,185,129,0.08)");
+    }
+
+    var spCtx = document.getElementById("spChart");
+    if (spCtx) {
+      new Chart(spCtx.getContext("2d"), {
+        type: "line",
+        data: {
+          labels: spYears,
+          datasets: [
+            {
+              label: "S&P 500 (approx.)",
+              data: spValues,
+              borderColor: "#4a8fe7",
+              borderWidth: 2,
+              fill: false,
+              pointRadius: 0,
+              tension: 0.3
+            },
+            {
+              label: "Market Phase",
+              data: spValues,
+              borderWidth: 0,
+              pointRadius: 0,
+              fill: true,
+              backgroundColor: bgColors,
+              segment: {
+                backgroundColor: function(ctx2) {
+                  return bgColors[ctx2.p0DataIndex];
+                }
+              }
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx3) {
+                  return "S&P 500: ~" + ctx3.raw.toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "rgba(255,255,255,0.06)" },
+              ticks: { color: "#9aa0a6", maxTicksLimit: 15 }
+            },
+            y: {
+              type: "logarithmic",
+              grid: { color: "rgba(255,255,255,0.06)" },
+              ticks: { color: "#9aa0a6" },
+              title: { display: true, text: "S&P 500 (log scale)", color: "#9aa0a6" }
+            }
+          }
+        }
+      });
+    }
+
+    /* ===== FAQ Toggle ===== */
+    var faqQs = document.querySelectorAll(".faq-q");
+    for (var f = 0; f < faqQs.length; f++) {
+      faqQs[f].addEventListener("click", function() {
+        var answer = this.nextElementSibling;
+        var isOpen = this.className.indexOf("open") !== -1;
+        /* Close all */
+        for (var a = 0; a < faqQs.length; a++) {
+          faqQs[a].className = "faq-q";
+          faqQs[a].nextElementSibling.className = "faq-a";
+        }
+        if (!isOpen) {
+          this.className = "faq-q open";
+          answer.className = "faq-a open";
+        }
+      });
+    }
+  </script>
+</SiteLayout>

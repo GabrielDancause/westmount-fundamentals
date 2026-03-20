@@ -1,0 +1,960 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+export const meta = {
+  title: 'Depreciation Calculator — Straight-Line, Declining Balance & MACRS | Westmount Fundamentals',
+  description: 'Free depreciation calculator with straight-line, double declining balance, and MACRS methods. Generate depreciation schedules, charts, and compare methods side-by-side.',
+  category: 'study',
+  published: '2026-03-20',
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "datePublished": meta.published,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://westmountfundamentals.com/depreciation-calculator/"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is depreciation in accounting?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depreciation is the systematic allocation of an asset's cost over its useful life. It reflects the decline in value of tangible assets like equipment, vehicles, and buildings due to wear, age, or obsolescence. Depreciation is recorded as an expense on the income statement and reduces the book value of assets on the balance sheet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the straight-line depreciation formula?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The straight-line depreciation formula is: Annual Depreciation = (Asset Cost − Salvage Value) ÷ Useful Life in Years. This method spreads the depreciable amount evenly across each year of the asset's useful life, making it the simplest and most commonly used depreciation method."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does MACRS depreciation work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "MACRS (Modified Accelerated Cost Recovery System) is the tax depreciation method required by the IRS for most business assets. It assigns assets to property classes (3, 5, 7, 10, 15, or 20 years) and uses predetermined percentages to calculate depreciation each year. MACRS front-loads depreciation, providing larger deductions in earlier years."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between straight-line and declining balance depreciation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Straight-line depreciation allocates an equal amount each year, while double declining balance (DDB) applies a fixed rate (2 ÷ useful life) to the remaining book value each year. DDB results in higher depreciation expense in early years and lower amounts later. Straight-line is simpler for financial reporting; DDB better matches assets that lose value quickly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is accumulated depreciation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Accumulated depreciation is the total depreciation expense recorded against an asset from the time it was placed in service. It is a contra-asset account on the balance sheet that reduces the asset's gross cost to arrive at net book value. For example, if equipment cost $100,000 and has $40,000 in accumulated depreciation, its book value is $60,000."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout
+  site="westmount"
+  title={meta.title}
+  description={meta.description}
+  canonical="https://westmountfundamentals.com/depreciation-calculator/"
+  schema={schema}
+>
+
+<style is:inline>{`
+  :root {
+    --accent: #4a8fe7;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --bg-card: #0d1117;
+    --border: #30363d;
+  }
+  .dep-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, rgba(74,143,231,0.08), rgba(74,143,231,0.02));
+    border-bottom: 1px solid rgba(74,143,231,0.15);
+  }
+  .dep-hero h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #e8eaed;
+  }
+  .dep-hero .subtitle {
+    color: #9aa0a6;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+  }
+  .stat-row {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    min-width: 150px;
+    text-align: center;
+  }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.8rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .calc-section {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  .section-title {
+    font-size: 1.6rem;
+    color: #e8eaed;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title-sm {
+    font-size: 1.3rem;
+    color: #e8eaed;
+    margin: 2rem 0 1rem;
+  }
+
+  /* Calculator */
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 768px) {
+    .calc-grid { grid-template-columns: 1fr; }
+  }
+  .calc-inputs {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .calc-inputs label {
+    display: block;
+    color: #9aa0a6;
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .calc-inputs input, .calc-inputs select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: #e8eaed;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+  }
+  .calc-inputs input:focus, .calc-inputs select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .method-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .method-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: #9aa0a6;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .method-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-calc {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-calc:hover { opacity: 0.9; }
+
+  .calc-results {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .result-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .result-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+  }
+  .result-item .r-label { color: #9aa0a6; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .result-item .r-value { color: #e8eaed; font-size: 1.3rem; font-weight: 700; margin-top: 0.2rem; }
+
+  /* Schedule table */
+  .schedule-wrap {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .schedule-table th {
+    background: rgba(74,143,231,0.12);
+    color: var(--accent);
+    padding: 0.6rem 0.8rem;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .schedule-table th:first-child { text-align: center; }
+  .schedule-table td {
+    padding: 0.5rem 0.8rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #c9d1d9;
+  }
+  .schedule-table td:first-child { text-align: center; color: #9aa0a6; }
+  .schedule-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* Charts */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+  @media (max-width: 768px) {
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .chart-card h3 {
+    color: #e8eaed;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* Educational content */
+  .content-section {
+    max-width: 1100px;
+    margin: 2.5rem auto;
+    padding: 0 1rem;
+  }
+  .content-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .content-card h2 {
+    font-size: 1.5rem;
+    color: #e8eaed;
+    margin-bottom: 1rem;
+  }
+  .content-card h3 {
+    font-size: 1.15rem;
+    color: var(--accent);
+    margin: 1.5rem 0 0.5rem;
+  }
+  .content-card p, .content-card li {
+    color: #9aa0a6;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+  .content-card ul { padding-left: 1.2rem; }
+  .content-card li { margin-bottom: 0.4rem; }
+
+  .formula-box {
+    background: rgba(74,143,231,0.08);
+    border: 1px solid rgba(74,143,231,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    font-family: monospace;
+    color: var(--accent);
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  /* Comparison & MACRS table */
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+  }
+  .comp-table th {
+    background: rgba(74,143,231,0.1);
+    color: var(--accent);
+    padding: 0.7rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .comp-table td {
+    padding: 0.6rem 0.7rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #c9d1d9;
+  }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* Insights */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .insight-card .insight-num {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .insight-card .insight-title {
+    color: #e8eaed;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+  .insight-card p { color: #9aa0a6; font-size: 0.88rem; line-height: 1.6; margin: 0; }
+
+  /* FAQ */
+  .faq-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .faq-item h3 {
+    color: #e8eaed;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+  }
+  .faq-item p { color: #9aa0a6; font-size: 0.92rem; line-height: 1.65; margin: 0; }
+
+  .macrs-label { display: none; }
+  #macrsClassGroup { display: none; }
+  #macrsClassGroup.show { display: block; }
+  .macrs-label.show { display: block; }
+`}</style>
+
+<!-- Hero -->
+<div class="dep-hero">
+  <h1>📉 Depreciation Calculator</h1>
+  <p class="subtitle">Calculate depreciation using straight-line, double declining balance, or MACRS methods. Generate schedules, compare methods, and visualize asset value over time.</p>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Methods Supported</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">6</div>
+      <div class="stat-label">MACRS Asset Classes</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statYears">—</div>
+      <div class="stat-label">Schedule Years</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="statTotalDep">—</div>
+      <div class="stat-label">Total Depreciation</div>
+    </div>
+  </div>
+</div>
+
+<!-- Calculator -->
+<div class="calc-section">
+  <h2 class="section-title">Depreciation Calculator</h2>
+  <div class="calc-grid">
+    <div class="calc-inputs">
+      <div class="method-toggle">
+        <button class="method-btn active" data-method="sl" type="button">Straight-Line</button>
+        <button class="method-btn" data-method="ddb" type="button">Double Declining</button>
+        <button class="method-btn" data-method="macrs" type="button">MACRS</button>
+      </div>
+      <label for="assetCost">Asset Cost ($)</label>
+      <input type="number" id="assetCost" value="100000" min="0" step="100">
+      <label for="salvageValue">Salvage Value ($)</label>
+      <input type="number" id="salvageValue" value="10000" min="0" step="100">
+      <label for="usefulLife">Useful Life (Years)</label>
+      <input type="number" id="usefulLife" value="5" min="1" max="40" step="1">
+      <div id="macrsClassGroup">
+        <label for="macrsClass">MACRS Property Class</label>
+        <select id="macrsClass">
+          <option value="3">3-Year (tractors, racehorses)</option>
+          <option value="5" selected>5-Year (vehicles, computers)</option>
+          <option value="7">7-Year (office furniture, equipment)</option>
+          <option value="10">10-Year (water transportation)</option>
+          <option value="15">15-Year (land improvements)</option>
+          <option value="20">20-Year (farm buildings)</option>
+        </select>
+      </div>
+      <button class="btn-calc" id="btnCalculate" type="button">Calculate Depreciation</button>
+    </div>
+    <div class="calc-results">
+      <h3 style="color:#e8eaed;margin-bottom:1rem;">Results</h3>
+      <div class="result-summary">
+        <div class="result-item">
+          <div class="r-label">Annual Depreciation</div>
+          <div class="r-value" id="resAnnual">—</div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">Total Depreciation</div>
+          <div class="r-value" id="resTotal">—</div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">Depreciation Rate</div>
+          <div class="r-value" id="resRate">—</div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">Final Book Value</div>
+          <div class="r-value" id="resFinal">—</div>
+        </div>
+      </div>
+      <h4 style="color:#e8eaed;margin-bottom:0.5rem;">Depreciation Schedule</h4>
+      <div class="schedule-wrap">
+        <table class="schedule-table" id="scheduleTable">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Depreciation Expense</th>
+              <th>Accumulated Depreciation</th>
+              <th>Book Value</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <h2 class="section-title">Depreciation Charts — All Methods Compared</h2>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Book Value Over Time</h3>
+      <canvas id="bookValueChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Annual Depreciation Expense</h3>
+      <canvas id="expenseChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Educational Content -->
+<div class="content-section">
+
+  <!-- What is Depreciation -->
+  <div class="content-card">
+    <h2>What Is Depreciation?</h2>
+    <p>Depreciation is the accounting process of allocating the cost of a tangible asset over its useful life. When a business buys equipment, vehicles, or property, the full cost is not expensed immediately. Instead, the cost is spread across multiple accounting periods to match the expense with the revenue the asset generates.</p>
+    <p>On the <strong>income statement</strong>, depreciation appears as an operating expense that reduces taxable income. On the <strong>balance sheet</strong>, accumulated depreciation is a contra-asset account that reduces the gross value of fixed assets to their net book value.</p>
+
+    <h3>Why Depreciation Matters</h3>
+    <ul>
+      <li><strong>Tax benefits:</strong> Depreciation expense reduces taxable income, lowering a company's tax liability each year.</li>
+      <li><strong>Accurate financial reporting:</strong> Matching the cost of an asset to the periods it produces revenue gives a more realistic picture of profitability.</li>
+      <li><strong>Capital planning:</strong> Depreciation schedules help businesses plan for asset replacement and capital expenditures.</li>
+      <li><strong>Asset valuation:</strong> Net book value (cost minus accumulated depreciation) provides a measure of the remaining value of assets on the balance sheet.</li>
+    </ul>
+
+    <h3>The Depreciation Formula (Straight-Line)</h3>
+    <div class="formula-box">Annual Depreciation = (Asset Cost − Salvage Value) ÷ Useful Life</div>
+    <p>For a $100,000 asset with a $10,000 salvage value and a 5-year useful life: ($100,000 − $10,000) ÷ 5 = <strong>$18,000 per year</strong>.</p>
+
+    <h3>Double Declining Balance Formula</h3>
+    <div class="formula-box">Depreciation = (2 ÷ Useful Life) × Book Value at Beginning of Year</div>
+    <p>This accelerated method applies a constant rate to a declining book value, producing higher depreciation in early years and lower amounts later. The rate is double the straight-line rate.</p>
+
+    <h3>MACRS Depreciation</h3>
+    <p>The Modified Accelerated Cost Recovery System (MACRS) is the tax depreciation system required by the IRS for most business property placed in service after 1986. MACRS assigns assets to property classes and applies predetermined percentages each year. Unlike other methods, MACRS ignores salvage value — the asset is depreciated down to zero.</p>
+  </div>
+
+  <!-- Method Comparison Table -->
+  <div class="content-card">
+    <h2>Depreciation Method Comparison</h2>
+    <p>Choosing the right depreciation method depends on how you expect the asset to lose value and whether you need the calculation for tax or financial reporting purposes.</p>
+    <div class="schedule-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Straight-Line</th>
+            <th>Double Declining Balance</th>
+            <th>MACRS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pattern</td>
+            <td>Equal expense each year</td>
+            <td>Higher early, lower later</td>
+            <td>Accelerated (IRS tables)</td>
+          </tr>
+          <tr>
+            <td>Complexity</td>
+            <td>Simple</td>
+            <td>Moderate</td>
+            <td>Moderate (table lookup)</td>
+          </tr>
+          <tr>
+            <td>Salvage Value</td>
+            <td>Subtracted from cost</td>
+            <td>Sets floor for book value</td>
+            <td>Ignored (depreciate to $0)</td>
+          </tr>
+          <tr>
+            <td>Best For</td>
+            <td>GAAP financial reporting</td>
+            <td>Assets losing value quickly</td>
+            <td>U.S. federal tax returns</td>
+          </tr>
+          <tr>
+            <td>Used By</td>
+            <td>Most companies (books)</td>
+            <td>Tech, equipment-heavy firms</td>
+            <td>All U.S. taxpayers (tax)</td>
+          </tr>
+          <tr>
+            <td>Tax Advantage</td>
+            <td>Minimal (even deductions)</td>
+            <td>Front-loaded deductions</td>
+            <td>Maximum front-loading</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MACRS Reference Table -->
+  <div class="content-card">
+    <h2>MACRS Asset Class Reference Table</h2>
+    <p>Under MACRS, the IRS classifies business property into recovery periods. Below are the most common classes with their depreciation percentages (GDS, 200% declining balance convention).</p>
+    <div class="schedule-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Property Class</th>
+            <th>Example Assets</th>
+            <th>Year 1</th>
+            <th>Year 2</th>
+            <th>Year 3</th>
+            <th>Year 4</th>
+            <th>Year 5</th>
+            <th>Year 6+</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>3-Year</strong></td>
+            <td>Tractors, racehorses, rent-to-own property</td>
+            <td>33.33%</td>
+            <td>44.45%</td>
+            <td>14.81%</td>
+            <td>7.41%</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>5-Year</strong></td>
+            <td>Vehicles, computers, office equipment</td>
+            <td>20.00%</td>
+            <td>32.00%</td>
+            <td>19.20%</td>
+            <td>11.52%</td>
+            <td>11.52%</td>
+            <td>5.76%</td>
+          </tr>
+          <tr>
+            <td><strong>7-Year</strong></td>
+            <td>Office furniture, fixtures, agricultural machinery</td>
+            <td>14.29%</td>
+            <td>24.49%</td>
+            <td>17.49%</td>
+            <td>12.49%</td>
+            <td>8.93%</td>
+            <td>8.92 / 8.93 / 4.46%</td>
+          </tr>
+          <tr>
+            <td><strong>10-Year</strong></td>
+            <td>Water transportation, single-purpose structures</td>
+            <td>10.00%</td>
+            <td>18.00%</td>
+            <td>14.40%</td>
+            <td>11.52%</td>
+            <td>9.22%</td>
+            <td>Continues to Yr 11</td>
+          </tr>
+          <tr>
+            <td><strong>15-Year</strong></td>
+            <td>Land improvements, fences, roads, bridges</td>
+            <td>5.00%</td>
+            <td>9.50%</td>
+            <td>8.55%</td>
+            <td>7.70%</td>
+            <td>6.93%</td>
+            <td>Continues to Yr 16</td>
+          </tr>
+          <tr>
+            <td><strong>20-Year</strong></td>
+            <td>Farm buildings, municipal sewers</td>
+            <td>3.750%</td>
+            <td>7.219%</td>
+            <td>6.677%</td>
+            <td>6.177%</td>
+            <td>5.713%</td>
+            <td>Continues to Yr 21</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="content-card">
+    <h2>5 Key Insights About Depreciation</h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-num">Insight 1</div>
+        <div class="insight-title">Depreciation Is Not Cash Flow</div>
+        <p>Depreciation is a non-cash expense. It reduces reported income but does not directly reduce cash. This is why depreciation is added back in the cash flow statement under operating activities.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 2</div>
+        <div class="insight-title">Two Sets of Books Are Normal</div>
+        <p>Most U.S. companies use straight-line for financial reporting (GAAP) and MACRS for tax returns. The difference creates a deferred tax liability on the balance sheet.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 3</div>
+        <div class="insight-title">MACRS Front-Loads Tax Savings</div>
+        <p>By accelerating depreciation, MACRS provides larger tax deductions in earlier years. Due to the time value of money, a dollar saved today is worth more than a dollar saved five years from now.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 4</div>
+        <div class="insight-title">Land Cannot Be Depreciated</div>
+        <p>Land is considered to have an indefinite useful life and does not wear out. Only improvements to land (buildings, fences, paving) can be depreciated. This is a common exam question in accounting courses.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 5</div>
+        <div class="insight-title">Section 179 vs. Regular Depreciation</div>
+        <p>Section 179 allows businesses to deduct the full cost of qualifying assets in the year of purchase (up to $1.22M in 2024), instead of depreciating over multiple years. It is a powerful tool for small businesses.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="content-card">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <h3>What is depreciation in accounting?</h3>
+      <p>Depreciation is the systematic allocation of an asset's cost over its useful life. It reflects the decline in value of tangible assets like equipment, vehicles, and buildings due to wear, age, or obsolescence. Depreciation is recorded as an expense on the income statement and reduces the book value of assets on the balance sheet.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is the straight-line depreciation formula?</h3>
+      <p>The straight-line depreciation formula is: Annual Depreciation = (Asset Cost − Salvage Value) ÷ Useful Life in Years. This method spreads the depreciable amount evenly across each year of the asset's useful life, making it the simplest and most commonly used depreciation method.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How does MACRS depreciation work?</h3>
+      <p>MACRS (Modified Accelerated Cost Recovery System) is the tax depreciation method required by the IRS for most business assets. It assigns assets to property classes (3, 5, 7, 10, 15, or 20 years) and uses predetermined percentages to calculate depreciation each year. MACRS front-loads depreciation, providing larger deductions in earlier years. Unlike other methods, salvage value is ignored under MACRS.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is the difference between straight-line and declining balance depreciation?</h3>
+      <p>Straight-line depreciation allocates an equal amount each year, while double declining balance applies a fixed rate (2 ÷ useful life) to the remaining book value each year. DDB results in higher depreciation expense in early years and lower amounts later. Straight-line is simpler and commonly used for financial reporting; DDB better matches assets that lose value quickly early in their life.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>What is accumulated depreciation?</h3>
+      <p>Accumulated depreciation is the total depreciation expense recorded against an asset from the time it was placed in service. It is a contra-asset account on the balance sheet that reduces the asset's gross cost to arrive at net book value. For example, if equipment cost $100,000 and has $40,000 in accumulated depreciation, its book value is $60,000.</p>
+    </div>
+  </div>
+
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+(function() {
+  var MACRS_TABLES = {
+    "3":  [33.33, 44.45, 14.81, 7.41],
+    "5":  [20.00, 32.00, 19.20, 11.52, 11.52, 5.76],
+    "7":  [14.29, 24.49, 17.49, 12.49, 8.93, 8.92, 8.93, 4.46],
+    "10": [10.00, 18.00, 14.40, 11.52, 9.22, 7.37, 6.55, 6.55, 6.56, 6.55, 3.28],
+    "15": [5.00, 9.50, 8.55, 7.70, 6.93, 6.23, 5.90, 5.90, 5.91, 5.90, 5.91, 5.90, 5.91, 5.90, 5.91, 2.95],
+    "20": [3.750, 7.219, 6.677, 6.177, 5.713, 5.285, 4.888, 4.522, 4.462, 4.461, 4.462, 4.461, 4.462, 4.461, 4.462, 4.461, 4.462, 4.461, 4.462, 4.461, 2.231]
+  };
+
+  var activeMethod = "sl";
+  var bookValueChart = null;
+  var expenseChart = null;
+
+  // Method toggle
+  var btns = document.querySelectorAll(".method-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", function() {
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].className = "method-btn";
+      }
+      this.className = "method-btn active";
+      activeMethod = this.getAttribute("data-method");
+      var macrsGroup = document.getElementById("macrsClassGroup");
+      if (activeMethod === "macrs") {
+        macrsGroup.className = "show";
+        macrsGroup.style.display = "block";
+      } else {
+        macrsGroup.className = "";
+        macrsGroup.style.display = "none";
+      }
+    });
+  }
+
+  function fmt(n) {
+    return "$" + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function calcSL(cost, salvage, life) {
+    var annual = (cost - salvage) / life;
+    var schedule = [];
+    var accum = 0;
+    var bv = cost;
+    for (var y = 1; y <= life; y++) {
+      var dep = annual;
+      if (y === life) dep = bv - salvage;
+      accum += dep;
+      bv -= dep;
+      schedule.push({ year: y, dep: dep, accum: accum, bv: bv });
+    }
+    return schedule;
+  }
+
+  function calcDDB(cost, salvage, life) {
+    var rate = 2 / life;
+    var schedule = [];
+    var accum = 0;
+    var bv = cost;
+    for (var y = 1; y <= life; y++) {
+      var dep = bv * rate;
+      if (bv - dep < salvage) dep = bv - salvage;
+      if (dep < 0) dep = 0;
+      accum += dep;
+      bv -= dep;
+      schedule.push({ year: y, dep: dep, accum: accum, bv: bv });
+    }
+    return schedule;
+  }
+
+  function calcMARS(cost, macrsClass) {
+    var pcts = MACRS_TABLES[macrsClass];
+    if (!pcts) return [];
+    var schedule = [];
+    var accum = 0;
+    var bv = cost;
+    for (var y = 0; y < pcts.length; y++) {
+      var dep = cost * pcts[y] / 100;
+      accum += dep;
+      bv -= dep;
+      if (bv < 0) bv = 0;
+      schedule.push({ year: y + 1, dep: dep, accum: accum, bv: bv });
+    }
+    return schedule;
+  }
+
+  function renderSchedule(schedule) {
+    var tbody = document.getElementById("scheduleBody");
+    var html = "";
+    for (var i = 0; i < schedule.length; i++) {
+      var r = schedule[i];
+      html += "<tr><td>" + r.year + "</td><td>" + fmt(r.dep) + "</td><td>" + fmt(r.accum) + "</td><td>" + fmt(r.bv) + "</td></tr>";
+    }
+    tbody.innerHTML = html;
+  }
+
+  function renderResults(schedule, cost, method) {
+    var total = schedule.length > 0 ? schedule[schedule.length - 1].accum : 0;
+    var annual = schedule.length > 0 ? schedule[0].dep : 0;
+    var finalBV = schedule.length > 0 ? schedule[schedule.length - 1].bv : cost;
+    var rate = cost > 0 ? (total / cost * 100) : 0;
+
+    document.getElementById("resAnnual").textContent = fmt(annual) + (method === "sl" ? "/yr" : " (Yr 1)");
+    document.getElementById("resTotal").textContent = fmt(total);
+    document.getElementById("resRate").textContent = rate.toFixed(1) + "%";
+    document.getElementById("resFinal").textContent = fmt(finalBV);
+    document.getElementById("statYears").textContent = schedule.length;
+    document.getElementById("statTotalDep").textContent = fmt(total);
+  }
+
+  function renderCharts(cost, salvage, life, macrsClass) {
+    // Compute all three methods for comparison
+    var slData = calcSL(cost, salvage, life);
+    var ddbData = calcDDB(cost, salvage, life);
+    var macrsData = calcMARS(cost, macrsClass);
+
+    var maxLen = Math.max(slData.length, ddbData.length, macrsData.length);
+    var labels = [];
+    for (var i = 0; i <= maxLen; i++) labels.push(i === 0 ? "Start" : "Year " + i);
+
+    // Book values (start at cost)
+    var slBV = [cost]; var ddbBV = [cost]; var macrsBV = [cost];
+    for (var i = 0; i < maxLen; i++) {
+      slBV.push(i < slData.length ? slData[i].bv : (slData.length > 0 ? slData[slData.length - 1].bv : cost));
+      ddbBV.push(i < ddbData.length ? ddbData[i].bv : (ddbData.length > 0 ? ddbData[ddbData.length - 1].bv : cost));
+      macrsBV.push(i < macrsData.length ? macrsData[i].bv : (macrsData.length > 0 ? macrsData[macrsData.length - 1].bv : cost));
+    }
+
+    // Expense
+    var expLabels = [];
+    var slExp = []; var ddbExp = []; var macrsExp = [];
+    for (var i = 0; i < maxLen; i++) {
+      expLabels.push("Year " + (i + 1));
+      slExp.push(i < slData.length ? slData[i].dep : 0);
+      ddbExp.push(i < ddbData.length ? ddbData[i].dep : 0);
+      macrsExp.push(i < macrsData.length ? macrsData[i].dep : 0);
+    }
+
+    // Destroy old charts
+    if (bookValueChart) bookValueChart.destroy();
+    if (expenseChart) expenseChart.destroy();
+
+    var bvCtx = document.getElementById("bookValueChart").getContext("2d");
+    bookValueChart = new Chart(bvCtx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          { label: "Straight-Line", data: slBV, borderColor: "#4a8fe7", backgroundColor: "rgba(74,143,231,0.1)", tension: 0.3, fill: false },
+          { label: "Double Declining", data: ddbBV, borderColor: "#10b981", backgroundColor: "rgba(16,185,129,0.1)", tension: 0.3, fill: false },
+          { label: "MACRS", data: macrsBV, borderColor: "#ef4444", backgroundColor: "rgba(239,68,68,0.1)", tension: 0.3, fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6" } }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { color: "#9aa0a6", callback: function(v) { return "$" + v.toLocaleString(); } }, grid: { color: "rgba(255,255,255,0.05)" } }
+        }
+      }
+    });
+
+    var expCtx = document.getElementById("expenseChart").getContext("2d");
+    expenseChart = new Chart(expCtx, {
+      type: "bar",
+      data: {
+        labels: expLabels,
+        datasets: [
+          { label: "Straight-Line", data: slExp, backgroundColor: "rgba(74,143,231,0.7)", borderColor: "#4a8fe7", borderWidth: 1 },
+          { label: "Double Declining", data: ddbExp, backgroundColor: "rgba(16,185,129,0.7)", borderColor: "#10b981", borderWidth: 1 },
+          { label: "MACRS", data: macrsExp, backgroundColor: "rgba(239,68,68,0.7)", borderColor: "#ef4444", borderWidth: 1 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6" } }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { color: "#9aa0a6", callback: function(v) { return "$" + v.toLocaleString(); } }, grid: { color: "rgba(255,255,255,0.05)" } }
+        }
+      }
+    });
+  }
+
+  document.getElementById("btnCalculate").addEventListener("click", function() {
+    var cost = parseFloat(document.getElementById("assetCost").value) || 0;
+    var salvage = parseFloat(document.getElementById("salvageValue").value) || 0;
+    var life = parseInt(document.getElementById("usefulLife").value) || 5;
+    var macrsClass = document.getElementById("macrsClass").value;
+
+    var schedule;
+    if (activeMethod === "sl") {
+      schedule = calcSL(cost, salvage, life);
+    } else if (activeMethod === "ddb") {
+      schedule = calcDDB(cost, salvage, life);
+    } else {
+      schedule = calcMARS(cost, macrsClass);
+    }
+
+    renderSchedule(schedule);
+    renderResults(schedule, cost, activeMethod);
+    renderCharts(cost, salvage, life, macrsClass);
+  });
+
+  // Auto-calculate on load
+  document.getElementById("btnCalculate").click();
+})();
+</script>
+
+</SiteLayout>

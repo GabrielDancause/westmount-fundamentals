@@ -1,0 +1,530 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Return on Equity (ROE) Calculator — Formula, DuPont Analysis & Sector Benchmarks", description: "Calculate return on equity with our free ROE calculator. Includes DuPont analysis, S&P 500 sector benchmarks, ROE vs ROA vs ROIC comparison, and interpretation guide.", category: "study", published: "2026-03-20" };
+
+var schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": meta.title,
+      "description": meta.description,
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20",
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": "https://westmountfundamentals.com/return-on-equity-calculator/" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a good return on equity (ROE)?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A good ROE is generally considered to be 15% to 25%. An ROE above 25% is excellent and suggests the company generates strong profits relative to shareholder equity. An ROE below 10% is considered poor for most industries, though capital-intensive sectors like utilities may naturally have lower ROEs." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you calculate return on equity?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Return on equity is calculated by dividing net income by average shareholders' equity, then multiplying by 100 to express it as a percentage. The formula is: ROE = (Net Income / Shareholders' Equity) × 100. You can find net income on the income statement and shareholders' equity on the balance sheet." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the DuPont analysis of ROE?",
+          "acceptedAnswer": { "@type": "Answer", "text": "DuPont analysis breaks ROE into three components: Profit Margin (Net Income / Revenue), Asset Turnover (Revenue / Total Assets), and Equity Multiplier (Total Assets / Shareholders' Equity). The formula is ROE = Profit Margin × Asset Turnover × Equity Multiplier. This decomposition reveals whether ROE is driven by profitability, efficiency, or leverage." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between ROE, ROA, and ROIC?",
+          "acceptedAnswer": { "@type": "Answer", "text": "ROE measures profit relative to shareholders' equity, ROA measures profit relative to total assets, and ROIC measures profit relative to total invested capital (equity plus debt). ROE can be inflated by high debt levels, while ROIC provides a clearer picture of how efficiently a company uses all capital. ROA is useful for comparing companies with different capital structures." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can ROE be negative and what does it mean?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, ROE can be negative. A negative ROE typically occurs when a company reports a net loss, meaning it is losing money rather than generating profits. In rare cases, negative ROE can also occur when shareholders' equity is negative due to accumulated losses or excessive debt. A negative ROE is a warning sign that requires further investigation." }
+        }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/return-on-equity-calculator/" schema={JSON.stringify(schema)}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/study/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Study</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Return on Equity Calculator</span></nav>
+    <span>8 min read</span>
+  </div>
+
+  <style is:inline>
+    .roe-page { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --bg-card: #0d1117; --border: #30363d; }
+    .roe-page { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; color: #c9d1d9; line-height: 1.7; }
+    .roe-page h1 { font-size: 2.2rem; color: #e6edf3; margin-bottom: 0.5rem; line-height: 1.25; }
+    .roe-page h2 { font-size: 1.5rem; color: #e6edf3; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .roe-page h3 { font-size: 1.15rem; color: #e6edf3; margin: 1.5rem 0 0.75rem; }
+    .roe-page p { margin: 0 0 1rem; }
+    .roe-page a { color: var(--accent); text-decoration: none; }
+    .roe-page a:hover { text-decoration: underline; }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0 2rem; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center; }
+    .stat-card .sv { font-size: 1.9rem; font-weight: 700; color: var(--accent); }
+    .stat-card .sl { font-size: 0.78rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+    .calc-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 2rem; margin: 1.5rem 0 2rem; }
+    .calc-card h3 { margin-top: 0; }
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .input-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .field label { display: block; font-size: 0.85rem; color: #8b949e; margin-bottom: 0.35rem; }
+    .field input { width: 100%; padding: 0.65rem 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: #e6edf3; font-size: 1rem; box-sizing: border-box; }
+    .field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(74,143,231,0.25); }
+    .calc-btn { display: inline-block; padding: 0.7rem 2rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: background 0.2s; }
+    .calc-btn:hover { background: #3a7dd4; }
+    .result-box { margin-top: 1.25rem; padding: 1.25rem; background: rgba(74,143,231,0.08); border: 1px solid rgba(74,143,231,0.2); border-radius: 10px; display: none; }
+    .result-box .big { font-size: 2.2rem; font-weight: 700; }
+    .result-box .lbl { font-size: 0.85rem; color: #8b949e; }
+    .chart-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; margin: 1.5rem 0 2rem; }
+    .chart-wrap canvas { width: 100% !important; max-height: 420px; }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; font-size: 0.92rem; }
+    .compare-table th, .compare-table td { padding: 0.75rem 1rem; border: 1px solid var(--border); text-align: left; }
+    .compare-table th { background: rgba(74,143,231,0.1); color: #e6edf3; font-weight: 600; }
+    .compare-table td { background: var(--bg-card); color: #c9d1d9; }
+    .interp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 2rem; }
+    .interp-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); }
+    .interp-card .range { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .interp-card .grade { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+    .interp-card p { font-size: 0.88rem; margin: 0; color: #8b949e; }
+    .insight-list { list-style: none; padding: 0; margin: 1rem 0 2rem; }
+    .insight-list li { padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+    .insight-list li .num { font-size: 1.1rem; font-weight: 700; color: var(--accent); min-width: 28px; }
+    .faq-section details { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.75rem; background: var(--bg-card); }
+    .faq-section summary { padding: 1rem 1.25rem; cursor: pointer; font-weight: 600; color: #e6edf3; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+    .faq-section summary::after { content: "+"; font-size: 1.3rem; color: var(--accent); transition: transform 0.2s; }
+    .faq-section details[open] summary::after { content: "\2212"; }
+    .faq-section .faq-body { padding: 0 1.25rem 1rem; color: #8b949e; line-height: 1.65; }
+    .formula-box { background: rgba(74,143,231,0.06); border: 1px solid rgba(74,143,231,0.15); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1rem 0 1.5rem; text-align: center; font-size: 1.15rem; color: #e6edf3; font-weight: 500; }
+    @media (max-width: 700px) {
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .input-row, .input-row.three { grid-template-columns: 1fr; }
+      .interp-grid { grid-template-columns: 1fr; }
+      .roe-page h1 { font-size: 1.6rem; }
+      .compare-table { font-size: 0.82rem; }
+      .compare-table th, .compare-table td { padding: 0.5rem 0.6rem; }
+    }
+  </style>
+
+  <div class="roe-page">
+    <h1>Return on Equity (ROE) Calculator</h1>
+    <p>Calculate return on equity instantly with our free ROE calculator. Understand the ROE formula, run a DuPont analysis, and benchmark against S&P 500 sector averages — all in one place.</p>
+
+    <!-- Stat Cards -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="sv">15–25%</div>
+        <div class="sl">Good ROE Range</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">~18%</div>
+        <div class="sl">S&P 500 Median ROE</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">3</div>
+        <div class="sl">DuPont Components</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">11</div>
+        <div class="sl">Sectors Benchmarked</div>
+      </div>
+    </div>
+
+    <!-- Basic ROE Calculator -->
+    <h2>ROE Calculator</h2>
+    <p>Enter a company's net income and total shareholders' equity to calculate its return on equity ratio. The <strong>return on equity formula</strong> is: ROE = (Net Income ÷ Shareholders' Equity) × 100.</p>
+
+    <div class="calc-card">
+      <h3>📊 Basic ROE Calculation</h3>
+      <div class="input-row">
+        <div class="field">
+          <label for="netIncome">Net Income ($)</label>
+          <input type="number" id="netIncome" placeholder="e.g. 5000000" />
+        </div>
+        <div class="field">
+          <label for="equity">Shareholders' Equity ($)</label>
+          <input type="number" id="equity" placeholder="e.g. 25000000" />
+        </div>
+      </div>
+      <button class="calc-btn" id="calcRoe" type="button">Calculate ROE</button>
+      <div class="result-box" id="roeResult">
+        <div class="lbl">Return on Equity</div>
+        <div class="big" id="roeValue">—</div>
+        <p id="roeInterp" style="margin:0.5rem 0 0;font-size:0.9rem;color:#8b949e;"></p>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>ROE Formula:</strong> ROE = (Net Income ÷ Shareholders' Equity) × 100
+    </div>
+
+    <!-- DuPont Analysis Calculator -->
+    <h2>DuPont Analysis Calculator</h2>
+    <p>The <strong>DuPont analysis</strong> decomposes return on equity into three fundamental drivers: profit margin, asset turnover, and the equity multiplier. This reveals <em>why</em> a company has a high or low ROE — is it profitability, efficiency, or financial leverage?</p>
+
+    <div class="calc-card">
+      <h3>🔬 DuPont ROE Decomposition</h3>
+      <div class="input-row three">
+        <div class="field">
+          <label for="profitMargin">Profit Margin (%)</label>
+          <input type="number" id="profitMargin" placeholder="e.g. 15" step="0.01" />
+        </div>
+        <div class="field">
+          <label for="assetTurnover">Asset Turnover (×)</label>
+          <input type="number" id="assetTurnover" placeholder="e.g. 0.8" step="0.01" />
+        </div>
+        <div class="field">
+          <label for="equityMultiplier">Equity Multiplier (×)</label>
+          <input type="number" id="equityMultiplier" placeholder="e.g. 2.5" step="0.01" />
+        </div>
+      </div>
+      <button class="calc-btn" id="calcDupont" type="button">Calculate DuPont ROE</button>
+      <div class="result-box" id="dupontResult">
+        <div class="lbl">DuPont ROE</div>
+        <div class="big" id="dupontValue">—</div>
+        <p id="dupontBreakdown" style="margin:0.5rem 0 0;font-size:0.9rem;color:#8b949e;"></p>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>DuPont Formula:</strong> ROE = Profit Margin × Asset Turnover × Equity Multiplier
+    </div>
+
+    <!-- What is ROE -->
+    <h2>What Is Return on Equity (ROE)?</h2>
+    <p><strong>Return on equity (ROE)</strong> is a financial ratio that measures how effectively a company uses shareholders' equity to generate profits. It tells investors how many dollars of profit a company produces for every dollar of equity capital invested.</p>
+    <p>The <strong>return on equity ratio formula</strong> divides a company's net income (from the income statement) by its total shareholders' equity (from the balance sheet). The result, expressed as a percentage, represents the company's profitability relative to the book value of equity.</p>
+    <p>ROE is one of the most widely used metrics in fundamental analysis because it captures the relationship between profitability and capital efficiency. Warren Buffett, for instance, famously looks for companies that consistently maintain an ROE above 15% as a sign of durable competitive advantage.</p>
+    <p>The <strong>return on stockholders' equity formula</strong> is the same calculation — "stockholders' equity" and "shareholders' equity" are interchangeable terms. Both refer to the residual interest in assets after deducting liabilities.</p>
+
+    <!-- ROE Interpretation Guide -->
+    <h2>What Is a Good ROE? Interpretation Guide</h2>
+    <p>ROE benchmarks vary by industry, but here's a general framework for evaluating return on equity across sectors:</p>
+
+    <div class="interp-grid">
+      <div class="interp-card" style="border-left:4px solid var(--negative);">
+        <div class="range" style="color:var(--negative);">&lt; 10%</div>
+        <div class="grade" style="color:var(--negative);">Poor</div>
+        <p>The company is generating below-average returns on equity. May indicate weak profitability, excessive assets, or an over-leveraged balance sheet working against it.</p>
+      </div>
+      <div class="interp-card" style="border-left:4px solid #f59e0b;">
+        <div class="range" style="color:#f59e0b;">10% – 15%</div>
+        <div class="grade" style="color:#f59e0b;">Average</div>
+        <p>Acceptable for capital-intensive industries like utilities or banking. For tech or consumer staples, this range may signal room for improvement.</p>
+      </div>
+      <div class="interp-card" style="border-left:4px solid var(--positive);">
+        <div class="range" style="color:var(--positive);">15% – 25%</div>
+        <div class="grade" style="color:var(--positive);">Good</div>
+        <p>Strong return on equity. The company is efficiently converting equity into profit. Most high-quality businesses fall in this range consistently.</p>
+      </div>
+      <div class="interp-card" style="border-left:4px solid #8b5cf6;">
+        <div class="range" style="color:#8b5cf6;">&gt; 25%</div>
+        <div class="grade" style="color:#8b5cf6;">Excellent</div>
+        <p>Exceptional profitability. Common among asset-light businesses with strong moats. Verify it's not driven solely by excessive leverage via DuPont analysis.</p>
+      </div>
+    </div>
+
+    <!-- S&P 500 Sector ROE Chart -->
+    <h2>ROE by S&P 500 Sector (2025 Averages)</h2>
+    <p>Return on equity varies significantly across sectors. Technology companies typically boast the highest ROEs due to asset-light models, while utilities and real estate have lower ROEs because of their capital-intensive nature.</p>
+
+    <div class="chart-wrap">
+      <canvas id="sectorChart"></canvas>
+    </div>
+
+    <!-- ROE Trend Chart -->
+    <h2>How to Read ROE Trends</h2>
+    <p>A single-year ROE snapshot is useful, but tracking ROE over time reveals the trajectory of a company's profitability. An <span style="color:var(--positive)">improving ROE trend</span> suggests growing efficiency or profitability, while a <span style="color:var(--negative)">declining ROE trend</span> may signal deteriorating fundamentals or increasing leverage risk.</p>
+
+    <div class="chart-wrap">
+      <canvas id="trendChart"></canvas>
+    </div>
+
+    <!-- ROE vs ROA vs ROIC -->
+    <h2>ROE vs ROA vs ROIC Comparison</h2>
+    <p>Return on equity is just one lens for measuring profitability. Comparing ROE with ROA and ROIC provides a more complete picture of how a company deploys capital.</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Formula</th>
+          <th>Measures</th>
+          <th>Best For</th>
+          <th>Limitation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ROE</strong></td>
+          <td>Net Income ÷ Shareholders' Equity</td>
+          <td>Profit per dollar of equity</td>
+          <td>Comparing equity efficiency</td>
+          <td>Inflated by high debt</td>
+        </tr>
+        <tr>
+          <td><strong>ROA</strong></td>
+          <td>Net Income ÷ Total Assets</td>
+          <td>Profit per dollar of assets</td>
+          <td>Asset-heavy industries</td>
+          <td>Ignores capital structure</td>
+        </tr>
+        <tr>
+          <td><strong>ROIC</strong></td>
+          <td>NOPAT ÷ Invested Capital</td>
+          <td>Profit per dollar of total capital</td>
+          <td>Comparing across capital structures</td>
+          <td>Requires NOPAT calculation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Key Insights -->
+    <h2>5 Key Insights About Return on Equity</h2>
+    <ol class="insight-list">
+      <li>
+        <span class="num">1</span>
+        <div><strong>ROE is most useful when compared within the same industry.</strong> A 12% ROE is excellent for a bank but mediocre for a software company. Always benchmark against sector peers, not the broad market.</div>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <div><strong>High ROE driven by debt is a red flag.</strong> If the equity multiplier in DuPont analysis is the primary driver, the company may be taking on excessive risk. Use DuPont decomposition to distinguish genuine profitability from leverage-fueled returns.</div>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <div><strong>Consistent ROE above 15% signals a competitive moat.</strong> Companies that sustain high ROE over 5–10 years typically possess structural advantages like brand power, network effects, or switching costs that protect margins.</div>
+      </li>
+      <li>
+        <span class="num">4</span>
+        <div><strong>Share buybacks can artificially inflate ROE.</strong> When companies repurchase shares, shareholders' equity decreases, which mechanically boosts ROE even if net income is flat. Always examine both the numerator and denominator.</div>
+      </li>
+      <li>
+        <span class="num">5</span>
+        <div><strong>Negative equity makes ROE meaningless.</strong> Companies like McDonald's or Starbucks have negative book equity due to aggressive buybacks. In such cases, ROE is mathematically undefined, and you should rely on ROIC or other metrics instead.</div>
+      </li>
+    </ol>
+
+    <!-- FAQ Section -->
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-section">
+      <details>
+        <summary>What is a good return on equity (ROE)?</summary>
+        <div class="faq-body">A good ROE is generally considered to be 15% to 25%. An ROE above 25% is excellent and suggests the company generates strong profits relative to shareholder equity. An ROE below 10% is considered poor for most industries, though capital-intensive sectors like utilities may naturally have lower ROEs.</div>
+      </details>
+      <details>
+        <summary>How do you calculate return on equity?</summary>
+        <div class="faq-body">Return on equity is calculated by dividing net income by average shareholders' equity, then multiplying by 100 to express it as a percentage. The formula is: ROE = (Net Income / Shareholders' Equity) × 100. You can find net income on the income statement and shareholders' equity on the balance sheet.</div>
+      </details>
+      <details>
+        <summary>What is the DuPont analysis of ROE?</summary>
+        <div class="faq-body">DuPont analysis breaks ROE into three components: Profit Margin (Net Income / Revenue), Asset Turnover (Revenue / Total Assets), and Equity Multiplier (Total Assets / Shareholders' Equity). The formula is ROE = Profit Margin × Asset Turnover × Equity Multiplier. This decomposition reveals whether ROE is driven by profitability, efficiency, or leverage.</div>
+      </details>
+      <details>
+        <summary>What is the difference between ROE, ROA, and ROIC?</summary>
+        <div class="faq-body">ROE measures profit relative to shareholders' equity, ROA measures profit relative to total assets, and ROIC measures profit relative to total invested capital (equity plus debt). ROE can be inflated by high debt levels, while ROIC provides a clearer picture of how efficiently a company uses all capital. ROA is useful for comparing companies with different capital structures.</div>
+      </details>
+      <details>
+        <summary>Can ROE be negative and what does it mean?</summary>
+        <div class="faq-body">Yes, ROE can be negative. A negative ROE typically occurs when a company reports a net loss, meaning it is losing money rather than generating profits. In rare cases, negative ROE can also occur when shareholders' equity is negative due to accumulated losses or excessive debt. A negative ROE is a warning sign that requires further investigation.</div>
+      </details>
+    </div>
+  </div>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    (function() {
+      // Basic ROE Calculator
+      var calcBtn = document.getElementById("calcRoe");
+      if (calcBtn) {
+        calcBtn.addEventListener("click", function() {
+          var ni = parseFloat(document.getElementById("netIncome").value);
+          var eq = parseFloat(document.getElementById("equity").value);
+          var box = document.getElementById("roeResult");
+          if (isNaN(ni) || isNaN(eq) || eq === 0) {
+            box.style.display = "block";
+            document.getElementById("roeValue").textContent = "Invalid input";
+            document.getElementById("roeValue").style.color = "var(--negative)";
+            document.getElementById("roeInterp").textContent = "Please enter valid numbers. Equity cannot be zero.";
+            return;
+          }
+          var roe = (ni / eq) * 100;
+          box.style.display = "block";
+          var color = "var(--accent)";
+          var interp = "";
+          if (roe < 0) { color = "var(--negative)"; interp = "Negative ROE — the company is generating losses relative to equity."; }
+          else if (roe < 10) { color = "var(--negative)"; interp = "Poor — below-average return on equity for most industries."; }
+          else if (roe < 15) { color = "#f59e0b"; interp = "Average — acceptable for capital-intensive sectors but room for improvement."; }
+          else if (roe < 25) { color = "var(--positive)"; interp = "Good — strong return on equity indicating efficient profit generation."; }
+          else { color = "#8b5cf6"; interp = "Excellent — exceptional return on equity. Verify via DuPont analysis."; }
+          document.getElementById("roeValue").textContent = roe.toFixed(2) + "%";
+          document.getElementById("roeValue").style.color = color;
+          document.getElementById("roeInterp").textContent = interp;
+        });
+      }
+
+      // DuPont Calculator
+      var dupontBtn = document.getElementById("calcDupont");
+      if (dupontBtn) {
+        dupontBtn.addEventListener("click", function() {
+          var pm = parseFloat(document.getElementById("profitMargin").value);
+          var at = parseFloat(document.getElementById("assetTurnover").value);
+          var em = parseFloat(document.getElementById("equityMultiplier").value);
+          var box = document.getElementById("dupontResult");
+          if (isNaN(pm) || isNaN(at) || isNaN(em)) {
+            box.style.display = "block";
+            document.getElementById("dupontValue").textContent = "Invalid input";
+            document.getElementById("dupontValue").style.color = "var(--negative)";
+            document.getElementById("dupontBreakdown").textContent = "Please enter valid numbers for all three fields.";
+            return;
+          }
+          var roe = (pm / 100) * at * em * 100;
+          box.style.display = "block";
+          var color = roe < 10 ? "var(--negative)" : roe < 15 ? "#f59e0b" : roe < 25 ? "var(--positive)" : "#8b5cf6";
+          document.getElementById("dupontValue").textContent = roe.toFixed(2) + "%";
+          document.getElementById("dupontValue").style.color = color;
+
+          var dominant = "profitability (margin)";
+          if (at > em && at > pm / 100) dominant = "asset efficiency (turnover)";
+          else if (em > at && em > pm / 100) dominant = "financial leverage (equity multiplier)";
+          document.getElementById("dupontBreakdown").textContent =
+            "Breakdown: " + pm + "% margin × " + at + "× turnover × " + em + "× leverage. Primary ROE driver: " + dominant + ".";
+        });
+      }
+
+      // Sector ROE Chart
+      var sectorCtx = document.getElementById("sectorChart");
+      if (sectorCtx) {
+        var sectorLabels = [
+          "Technology", "Healthcare", "Consumer Discretionary", "Energy",
+          "Industrials", "Communication Services", "Consumer Staples",
+          "Materials", "Financials", "Real Estate", "Utilities"
+        ];
+        var sectorData = [35.2, 25.4, 23.8, 20.1, 18.5, 17.9, 16.3, 14.7, 12.4, 9.8, 8.6];
+        var sectorColors = sectorData.map(function(v) {
+          if (v >= 25) return "#8b5cf6";
+          if (v >= 15) return "#10b981";
+          if (v >= 10) return "#f59e0b";
+          return "#ef4444";
+        });
+
+        new Chart(sectorCtx, {
+          type: "bar",
+          data: {
+            labels: sectorLabels,
+            datasets: [{
+              label: "Average ROE (%)",
+              data: sectorData,
+              backgroundColor: sectorColors,
+              borderColor: sectorColors,
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) { return ctx.parsed.x + "%"; }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 45,
+                ticks: { color: "#8b949e", callback: function(v) { return v + "%"; } },
+                grid: { color: "rgba(48,54,61,0.5)" }
+              },
+              y: {
+                ticks: { color: "#c9d1d9", font: { size: 12 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+        sectorCtx.parentElement.style.height = "420px";
+      }
+
+      // ROE Trend Chart
+      var trendCtx = document.getElementById("trendChart");
+      if (trendCtx) {
+        var years = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+        new Chart(trendCtx, {
+          type: "line",
+          data: {
+            labels: years,
+            datasets: [
+              {
+                label: "Improving ROE (Company A)",
+                data: [12, 14, 16, 18, 21, 23, 26],
+                borderColor: "#10b981",
+                backgroundColor: "rgba(16,185,129,0.1)",
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: "#10b981"
+              },
+              {
+                label: "Declining ROE (Company B)",
+                data: [28, 25, 22, 19, 15, 12, 9],
+                borderColor: "#ef4444",
+                backgroundColor: "rgba(239,68,68,0.1)",
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: "#ef4444"
+              },
+              {
+                label: "Stable ROE (Company C)",
+                data: [18, 17, 19, 18, 19, 18, 19],
+                borderColor: "#4a8fe7",
+                backgroundColor: "rgba(74,143,231,0.05)",
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: "#4a8fe7",
+                borderDash: [5, 5]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: "#c9d1d9", usePointStyle: true, padding: 20 }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) { return ctx.dataset.label + ": " + ctx.parsed.y + "%"; }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: "#8b949e" },
+                grid: { color: "rgba(48,54,61,0.5)" }
+              },
+              y: {
+                beginAtZero: true,
+                max: 35,
+                ticks: { color: "#8b949e", callback: function(v) { return v + "%"; } },
+                grid: { color: "rgba(48,54,61,0.5)" }
+              }
+            }
+          }
+        });
+        trendCtx.parentElement.style.height = "350px";
+      }
+    })();
+  </script>
+</SiteLayout>

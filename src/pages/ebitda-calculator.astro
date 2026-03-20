@@ -1,0 +1,699 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "EBITDA Calculator — Formula, Margin & EV/EBITDA Ratio", description: "Free EBITDA calculator with margin analysis and EV/EBITDA valuation. Learn the EBITDA formula, compare sectors, and understand what EBITDA really means for business valuation.", category: "study", published: "2026-03-20" };
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "EBITDA Calculator — Formula, Margin & EV/EBITDA Ratio",
+    "description": "Free EBITDA calculator with margin analysis and EV/EBITDA valuation. Learn the EBITDA formula, compare sectors, and understand what EBITDA really means.",
+    "datePublished": "2026-03-20",
+    "author": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals",
+      "url": "https://westmountfundamentals.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Westmount Fundamentals"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is EBITDA and what does it stand for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EBITDA stands for Earnings Before Interest, Taxes, Depreciation, and Amortization. It is a financial metric used to evaluate a company's operating performance by stripping out non-operating expenses like financing costs, tax environments, and non-cash charges. EBITDA provides a cleaner view of core business profitability."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate EBITDA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There are two common EBITDA formulas. The top-down method: EBITDA = Revenue - COGS - Operating Expenses + Depreciation & Amortization. The bottom-up method: EBITDA = Net Income + Interest + Taxes + Depreciation + Amortization. Both should yield the same result when using consistent financial data."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a good EBITDA margin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A good EBITDA margin varies significantly by industry. Software and technology companies often achieve margins of 25-40%, while retail and restaurants typically operate at 5-15%. Generally, an EBITDA margin above 20% is considered strong, but always compare within the same sector for meaningful analysis."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between EBITDA and net income?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "EBITDA excludes interest, taxes, depreciation, and amortization, showing operating performance before these costs. Net income is the bottom line after all expenses. EBITDA is useful for comparing companies with different capital structures and tax situations, while net income shows actual profitability after all obligations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does EV/EBITDA ratio tell you?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The EV/EBITDA ratio (Enterprise Value to EBITDA) is a valuation multiple that compares a company's total value including debt to its operating earnings. A lower EV/EBITDA (under 10x) may indicate undervaluation, while a higher ratio (over 15x) suggests the market expects strong future growth. The S&P 500 average is roughly 12-14x."
+        }
+      }
+    ]
+  }
+];
+---
+
+<SiteLayout site="westmount" title="EBITDA Calculator — Formula, Margin & EV/EBITDA Ratio" description="Free EBITDA calculator with margin analysis and EV/EBITDA valuation. Learn the EBITDA formula, compare sectors, and understand what EBITDA really means for business valuation." canonical="https://westmountfundamentals.com/ebitda-calculator/" schema={schema}>
+
+<style>
+  :root {
+    --accent: #4a8fe7;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --bg-card: #0d1117;
+    --border: #30363d;
+  }
+  .ebitda-hero { text-align: center; padding: 3rem 1rem 2rem; max-width: 900px; margin: 0 auto; }
+  .ebitda-hero h1 { font-size: 2.4rem; margin-bottom: 1rem; line-height: 1.2; }
+  .ebitda-hero p { color: #8b949e; font-size: 1.1rem; max-width: 700px; margin: 0 auto; }
+
+  .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.85rem; color: #8b949e; margin-top: 0.3rem; }
+
+  .calc-section { max-width: 1100px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .calc-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .section-subtitle { color: #8b949e; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .calc-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+  .calc-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .calc-box .calc-desc { color: #8b949e; font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.85rem; color: #c9d1d9; margin-bottom: 0.3rem; }
+  .form-group input { width: 100%; padding: 0.6rem 0.8rem; background: #161b22; border: 1px solid var(--border); border-radius: 8px; color: #e6edf3; font-size: 1rem; box-sizing: border-box; }
+  .form-group input:focus { outline: none; border-color: var(--accent); }
+
+  .calc-btn { width: 100%; padding: 0.75rem; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
+  .calc-btn:hover { opacity: 0.9; }
+
+  .result-box { margin-top: 1.5rem; padding: 1.2rem; background: #161b22; border: 1px solid var(--border); border-radius: 8px; display: none; }
+  .result-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: #8b949e; }
+  .result-val { font-weight: 600; }
+  .result-val.pos { color: var(--positive); }
+  .result-val.neg { color: var(--negative); }
+
+  .ev-interpretation { margin-top: 1rem; padding: 0.8rem; border-radius: 8px; font-size: 0.9rem; text-align: center; font-weight: 600; }
+
+  .sector-table-wrap { overflow-x: auto; margin-top: 1rem; }
+  .sector-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
+  .sector-table th, .sector-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .sector-table th { background: #161b22; color: #8b949e; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sector-table td { font-size: 0.9rem; }
+  .sector-table tr:last-child td { border-bottom: none; }
+  .margin-bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--accent); vertical-align: middle; margin-right: 0.5rem; }
+
+  .chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+  .chart-container canvas { max-height: 400px; }
+
+  .content-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .content-section h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  .content-section h3 { font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+  .content-section p { color: #c9d1d9; line-height: 1.7; margin-bottom: 1rem; }
+
+  .formula-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem 2rem; margin: 1.5rem 0; font-family: monospace; font-size: 1.1rem; color: var(--accent); text-align: center; }
+
+  .compare-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; margin: 1.5rem 0; }
+  .compare-table th, .compare-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .compare-table th { background: #161b22; color: #8b949e; font-size: 0.8rem; text-transform: uppercase; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .check { color: var(--positive); }
+  .cross { color: var(--negative); }
+
+  .insights-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.5rem 0; }
+  .insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .insight-num { background: var(--accent); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  .insight-text { color: #c9d1d9; font-size: 0.95rem; line-height: 1.5; }
+  .insight-text strong { color: #e6edf3; }
+
+  .faq-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+  .faq-section h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
+  .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+  .faq-q { padding: 1.2rem 1.5rem; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q:hover { background: #161b22; }
+  .faq-arrow { transition: transform 0.2s; color: #8b949e; }
+  .faq-a { padding: 0 1.5rem 1.2rem; color: #8b949e; line-height: 1.7; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+  @media (max-width: 768px) {
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .calc-grid { grid-template-columns: 1fr; }
+    .ebitda-hero h1 { font-size: 1.8rem; }
+  }
+  @media (max-width: 480px) {
+    .stat-cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Hero -->
+<div class="ebitda-hero">
+  <h1>EBITDA Calculator</h1>
+  <p>Calculate EBITDA, EBITDA margin, and EV/EBITDA valuation multiples. Compare your numbers against sector benchmarks and understand what EBITDA really means for business performance.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-value">~25%</div>
+    <div class="stat-label">S&P 500 Avg EBITDA Margin</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">12-14x</div>
+    <div class="stat-label">Avg EV/EBITDA Multiple</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">#1</div>
+    <div class="stat-label">Most Used Valuation Metric</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">93%</div>
+    <div class="stat-label">M&A Deals Using EBITDA</div>
+  </div>
+</div>
+
+<!-- Calculators -->
+<div class="calc-section">
+  <h2>EBITDA Calculator</h2>
+  <p class="section-subtitle">Calculate EBITDA using the top-down method (from revenue) or the bottom-up method (from net income).</p>
+
+  <div class="calc-grid">
+    <!-- Top-Down Calculator -->
+    <div class="calc-box">
+      <h3>📊 Top-Down (From Revenue)</h3>
+      <p class="calc-desc">EBITDA = Revenue − COGS − Operating Expenses + D&A</p>
+      <div class="form-group">
+        <label>Revenue ($)</label>
+        <input type="number" id="td-revenue" placeholder="e.g. 10,000,000">
+      </div>
+      <div class="form-group">
+        <label>Cost of Goods Sold ($)</label>
+        <input type="number" id="td-cogs" placeholder="e.g. 4,000,000">
+      </div>
+      <div class="form-group">
+        <label>Operating Expenses ($)</label>
+        <input type="number" id="td-opex" placeholder="e.g. 3,000,000">
+      </div>
+      <div class="form-group">
+        <label>Depreciation & Amortization ($)</label>
+        <input type="number" id="td-da" placeholder="e.g. 500,000">
+      </div>
+      <div class="form-group">
+        <label>Market Cap ($ — optional, for EV/EBITDA)</label>
+        <input type="number" id="td-mcap" placeholder="e.g. 50,000,000">
+      </div>
+      <div class="form-group">
+        <label>Total Debt ($ — optional)</label>
+        <input type="number" id="td-debt" placeholder="e.g. 5,000,000">
+      </div>
+      <div class="form-group">
+        <label>Cash & Equivalents ($ — optional)</label>
+        <input type="number" id="td-cash" placeholder="e.g. 2,000,000">
+      </div>
+      <button class="calc-btn" onclick="calcTopDown()">Calculate EBITDA</button>
+      <div class="result-box" id="td-result"></div>
+    </div>
+
+    <!-- Bottom-Up Calculator -->
+    <div class="calc-box">
+      <h3>🔄 Bottom-Up (From Net Income)</h3>
+      <p class="calc-desc">EBITDA = Net Income + Interest + Taxes + D&A</p>
+      <div class="form-group">
+        <label>Net Income ($)</label>
+        <input type="number" id="bu-net" placeholder="e.g. 1,500,000">
+      </div>
+      <div class="form-group">
+        <label>Interest Expense ($)</label>
+        <input type="number" id="bu-interest" placeholder="e.g. 300,000">
+      </div>
+      <div class="form-group">
+        <label>Taxes ($)</label>
+        <input type="number" id="bu-taxes" placeholder="e.g. 400,000">
+      </div>
+      <div class="form-group">
+        <label>Depreciation & Amortization ($)</label>
+        <input type="number" id="bu-da" placeholder="e.g. 500,000">
+      </div>
+      <div class="form-group">
+        <label>Revenue ($ — for margin calculation)</label>
+        <input type="number" id="bu-revenue" placeholder="e.g. 10,000,000">
+      </div>
+      <button class="calc-btn" onclick="calcBottomUp()">Calculate EBITDA</button>
+      <div class="result-box" id="bu-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EV/EBITDA Ratio Calculator -->
+<div class="calc-section">
+  <h2>EV/EBITDA Ratio Calculator</h2>
+  <p class="section-subtitle">Enterprise Value to EBITDA is the most widely used valuation multiple in M&A and equity research.</p>
+  <div class="calc-box" style="max-width: 600px;">
+    <h3>🏢 EV/EBITDA Valuation</h3>
+    <p class="calc-desc">EV = Market Cap + Total Debt − Cash. EV/EBITDA = Enterprise Value ÷ EBITDA.</p>
+    <div class="form-group">
+      <label>Market Capitalization ($)</label>
+      <input type="number" id="ev-mcap" placeholder="e.g. 50,000,000">
+    </div>
+    <div class="form-group">
+      <label>Total Debt ($)</label>
+      <input type="number" id="ev-debt" placeholder="e.g. 10,000,000">
+    </div>
+    <div class="form-group">
+      <label>Cash & Equivalents ($)</label>
+      <input type="number" id="ev-cash" placeholder="e.g. 3,000,000">
+    </div>
+    <div class="form-group">
+      <label>EBITDA ($)</label>
+      <input type="number" id="ev-ebitda" placeholder="e.g. 5,000,000">
+    </div>
+    <button class="calc-btn" onclick="calcEVEbitda()">Calculate EV/EBITDA</button>
+    <div class="result-box" id="ev-result"></div>
+  </div>
+</div>
+
+<!-- Sector Comparison -->
+<div class="calc-section">
+  <h2>EBITDA Margin by Sector</h2>
+  <p class="section-subtitle">Average EBITDA margins vary dramatically across industries. Use this benchmark to see where your company stands.</p>
+
+  <div class="sector-table-wrap">
+    <table class="sector-table">
+      <thead>
+        <tr>
+          <th>Sector</th>
+          <th>Avg EBITDA Margin</th>
+          <th>Typical EV/EBITDA</th>
+          <th>Visual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Software & SaaS</td><td>30–40%</td><td>20–30x</td><td><span class="margin-bar" style="width:140px"></span> 35%</td></tr>
+        <tr><td>Telecom</td><td>30–38%</td><td>6–8x</td><td><span class="margin-bar" style="width:136px"></span> 34%</td></tr>
+        <tr><td>Oil & Gas</td><td>25–35%</td><td>5–8x</td><td><span class="margin-bar" style="width:120px"></span> 30%</td></tr>
+        <tr><td>Mining & Materials</td><td>25–35%</td><td>6–9x</td><td><span class="margin-bar" style="width:116px"></span> 29%</td></tr>
+        <tr><td>Pharmaceuticals</td><td>25–30%</td><td>12–18x</td><td><span class="margin-bar" style="width:108px"></span> 27%</td></tr>
+        <tr><td>Utilities</td><td>20–30%</td><td>8–12x</td><td><span class="margin-bar" style="width:100px"></span> 25%</td></tr>
+        <tr><td>Healthcare</td><td>15–25%</td><td>10–15x</td><td><span class="margin-bar" style="width:80px"></span> 20%</td></tr>
+        <tr><td>Industrials / Manufacturing</td><td>12–20%</td><td>8–12x</td><td><span class="margin-bar" style="width:64px"></span> 16%</td></tr>
+        <tr><td>Consumer Goods</td><td>10–18%</td><td>10–14x</td><td><span class="margin-bar" style="width:56px"></span> 14%</td></tr>
+        <tr><td>Retail</td><td>5–12%</td><td>8–12x</td><td><span class="margin-bar" style="width:36px"></span> 9%</td></tr>
+        <tr><td>Restaurants & Hospitality</td><td>5–15%</td><td>8–14x</td><td><span class="margin-bar" style="width:40px"></span> 10%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-container">
+    <canvas id="sectorChart"></canvas>
+  </div>
+</div>
+
+<!-- What is EBITDA -->
+<div class="content-section">
+  <h2>What is EBITDA? Definition & Meaning</h2>
+  <p><strong>EBITDA</strong> stands for <strong>Earnings Before Interest, Taxes, Depreciation, and Amortization</strong>. It is one of the most widely used financial metrics for evaluating a company's operating performance, stripping away the effects of financing decisions, tax jurisdictions, and non-cash accounting charges.</p>
+  <p>Think of EBITDA as a company's "operating cash flow proxy." By removing interest (capital structure), taxes (jurisdiction-dependent), depreciation (asset age), and amortization (acquisition history), you get a cleaner picture of how well the core business actually generates earnings.</p>
+
+  <h3>The EBITDA Formula</h3>
+  <p>There are two standard ways to calculate EBITDA:</p>
+
+  <div class="formula-box">
+    <strong>Top-Down:</strong> EBITDA = Revenue − COGS − Operating Expenses + D&A
+  </div>
+  <div class="formula-box">
+    <strong>Bottom-Up:</strong> EBITDA = Net Income + Interest + Taxes + D&A
+  </div>
+
+  <p>Both methods should produce the same result when using consistent financial statements. The top-down approach starts from the income statement's revenue line, while the bottom-up approach works backwards from net income.</p>
+
+  <h3>EBITDA Margin</h3>
+  <p>The <strong>EBITDA margin</strong> expresses EBITDA as a percentage of revenue: <code>EBITDA Margin = (EBITDA ÷ Revenue) × 100</code>. This ratio shows how much of each dollar of revenue converts into operating earnings before non-operating costs. A higher EBITDA margin indicates greater operational efficiency and pricing power.</p>
+
+  <h3>What is Adjusted EBITDA?</h3>
+  <p><strong>Adjusted EBITDA</strong> takes standard EBITDA and removes one-time, non-recurring, or unusual items to show "normalized" earnings. Common adjustments include restructuring charges, stock-based compensation, litigation costs, and one-time gains or losses. While adjusted EBITDA can provide a clearer picture of ongoing operations, investors should scrutinize what management chooses to adjust — aggressive adjustments can paint an artificially rosy picture.</p>
+
+  <h3>EV/EBITDA — Enterprise Value to EBITDA</h3>
+  <p>The <strong>EV/EBITDA ratio</strong> is the gold standard valuation multiple in mergers and acquisitions. It compares a company's enterprise value (market cap + debt − cash) to its EBITDA. Unlike the P/E ratio, EV/EBITDA accounts for debt levels, making it especially useful for comparing companies with different capital structures.</p>
+  <p>General guidelines for EV/EBITDA interpretation:</p>
+  <ul>
+    <li><strong>Below 8x:</strong> Potentially undervalued — could indicate a value opportunity or fundamental problems</li>
+    <li><strong>8–12x:</strong> Fair value range for most mature industries</li>
+    <li><strong>12–20x:</strong> Premium valuation — market expects above-average growth</li>
+    <li><strong>Above 20x:</strong> High-growth territory — common in tech and SaaS</li>
+  </ul>
+</div>
+
+<!-- EBITDA vs Net Income vs Operating Income -->
+<div class="content-section">
+  <h2>EBITDA vs Net Income vs Operating Income</h2>
+  <p>Understanding the differences between these three profit metrics is essential for financial analysis. Each measures profitability at a different stage of the income statement.</p>
+
+  <div class="sector-table-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>EBITDA</th>
+          <th>Operating Income (EBIT)</th>
+          <th>Net Income</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Includes Interest Expense</td>
+          <td><span class="cross">✗</span> Excluded</td>
+          <td><span class="cross">✗</span> Excluded</td>
+          <td><span class="check">✓</span> Included</td>
+        </tr>
+        <tr>
+          <td>Includes Taxes</td>
+          <td><span class="cross">✗</span> Excluded</td>
+          <td><span class="cross">✗</span> Excluded</td>
+          <td><span class="check">✓</span> Included</td>
+        </tr>
+        <tr>
+          <td>Includes D&A</td>
+          <td><span class="cross">✗</span> Excluded</td>
+          <td><span class="check">✓</span> Included</td>
+          <td><span class="check">✓</span> Included</td>
+        </tr>
+        <tr>
+          <td>Best For</td>
+          <td>Comparing operations across companies</td>
+          <td>Core business profitability</td>
+          <td>True bottom-line profit</td>
+        </tr>
+        <tr>
+          <td>Found on Income Statement</td>
+          <td><span class="cross">✗</span> Calculated</td>
+          <td><span class="check">✓</span> Yes</td>
+          <td><span class="check">✓</span> Yes</td>
+        </tr>
+        <tr>
+          <td>GAAP Metric</td>
+          <td><span class="cross">✗</span> Non-GAAP</td>
+          <td><span class="check">✓</span> GAAP</td>
+          <td><span class="check">✓</span> GAAP</td>
+        </tr>
+        <tr>
+          <td>Capital Structure Neutral</td>
+          <td><span class="check">✓</span> Yes</td>
+          <td><span class="check">✓</span> Yes</td>
+          <td><span class="cross">✗</span> No</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="content-section">
+  <h2>5 Key Insights About EBITDA</h2>
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-num">1</div>
+      <div class="insight-text"><strong>EBITDA is not cash flow.</strong> Despite being called a "cash flow proxy," EBITDA ignores working capital changes, capital expenditures, and debt service. A company can have strong EBITDA and still run out of cash. Always pair EBITDA analysis with the cash flow statement.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">2</div>
+      <div class="insight-text"><strong>Adjusted EBITDA can be manipulated.</strong> Since there are no GAAP rules for adjusted EBITDA, management teams can exclude almost anything they want. Warren Buffett has been notably critical, calling EBITDA adjustments a way to "ichly dress up" earnings.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">3</div>
+      <div class="insight-text"><strong>Capital-intensive businesses need extra scrutiny.</strong> For companies with heavy fixed assets (airlines, manufacturing, telecom), D&A represents real economic costs of replacing equipment. EBITDA can significantly overstate the true earning power of these businesses.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">4</div>
+      <div class="insight-text"><strong>EV/EBITDA beats P/E for cross-company comparisons.</strong> Because it neutralizes capital structure and tax differences, EV/EBITDA is the preferred metric for comparing companies across borders or with different leverage levels — which is why it dominates M&A analysis.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">5</div>
+      <div class="insight-text"><strong>EBITDA margin trends matter more than absolute values.</strong> A declining EBITDA margin over several quarters may signal rising costs, pricing pressure, or operational inefficiency — even if the absolute EBITDA figure is growing alongside revenue.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What is EBITDA and what does it stand for?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">EBITDA stands for Earnings Before Interest, Taxes, Depreciation, and Amortization. It is a financial metric used to evaluate a company's operating performance by stripping out non-operating expenses like financing costs, tax environments, and non-cash charges. EBITDA provides a cleaner view of core business profitability and is the most widely used metric in M&A valuations.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      How do you calculate EBITDA?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">There are two common EBITDA formulas. The top-down method starts from revenue: EBITDA = Revenue − COGS − Operating Expenses + Depreciation & Amortization. The bottom-up method starts from net income: EBITDA = Net Income + Interest + Taxes + Depreciation + Amortization. Both approaches should produce the same result when using consistent financial statement data.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What is a good EBITDA margin?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">A good EBITDA margin varies significantly by industry. Software and SaaS companies often achieve margins of 30–40%, while retail and restaurants typically operate at 5–15%. Generally, an EBITDA margin above 20% is considered strong across most industries, but the most meaningful comparison is always against direct competitors within the same sector.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What is the difference between EBITDA and net income?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">EBITDA excludes interest, taxes, depreciation, and amortization to show operating performance before these costs. Net income is the true bottom line after all expenses are deducted. EBITDA is more useful for comparing companies with different capital structures and tax situations, while net income shows actual profitability available to shareholders after all obligations.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      What does the EV/EBITDA ratio tell you?
+      <span class="faq-arrow">▼</span>
+    </div>
+    <div class="faq-a">The EV/EBITDA ratio (Enterprise Value to EBITDA) is a valuation multiple that compares a company's total value — including debt — to its operating earnings. A lower ratio (below 10x) may indicate undervaluation or a value opportunity, while a higher ratio (above 15x) suggests the market expects strong future growth. The S&P 500 average historically sits around 12–14x.</div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script is:inline>
+function formatNum(n) {
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  if (Math.abs(n) >= 1e9) return "$" + (n / 1e9).toFixed(2) + "B";
+  if (Math.abs(n) >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+  if (Math.abs(n) >= 1e3) return "$" + (n / 1e3).toFixed(1) + "K";
+  return "$" + n.toFixed(2);
+}
+
+function getVal(id) {
+  var el = document.getElementById(id);
+  if (!el) return 0;
+  var v = parseFloat(el.value);
+  return isNaN(v) ? 0 : v;
+}
+
+function showResult(containerId, rows) {
+  var container = document.getElementById(containerId);
+  var html = "";
+  for (var i = 0; i < rows.length; i++) {
+    var cls = "";
+    if (rows[i].color === "pos") cls = " pos";
+    if (rows[i].color === "neg") cls = " neg";
+    html += '<div class="result-row"><span class="result-label">' + rows[i].label + '</span><span class="result-val' + cls + '">' + rows[i].value + '</span></div>';
+  }
+  container.innerHTML = html;
+  container.style.display = "block";
+}
+
+function calcTopDown() {
+  var revenue = getVal("td-revenue");
+  var cogs = getVal("td-cogs");
+  var opex = getVal("td-opex");
+  var da = getVal("td-da");
+  var mcap = getVal("td-mcap");
+  var debt = getVal("td-debt");
+  var cash = getVal("td-cash");
+
+  var operatingIncome = revenue - cogs - opex;
+  var ebitda = operatingIncome + da;
+  var margin = revenue > 0 ? (ebitda / revenue) * 100 : 0;
+
+  var rows = [
+    { label: "Gross Profit", value: formatNum(revenue - cogs) },
+    { label: "Operating Income (EBIT)", value: formatNum(operatingIncome) },
+    { label: "EBITDA", value: formatNum(ebitda), color: ebitda >= 0 ? "pos" : "neg" },
+    { label: "EBITDA Margin", value: margin.toFixed(1) + "%", color: margin >= 15 ? "pos" : "neg" }
+  ];
+
+  if (mcap > 0) {
+    var ev = mcap + debt - cash;
+    var evEbitda = ebitda > 0 ? ev / ebitda : 0;
+    rows.push({ label: "Enterprise Value (EV)", value: formatNum(ev) });
+    rows.push({ label: "EV/EBITDA", value: evEbitda.toFixed(1) + "x", color: evEbitda < 12 ? "pos" : evEbitda > 20 ? "neg" : "" });
+  }
+
+  showResult("td-result", rows);
+}
+
+function calcBottomUp() {
+  var net = getVal("bu-net");
+  var interest = getVal("bu-interest");
+  var taxes = getVal("bu-taxes");
+  var da = getVal("bu-da");
+  var revenue = getVal("bu-revenue");
+
+  var ebitda = net + interest + taxes + da;
+  var ebit = net + interest + taxes;
+
+  var rows = [
+    { label: "EBIT (Operating Income)", value: formatNum(ebit) },
+    { label: "EBITDA", value: formatNum(ebitda), color: ebitda >= 0 ? "pos" : "neg" }
+  ];
+
+  if (revenue > 0) {
+    var margin = (ebitda / revenue) * 100;
+    rows.push({ label: "EBITDA Margin", value: margin.toFixed(1) + "%", color: margin >= 15 ? "pos" : "neg" });
+  }
+
+  showResult("bu-result", rows);
+}
+
+function calcEVEbitda() {
+  var mcap = getVal("ev-mcap");
+  var debt = getVal("ev-debt");
+  var cash = getVal("ev-cash");
+  var ebitda = getVal("ev-ebitda");
+
+  var ev = mcap + debt - cash;
+  var ratio = ebitda > 0 ? ev / ebitda : 0;
+
+  var rows = [
+    { label: "Enterprise Value (EV)", value: formatNum(ev) },
+    { label: "EV/EBITDA Ratio", value: ratio.toFixed(1) + "x" }
+  ];
+
+  showResult("ev-result", rows);
+
+  var interpEl = document.getElementById("ev-interp");
+  if (!interpEl) {
+    interpEl = document.createElement("div");
+    interpEl.id = "ev-interp";
+    interpEl.className = "ev-interpretation";
+    document.getElementById("ev-result").parentNode.appendChild(interpEl);
+  }
+
+  if (ebitda <= 0) {
+    interpEl.style.background = "#30363d";
+    interpEl.style.color = "#8b949e";
+    interpEl.textContent = "Cannot calculate — EBITDA must be positive";
+  } else if (ratio < 8) {
+    interpEl.style.background = "rgba(16, 185, 129, 0.15)";
+    interpEl.style.color = "#10b981";
+    interpEl.textContent = "⬇ " + ratio.toFixed(1) + "x — Potentially Undervalued (below 8x)";
+  } else if (ratio <= 12) {
+    interpEl.style.background = "rgba(74, 143, 231, 0.15)";
+    interpEl.style.color = "#4a8fe7";
+    interpEl.textContent = "⚖ " + ratio.toFixed(1) + "x — Fair Value Range (8–12x)";
+  } else if (ratio <= 20) {
+    interpEl.style.background = "rgba(234, 179, 8, 0.15)";
+    interpEl.style.color = "#eab308";
+    interpEl.textContent = "📈 " + ratio.toFixed(1) + "x — Premium Valuation (12–20x)";
+  } else {
+    interpEl.style.background = "rgba(239, 68, 68, 0.15)";
+    interpEl.style.color = "#ef4444";
+    interpEl.textContent = "⬆ " + ratio.toFixed(1) + "x — Expensive / High-Growth (above 20x)";
+  }
+  interpEl.style.display = "block";
+}
+
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var isOpen = item.className.indexOf("open") !== -1;
+  if (isOpen) {
+    item.className = "faq-item";
+  } else {
+    item.className = "faq-item open";
+  }
+}
+
+/* Sector Chart */
+document.addEventListener("DOMContentLoaded", function() {
+  var ctx = document.getElementById("sectorChart");
+  if (!ctx) return;
+
+  var sectorLabels = [
+    "Software & SaaS", "Telecom", "Oil & Gas", "Mining", "Pharma",
+    "Utilities", "Healthcare", "Industrials", "Consumer Goods", "Retail", "Restaurants"
+  ];
+  var sectorMargins = [35, 34, 30, 29, 27, 25, 20, 16, 14, 9, 10];
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: sectorLabels,
+      datasets: [{
+        label: "Avg EBITDA Margin (%)",
+        data: sectorMargins,
+        backgroundColor: "rgba(74, 143, 231, 0.7)",
+        borderColor: "#4a8fe7",
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      indexAxis: "y",
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.parsed.x + "% EBITDA Margin";
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 45,
+          ticks: { color: "#8b949e", callback: function(v) { return v + "%"; } },
+          grid: { color: "rgba(48, 54, 61, 0.5)" }
+        },
+        y: {
+          ticks: { color: "#c9d1d9", font: { size: 12 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+});
+</script>
+
+</SiteLayout>
