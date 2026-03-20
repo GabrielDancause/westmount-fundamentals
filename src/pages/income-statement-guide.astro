@@ -1,0 +1,581 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Income Statement Guide: How to Read a Profit & Loss Statement", description: "Master the income statement (P&L) with our interactive builder, waterfall chart, margin formulas, and step-by-step walkthrough. Includes income statement template, examples, and sector margin comparison.", category: "study", published: "2026-03-20" };
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "datePublished": "2026-03-20",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com", "logo": { "@type": "ImageObject", "url": "https://westmountfundamentals.com/logo.png" } },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://westmountfundamentals.com/income-statement-guide/" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is an income statement?", "acceptedAnswer": { "@type": "Answer", "text": "An income statement (also called a profit and loss statement or P&L) is a financial report that summarizes a company's revenues, expenses, and profits over a specific period—typically a quarter or fiscal year. It starts with total revenue at the top and subtracts costs step by step to arrive at net income (the bottom line)." } },
+      { "@type": "Question", "name": "What is the income statement formula?", "acceptedAnswer": { "@type": "Answer", "text": "The core income statement formula is: Net Income = Revenue − Cost of Goods Sold − Operating Expenses − Interest Expense − Taxes. Key intermediate lines include Gross Profit (Revenue − COGS), Operating Income (Gross Profit − Operating Expenses), and Pre-tax Income (Operating Income − Interest Expense)." } },
+      { "@type": "Question", "name": "What is the difference between an income statement and a balance sheet?", "acceptedAnswer": { "@type": "Answer", "text": "An income statement measures financial performance over a period (like a movie), showing revenue, expenses, and profit. A balance sheet shows financial position at a single point in time (like a photograph), listing assets, liabilities, and equity. The income statement's net income flows into retained earnings on the balance sheet." } },
+      { "@type": "Question", "name": "How do you read an income statement?", "acceptedAnswer": { "@type": "Answer", "text": "Start at the top with revenue (sales), then subtract COGS to get gross profit. Next, subtract operating expenses (SG&A, R&D, D&A) to find operating income. Deduct interest expense to get pre-tax income, then subtract taxes to arrive at net income. Calculate margins at each step to assess profitability and compare against peers." } },
+      { "@type": "Question", "name": "What are the most important income statement metrics?", "acceptedAnswer": { "@type": "Answer", "text": "The four most important income statement metrics are: Gross Margin (Gross Profit / Revenue), Operating Margin (Operating Income / Revenue), Net Margin (Net Income / Revenue), and Earnings Per Share (Net Income / Shares Outstanding). These metrics reveal a company's pricing power, operational efficiency, overall profitability, and per-share earnings." } }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/income-statement-guide/" schema={schema}>
+
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/study/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Study</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Income Statement Guide</span></nav>
+    <span>14 min read</span>
+  </div>
+
+  <div class="page-content">
+    <h1>Income Statement Guide: How to Read a Profit & Loss Statement</h1>
+    <p>The <strong>income statement</strong>—also known as the <strong>profit and loss statement (P&L)</strong>—is the most closely watched financial statement on Wall Street. It tells you whether a company is actually making money, how efficiently it operates, and where every dollar of revenue ends up. Whether you're a beginner investor, a finance student, or prepping for the CFA, this guide breaks down every line item from <strong>top line (revenue) to bottom line (net income)</strong>.</p>
+
+    <!-- ═══ STAT CARDS ═══ -->
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value" style="color:#4a8fe7">Revenue → Net Income</div><div class="stat-label">The Income Statement Flow</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:#10b981">~20%</div><div class="stat-label">Average S&P 500 Net Margin</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:#f59e0b">4</div><div class="stat-label">Key Profitability Margins</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:#ef4444">#1</div><div class="stat-label">Most-Watched Financial Statement</div></div>
+    </div>
+
+    <!-- ═══ WHAT IS AN INCOME STATEMENT ═══ -->
+    <h2 id="what-is-an-income-statement">What Is an Income Statement?</h2>
+    <p>An <strong>income statement</strong> (or <em>profit and loss statement</em>) is a financial report that measures a company's financial performance over a specific period—typically a quarter or fiscal year. Unlike the <a href="/balance-sheet-explained/">balance sheet</a>, which is a snapshot at one moment, the income statement is like a <strong>movie</strong>: it captures everything that happened between two dates.</p>
+
+    <div class="equation-box">
+      <div class="equation-title">The Income Statement Formula</div>
+      <div class="equation">Net Income = Revenue − COGS − Operating Expenses − Interest − Taxes</div>
+      <p style="text-align:center;color:#94a3b8;margin:8px 0 0">Each subtraction reveals a different level of profitability—from gross profit to the final bottom line.</p>
+    </div>
+
+    <p>The income statement answers one fundamental question: <strong>Is this company profitable, and how profitable is it?</strong> It flows through several layers:</p>
+    <ul>
+      <li><strong>Revenue (Top Line)</strong> — Total sales or income generated from core business operations</li>
+      <li><strong>Cost of Goods Sold (COGS)</strong> — Direct costs to produce goods or services: raw materials, manufacturing labor, shipping</li>
+      <li><strong>Gross Profit</strong> — Revenue minus COGS; measures production efficiency and pricing power</li>
+      <li><strong>Operating Expenses (OpEx)</strong> — Indirect costs: selling, general & administrative (SG&A), research & development (R&D), depreciation & amortization (D&A)</li>
+      <li><strong>Operating Income (EBIT)</strong> — Gross profit minus operating expenses; core business profitability</li>
+      <li><strong>Interest Expense</strong> — Cost of debt financing: bond interest, loan payments</li>
+      <li><strong>Pre-tax Income</strong> — Operating income minus interest expense</li>
+      <li><strong>Net Income (Bottom Line)</strong> — What remains after taxes; the profit shareholders ultimately care about</li>
+    </ul>
+
+    <!-- ═══ KEY INSIGHTS ═══ -->
+    <h2 id="key-insights">5 Key Insights About Income Statements</h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-number">1</div>
+        <h3>Revenue Is Vanity, Profit Is Sanity</h3>
+        <p>A company can grow revenue 50% year-over-year and still lose money. Always look at margins, not just the top line. WeWork grew revenue rapidly but had catastrophic operating losses.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-number">2</div>
+        <h3>Margins Tell the Real Story</h3>
+        <p>Comparing gross, operating, and net margins over time reveals whether a company is gaining or losing competitive advantage. Expanding margins signal pricing power and operational efficiency.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-number">3</div>
+        <h3>EBITDA ≠ Cash Flow</h3>
+        <p>EBITDA adds back depreciation and amortization to operating income, but it ignores capital expenditures, working capital changes, and debt payments. Never confuse it with actual cash generation.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-number">4</div>
+        <h3>One-Time Items Distort Reality</h3>
+        <p>Restructuring charges, asset write-downs, and legal settlements can make a great quarter look terrible (or a bad one look good). Always distinguish recurring earnings from one-time items.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-number">5</div>
+        <h3>The Three Statements Are Connected</h3>
+        <p>Net income flows into retained earnings on the balance sheet. Depreciation from the income statement is added back on the cash flow statement. You can't fully understand one without the other two.</p>
+      </div>
+    </div>
+
+    <!-- ═══ VISUAL WATERFALL ═══ -->
+    <h2 id="income-statement-waterfall">Income Statement Waterfall Chart</h2>
+    <p>The waterfall below visualizes how <strong>TechCorp Inc.'s</strong> $500M in revenue cascades down to $75M in net income. Each colored bar represents a deduction—the wider the bar, the larger the expense eating into profits.</p>
+    <div class="chart-container">
+      <canvas id="waterfallChart" style="width:100%;max-height:420px"></canvas>
+    </div>
+
+    <!-- ═══ INTERACTIVE BUILDER ═══ -->
+    <h2 id="income-statement-builder">Interactive Income Statement Builder</h2>
+    <p>Enter your own numbers below to build a complete <strong>income statement template</strong>. The builder auto-calculates gross profit, EBITDA, operating income, pre-tax income, net income, and all profitability margins in real time.</p>
+
+    <div class="builder-card">
+      <div class="builder-grid">
+        <div class="builder-section">
+          <h3 style="color:#4a8fe7;margin:0 0 16px">📊 Revenue & Costs</h3>
+          <div class="input-group">
+            <label for="is-revenue">Revenue (Total Sales)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-revenue" value="500000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="is-cogs">Cost of Goods Sold (COGS)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-cogs" value="200000000" min="0" step="1000000"></div>
+          </div>
+          <h3 style="color:#f59e0b;margin:16px 0 16px">⚙️ Operating Expenses</h3>
+          <div class="input-group">
+            <label for="is-sga">Selling, General & Admin (SG&A)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-sga" value="80000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="is-rd">Research & Development (R&D)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-rd" value="50000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="is-da">Depreciation & Amortization (D&A)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-da" value="20000000" min="0" step="1000000"></div>
+          </div>
+          <h3 style="color:#ef4444;margin:16px 0 16px">💰 Below the Line</h3>
+          <div class="input-group">
+            <label for="is-interest">Interest Expense</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="is-interest" value="25000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="is-taxrate">Tax Rate</label>
+            <div class="input-wrapper"><span class="prefix">%</span><input type="number" id="is-taxrate" value="21" min="0" max="100" step="0.5"></div>
+          </div>
+        </div>
+
+        <div class="builder-section">
+          <h3 style="color:#10b981;margin:0 0 16px">📈 Calculated Results</h3>
+          <div class="result-grid" id="is-results">
+            <div class="result-row"><span class="result-label">Gross Profit</span><span class="result-value" id="r-gp">—</span></div>
+            <div class="result-row highlight"><span class="result-label">Gross Margin</span><span class="result-value" id="r-gm">—</span></div>
+            <div class="result-row"><span class="result-label">Total Operating Expenses</span><span class="result-value" id="r-opex">—</span></div>
+            <div class="result-row"><span class="result-label">EBITDA</span><span class="result-value" id="r-ebitda">—</span></div>
+            <div class="result-row highlight"><span class="result-label">EBITDA Margin</span><span class="result-value" id="r-ebitdam">—</span></div>
+            <div class="result-row"><span class="result-label">Operating Income (EBIT)</span><span class="result-value" id="r-oi">—</span></div>
+            <div class="result-row highlight"><span class="result-label">Operating Margin</span><span class="result-value" id="r-om">—</span></div>
+            <div class="result-row"><span class="result-label">Pre-tax Income</span><span class="result-value" id="r-pti">—</span></div>
+            <div class="result-row"><span class="result-label">Income Tax</span><span class="result-value" id="r-tax">—</span></div>
+            <div class="result-row big"><span class="result-label">Net Income</span><span class="result-value" id="r-ni">—</span></div>
+            <div class="result-row highlight big"><span class="result-label">Net Margin</span><span class="result-value" id="r-nm">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MARGIN COMPARISON BY SECTOR ═══ -->
+    <h2 id="margins-by-sector">Profit Margins by Sector</h2>
+    <p>Not all industries are created equal. The chart below compares <strong>gross margin, operating margin, and net margin</strong> across major sectors. Technology and healthcare companies typically enjoy wider margins than energy or retail businesses due to lower marginal costs and intellectual property advantages.</p>
+    <div class="chart-container">
+      <canvas id="sectorChart" style="width:100%;max-height:420px"></canvas>
+    </div>
+
+    <!-- ═══ INCOME STATEMENT VS BALANCE SHEET VS CASH FLOW ═══ -->
+    <h2 id="income-statement-vs-balance-sheet">Income Statement vs Balance Sheet vs Cash Flow Statement</h2>
+    <p>The three financial statements work together like puzzle pieces. Understanding how they connect is essential for any serious investor or analyst.</p>
+
+    <div class="comparison-table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr><th>Feature</th><th>Income Statement</th><th>Balance Sheet</th><th>Cash Flow Statement</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Also Called</strong></td><td>Profit & Loss (P&L)</td><td>Statement of Financial Position</td><td>Statement of Cash Flows</td></tr>
+          <tr><td><strong>Measures</strong></td><td>Profitability over a period</td><td>Financial position at a point in time</td><td>Cash movement over a period</td></tr>
+          <tr><td><strong>Time Frame</strong></td><td>Period (quarter/year)</td><td>Snapshot (single date)</td><td>Period (quarter/year)</td></tr>
+          <tr><td><strong>Key Equation</strong></td><td>Revenue − Expenses = Net Income</td><td>Assets = Liabilities + Equity</td><td>Operating + Investing + Financing = Δ Cash</td></tr>
+          <tr><td><strong>Starts With</strong></td><td>Revenue</td><td>Assets</td><td>Net Income (indirect method)</td></tr>
+          <tr><td><strong>Ends With</strong></td><td>Net Income / EPS</td><td>Total Equity</td><td>Ending Cash Balance</td></tr>
+          <tr><td><strong>Key Metrics</strong></td><td>Gross Margin, Operating Margin, EPS</td><td>Current Ratio, D/E Ratio, Book Value</td><td>Free Cash Flow, Operating Cash Flow</td></tr>
+          <tr><td><strong>Connection</strong></td><td>Net income → Retained Earnings</td><td>Retained Earnings from net income</td><td>Starts with net income, adjusts to cash</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>For a deep dive into the balance sheet, see our <a href="/balance-sheet-explained/">Balance Sheet Explained</a> guide with an interactive builder and ratio calculator.</p>
+
+    <!-- ═══ KEY METRICS ═══ -->
+    <h2 id="key-metrics">Key Metrics from the Income Statement</h2>
+    <p>These four margins and ratios are the most important numbers investors extract from every <strong>income statement example</strong>. Memorize the formulas and benchmark them against industry averages.</p>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">📊</div>
+        <h3>Gross Margin</h3>
+        <div class="metric-formula">Gross Profit ÷ Revenue × 100</div>
+        <p>Measures production efficiency and pricing power. A 60% gross margin means the company keeps $0.60 of every revenue dollar after direct costs. Tech companies average 60–70%; retailers average 25–35%.</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">⚙️</div>
+        <h3>Operating Margin</h3>
+        <div class="metric-formula">Operating Income ÷ Revenue × 100</div>
+        <p>Shows how efficiently the company runs its core operations, including overhead. A rising operating margin signals improving operational leverage. S&P 500 median is ~15%.</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">💰</div>
+        <h3>Net Margin</h3>
+        <div class="metric-formula">Net Income ÷ Revenue × 100</div>
+        <p>The ultimate profitability measure—what percentage of revenue becomes actual profit after all costs, interest, and taxes. Apple's net margin (~26%) dwarfs most retailers (~3–5%).</p>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">📈</div>
+        <h3>Earnings Per Share (EPS)</h3>
+        <div class="metric-formula">Net Income ÷ Shares Outstanding</div>
+        <p>The single most-watched metric on earnings day. EPS tells you how much profit is attributable to each share of stock. Diluted EPS accounts for stock options and convertible securities.</p>
+      </div>
+    </div>
+
+    <!-- ═══ HOW TO READ STEP BY STEP ═══ -->
+    <h2 id="how-to-read">How to Read an Income Statement: Step-by-Step</h2>
+    <p>Let's walk through a real <strong>income statement example</strong> for our sample company, <strong>TechCorp Inc.</strong>, which reported $500M in annual revenue. Follow each step to understand how revenue becomes net income.</p>
+
+    <div class="walkthrough">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Start with Revenue: $500M</h3>
+          <p>TechCorp generated <strong>$500 million</strong> in total revenue from selling its software products and cloud services. This is the "top line"—the starting point of every income statement. Check: Is revenue growing year-over-year? TechCorp grew 12% from $446M last year. ✅</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Subtract COGS: −$200M → Gross Profit: $300M</h3>
+          <p>Cost of goods sold includes server costs, cloud infrastructure, and direct labor for service delivery. <strong>Gross Profit = $300M</strong> gives a <strong>60% gross margin</strong>—healthy for a SaaS company. Compare to peers: Salesforce ~73%, Oracle ~71%.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Subtract Operating Expenses: −$150M → Operating Income: $150M</h3>
+          <p>SG&A ($80M) + R&D ($50M) + D&A ($20M) = $150M in operating expenses. <strong>Operating Income = $150M</strong> for a <strong>30% operating margin</strong>. This tells us TechCorp converts 30 cents of every revenue dollar into operating profit—strong operational efficiency.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Subtract Interest Expense: −$25M → Pre-tax Income: $125M</h3>
+          <p>TechCorp pays $25M in annual interest on its corporate bonds and credit facility. <strong>Pre-tax Income = $125M</strong>. The interest coverage ratio (EBIT / Interest) is 6.0x—well above the 3.0x safety threshold. Debt is manageable. ✅</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Subtract Taxes: −$26.25M → Net Income: $98.75M → Adjusted: $75M</h3>
+          <p>At a 21% corporate tax rate, TechCorp owes ~$26.25M. But after additional adjustments (stock-based compensation, one-time charges), reported <strong>Net Income = $75M</strong>, giving a <strong>15% net margin</strong>. This is the bottom line—the profit that flows to retained earnings and drives EPS.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="techcorp-summary">
+      <h3>TechCorp Inc. — Income Statement Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-row header-row"><span>Line Item</span><span>Amount</span><span>Margin</span></div>
+        <div class="summary-row"><span>Revenue</span><span>$500M</span><span>100%</span></div>
+        <div class="summary-row"><span>COGS</span><span>($200M)</span><span>—</span></div>
+        <div class="summary-row accent"><span><strong>Gross Profit</strong></span><span><strong>$300M</strong></span><span><strong>60.0%</strong></span></div>
+        <div class="summary-row"><span>Operating Expenses</span><span>($150M)</span><span>—</span></div>
+        <div class="summary-row accent"><span><strong>Operating Income</strong></span><span><strong>$150M</strong></span><span><strong>30.0%</strong></span></div>
+        <div class="summary-row"><span>Interest Expense</span><span>($25M)</span><span>—</span></div>
+        <div class="summary-row"><span>Pre-tax Income</span><span>$125M</span><span>25.0%</span></div>
+        <div class="summary-row"><span>Taxes (21%)</span><span>($26.25M)</span><span>—</span></div>
+        <div class="summary-row"><span>Adjustments</span><span>($23.75M)</span><span>—</span></div>
+        <div class="summary-row accent big"><span><strong>Net Income</strong></span><span><strong>$75M</strong></span><span><strong>15.0%</strong></span></div>
+      </div>
+    </div>
+
+    <!-- ═══ RED FLAGS ═══ -->
+    <h2 id="red-flags">Red Flags to Watch on an Income Statement</h2>
+    <p>Not everything on an income statement is what it seems. These warning signs can indicate deeper problems that the headline numbers might obscure.</p>
+
+    <div class="redflags-grid">
+      <div class="redflag-card">
+        <div class="redflag-icon">📉</div>
+        <h3>Declining Margins Over Time</h3>
+        <p>If gross or operating margins are shrinking quarter after quarter, the company may be losing pricing power, facing rising input costs, or competing on price. Compare margin trends over 8+ quarters—not just one period.</p>
+      </div>
+      <div class="redflag-card">
+        <div class="redflag-icon">📈</div>
+        <h3>SG&A Growing Faster Than Revenue</h3>
+        <p>When selling, general & administrative expenses grow faster than revenue, the company is spending more to generate each dollar of sales. This signals inefficiency, bloated overhead, or aggressive spending that isn't translating to growth.</p>
+      </div>
+      <div class="redflag-card">
+        <div class="redflag-icon">⚠️</div>
+        <h3>Frequent "One-Time" Items</h3>
+        <p>Restructuring charges that appear every year aren't one-time—they're recurring costs being disguised. If a company regularly excludes items from "adjusted earnings," scrutinize what's being hidden. Check: Do GAAP and non-GAAP earnings diverge significantly?</p>
+      </div>
+      <div class="redflag-card">
+        <div class="redflag-icon">🔍</div>
+        <h3>Revenue Recognition Tricks</h3>
+        <p>Watch for channel stuffing (shipping excess inventory to distributors), bill-and-hold arrangements, or premature revenue recognition. If accounts receivable grow much faster than revenue, the company may be booking sales that haven't truly closed.</p>
+      </div>
+    </div>
+
+    <!-- ═══ FAQ ═══ -->
+    <h2 id="faq">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details class="faq-item"><summary>What is an income statement?</summary><p>An income statement (also called a profit and loss statement or P&L) is a financial report that summarizes a company's revenues, expenses, and profits over a specific period—typically a quarter or fiscal year. It starts with total revenue at the top and subtracts costs step by step to arrive at net income (the bottom line).</p></details>
+      <details class="faq-item"><summary>What is the income statement formula?</summary><p>The core formula is: <strong>Net Income = Revenue − COGS − Operating Expenses − Interest Expense − Taxes</strong>. Key intermediate calculations include Gross Profit (Revenue − COGS), Operating Income (Gross Profit − OpEx), and Pre-tax Income (Operating Income − Interest).</p></details>
+      <details class="faq-item"><summary>What is the difference between an income statement and a balance sheet?</summary><p>An income statement shows profitability over a period (like a movie), while a balance sheet shows financial position at a single date (like a photograph). The income statement reports revenue and expenses; the balance sheet reports assets, liabilities, and equity. Net income from the income statement flows into retained earnings on the balance sheet. See our <a href="/balance-sheet-explained/">Balance Sheet Explained</a> guide for more.</p></details>
+      <details class="faq-item"><summary>How do you read an income statement?</summary><p>Start at the top with revenue, subtract COGS to get gross profit, subtract operating expenses (SG&A, R&D, D&A) to find operating income, deduct interest for pre-tax income, and subtract taxes to arrive at net income. Calculate margins at each level to assess profitability.</p></details>
+      <details class="faq-item"><summary>What are the most important income statement metrics?</summary><p>The four key metrics are: <strong>Gross Margin</strong> (Gross Profit / Revenue), <strong>Operating Margin</strong> (Operating Income / Revenue), <strong>Net Margin</strong> (Net Income / Revenue), and <strong>EPS</strong> (Net Income / Shares Outstanding). These measure pricing power, operational efficiency, bottom-line profitability, and per-share earnings respectively.</p></details>
+    </div>
+
+  </div>
+
+  <!-- ═══ STYLES ═══ -->
+  <style>
+    .page-content { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; color: #c8d0de; line-height: 1.7; }
+    .page-content h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; margin: 0 0 16px; color: #f0f4fc; line-height: 1.2; }
+    .page-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; color: #f0f4fc; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+    .page-content h3 { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin: 0 0 8px; }
+    .page-content p { margin: 0 0 16px; }
+    .page-content a { color: #4a8fe7; text-decoration: none; }
+    .page-content a:hover { text-decoration: underline; }
+    .page-content ul { margin: 0 0 16px; padding-left: 24px; }
+    .page-content li { margin: 0 0 8px; }
+    .page-content strong { color: #e2e8f0; }
+
+    /* Stat Cards */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0 32px; }
+    .stat-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+    .stat-label { font-size: 0.85rem; color: #94a3b8; }
+
+    /* Equation Box */
+    .equation-box { background: linear-gradient(135deg, rgba(74,143,231,0.1), rgba(99,102,241,0.1)); border: 1px solid rgba(74,143,231,0.3); border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center; }
+    .equation-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #4a8fe7; margin-bottom: 12px; font-weight: 600; }
+    .equation { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 700; color: #f0f4fc; font-family: 'SF Mono', 'Fira Code', monospace; }
+
+    /* Insights */
+    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+    .insight-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
+    .insight-number { width: 32px; height: 32px; border-radius: 50%; background: #4a8fe7; color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; margin-bottom: 12px; }
+    .insight-card h3 { font-size: 1rem; margin: 0 0 8px; color: #e2e8f0; }
+    .insight-card p { font-size: 0.9rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+
+    /* Chart */
+    .chart-container { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 24px 0; }
+
+    /* Builder */
+    .builder-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 24px 0; }
+    .builder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 768px) { .builder-grid { grid-template-columns: 1fr; } }
+    .builder-section h3 { font-size: 1rem; }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 4px; font-weight: 500; }
+    .input-wrapper { display: flex; align-items: center; background: #161b22; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; }
+    .input-wrapper .prefix { padding: 8px 10px; color: #94a3b8; font-size: 0.85rem; background: rgba(48,54,61,0.5); border-right: 1px solid #30363d; font-weight: 600; }
+    .input-wrapper input { flex: 1; background: transparent; border: none; padding: 8px 12px; color: #f0f4fc; font-size: 0.95rem; outline: none; font-family: inherit; }
+    .input-wrapper input:focus { box-shadow: inset 0 0 0 1px #4a8fe7; }
+
+    /* Results */
+    .result-grid { display: flex; flex-direction: column; gap: 8px; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #161b22; border-radius: 8px; font-size: 0.9rem; }
+    .result-row.highlight { background: rgba(74,143,231,0.1); border: 1px solid rgba(74,143,231,0.2); }
+    .result-row.big { font-size: 1.05rem; font-weight: 700; }
+    .result-row.big .result-value { color: #10b981; }
+    .result-label { color: #94a3b8; }
+    .result-value { color: #f0f4fc; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; }
+
+    /* Comparison Table */
+    .comparison-table-wrapper { overflow-x: auto; margin: 24px 0; border-radius: 12px; border: 1px solid #30363d; }
+    .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .comparison-table th { background: #161b22; padding: 12px 16px; text-align: left; color: #4a8fe7; font-weight: 600; border-bottom: 1px solid #30363d; white-space: nowrap; }
+    .comparison-table td { padding: 10px 16px; border-bottom: 1px solid #30363d; color: #c8d0de; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: rgba(74,143,231,0.05); }
+
+    /* Metrics Grid */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+    .metric-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
+    .metric-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .metric-card h3 { font-size: 1rem; color: #e2e8f0; margin: 0 0 8px; }
+    .metric-formula { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px 12px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; color: #4a8fe7; margin-bottom: 12px; text-align: center; font-weight: 600; }
+    .metric-card p { font-size: 0.88rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+
+    /* Walkthrough Steps */
+    .walkthrough { margin: 24px 0; display: flex; flex-direction: column; gap: 16px; }
+    .step-card { display: flex; gap: 16px; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
+    .step-num { min-width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4a8fe7, #6366f1); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .step-content h3 { font-size: 1rem; margin: 0 0 8px; color: #f0f4fc; }
+    .step-content p { font-size: 0.9rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+    @media (max-width: 600px) { .step-card { flex-direction: column; gap: 12px; } }
+
+    /* TechCorp Summary */
+    .techcorp-summary { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 24px 0; }
+    .techcorp-summary h3 { color: #4a8fe7; margin: 0 0 16px; font-size: 1.1rem; }
+    .summary-grid { display: flex; flex-direction: column; gap: 4px; }
+    .summary-row { display: grid; grid-template-columns: 1fr 120px 80px; padding: 8px 12px; font-size: 0.9rem; color: #c8d0de; border-radius: 6px; }
+    .summary-row.header-row { color: #94a3b8; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 4px; }
+    .summary-row.accent { background: rgba(74,143,231,0.08); }
+    .summary-row.big { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); font-size: 1rem; }
+
+    /* Red Flags */
+    .redflags-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 24px 0; }
+    .redflag-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; border-left: 3px solid #ef4444; }
+    .redflag-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .redflag-card h3 { font-size: 1rem; color: #e2e8f0; margin: 0 0 8px; }
+    .redflag-card p { font-size: 0.88rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+
+    /* FAQ */
+    .faq-list { margin: 24px 0; display: flex; flex-direction: column; gap: 8px; }
+    .faq-item { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; overflow: hidden; }
+    .faq-item summary { padding: 16px 20px; cursor: pointer; font-weight: 600; color: #e2e8f0; font-size: 1rem; list-style: none; display: flex; align-items: center; gap: 12px; }
+    .faq-item summary::before { content: '+'; color: #4a8fe7; font-size: 1.3rem; font-weight: 700; min-width: 20px; text-align: center; }
+    .faq-item[open] summary::before { content: '−'; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item p { padding: 0 20px 16px; color: #94a3b8; font-size: 0.92rem; margin: 0; line-height: 1.7; }
+    .faq-item a { color: #4a8fe7; }
+  </style>
+
+  <!-- ═══ CHART.JS ═══ -->
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script is:inline>
+  (function() {
+    /* ── Waterfall Chart ── */
+    var wCtx = document.getElementById('waterfallChart');
+    if (wCtx) {
+      var labels = ['Revenue', 'COGS', 'Gross Profit', 'SG&A', 'R&D', 'D&A', 'Operating Income', 'Interest', 'Taxes', 'Net Income'];
+      var values = [500, -200, 300, -80, -50, -20, 150, -25, -50, 75];
+      var baseVals = [];
+      var posVals = [];
+      var negVals = [];
+      var running = 0;
+      for (var i = 0; i < values.length; i++) {
+        if (i === 0) {
+          baseVals.push(0);
+          posVals.push(500);
+          negVals.push(0);
+          running = 500;
+        } else if (i === 2 || i === 6 || i === 9) {
+          baseVals.push(0);
+          posVals.push(values[i]);
+          negVals.push(0);
+        } else {
+          var absVal = Math.abs(values[i]);
+          running = running + values[i];
+          baseVals.push(running);
+          posVals.push(0);
+          negVals.push(absVal);
+        }
+      }
+      new Chart(wCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Base', data: baseVals, backgroundColor: 'transparent', borderWidth: 0 },
+            { label: 'Positive', data: posVals, backgroundColor: '#10b981', borderRadius: 4 },
+            { label: 'Deduction', data: negVals, backgroundColor: '#ef4444', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  if (ctx.datasetIndex === 0) return '';
+                  return ctx.dataset.label + ': $' + ctx.raw + 'M';
+                }
+              }
+            }
+          },
+          scales: {
+            x: { stacked: true, ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
+            y: { stacked: true, ticks: { color: '#94a3b8', callback: function(v) { return '$' + v + 'M'; } }, grid: { color: 'rgba(48,54,61,0.5)' } }
+          }
+        }
+      });
+    }
+
+    /* ── Sector Margin Chart ── */
+    var sCtx = document.getElementById('sectorChart');
+    if (sCtx) {
+      var sectors = ['Technology', 'Healthcare', 'Financials', 'Industrials', 'Consumer Staples', 'Energy', 'Retail'];
+      var grossData = [65, 55, 0, 35, 38, 42, 28];
+      var opData = [30, 22, 35, 14, 12, 18, 6];
+      var netData = [22, 15, 25, 9, 8, 10, 3];
+      new Chart(sCtx, {
+        type: 'bar',
+        data: {
+          labels: sectors,
+          datasets: [
+            { label: 'Gross Margin', data: grossData, backgroundColor: '#4a8fe7', borderRadius: 4 },
+            { label: 'Operating Margin', data: opData, backgroundColor: '#f59e0b', borderRadius: 4 },
+            { label: 'Net Margin', data: netData, backgroundColor: '#10b981', borderRadius: 4 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'top', labels: { color: '#94a3b8', usePointStyle: true, pointStyle: 'rectRounded', padding: 16 } },
+            tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw + '%'; } } }
+          },
+          scales: {
+            x: { ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } }, grid: { color: 'rgba(48,54,61,0.5)' }, max: 75 },
+            y: { ticks: { color: '#c8d0de', font: { size: 12 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    /* ── Income Statement Builder ── */
+    function fmt(n) {
+      if (n >= 1e9 || n <= -1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+      if (n >= 1e6 || n <= -1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+      if (n >= 1e3 || n <= -1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+      return '$' + n.toFixed(0);
+    }
+    function pct(num, den) {
+      if (!den || den === 0) return '—';
+      return (num / den * 100).toFixed(1) + '%';
+    }
+    function calc() {
+      var rev = parseFloat(document.getElementById('is-revenue').value) || 0;
+      var cogs = parseFloat(document.getElementById('is-cogs').value) || 0;
+      var sga = parseFloat(document.getElementById('is-sga').value) || 0;
+      var rd = parseFloat(document.getElementById('is-rd').value) || 0;
+      var da = parseFloat(document.getElementById('is-da').value) || 0;
+      var interest = parseFloat(document.getElementById('is-interest').value) || 0;
+      var taxRate = parseFloat(document.getElementById('is-taxrate').value) || 0;
+
+      var gp = rev - cogs;
+      var opex = sga + rd + da;
+      var oi = gp - opex;
+      var ebitda = oi + da;
+      var pti = oi - interest;
+      var tax = pti > 0 ? pti * (taxRate / 100) : 0;
+      var ni = pti - tax;
+
+      document.getElementById('r-gp').textContent = fmt(gp);
+      document.getElementById('r-gm').textContent = pct(gp, rev);
+      document.getElementById('r-opex').textContent = fmt(opex);
+      document.getElementById('r-ebitda').textContent = fmt(ebitda);
+      document.getElementById('r-ebitdam').textContent = pct(ebitda, rev);
+      document.getElementById('r-oi').textContent = fmt(oi);
+      document.getElementById('r-om').textContent = pct(oi, rev);
+      document.getElementById('r-pti').textContent = fmt(pti);
+      document.getElementById('r-tax').textContent = fmt(tax);
+      document.getElementById('r-ni').textContent = fmt(ni);
+      document.getElementById('r-nm').textContent = pct(ni, rev);
+    }
+
+    var ids = ['is-revenue', 'is-cogs', 'is-sga', 'is-rd', 'is-da', 'is-interest', 'is-taxrate'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el) el.addEventListener('input', calc);
+    }
+    calc();
+  })();
+  </script>
+
+</SiteLayout>

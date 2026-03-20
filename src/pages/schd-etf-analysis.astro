@@ -1,0 +1,973 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+export const meta = {
+  title: 'SCHD ETF Analysis — Schwab Dividend Portfolio, Holdings & Yield | Westmount Fundamentals',
+  description: 'Complete SCHD ETF analysis: Schwab US Dividend Equity portfolio breakdown, top holdings, dividend yield history, SCHD vs VYM comparison, and interactive income calculator.',
+  category: 'study',
+  published: '2026-03-20',
+};
+
+var faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the SCHD ETF and what index does it track?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SCHD (Schwab U.S. Dividend Equity ETF) tracks the Dow Jones U.S. Dividend 100 Index. It focuses on high-quality U.S. companies with at least 10 consecutive years of dividend payments, selected based on cash flow to total debt, return on equity, dividend yield, and 5-year dividend growth rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is SCHD's current dividend yield and expense ratio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SCHD currently offers a dividend yield of approximately 3.4% with an ultra-low expense ratio of just 0.06%, making it one of the cheapest dividend ETFs available. On a $10,000 investment, annual fees are only $6."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does SCHD compare to VYM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SCHD and VYM are both popular dividend ETFs. SCHD holds ~100 stocks with a 0.06% expense ratio and ~3.4% yield, using a quality screen methodology. VYM holds ~400+ stocks with a 0.06% expense ratio and ~2.8% yield, using a broader high-yield approach. SCHD has generally outperformed VYM over 5 and 10-year periods due to its quality tilt."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the top holdings in SCHD?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SCHD's top holdings include AbbVie (ABBV), PepsiCo (PEP), Cisco Systems (CSCO), Coca-Cola (KO), Home Depot (HD), Amgen (AMGN), Texas Instruments (TXN), and Chevron (CVX). The fund is well-diversified with top holdings weighted around 4-5% each."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is SCHD a good long-term investment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SCHD has delivered strong long-term results since its 2011 inception: $10,000 invested at launch would be worth approximately $47,000+ today including dividend reinvestment. Its quality screen, low expense ratio, consistent dividend growth (~11% CAGR), and broad sector diversification make it a popular core holding for dividend-focused portfolios."
+      }
+    }
+  ]
+};
+
+var articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": meta.title,
+  "description": meta.description,
+  "datePublished": "2026-03-20",
+  "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+  "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" },
+  "mainEntityOfPage": "https://westmountfundamentals.com/schd-etf-analysis/"
+};
+
+var combinedSchema = [faqSchema, articleSchema];
+---
+<SiteLayout
+  title={meta.title}
+  description={meta.description}
+  site="westmount"
+  canonical="https://westmountfundamentals.com/schd-etf-analysis/"
+  schema={combinedSchema}
+>
+  <style>
+    :root {
+      --accent: #4a8fe7;
+      --positive: #10b981;
+      --negative: #ef4444;
+      --bg-card: #0d1117;
+      --border: #30363d;
+    }
+    .hero-section {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      background: linear-gradient(135deg, rgba(74,143,231,0.08), rgba(74,143,231,0.02));
+      border-bottom: 1px solid rgba(74,143,231,0.15);
+    }
+    .hero-section h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      color: #e8eaed;
+      line-height: 1.2;
+    }
+    .hero-section .subtitle {
+      color: #9aa0a6;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+    }
+    .content-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem 3rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      color: #e8eaed;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+    .stat-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      min-width: 140px;
+      text-align: center;
+      flex: 1;
+      max-width: 200px;
+    }
+    .stat-card .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-card .stat-label {
+      font-size: 0.78rem;
+      color: #9aa0a6;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.3rem;
+    }
+
+    /* Overview Dashboard */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .overview-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .overview-item .ov-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .overview-item .ov-label {
+      font-size: 0.75rem;
+      color: #9aa0a6;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.3rem;
+    }
+
+    /* Calculator */
+    .calc-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .calc-box h3 {
+      color: #e8eaed;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .calc-inputs {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .calc-field label {
+      font-size: 0.8rem;
+      color: #9aa0a6;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .calc-field input, .calc-field select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      color: #e8eaed;
+      font-size: 1rem;
+      width: 160px;
+    }
+    .calc-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.65rem 1.5rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .calc-btn:hover { opacity: 0.9; }
+    .calc-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .calc-result-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .calc-result-card .cr-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--positive);
+    }
+    .calc-result-card .cr-label {
+      font-size: 0.75rem;
+      color: #9aa0a6;
+      margin-top: 0.2rem;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    thead th {
+      background: rgba(74,143,231,0.1);
+      padding: 0.8rem 0.7rem;
+      text-align: left;
+      color: #9aa0a6;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid rgba(74,143,231,0.3);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 0.7rem;
+      border-bottom: 1px solid var(--border);
+      color: #c9d1d9;
+    }
+    tbody tr:hover { background: rgba(74,143,231,0.04); }
+    .highlight-row { background: rgba(74,143,231,0.06); }
+    .positive { color: var(--positive); }
+    .negative { color: var(--negative); }
+
+    /* Charts */
+    .chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+    .chart-container canvas {
+      max-height: 380px;
+    }
+
+    /* Insights */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .insight-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+    }
+    .insight-card .insight-num {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .insight-card h4 {
+      color: #e8eaed;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .insight-card p {
+      color: #9aa0a6;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    /* Methodology */
+    .method-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .method-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .method-step .step-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .method-step h4 {
+      color: #e8eaed;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+    }
+    .method-step p {
+      color: #9aa0a6;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    /* FAQ */
+    .faq-list {
+      margin: 1.5rem 0;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
+      overflow: hidden;
+    }
+    .faq-q {
+      padding: 1rem 1.2rem;
+      cursor: pointer;
+      color: #e8eaed;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-q:hover { background: rgba(74,143,231,0.04); }
+    .faq-q .arrow { transition: transform 0.2s; color: var(--accent); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-a-inner {
+      padding: 0 1.2rem 1rem;
+      color: #9aa0a6;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .faq-item.open .faq-a { max-height: 300px; }
+    .faq-item.open .arrow { transform: rotate(180deg); }
+
+    /* Dividend History */
+    .div-history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    .div-year {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+    }
+    .div-year .dy-year {
+      font-size: 0.72rem;
+      color: #9aa0a6;
+    }
+    .div-year .dy-amount {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--positive);
+    }
+    .div-year .dy-growth {
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .hero-section h1 { font-size: 1.5rem; }
+      .stat-card { min-width: 110px; padding: 0.8rem; }
+      .stat-card .stat-value { font-size: 1.4rem; }
+      .calc-inputs { flex-direction: column; }
+      .calc-field input { width: 100%; }
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <h1>SCHD ETF Analysis: Schwab Dividend Portfolio Deep Dive</h1>
+    <p class="subtitle">Complete breakdown of the SCHD ETF — Schwab US Dividend Equity holdings, dividend yield history, performance, and how it compares to VYM, DVY, and HDV.</p>
+  </section>
+
+  <div class="content-wrap">
+
+    <!-- Stat Cards -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-value">$27.10</div>
+        <div class="stat-label">Share Price</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3.4%</div>
+        <div class="stat-label">Dividend Yield</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">0.06%</div>
+        <div class="stat-label">Expense Ratio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">370%+</div>
+        <div class="stat-label">Total Return Since 2011</div>
+      </div>
+    </div>
+
+    <!-- 1. Overview Dashboard -->
+    <h2 class="section-title" id="overview">SCHD Overview Dashboard</h2>
+    <div class="overview-grid">
+      <div class="overview-item">
+        <div class="ov-value">$27.10</div>
+        <div class="ov-label">Price (NAV)</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">0.06%</div>
+        <div class="ov-label">Expense Ratio</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">~3.4%</div>
+        <div class="ov-label">SCHD Dividend Yield</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">$65B</div>
+        <div class="ov-label">AUM</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">Oct 2011</div>
+        <div class="ov-label">Inception</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">~104</div>
+        <div class="ov-label">Holdings</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">Quarterly</div>
+        <div class="ov-label">Distribution</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-value">DJ US Div 100</div>
+        <div class="ov-label">Benchmark Index</div>
+      </div>
+    </div>
+    <p style="color:#9aa0a6;font-size:0.9rem;line-height:1.6;margin-top:1rem;">
+      The <strong style="color:#e8eaed;">SCHD ETF</strong> (Schwab U.S. Dividend Equity ETF) is one of the most popular dividend-focused exchange-traded funds, tracking the <strong style="color:#e8eaed;">Dow Jones U.S. Dividend 100 Index</strong>. The Schwab Dividend fund uses a quality screen methodology to select approximately 100 high-quality U.S. dividend-paying companies with strong fundamentals and a track record of consistent dividend payments.
+    </p>
+
+    <!-- 2. Dividend Income Calculator -->
+    <h2 class="section-title" id="calculator">SCHD Dividend Income Calculator</h2>
+    <div class="calc-box">
+      <h3>💰 Estimate Your SCHD Dividend Income</h3>
+      <div class="calc-inputs">
+        <div class="calc-field">
+          <label>Input Type</label>
+          <select id="calcType">
+            <option value="shares">Shares Owned</option>
+            <option value="dollars">$ Invested</option>
+          </select>
+        </div>
+        <div class="calc-field">
+          <label id="calcInputLabel">Number of Shares</label>
+          <input type="number" id="calcInput" value="1000" min="1" step="1" />
+        </div>
+        <div class="calc-field">
+          <label>Dividend Growth (%/yr)</label>
+          <input type="number" id="calcGrowth" value="11" min="0" max="30" step="1" />
+        </div>
+        <button class="calc-btn" id="calcBtn">Calculate</button>
+      </div>
+      <div class="calc-results" id="calcResults">
+        <div class="calc-result-card">
+          <div class="cr-value" id="crAnnual">$920</div>
+          <div class="cr-label">Annual Dividend Income</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="cr-value" id="crMonthly">$76.67</div>
+          <div class="cr-label">Monthly Income</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="cr-value" id="crYield5">5.8%</div>
+          <div class="cr-label">Yield on Cost (5yr)</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="cr-value" id="crYield10">9.7%</div>
+          <div class="cr-label">Yield on Cost (10yr)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Growth Chart -->
+    <h2 class="section-title" id="growth">$10K Invested in SCHD Since Inception</h2>
+    <div class="chart-container">
+      <canvas id="growthChart"></canvas>
+    </div>
+
+    <!-- 4. SCHD vs VYM Comparison -->
+    <h2 class="section-title" id="comparison">SCHD vs VYM vs DVY vs HDV Comparison</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>SCHD</th>
+            <th>VYM</th>
+            <th>DVY</th>
+            <th>HDV</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><strong style="color:#e8eaed;">Full Name</strong></td>
+            <td>Schwab US Dividend Equity</td>
+            <td>Vanguard High Dividend Yield</td>
+            <td>iShares Select Dividend</td>
+            <td>iShares Core High Dividend</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">Expense Ratio</strong></td>
+            <td class="positive">0.06%</td>
+            <td class="positive">0.06%</td>
+            <td>0.38%</td>
+            <td>0.08%</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">Dividend Yield</strong></td>
+            <td>~3.4%</td>
+            <td>~2.8%</td>
+            <td>~3.3%</td>
+            <td>~3.5%</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">AUM</strong></td>
+            <td class="positive">$65B</td>
+            <td>$58B</td>
+            <td>$20B</td>
+            <td>$11B</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">5yr Return (Annl.)</strong></td>
+            <td class="positive">~12.5%</td>
+            <td>~10.2%</td>
+            <td>~9.8%</td>
+            <td>~8.1%</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">Holdings Count</strong></td>
+            <td>~104</td>
+            <td>~400+</td>
+            <td>~100</td>
+            <td>~75</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">Strategy</strong></td>
+            <td>Quality + Dividend Screen</td>
+            <td>Broad High Yield</td>
+            <td>Yield-Weighted Select</td>
+            <td>Dividend Health Screen</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#e8eaed;">Inception</strong></td>
+            <td>2011</td>
+            <td>2006</td>
+            <td>2003</td>
+            <td>2011</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. Annual Returns Bar Chart -->
+    <h2 class="section-title" id="returns">SCHD Annual Returns (2012–2025)</h2>
+    <div class="chart-container">
+      <canvas id="returnsChart"></canvas>
+    </div>
+
+    <!-- 6. Top 15 Holdings -->
+    <h2 class="section-title" id="holdings">Top 15 SCHD Holdings</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ticker</th>
+            <th>Company</th>
+            <th>Sector</th>
+            <th>Weight</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><strong style="color:#e8eaed;">ABBV</strong></td><td>AbbVie Inc.</td><td>Healthcare</td><td>4.8%</td></tr>
+          <tr><td>2</td><td><strong style="color:#e8eaed;">PEP</strong></td><td>PepsiCo Inc.</td><td>Consumer Staples</td><td>4.5%</td></tr>
+          <tr><td>3</td><td><strong style="color:#e8eaed;">CSCO</strong></td><td>Cisco Systems</td><td>Technology</td><td>4.4%</td></tr>
+          <tr><td>4</td><td><strong style="color:#e8eaed;">KO</strong></td><td>Coca-Cola Co.</td><td>Consumer Staples</td><td>4.3%</td></tr>
+          <tr><td>5</td><td><strong style="color:#e8eaed;">HD</strong></td><td>Home Depot Inc.</td><td>Consumer Discretionary</td><td>4.3%</td></tr>
+          <tr><td>6</td><td><strong style="color:#e8eaed;">AMGN</strong></td><td>Amgen Inc.</td><td>Healthcare</td><td>4.2%</td></tr>
+          <tr><td>7</td><td><strong style="color:#e8eaed;">TXN</strong></td><td>Texas Instruments</td><td>Technology</td><td>4.1%</td></tr>
+          <tr><td>8</td><td><strong style="color:#e8eaed;">CVX</strong></td><td>Chevron Corp.</td><td>Energy</td><td>4.1%</td></tr>
+          <tr><td>9</td><td><strong style="color:#e8eaed;">BLK</strong></td><td>BlackRock Inc.</td><td>Financials</td><td>4.0%</td></tr>
+          <tr><td>10</td><td><strong style="color:#e8eaed;">UPS</strong></td><td>United Parcel Service</td><td>Industrials</td><td>3.9%</td></tr>
+          <tr><td>11</td><td><strong style="color:#e8eaed;">PFE</strong></td><td>Pfizer Inc.</td><td>Healthcare</td><td>3.8%</td></tr>
+          <tr><td>12</td><td><strong style="color:#e8eaed;">VZ</strong></td><td>Verizon Communications</td><td>Communication</td><td>3.7%</td></tr>
+          <tr><td>13</td><td><strong style="color:#e8eaed;">ITW</strong></td><td>Illinois Tool Works</td><td>Industrials</td><td>3.5%</td></tr>
+          <tr><td>14</td><td><strong style="color:#e8eaed;">EOG</strong></td><td>EOG Resources</td><td>Energy</td><td>3.4%</td></tr>
+          <tr><td>15</td><td><strong style="color:#e8eaed;">LMT</strong></td><td>Lockheed Martin</td><td>Industrials</td><td>3.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:#9aa0a6;font-size:0.85rem;margin-top:0.5rem;">The SCHD portfolio is reconstituted annually in March. Top 15 holdings represent approximately 60% of total assets. Individual SCHD holdings are generally capped around 4-5% weight.</p>
+
+    <!-- 7. Sector Allocation Doughnut -->
+    <h2 class="section-title" id="sectors">SCHD Sector Allocation</h2>
+    <div class="chart-container" style="max-width:500px;margin-left:auto;margin-right:auto;">
+      <canvas id="sectorChart"></canvas>
+    </div>
+
+    <!-- 8. Dividend Growth History -->
+    <h2 class="section-title" id="dividends">SCHD Dividend Growth History</h2>
+    <p style="color:#9aa0a6;font-size:0.9rem;margin-bottom:0.5rem;">Annual dividend per share (2012–2025). SCHD has grown its dividend at an approximately 11% CAGR — far outpacing inflation.</p>
+    <div class="div-history-grid">
+      <div class="div-year"><div class="dy-year">2012</div><div class="dy-amount">$0.67</div><div class="dy-growth">—</div></div>
+      <div class="div-year"><div class="dy-year">2013</div><div class="dy-amount">$0.80</div><div class="dy-growth">+19.4%</div></div>
+      <div class="div-year"><div class="dy-year">2014</div><div class="dy-amount">$0.88</div><div class="dy-growth">+10.0%</div></div>
+      <div class="div-year"><div class="dy-year">2015</div><div class="dy-amount">$0.95</div><div class="dy-growth">+8.0%</div></div>
+      <div class="div-year"><div class="dy-year">2016</div><div class="dy-amount">$1.05</div><div class="dy-growth">+10.5%</div></div>
+      <div class="div-year"><div class="dy-year">2017</div><div class="dy-amount">$1.15</div><div class="dy-growth">+9.5%</div></div>
+      <div class="div-year"><div class="dy-year">2018</div><div class="dy-amount">$1.26</div><div class="dy-growth">+9.6%</div></div>
+      <div class="div-year"><div class="dy-year">2019</div><div class="dy-amount">$1.33</div><div class="dy-growth">+5.6%</div></div>
+      <div class="div-year"><div class="dy-year">2020</div><div class="dy-amount">$1.46</div><div class="dy-growth">+9.8%</div></div>
+      <div class="div-year"><div class="dy-year">2021</div><div class="dy-amount">$1.65</div><div class="dy-growth">+13.0%</div></div>
+      <div class="div-year"><div class="dy-year">2022</div><div class="dy-amount">$1.86</div><div class="dy-growth">+12.7%</div></div>
+      <div class="div-year"><div class="dy-year">2023</div><div class="dy-amount">$1.98</div><div class="dy-growth">+6.5%</div></div>
+      <div class="div-year"><div class="dy-year">2024</div><div class="dy-amount">$2.13</div><div class="dy-growth">+7.6%</div></div>
+    </div>
+
+    <!-- 9. Quality Screen Methodology -->
+    <h2 class="section-title" id="methodology">SCHD Quality Screen Methodology</h2>
+    <p style="color:#9aa0a6;font-size:0.9rem;line-height:1.6;margin-bottom:1rem;">
+      The Dow Jones U.S. Dividend 100 Index (SCHD's benchmark) applies a rigorous quality screen to select approximately 100 stocks from a universe of U.S. dividend-paying companies. Here is how the Schwab Dividend selection process works:
+    </p>
+    <div class="method-steps">
+      <div class="method-step">
+        <div class="step-icon">📊</div>
+        <h4>10-Year Dividend History</h4>
+        <p>Companies must have paid dividends for at least 10 consecutive years, ensuring a proven commitment to returning capital to shareholders.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-icon">💰</div>
+        <h4>Free Cash Flow / Debt</h4>
+        <p>High FCF relative to total debt signals a company can sustain and grow dividends without relying on leverage. Stronger balance sheets reduce risk.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-icon">📈</div>
+        <h4>Return on Equity (ROE)</h4>
+        <p>Companies are ranked by ROE to ensure management is effectively deploying shareholder capital to generate profits.</p>
+      </div>
+      <div class="method-step">
+        <div class="step-icon">🎯</div>
+        <h4>Dividend Yield</h4>
+        <p>The index selects the top 100 stocks by composite score and weights them by modified market cap, with a tilt toward higher-yielding names.</p>
+      </div>
+    </div>
+
+    <!-- 10. (Stat cards already at top) -->
+
+    <!-- 11. Key Insights -->
+    <h2 class="section-title" id="insights">5 Key Insights About SCHD</h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-num">1</div>
+        <h4>Quality Over Yield Chasing</h4>
+        <p>Unlike pure high-yield ETFs, SCHD's quality screen filters for financially strong companies. This is why SCHD portfolio companies have higher ROE and lower payout ratios than peers like DVY or HDV.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">2</div>
+        <h4>Dividend Growth Machine</h4>
+        <p>SCHD's ~11% CAGR dividend growth rate means your yield on cost roughly doubles every 6-7 years. A 3.4% yield today becomes ~6% yield on cost in 6 years — far better than bonds.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">3</div>
+        <h4>SCHD vs VYM: Concentrated Beats Broad</h4>
+        <p>While VYM offers more diversification with 400+ holdings, SCHD's concentrated 100-stock portfolio with quality screens has consistently outperformed. Quality concentration can beat broad diversification.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">4</div>
+        <h4>Tax Efficiency Advantage</h4>
+        <p>SCHD holds mostly qualified dividend-paying stocks, meaning distributions are typically taxed at the lower qualified dividend rate (0-20%) rather than ordinary income rates — a real edge in taxable accounts.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">5</div>
+        <h4>Annual Reconstitution Creates Opportunity</h4>
+        <p>SCHD reconstitutes every March, dropping companies that no longer meet quality criteria and adding new ones. This built-in discipline forces "buy quality, sell deterioration" — a systematic value approach.</p>
+      </div>
+    </div>
+
+    <!-- 12. FAQ -->
+    <h2 class="section-title" id="faq">Frequently Asked Questions</h2>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item">
+        <div class="faq-q">What is the SCHD ETF and what index does it track? <span class="arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">SCHD (Schwab U.S. Dividend Equity ETF) tracks the Dow Jones U.S. Dividend 100 Index. It focuses on high-quality U.S. companies with at least 10 consecutive years of dividend payments, selected based on cash flow to total debt, return on equity, dividend yield, and 5-year dividend growth rate.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What is SCHD's current dividend yield and expense ratio? <span class="arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">SCHD currently offers a dividend yield of approximately 3.4% with an ultra-low expense ratio of just 0.06%, making it one of the cheapest dividend ETFs available. On a $10,000 investment, annual fees are only $6.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How does SCHD compare to VYM? <span class="arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">SCHD and VYM are both popular dividend ETFs. SCHD holds ~100 stocks with a 0.06% expense ratio and ~3.4% yield, using a quality screen methodology. VYM holds ~400+ stocks with a 0.06% expense ratio and ~2.8% yield, using a broader high-yield approach. SCHD has generally outperformed VYM over 5 and 10-year periods due to its quality tilt.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What are the top holdings in SCHD? <span class="arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">SCHD's top holdings include AbbVie (ABBV), PepsiCo (PEP), Cisco Systems (CSCO), Coca-Cola (KO), Home Depot (HD), Amgen (AMGN), Texas Instruments (TXN), and Chevron (CVX). The fund is well-diversified with top holdings weighted around 4-5% each.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is SCHD a good long-term investment? <span class="arrow">▼</span></div>
+        <div class="faq-a"><div class="faq-a-inner">SCHD has delivered strong long-term results since its 2011 inception: $10,000 invested at launch would be worth approximately $47,000+ today including dividend reinvestment. Its quality screen, low expense ratio, consistent dividend growth (~11% CAGR), and broad sector diversification make it a popular core holding for dividend-focused portfolios.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    // Calculator
+    (function() {
+      var typeEl = document.getElementById('calcType');
+      var inputEl = document.getElementById('calcInput');
+      var labelEl = document.getElementById('calcInputLabel');
+      var growthEl = document.getElementById('calcGrowth');
+      var btnEl = document.getElementById('calcBtn');
+      var price = 27.10;
+      var currentYield = 0.034;
+
+      typeEl.addEventListener('change', function() {
+        if (typeEl.value === 'shares') {
+          labelEl.textContent = 'Number of Shares';
+          inputEl.value = '1000';
+        } else {
+          labelEl.textContent = 'Amount Invested ($)';
+          inputEl.value = '10000';
+        }
+        calculate();
+      });
+
+      function calculate() {
+        var val = parseFloat(inputEl.value) || 0;
+        var growth = parseFloat(growthEl.value) / 100 || 0.11;
+        var shares, costBasis;
+        if (typeEl.value === 'shares') {
+          shares = val;
+          costBasis = val * price;
+        } else {
+          shares = val / price;
+          costBasis = val;
+        }
+        var annualDiv = shares * price * currentYield;
+        var monthlyDiv = annualDiv / 12;
+        var yoc5 = currentYield * Math.pow(1 + growth, 5) * 100;
+        var yoc10 = currentYield * Math.pow(1 + growth, 10) * 100;
+
+        document.getElementById('crAnnual').textContent = '$' + annualDiv.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.getElementById('crMonthly').textContent = '$' + monthlyDiv.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.getElementById('crYield5').textContent = yoc5.toFixed(1) + '%';
+        document.getElementById('crYield10').textContent = yoc10.toFixed(1) + '%';
+      }
+
+      btnEl.addEventListener('click', calculate);
+      calculate();
+    })();
+
+    // Growth Chart: $10K in SCHD since 2011
+    (function() {
+      var years = ['2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'];
+      var annualReturns = [0, 0.115, 0.303, 0.132, -0.003, 0.163, 0.217, -0.056, 0.273, 0.139, 0.292, -0.032, 0.054, 0.120, -0.03];
+      var values = [10000];
+      for (var i = 1; i < annualReturns.length; i++) {
+        values.push(Math.round(values[i-1] * (1 + annualReturns[i])));
+      }
+      var ctx = document.getElementById('growthChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: years,
+          datasets: [{
+            label: 'Portfolio Value ($)',
+            data: values,
+            borderColor: '#4a8fe7',
+            backgroundColor: 'rgba(74,143,231,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#4a8fe7',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#9aa0a6' } },
+            tooltip: {
+              callbacks: {
+                label: function(ctx2) {
+                  return '$' + ctx2.parsed.y.toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: {
+              ticks: {
+                color: '#9aa0a6',
+                callback: function(v) { return '$' + (v/1000).toFixed(0) + 'K'; }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
+    })();
+
+    // Annual Returns Bar Chart
+    (function() {
+      var labels = ['2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024','2025 YTD'];
+      var data = [11.5, 30.3, 13.2, -0.3, 16.3, 21.7, -5.6, 27.3, 13.9, 29.2, -3.2, 5.4, 12.0, -3.0];
+      var colors = [];
+      for (var i = 0; i < data.length; i++) {
+        colors.push(data[i] >= 0 ? '#10b981' : '#ef4444');
+      }
+      var ctx = document.getElementById('returnsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Annual Return (%)',
+            data: data,
+            backgroundColor: colors,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#9aa0a6' } },
+            tooltip: {
+              callbacks: {
+                label: function(ctx2) { return ctx2.parsed.y.toFixed(1) + '%'; }
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#9aa0a6' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: {
+              ticks: {
+                color: '#9aa0a6',
+                callback: function(v) { return v + '%'; }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
+    })();
+
+    // Sector Allocation Doughnut
+    (function() {
+      var ctx = document.getElementById('sectorChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Financials','Healthcare','Industrials','Technology','Consumer Staples','Energy','Consumer Disc.','Communication','Other'],
+          datasets: [{
+            data: [18, 16, 15, 12, 12, 10, 7, 5, 5],
+            backgroundColor: [
+              '#4a8fe7','#10b981','#f59e0b','#8b5cf6','#ec4899',
+              '#ef4444','#06b6d4','#84cc16','#6b7280'
+            ],
+            borderColor: '#0d1117',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#9aa0a6', padding: 15, font: { size: 12 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(ctx2) { return ctx2.label + ': ' + ctx2.parsed + '%'; }
+              }
+            }
+          }
+        }
+      });
+    })();
+
+    // FAQ accordion
+    (function() {
+      var items = document.querySelectorAll('.faq-item');
+      for (var i = 0; i < items.length; i++) {
+        (function(item) {
+          var q = item.querySelector('.faq-q');
+          q.addEventListener('click', function() {
+            var wasOpen = item.className.indexOf('open') !== -1;
+            for (var j = 0; j < items.length; j++) {
+              items[j].className = 'faq-item';
+            }
+            if (!wasOpen) {
+              item.className = 'faq-item open';
+            }
+          });
+        })(items[i]);
+      }
+    })();
+  </script>
+</SiteLayout>

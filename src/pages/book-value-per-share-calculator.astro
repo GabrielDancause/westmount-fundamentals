@@ -1,0 +1,941 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Book Value Per Share Calculator | BVPS, P/B Ratio & Tangible Book Value", description: "Calculate book value per share (BVPS), price-to-book (P/B) ratio, and tangible book value with our free calculator. Compare P/B ratios by sector with interactive charts.", category: "study", published: "2026-03-20" };
+
+const schema = JSON.stringify([
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Book Value Per Share Calculator | BVPS, P/B Ratio & Tangible Book Value",
+    "description": "Calculate book value per share (BVPS), price-to-book (P/B) ratio, and tangible book value. Compare sector P/B ratios with interactive Chart.js visualizations.",
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "datePublished": "2026-03-20",
+    "mainEntityOfPage": "https://westmountfundamentals.com/book-value-per-share-calculator/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is book value per share (BVPS)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Book value per share (BVPS) represents the net asset value of a company on a per-share basis. It is calculated as (Total Assets − Total Liabilities − Preferred Equity) ÷ Common Shares Outstanding. BVPS tells investors how much equity each share would theoretically receive if the company were liquidated at balance sheet values."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you calculate the price-to-book (P/B) ratio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The price-to-book ratio is calculated by dividing the current market price per share by the book value per share (BVPS). A P/B ratio below 1.0 may indicate that the stock is undervalued relative to its net assets, while a ratio above 1.0 suggests the market values the company above its accounting book value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is tangible book value?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tangible book value removes intangible assets (patents, trademarks, goodwill) from the standard book value calculation. The formula is: Total Assets − Intangible Assets − Goodwill − Total Liabilities − Preferred Equity. This provides a more conservative estimate of what shareholders would receive in a liquidation scenario."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do tech stocks have high P/B ratios?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Technology companies typically have high P/B ratios (often 10x or more) because their most valuable assets—intellectual property, brand equity, network effects, and human capital—are largely intangible and not fully reflected on the balance sheet. Their high returns on equity (ROE) also justify premium valuations over book value."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When is book value most useful for investors?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Book value is most meaningful for asset-heavy industries like banking, insurance, and real estate (REITs), where balance sheet assets closely approximate economic value. Banks hold financial assets at or near market value, making their P/B ratio a reliable gauge of whether a stock is cheap or expensive relative to its tangible net worth."
+        }
+      }
+    ]
+  }
+]);
+---
+
+<SiteLayout site="westmount" title={meta.title} description={meta.description} canonical="https://westmountfundamentals.com/book-value-per-share-calculator/" schema={schema}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/study/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Study</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Book Value Per Share Calculator</span></nav>
+    <span>8 min read</span>
+  </div>
+
+  <div class="container page-content">
+    <h1>Book Value Per Share Calculator</h1>
+    <p style="text-align:center;max-width:680px;margin:0 auto 2.5rem;color:var(--text-secondary,#94a3b8)">Calculate BVPS, price-to-book ratio, and tangible book value. Understand what book value means and when it matters most for stock analysis.</p>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number">1.5×</span>
+        <span class="stat-label">S&P 500 Financials Avg P/B</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">12×</span>
+        <span class="stat-label">S&P 500 Technology Avg P/B</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">&lt;1×</span>
+        <span class="stat-label">P/B Threshold for "Undervalued"</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">35%</span>
+        <span class="stat-label">Avg ROE for High-P/B Sectors</span>
+      </div>
+    </div>
+
+    <!-- BVPS Calculator -->
+    <div class="calculator-card" id="bvps-calculator">
+      <h2>Book Value Per Share (BVPS) Calculator</h2>
+      <p class="calc-desc">Enter balance sheet data to compute book value per share. The book value formula is: <strong>(Total Assets − Total Liabilities − Preferred Equity) ÷ Shares Outstanding</strong>.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="bvps-assets">Total Assets</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="bvps-assets" value="500000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="bvps-liabilities">Total Liabilities</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="bvps-liabilities" value="300000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="bvps-preferred">Preferred Equity</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="bvps-preferred" value="0" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="bvps-shares">Common Shares Outstanding</label>
+            <div class="input-wrapper"><input type="number" id="bvps-shares" value="50000000" min="1" step="1000000"><span class="suffix">shares</span></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Book Value Per Share</span>
+            <span class="calc-result-value" id="bvps-result">$4.00</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Total Book Value (Equity)</span><span class="result-value" id="bvps-equity">$200,000,000</span></div>
+            <div class="result-item"><span class="result-label">Net Book Value</span><span class="result-value" id="bvps-net">$200,000,000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P/B Ratio Calculator -->
+    <div class="calculator-card" id="pb-calculator">
+      <h2>Price-to-Book (P/B) Ratio Calculator</h2>
+      <p class="calc-desc">Enter the current market price and BVPS to calculate the price to book ratio. The BVPS auto-fills from the calculator above.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="pb-price">Current Market Price Per Share</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pb-price" value="12.00" min="0" step="0.01"></div>
+          </div>
+          <div class="input-group">
+            <label for="pb-bvps">Book Value Per Share (BVPS)</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="pb-bvps" value="4.00" min="0.01" step="0.01"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">P/B Ratio</span>
+            <span class="calc-result-value" id="pb-result">3.00×</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Interpretation</span><span class="result-value" id="pb-interpretation" style="font-size:0.85rem">Growth premium — market values above book</span></div>
+            <div class="result-item"><span class="result-label">Premium/Discount to Book</span><span class="result-value" id="pb-premium">+200.0%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tangible Book Value Calculator -->
+    <div class="calculator-card" id="tbv-calculator">
+      <h2>Tangible Book Value Calculator</h2>
+      <p class="calc-desc">Subtract intangible assets and goodwill for a conservative, tangible book value per share estimate.</p>
+      <div class="calc-grid">
+        <div class="input-panel">
+          <div class="input-group">
+            <label for="tbv-intangibles">Intangible Assets</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="tbv-intangibles" value="30000000" min="0" step="1000000"></div>
+          </div>
+          <div class="input-group">
+            <label for="tbv-goodwill">Goodwill</label>
+            <div class="input-wrapper"><span class="prefix">$</span><input type="number" id="tbv-goodwill" value="20000000" min="0" step="1000000"></div>
+          </div>
+        </div>
+        <div class="results-panel">
+          <div class="result-box primary-result">
+            <span class="calc-result-label">Tangible Book Value Per Share</span>
+            <span class="calc-result-value" id="tbv-result">$3.00</span>
+          </div>
+          <div class="secondary-results">
+            <div class="result-item"><span class="result-label">Total Tangible Book Value</span><span class="result-value" id="tbv-total">$150,000,000</span></div>
+            <div class="result-item"><span class="result-label">Intangibles as % of Book Value</span><span class="result-value" id="tbv-pct">25.0%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P/B Interpretation Guide -->
+    <div class="content-section">
+      <h2>P/B Ratio Interpretation Guide</h2>
+      <p>The price-to-book ratio compares a stock's market capitalization to its accounting book value. Here's how to interpret different ranges of the P/B ratio:</p>
+      <div class="interpretation-grid">
+        <div class="interp-card interp-green">
+          <span class="interp-range">&lt; 1.0×</span>
+          <span class="interp-title">Potentially Undervalued</span>
+          <p>Market values the company below its net asset value. Could signal a bargain—or a value trap if assets are impaired. Common in distressed banks and cyclical industries.</p>
+        </div>
+        <div class="interp-card interp-blue">
+          <span class="interp-range">1.0× – 3.0×</span>
+          <span class="interp-title">Fair Value Range</span>
+          <p>Typical for mature, asset-heavy companies with moderate returns on equity. Most financials, industrials, and utilities trade in this range.</p>
+        </div>
+        <div class="interp-card interp-yellow">
+          <span class="interp-range">3.0× – 10.0×</span>
+          <span class="interp-title">Growth Premium</span>
+          <p>Market expects above-average growth and ROE. The company's competitive advantages, brand, or intangible assets justify a premium over book value.</p>
+        </div>
+        <div class="interp-card interp-red">
+          <span class="interp-range">&gt; 10.0×</span>
+          <span class="interp-title">Extreme Premium</span>
+          <p>Typical for high-growth tech and SaaS companies where most value is intangible. Book value becomes nearly meaningless as a valuation anchor.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- P/B Ratio by Sector -->
+    <div class="content-section">
+      <h2>P/B Ratio by Sector — S&P 500 Averages</h2>
+      <p>Price-to-book ratios vary dramatically by sector. Asset-light sectors like Technology trade at extreme premiums while asset-heavy sectors like Financials trade near book value.</p>
+      <div class="sector-table">
+        <div class="sector-row header-row"><span>Sector</span><span>Avg P/B Ratio</span><span>Avg ROE</span><span>Assessment</span></div>
+        <div class="sector-row"><span>Technology</span><span class="mono">12.0×</span><span class="mono">35%</span><span class="badge badge-red">Extreme Premium</span></div>
+        <div class="sector-row"><span>Consumer Discretionary</span><span class="mono">8.0×</span><span class="mono">28%</span><span class="badge badge-yellow">Growth Premium</span></div>
+        <div class="sector-row"><span>Healthcare</span><span class="mono">5.0×</span><span class="mono">22%</span><span class="badge badge-yellow">Growth Premium</span></div>
+        <div class="sector-row"><span>Industrials</span><span class="mono">5.0×</span><span class="mono">20%</span><span class="badge badge-yellow">Growth Premium</span></div>
+        <div class="sector-row"><span>Consumer Staples</span><span class="mono">6.0×</span><span class="mono">25%</span><span class="badge badge-yellow">Growth Premium</span></div>
+        <div class="sector-row"><span>Communication Services</span><span class="mono">4.0×</span><span class="mono">18%</span><span class="badge badge-blue">Fair Value</span></div>
+        <div class="sector-row"><span>Materials</span><span class="mono">3.0×</span><span class="mono">15%</span><span class="badge badge-blue">Fair Value</span></div>
+        <div class="sector-row"><span>Energy</span><span class="mono">2.0×</span><span class="mono">14%</span><span class="badge badge-blue">Fair Value</span></div>
+        <div class="sector-row"><span>Utilities</span><span class="mono">2.0×</span><span class="mono">10%</span><span class="badge badge-blue">Fair Value</span></div>
+        <div class="sector-row"><span>Real Estate</span><span class="mono">2.5×</span><span class="mono">8%</span><span class="badge badge-blue">Fair Value</span></div>
+        <div class="sector-row"><span>Financials</span><span class="mono">1.5×</span><span class="mono">12%</span><span class="badge badge-green">Near Book</span></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="content-section">
+      <h2>P/B Ratio by Sector (Chart)</h2>
+      <p>The horizontal bar chart below visualizes how price-to-book ratios vary across S&P 500 sectors.</p>
+      <div class="chart-container"><canvas id="pbSectorChart"></canvas></div>
+    </div>
+
+    <div class="content-section">
+      <h2>P/B Ratio vs. Return on Equity (ROE) by Sector</h2>
+      <p>This scatter plot reveals why some sectors deserve higher P/B ratios: higher ROE justifies a larger premium to book value. Sectors in the upper-right generate more profit per dollar of equity, warranting higher market valuations.</p>
+      <div class="chart-container"><canvas id="pbRoeChart"></canvas></div>
+    </div>
+
+    <!-- What is Book Value -->
+    <div class="content-section">
+      <h2>What Is Book Value?</h2>
+      <p>Book value is the net asset value of a company as reported on its balance sheet. It represents the total amount that shareholders would theoretically receive if the company liquidated all its assets and paid off every liability at the values recorded in its financial statements.</p>
+
+      <div class="highlight-box">
+        <h3>The Book Value Formula</h3>
+        <code>Book Value = Total Assets − Total Liabilities</code>
+        <p style="margin-top:1rem;font-size:0.9rem">To get <strong>book value per share</strong>, subtract any preferred equity and divide by shares outstanding:<br><code>BVPS = (Total Assets − Total Liabilities − Preferred Equity) ÷ Shares Outstanding</code></p>
+      </div>
+
+      <h3>Accounting Book Value vs. Market Value</h3>
+      <p>Book value and market value measure fundamentally different things:</p>
+      <ul>
+        <li><strong>Book value</strong> is a backward-looking accounting measure based on historical cost. Assets are recorded at purchase price minus depreciation, not what they could sell for today.</li>
+        <li><strong>Market value</strong> (market capitalization) is forward-looking and reflects the market's expectations of future cash flows, growth, and competitive advantages.</li>
+        <li>For most companies, market value exceeds book value because intangible assets—brand, IP, network effects—don't appear on the balance sheet at their economic value.</li>
+        <li>When market value falls <em>below</em> book value (P/B &lt; 1), it may signal that the market expects asset write-downs, losses, or that the company is genuinely undervalued.</li>
+      </ul>
+
+      <h3>Net Book Value vs. Tangible Book Value</h3>
+      <p><strong>Net book value</strong> is synonymous with standard book value (total equity minus preferred stock). <strong>Tangible book value</strong> goes a step further by stripping out intangible assets and goodwill, leaving only the hard, tangible assets that could be liquidated. Tangible book value is especially useful for evaluating companies that have made large acquisitions, which often inflate goodwill on the balance sheet.</p>
+    </div>
+
+    <!-- When Book Value Matters -->
+    <div class="content-section">
+      <h2>When Book Value Matters — and When It Doesn't</h2>
+
+      <div class="two-col">
+        <div class="col-card positive-card">
+          <h3>✅ Book Value Matters Most</h3>
+          <ul>
+            <li><strong>Banks & Financial Institutions:</strong> Balance sheets consist primarily of financial assets (loans, securities) carried near market value. P/B is the single most important valuation metric for banks.</li>
+            <li><strong>Insurance Companies:</strong> Investment portfolios are marked to market. Book value reliably approximates liquidation value.</li>
+            <li><strong>REITs:</strong> Real estate assets are tangible and appraised regularly. Net Asset Value (NAV) — a refined version of book value — is the standard valuation metric.</li>
+            <li><strong>Asset-Heavy Industrials:</strong> Companies with large PP&E holdings (mining, utilities, shipping) where physical assets are the primary value driver.</li>
+            <li><strong>Distressed / Turnaround Situations:</strong> Book value provides a floor estimate for liquidation analysis when a company may not survive as a going concern.</li>
+          </ul>
+        </div>
+        <div class="col-card negative-card">
+          <h3>❌ Book Value Matters Least</h3>
+          <ul>
+            <li><strong>Technology & SaaS:</strong> Most value resides in code, algorithms, network effects, and recurring revenue — none of which are fully reflected in book value.</li>
+            <li><strong>Brand-Driven Consumer Companies:</strong> A brand like Coca-Cola or Nike is worth billions but appears on the balance sheet at minimal historical cost.</li>
+            <li><strong>Biotech & Pharma:</strong> R&D spending is expensed (not capitalized), so the drug pipeline — the real value — doesn't show up in book value.</li>
+            <li><strong>Asset-Light Business Models:</strong> Consulting firms, marketplaces, and platform companies have minimal tangible assets relative to their earnings power.</li>
+            <li><strong>Rapidly Growing Companies:</strong> Reinvesting in growth means book value understates economic value. Use revenue or earnings multiples instead.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="content-section">
+      <h2>5 Key Insights About Book Value</h2>
+      <div class="insights-list">
+        <div class="insight-item">
+          <span class="insight-num">1</span>
+          <div>
+            <h4>P/B below 1.0 doesn't always mean "cheap"</h4>
+            <p>A stock trading below book value could be a genuine bargain — or a value trap. If the company is destroying equity through losses, book value is declining. Always check ROE and earnings trends alongside P/B.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">2</span>
+          <div>
+            <h4>High ROE justifies high P/B</h4>
+            <p>The theoretically "correct" P/B ratio is linked to ROE. The Gordon Growth Model shows that P/B = (ROE − g) ÷ (r − g), where g is growth and r is the cost of equity. Companies earning 30%+ ROE deserve P/B ratios of 5× or more.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">3</span>
+          <div>
+            <h4>Buybacks reduce book value</h4>
+            <p>Share repurchases funded by cash reduce total equity, which can inflate P/B ratios even if the business hasn't changed. Apple's negative book value is a famous example — the result of aggressive buybacks, not financial distress.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">4</span>
+          <div>
+            <h4>Tangible book value matters more for acquisitions</h4>
+            <p>In M&A analysis, tangible book value strips away goodwill from prior acquisitions. A company with $10B in book value but $7B in goodwill has only $3B in tangible net assets — a critical distinction for assessing downside risk.</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-num">5</span>
+          <div>
+            <h4>Compare P/B within sectors, never across them</h4>
+            <p>A bank at 1.8× P/B is expensive for financials. A tech company at 1.8× P/B would be absurdly cheap. Always benchmark against sector peers. Our chart above shows why cross-sector P/B comparisons are meaningless.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="content-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item"><summary>What is book value per share (BVPS)?</summary><p>Book value per share represents the net asset value of a company on a per-share basis. It is calculated as (Total Assets − Total Liabilities − Preferred Equity) ÷ Common Shares Outstanding. BVPS tells investors how much equity each share would theoretically receive if the company were liquidated at balance sheet values.</p></details>
+        <details class="faq-item"><summary>How do you calculate the price-to-book (P/B) ratio?</summary><p>The price-to-book ratio is calculated by dividing the current market price per share by the book value per share. A P/B below 1.0 may signal undervaluation, while a P/B above 1.0 means the market values the company above its accounting book value. It's essential to compare P/B within the same sector for meaningful analysis.</p></details>
+        <details class="faq-item"><summary>What is tangible book value?</summary><p>Tangible book value removes intangible assets (patents, trademarks, goodwill) from the standard book value calculation. The formula is: Total Assets − Intangible Assets − Goodwill − Total Liabilities − Preferred Equity. This gives a more conservative estimate of shareholder value in a liquidation scenario.</p></details>
+        <details class="faq-item"><summary>Why do tech stocks have high P/B ratios?</summary><p>Technology companies typically have high P/B ratios because their most valuable assets — IP, software, network effects, brand equity — are largely intangible and not fully captured on the balance sheet. Combined with high ROE (often 25-40%), markets assign large premiums over book value.</p></details>
+        <details class="faq-item"><summary>When is book value most useful for investors?</summary><p>Book value is most meaningful for asset-heavy industries like banking, insurance, and real estate, where balance sheet assets closely approximate economic value. Banks hold financial assets near market value, making P/B a reliable valuation gauge. For tech and SaaS companies, earnings-based metrics like P/E or EV/Revenue are far more relevant.</p></details>
+      </div>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat-card {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+    font-family: var(--font-mono, monospace);
+  }
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.4;
+  }
+
+  /* Calculators */
+  .calculator-card {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .calculator-card h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  .calc-desc {
+    color: var(--text-secondary, #94a3b8);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .input-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #94a3b8);
+  }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .prefix {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    pointer-events: none;
+  }
+  .suffix {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-secondary, #94a3b8);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  input[type="number"] {
+    width: 100%;
+    background: var(--bg-color, #010409);
+    border: 1px solid var(--border, #30363d);
+    color: var(--text-primary, #c8d0de);
+    font-family: var(--font-mono, monospace);
+    font-size: 1.05rem;
+    padding: 0.75rem 1rem 0.75rem 2rem;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    appearance: none;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent, #4a8fe7);
+  }
+  .results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--bg-color, #010409);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .result-box.primary-result {
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+  .calc-result-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+    margin-bottom: 0.5rem;
+  }
+  .calc-result-value {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+    font-family: var(--font-mono, monospace);
+  }
+  .secondary-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border, #30363d);
+  }
+  .result-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #94a3b8);
+  }
+  .result-value {
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+    color: var(--text-primary, #c8d0de);
+  }
+
+  /* Interpretation grid */
+  .interpretation-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .interp-card {
+    border-radius: 10px;
+    padding: 1.25rem;
+    border: 1px solid var(--border, #30363d);
+    background: var(--bg-card, #0d1117);
+  }
+  .interp-range {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+    margin-bottom: 0.25rem;
+  }
+  .interp-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  .interp-card p {
+    font-size: 0.82rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .interp-green .interp-range { color: var(--positive, #10b981); }
+  .interp-green .interp-title { color: var(--positive, #10b981); }
+  .interp-blue .interp-range { color: var(--accent, #4a8fe7); }
+  .interp-blue .interp-title { color: var(--accent, #4a8fe7); }
+  .interp-yellow .interp-range { color: #f59e0b; }
+  .interp-yellow .interp-title { color: #f59e0b; }
+  .interp-red .interp-range { color: var(--negative, #ef4444); }
+  .interp-red .interp-title { color: var(--negative, #ef4444); }
+
+  /* Sector table */
+  .sector-table {
+    border: 1px solid var(--border, #30363d);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .sector-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr;
+    padding: 0.75rem 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border, #30363d);
+  }
+  .sector-row:last-child { border-bottom: none; }
+  .header-row {
+    background: var(--bg-card, #0d1117);
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #94a3b8);
+  }
+  .mono { font-family: var(--font-mono, monospace); }
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-green { background: rgba(16,185,129,0.15); color: var(--positive, #10b981); }
+  .badge-blue { background: rgba(74,143,231,0.15); color: var(--accent, #4a8fe7); }
+  .badge-yellow { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--negative, #ef4444); }
+
+  /* Chart */
+  .chart-container {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    max-height: 500px;
+  }
+
+  /* Content sections */
+  .content-section {
+    margin: 3rem 0;
+  }
+  .highlight-box {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-left: 4px solid var(--accent, #4a8fe7);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .highlight-box code {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--accent, #4a8fe7);
+    margin-top: 0.5rem;
+  }
+
+  /* Two column layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .col-card {
+    border: 1px solid var(--border, #30363d);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: var(--bg-card, #0d1117);
+  }
+  .col-card h3 { margin-top: 0; font-size: 1.1rem; }
+  .col-card ul { padding-left: 1.2rem; }
+  .col-card li { margin-bottom: 0.75rem; font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary, #94a3b8); }
+  .positive-card { border-left: 3px solid var(--positive, #10b981); }
+  .negative-card { border-left: 3px solid var(--negative, #ef4444); }
+
+  /* Insights */
+  .insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .insight-item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .insight-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--accent, #4a8fe7);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .insight-item h4 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+  }
+  .insight-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
+  }
+
+  /* FAQ */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .faq-item {
+    background: var(--bg-card, #0d1117);
+    border: 1px solid var(--border, #30363d);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.5rem;
+    font-weight: 700;
+    color: var(--accent, #4a8fe7);
+  }
+  .faq-item[open] summary::before { content: "−"; }
+  .faq-item p {
+    margin: 0.75rem 0 0 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .calc-grid { grid-template-columns: 1fr; }
+    .interpretation-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .sector-row { font-size: 0.8rem; grid-template-columns: 1.2fr 0.8fr 0.6fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .interpretation-grid { grid-template-columns: 1fr; }
+    .sector-row { grid-template-columns: 1fr 1fr; }
+    .sector-row .badge { display: none; }
+    .header-row span:nth-child(4) { display: none; }
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", function() {
+    // --- Formatters ---
+    var fmt = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+    var fmtLarge = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+    // --- BVPS Calculator ---
+    var bvpsAssets = document.getElementById("bvps-assets");
+    var bvpsLiab = document.getElementById("bvps-liabilities");
+    var bvpsPref = document.getElementById("bvps-preferred");
+    var bvpsShares = document.getElementById("bvps-shares");
+    var bvpsResult = document.getElementById("bvps-result");
+    var bvpsEquity = document.getElementById("bvps-equity");
+    var bvpsNet = document.getElementById("bvps-net");
+
+    // P/B calculator fields
+    var pbPrice = document.getElementById("pb-price");
+    var pbBvps = document.getElementById("pb-bvps");
+    var pbResult = document.getElementById("pb-result");
+    var pbInterp = document.getElementById("pb-interpretation");
+    var pbPremium = document.getElementById("pb-premium");
+
+    // TBV calculator fields
+    var tbvIntangibles = document.getElementById("tbv-intangibles");
+    var tbvGoodwill = document.getElementById("tbv-goodwill");
+    var tbvResult = document.getElementById("tbv-result");
+    var tbvTotal = document.getElementById("tbv-total");
+    var tbvPct = document.getElementById("tbv-pct");
+
+    function calcBVPS() {
+      var assets = parseFloat(bvpsAssets.value) || 0;
+      var liab = parseFloat(bvpsLiab.value) || 0;
+      var pref = parseFloat(bvpsPref.value) || 0;
+      var shares = parseFloat(bvpsShares.value) || 1;
+      if (shares < 1) shares = 1;
+
+      var equity = assets - liab;
+      var netBook = equity - pref;
+      var bvps = netBook / shares;
+
+      bvpsResult.textContent = fmt.format(bvps);
+      bvpsEquity.textContent = fmtLarge.format(equity);
+      bvpsNet.textContent = fmtLarge.format(netBook);
+
+      // Auto-fill P/B calculator BVPS
+      pbBvps.value = bvps.toFixed(2);
+      calcPB();
+      calcTBV();
+    }
+
+    function calcPB() {
+      var price = parseFloat(pbPrice.value) || 0;
+      var bvps = parseFloat(pbBvps.value) || 0.01;
+      if (bvps <= 0) bvps = 0.01;
+
+      var pb = price / bvps;
+      pbResult.textContent = pb.toFixed(2) + "\u00d7";
+
+      // Interpretation
+      var interp = "";
+      if (pb < 1) {
+        interp = "Potentially undervalued \u2014 trading below book value";
+        pbResult.style.color = "var(--positive, #10b981)";
+      } else if (pb < 3) {
+        interp = "Fair value range \u2014 moderate premium to book";
+        pbResult.style.color = "var(--accent, #4a8fe7)";
+      } else if (pb < 10) {
+        interp = "Growth premium \u2014 market values above book";
+        pbResult.style.color = "#f59e0b";
+      } else {
+        interp = "Extreme premium \u2014 book value largely irrelevant";
+        pbResult.style.color = "var(--negative, #ef4444)";
+      }
+      pbInterp.textContent = interp;
+
+      var premium = ((price / bvps) - 1) * 100;
+      var sign = premium >= 0 ? "+" : "";
+      pbPremium.textContent = sign + premium.toFixed(1) + "%";
+      pbPremium.style.color = premium >= 0 ? "var(--positive, #10b981)" : "var(--negative, #ef4444)";
+    }
+
+    function calcTBV() {
+      var assets = parseFloat(bvpsAssets.value) || 0;
+      var liab = parseFloat(bvpsLiab.value) || 0;
+      var pref = parseFloat(bvpsPref.value) || 0;
+      var shares = parseFloat(bvpsShares.value) || 1;
+      var intang = parseFloat(tbvIntangibles.value) || 0;
+      var gw = parseFloat(tbvGoodwill.value) || 0;
+      if (shares < 1) shares = 1;
+
+      var equity = assets - liab - pref;
+      var tangible = equity - intang - gw;
+      var tbvPerShare = tangible / shares;
+
+      tbvResult.textContent = fmt.format(tbvPerShare);
+      tbvTotal.textContent = fmtLarge.format(tangible);
+
+      var pctIntang = equity > 0 ? ((intang + gw) / equity) * 100 : 0;
+      tbvPct.textContent = pctIntang.toFixed(1) + "%";
+    }
+
+    // Attach event listeners
+    var bvpsInputs = [bvpsAssets, bvpsLiab, bvpsPref, bvpsShares];
+    for (var i = 0; i < bvpsInputs.length; i++) {
+      bvpsInputs[i].addEventListener("input", calcBVPS);
+    }
+    pbPrice.addEventListener("input", calcPB);
+    pbBvps.addEventListener("input", calcPB);
+    tbvIntangibles.addEventListener("input", calcTBV);
+    tbvGoodwill.addEventListener("input", calcTBV);
+
+    // Initial calculations
+    calcBVPS();
+
+    // --- Charts ---
+    var sectorLabels = ["Technology", "Consumer Disc.", "Consumer Staples", "Healthcare", "Industrials", "Comm. Services", "Materials", "Real Estate", "Energy", "Utilities", "Financials"];
+    var pbValues = [12, 8, 6, 5, 5, 4, 3, 2.5, 2, 2, 1.5];
+    var roeValues = [35, 28, 25, 22, 20, 18, 15, 8, 14, 10, 12];
+
+    var barColors = [
+      "#ef4444", "#f59e0b", "#f59e0b", "#f59e0b", "#f59e0b",
+      "#4a8fe7", "#4a8fe7", "#4a8fe7", "#4a8fe7", "#4a8fe7", "#10b981"
+    ];
+
+    // Horizontal Bar Chart
+    var barCtx = document.getElementById("pbSectorChart").getContext("2d");
+    new Chart(barCtx, {
+      type: "bar",
+      data: {
+        labels: sectorLabels,
+        datasets: [{
+          label: "P/B Ratio",
+          data: pbValues,
+          backgroundColor: barColors,
+          borderRadius: 4,
+          barThickness: 22
+        }]
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return "P/B: " + ctx.parsed.x + "\u00d7"; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "P/B Ratio", color: "#94a3b8" },
+            grid: { color: "rgba(48,54,61,0.5)" },
+            ticks: { color: "#94a3b8" }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: "#c8d0de", font: { size: 12 } }
+          }
+        }
+      }
+    });
+
+    // Scatter Plot: P/B vs ROE
+    var scatterData = [];
+    for (var j = 0; j < sectorLabels.length; j++) {
+      scatterData.push({ x: roeValues[j], y: pbValues[j], label: sectorLabels[j] });
+    }
+
+    var scatterCtx = document.getElementById("pbRoeChart").getContext("2d");
+    new Chart(scatterCtx, {
+      type: "scatter",
+      data: {
+        datasets: [{
+          label: "Sectors",
+          data: scatterData,
+          backgroundColor: barColors,
+          pointRadius: 8,
+          pointHoverRadius: 11
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                var pt = ctx.raw;
+                return pt.label + ": ROE " + pt.x + "%, P/B " + pt.y + "\u00d7";
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "Return on Equity (ROE %)", color: "#94a3b8" },
+            grid: { color: "rgba(48,54,61,0.5)" },
+            ticks: { color: "#94a3b8", callback: function(v) { return v + "%"; } },
+            min: 5,
+            max: 40
+          },
+          y: {
+            title: { display: true, text: "P/B Ratio", color: "#94a3b8" },
+            grid: { color: "rgba(48,54,61,0.5)" },
+            ticks: { color: "#94a3b8", callback: function(v) { return v + "\u00d7"; } },
+            min: 0,
+            max: 14
+          }
+        }
+      }
+    });
+  });
+</script>

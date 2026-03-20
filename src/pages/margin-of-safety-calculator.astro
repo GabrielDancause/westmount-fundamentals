@@ -1,0 +1,548 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = { title: "Margin of Safety Calculator — Find Undervalued Stocks", description: "Free margin of safety calculator for value investors. Use Benjamin Graham's formula to compare intrinsic value vs market price for 168 S&P 500 stocks.", category: "study", published: "2026-03-20" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Margin of Safety Calculator — Find Undervalued Stocks",
+      "description": "Free margin of safety calculator for value investors. Use Benjamin Graham's formula to compare intrinsic value vs market price for 168 S&P 500 stocks.",
+      "author": { "@type": "Organization", "name": "Westmount Fundamentals" },
+      "datePublished": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is margin of safety in investing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Margin of safety is the difference between a stock's intrinsic value and its market price, expressed as a percentage. Coined by Benjamin Graham in The Intelligent Investor, it measures how much a stock is undervalued. A higher margin of safety means lower downside risk and greater potential for returns."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you calculate margin of safety?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The margin of safety formula is: ((Intrinsic Value - Market Price) / Intrinsic Value) × 100. For example, if a stock's intrinsic value is $100 and its current price is $70, the margin of safety is 30%. This means the stock is trading 30% below its estimated fair value."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is a good margin of safety for stocks?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Benjamin Graham recommended a margin of safety of at least 33%. Warren Buffett typically looks for 25% or more. Growth investors may accept 15%. The ideal margin depends on the quality and predictability of the business — riskier businesses warrant a higher margin of safety."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between margin of safety and intrinsic value?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Intrinsic value is the estimated true worth of a stock based on fundamentals like earnings, cash flow, and growth. Margin of safety is the percentage discount at which the stock trades below that intrinsic value. Intrinsic value is the anchor; margin of safety is the buffer."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can margin of safety be negative?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. A negative margin of safety means the stock is trading above its estimated intrinsic value — it is overvalued. For example, if intrinsic value is $80 and the price is $100, the margin of safety is -25%. This signals higher risk and lower expected returns."
+          }
+        }
+      ]
+    }
+  ]
+};
+---
+<SiteLayout site="westmount" title="Margin of Safety Calculator — Find Undervalued Stocks" description="Free margin of safety calculator for value investors. Use Benjamin Graham's formula to compare intrinsic value vs market price for 168 S&P 500 stocks." canonical="https://westmountfundamentals.com/margin-of-safety-calculator/" schema={schema}>
+  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Margin of Safety Calculator</span></nav>
+    <span>8 min read</span>
+  </div>
+  <div class="page-content">
+    <div class="hero">
+      <h1>Margin of Safety Calculator</h1>
+      <p class="subtitle">Benjamin Graham's most powerful concept, applied to 168 S&P 500 stocks. Calculate how much downside protection you have before you invest.</p>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="mos-stats" id="statCards">
+      <div class="stat-card"><div class="stat-value" id="statAvgMos">—</div><div class="stat-label">Avg Margin of Safety</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--positive)" id="statUndervalued">—</div><div class="stat-label">Undervalued Stocks</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--negative)" id="statOvervalued">—</div><div class="stat-label">Overvalued Stocks</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--positive)" id="statHighest">—</div><div class="stat-label">Highest MoS Ticker</div></div>
+    </div>
+
+    <!-- Calculator Section -->
+    <section>
+      <h2>Interactive Margin of Safety Calculator</h2>
+      <p>Enter a <strong>ticker symbol</strong> to auto-fill with our intrinsic value estimates, or manually input your own intrinsic value and market price.</p>
+
+      <div class="calc-wrapper">
+        <div class="calc-inputs">
+          <div class="input-group">
+            <label for="tickerInput">Ticker Lookup</label>
+            <input type="text" id="tickerInput" placeholder="e.g. AAPL, MSFT, TSLA" autocomplete="off" style="text-transform:uppercase">
+            <div id="tickerSuggestions" class="ticker-suggestions"></div>
+          </div>
+          <div id="tickerInfo" class="ticker-info" style="display:none">
+            <div class="ticker-name" id="tickerName"></div>
+            <div class="ticker-details">
+              <span>Our IV: <strong id="tickerIV"></strong></span>
+              <span>Price: <strong id="tickerPrice"></strong></span>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="ivInput">Intrinsic Value ($)</label>
+              <input type="number" id="ivInput" placeholder="e.g. 150.00" step="0.01" min="0">
+            </div>
+            <div class="input-group">
+              <label for="priceInput">Current Market Price ($)</label>
+              <input type="number" id="priceInput" placeholder="e.g. 120.00" step="0.01" min="0">
+            </div>
+          </div>
+          <button id="calcBtn" class="calc-btn">Calculate Margin of Safety</button>
+        </div>
+
+        <div class="calc-result" id="calcResult" style="display:none">
+          <div class="mos-big" id="mosValue">—</div>
+          <div class="mos-verdict" id="mosVerdict">—</div>
+          <canvas id="mosGauge" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formula Section -->
+    <section>
+      <h2>Margin of Safety Formula</h2>
+      <div class="formula-box">
+        <div class="formula">Margin of Safety = ((Intrinsic Value − Market Price) / Intrinsic Value) × 100</div>
+      </div>
+      <p>The formula is elegantly simple. If a stock has an intrinsic value of <strong>$100</strong> and trades at <strong>$70</strong>, your margin of safety is <strong>30%</strong>. That 30% is your buffer — room for error in your analysis, unexpected market shocks, or temporary business headwinds.</p>
+      <div class="callout">
+        <strong>Example:</strong> If you estimate Apple's intrinsic value at $206.86 and it trades at $252.38, the margin of safety is <strong>−22.0%</strong> — meaning the stock is trading <em>above</em> your estimated fair value with no safety cushion.
+      </div>
+    </section>
+
+    <!-- Top 10 Undervalued -->
+    <section>
+      <h2>Top 10 Most Undervalued S&P 500 Stocks</h2>
+      <p>These stocks have the <strong>highest positive margin of safety</strong> in our universe — trading well below our intrinsic value estimates.</p>
+      <div class="table-scroll">
+        <table class="mos-table" id="topUndervalued">
+          <thead><tr><th>Ticker</th><th>Company</th><th>Intrinsic Value</th><th>Current Price</th><th>MoS %</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Top 10 Overvalued -->
+    <section>
+      <h2>Top 10 Most Overvalued S&P 500 Stocks</h2>
+      <p>These stocks trade <strong>furthest above</strong> our intrinsic value estimates — negative margin of safety signals potential downside risk.</p>
+      <div class="table-scroll">
+        <table class="mos-table" id="topOvervalued">
+          <thead><tr><th>Ticker</th><th>Company</th><th>Intrinsic Value</th><th>Current Price</th><th>MoS %</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Scatter Plot -->
+    <section>
+      <h2>Intrinsic Value vs Market Price — All 168 Stocks</h2>
+      <p>Stocks <strong>above the diagonal</strong> are undervalued (IV &gt; Price). Stocks <strong>below the line</strong> are overvalued. The further from the line, the greater the mispricing.</p>
+      <div class="chart-container">
+        <canvas id="scatterChart"></canvas>
+      </div>
+    </section>
+
+    <!-- What is MoS -->
+    <section>
+      <h2>What Is Margin of Safety?</h2>
+      <p>The <strong>margin of safety</strong> is the foundational concept of value investing, introduced by <strong>Benjamin Graham</strong> in his 1949 masterwork <em>The Intelligent Investor</em>. It represents the discount at which a security trades relative to its intrinsic (or fair) value.</p>
+      <p>Graham argued that no analyst can precisely determine a company's true worth. Earnings estimates can be wrong. Growth rates can stall. Management can make mistakes. The margin of safety accounts for all of these uncertainties by demanding that investors only buy when the price is <em>significantly</em> below the estimated value.</p>
+      <p><strong>Warren Buffett</strong>, Graham's most famous student, has called margin of safety the "three most important words in all of investing." Buffett refined the concept: instead of buying mediocre businesses at deep discounts (Graham's cigar-butt approach), he buys <em>wonderful businesses at fair prices</em> — but still insists on a meaningful margin of safety before committing capital.</p>
+
+      <div class="callout">
+        <strong>Graham's Analogy:</strong> "Confronted with a challenge to distill the secret of sound investment into three words, we venture the motto: Margin of Safety." — <em>The Intelligent Investor</em>, Chapter 20
+      </div>
+    </section>
+
+    <!-- Different Thresholds -->
+    <section>
+      <h2>What Margin of Safety Should You Use?</h2>
+      <p>Different investors use different thresholds depending on their risk tolerance, the quality of the business, and the predictability of earnings:</p>
+      <div class="threshold-grid">
+        <div class="threshold-card">
+          <div class="threshold-pct">33%+</div>
+          <div class="threshold-who">Benjamin Graham</div>
+          <div class="threshold-why">Deep value. Buy net-nets and statistically cheap stocks. High margin required because the businesses are often mediocre.</div>
+        </div>
+        <div class="threshold-card">
+          <div class="threshold-pct">25%+</div>
+          <div class="threshold-who">Warren Buffett</div>
+          <div class="threshold-why">Quality at a discount. Seeks wonderful companies with durable competitive advantages, but won't overpay.</div>
+        </div>
+        <div class="threshold-card">
+          <div class="threshold-pct">15%+</div>
+          <div class="threshold-who">Growth Investors</div>
+          <div class="threshold-why">Accepts slimmer margins for high-growth, high-quality compounders where future earnings justify a premium valuation.</div>
+        </div>
+      </div>
+      <p>The key insight: <strong>the riskier or less predictable the business, the higher the margin of safety you should demand.</strong> A utility company with stable cash flows might only need 15%. A cyclical commodity producer might need 40%+.</p>
+    </section>
+
+    <!-- Key Insights -->
+    <section>
+      <h2>5 Key Insights</h2>
+      <div class="insights-list">
+        <div class="insight">
+          <div class="insight-num">1</div>
+          <div class="insight-text"><strong>Margin of safety protects against analytical error.</strong> Even the best DCF model is built on assumptions. A 30% margin of safety means your thesis can be 30% wrong and you still break even.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-num">2</div>
+          <div class="insight-text"><strong>Negative MoS does not always mean "sell."</strong> Some great companies trade above IV for years because the market prices in future growth your model may not capture. Context matters.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-num">3</div>
+          <div class="insight-text"><strong>Intrinsic value is a range, not a point.</strong> Any single IV estimate is imprecise. Use margin of safety as a probability filter, not a binary signal.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-num">4</div>
+          <div class="insight-text"><strong>The best time to find wide margins of safety is during market panic.</strong> In 2008, 2020, and every major correction, high-quality stocks briefly traded at 40-50% discounts to fair value. Those were generational buying opportunities.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-num">5</div>
+          <div class="insight-text"><strong>Pair MoS with quality metrics.</strong> A 50% margin of safety on a company with declining revenues and rising debt is not value investing — it's a value trap. Always check the moat, management, and balance sheet.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section>
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details class="faq-item"><summary>What is margin of safety in investing?</summary><p>Margin of safety is the difference between a stock's intrinsic value and its market price, expressed as a percentage. Coined by Benjamin Graham in <em>The Intelligent Investor</em>, it measures how much a stock is undervalued. A higher margin of safety means lower downside risk and greater potential for returns.</p></details>
+        <details class="faq-item"><summary>How do you calculate margin of safety?</summary><p>The margin of safety formula is: ((Intrinsic Value − Market Price) / Intrinsic Value) × 100. For example, if a stock's intrinsic value is $100 and its current price is $70, the margin of safety is 30%.</p></details>
+        <details class="faq-item"><summary>What is a good margin of safety for stocks?</summary><p>Benjamin Graham recommended at least 33%. Warren Buffett typically looks for 25% or more. Growth investors may accept 15%. The ideal margin depends on the quality and predictability of the business.</p></details>
+        <details class="faq-item"><summary>What is the difference between margin of safety and intrinsic value?</summary><p>Intrinsic value is the estimated true worth of a stock based on fundamentals. Margin of safety is the percentage discount at which the stock trades below that intrinsic value. Intrinsic value is the anchor; margin of safety is the buffer.</p></details>
+        <details class="faq-item"><summary>Can margin of safety be negative?</summary><p>Yes. A negative margin of safety means the stock is trading above its estimated intrinsic value — it is overvalued. This signals higher risk and lower expected returns for the investor.</p></details>
+      </div>
+    </section>
+  </div>
+
+<style is:inline>
+  .mos-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; }
+  .stat-value { font-size: 28px; font-weight: 700; color: #4a8fe7; }
+  .stat-label { font-size: 13px; color: #8b949e; margin-top: 4px; }
+  .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 24px; }
+  .calc-inputs { display: flex; flex-direction: column; gap: 16px; }
+  .input-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
+  .input-group label { font-size: 13px; font-weight: 600; color: #c8d0de; }
+  .input-group input { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px 14px; color: #e6edf3; font-size: 15px; outline: none; }
+  .input-group input:focus { border-color: #4a8fe7; }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .calc-btn { background: #4a8fe7; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity .2s; }
+  .calc-btn:hover { opacity: 0.85; }
+  .calc-result { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .mos-big { font-size: 56px; font-weight: 800; }
+  .mos-verdict { font-size: 18px; font-weight: 600; margin: 4px 0 16px; }
+  .ticker-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 0 0 8px 8px; z-index: 10; display: none; max-height: 200px; overflow-y: auto; }
+  .ticker-suggestions .sug-item { padding: 8px 14px; cursor: pointer; font-size: 14px; color: #c8d0de; }
+  .ticker-suggestions .sug-item:hover { background: #21262d; }
+  .ticker-info { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 12px 14px; }
+  .ticker-name { font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+  .ticker-details { display: flex; gap: 16px; font-size: 14px; color: #8b949e; }
+  .ticker-details strong { color: #4a8fe7; }
+  .formula-box { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin: 16px 0; text-align: center; }
+  .formula { font-size: 18px; font-weight: 700; color: #4a8fe7; font-family: 'Courier New', monospace; }
+  .table-scroll { overflow-x: auto; }
+  .mos-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .mos-table th { background: #161b22; color: #8b949e; text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 2px solid #30363d; }
+  .mos-table td { padding: 10px 14px; border-bottom: 1px solid #30363d; color: #c8d0de; }
+  .mos-table tr:hover td { background: #161b22; }
+  .mos-pos { color: #10b981; font-weight: 700; }
+  .mos-neg { color: #ef4444; font-weight: 700; }
+  .chart-container { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .threshold-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+  .threshold-card { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; }
+  .threshold-pct { font-size: 32px; font-weight: 800; color: #4a8fe7; }
+  .threshold-who { font-size: 15px; font-weight: 700; color: #e6edf3; margin: 4px 0; }
+  .threshold-why { font-size: 13px; color: #8b949e; line-height: 1.5; }
+  .insights-list { display: flex; flex-direction: column; gap: 16px; }
+  .insight { display: flex; gap: 16px; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 16px 20px; align-items: flex-start; }
+  .insight-num { font-size: 24px; font-weight: 800; color: #4a8fe7; min-width: 32px; }
+  .insight-text { font-size: 14px; color: #c8d0de; line-height: 1.6; }
+  .faq-list { display: flex; flex-direction: column; gap: 8px; }
+  .faq-item { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; }
+  .faq-item summary { padding: 14px 18px; cursor: pointer; font-weight: 600; color: #e6edf3; font-size: 15px; }
+  .faq-item summary:hover { color: #4a8fe7; }
+  .faq-item p { padding: 0 18px 14px; font-size: 14px; color: #8b949e; line-height: 1.6; margin: 0; }
+  .callout { background: #161b22; border-left: 4px solid #4a8fe7; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14px; color: #c8d0de; line-height: 1.6; }
+  .callout strong { color: #e6edf3; }
+  @media (max-width: 768px) {
+    .mos-stats { grid-template-columns: repeat(2, 1fr); }
+    .calc-wrapper { grid-template-columns: 1fr; }
+    .input-row { grid-template-columns: 1fr; }
+    .threshold-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .mos-stats { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+var IV_DATA={"T":{"n":"AT&T","iv":125.6,"p":27.41},"MGM":{"n":"MGM Resorts International","iv":45.0,"p":37.14},"PAYX":{"n":"Paychex","iv":94.5,"p":91.71},"COIN":{"n":"Coinbase Global, Inc.","iv":185.5,"p":202.91},"PNR":{"n":"Pentair plc","iv":93.66,"p":88.49},"APA":{"n":"APA Corporation","iv":53.64,"p":38.06},"GILD":{"n":"Gilead Sciences","iv":120.0,"p":141.29},"ANET":{"n":"Arista Networks, Inc.","iv":128.5,"p":136.26},"FANG":{"n":"Diamondback Energy","iv":232.5,"p":190.31},"BEN":{"n":"Franklin Resources","iv":18.5,"p":23.87},"BLDR":{"n":"Builders FirstSource, Inc.","iv":105.0,"p":84.49},"SBUX":{"n":"Starbucks","iv":402.8,"p":95.11},"CCL":{"n":"Carnival Corporation","iv":31.45,"p":24.94},"MNST":{"n":"Monster Beverage","iv":8.29,"p":75.06},"EXPE":{"n":"Expedia Group, Inc.","iv":182.5,"p":239.41},"CNP":{"n":"CenterPoint Energy, Inc.","iv":46.2,"p":43.25},"BA":{"n":"Boeing","iv":89.5,"p":54.0},"ITW":{"n":"Illinois Tool Works","iv":189.85,"p":260.62},"MCO":{"n":"Moody's","iv":7718.0,"p":438.67},"NWS":{"n":"News Corp","iv":29.5,"p":27.24},"EA":{"n":"Electronic Arts Inc.","iv":178.5,"p":200.69},"GE":{"n":"GE Aerospace","iv":127.29,"p":302.55},"WM":{"n":"Waste Management","iv":25.2,"p":2816.0},"NDSN":{"n":"Nordson Corporation","iv":225.5,"p":267.21},"POOL":{"n":"Pool Corporation","iv":178.5,"p":204.36},"MAA":{"n":"Mid-America Apartment","iv":135.2,"p":124.51},"MPWR":{"n":"Monolithic Power Systems","iv":780.45,"p":1092.69},"EQR":{"n":"Equity Residential","iv":55.45,"p":59.31},"BMY":{"n":"Bristol Myers Squibb","iv":78.45,"p":58.11},"CTAS":{"n":"Cintas","iv":125.46,"p":181.83},"HCA":{"n":"HCA Healthcare Inc.","iv":7.7,"p":502.05},"PSX":{"n":"Phillips 66","iv":195.0,"p":178.34},"D":{"n":"Dominion Energy, Inc.","iv":55.2,"p":61.02},"LMT":{"n":"Lockheed Martin","iv":461.34,"p":637.51},"APH":{"n":"Amphenol","iv":23.1,"p":127.81},"EW":{"n":"Edwards Lifesciences","iv":94.6,"p":82.46},"SNPS":{"n":"Synopsys","iv":8.0,"p":428.67},"DLR":{"n":"Digital Realty","iv":182.45,"p":179.85},"SPOT":{"n":"Spotify","iv":415.88,"p":515.54},"MCHP":{"n":"Microchip Technology","iv":55.42,"p":63.29},"TXN":{"n":"Texas Instruments","iv":193.75,"p":193.75},"GDDY":{"n":"GoDaddy Inc.","iv":126.85,"p":83.66},"ETN":{"n":"Eaton Corporation","iv":310.0,"p":360.23},"GPC":{"n":"Genuine Parts Company","iv":96.57,"p":99.09},"ABNB":{"n":"Airbnb, Inc.","iv":125,"p":130.79},"NTRS":{"n":"Northern Trust","iv":120.5,"p":135.78},"USB":{"n":"U.S. Bancorp","iv":26.4,"p":51.32},"GLW":{"n":"Corning","iv":15.6,"p":133.36},"DD":{"n":"DuPont de Nemours","iv":45.0,"p":43.52},"OXY":{"n":"Occidental Petroleum","iv":32.94,"p":59.58},"LHX":{"n":"L3Harris","iv":21.9,"p":368.38},"EXE":{"n":"Expand Energy","iv":135.2,"p":107.95},"AMP":{"n":"Ameriprise Financial","iv":512.45,"p":434.06},"GEV":{"n":"GE Vernova","iv":38.1,"p":874.38},"PTC":{"n":"PTC Inc.","iv":158.2,"p":150.67},"LNT":{"n":"Alliant Energy","iv":55.45,"p":71.32},"MDT":{"n":"Medtronic plc","iv":71.87,"p":86.87},"ASML":{"n":"ASML Holding","iv":951.47,"p":1376.3},"HPQ":{"n":"HP Inc.","iv":28.5,"p":18.48},"XOM":{"n":"Exxon Mobil","iv":91.18,"p":158.99},"PANW":{"n":"Palo Alto Networks","iv":120.4,"p":169.74},"APTV":{"n":"Aptiv PLC","iv":45.2,"p":69.17},"MTB":{"n":"M&T Bank","iv":263.78,"p":196.24},"BAC":{"n":"Bank of America","iv":32.48,"p":47.59},"RL":{"n":"Ralph Lauren","iv":340.21,"p":340.21},"PCG":{"n":"PG&E Corporation","iv":21.5,"p":18.19},"CEG":{"n":"Constellation Energy","iv":260.4,"p":316.47},"CI":{"n":"The Cigna Group","iv":665.54,"p":264.57},"MAR":{"n":"Marriott","iv":26.2,"p":327.3},"AMD":{"n":"Advanced Micro Devices","iv":147.61,"p":147.61},"KMI":{"n":"Kinder Morgan","iv":16.9,"p":32.61},"PHM":{"n":"PulteGroup, Inc.","iv":123.74,"p":117.85},"COP":{"n":"ConocoPhillips","iv":110.0,"p":110.0},"WELL":{"n":"Welltower","iv":10.8,"p":209.21},"ECL":{"n":"Ecolab Inc.","iv":215.5,"p":258.7},"SYK":{"n":"Stryker Corporation","iv":25.1,"p":348.56},"DECK":{"n":"Deckers Brands","iv":120.5,"p":104.91},"BR":{"n":"Broadridge Financial","iv":158.5,"p":174.38},"CNC":{"n":"Centene Corporation","iv":48.75,"p":35.57},"CTVA":{"n":"Corteva, Inc.","iv":70.0,"p":78.07},"ADSK":{"n":"Autodesk, Inc.","iv":275.4,"p":247.65},"MCK":{"n":"McKesson Corporation","iv":1716.86,"p":898.95},"OKE":{"n":"ONEOK, Inc.","iv":75.4,"p":88.39},"JCI":{"n":"Johnson Controls","iv":152.0,"p":133.25},"PEP":{"n":"PepsiCo, Inc.","iv":118.22,"p":155.14},"CME":{"n":"CME Group Inc.","iv":315.5,"p":310.71},"ON":{"n":"ON Semiconductor","iv":78.5,"p":59.29},"COO":{"n":"Cooper Companies","iv":66.5,"p":70.71},"PRU":{"n":"Prudential Financial","iv":128.45,"p":92.51},"CRH":{"n":"CRH plc","iv":125.4,"p":101.02},"PVH":{"n":"PVH Corp.","iv":69.12,"p":64.0},"HLT":{"n":"Hilton Worldwide","iv":160.33,"p":297.83},"MS":{"n":"Morgan Stanley","iv":159.47,"p":159.47},"NTAP":{"n":"NetApp, Inc.","iv":95.0,"p":103.09},"GRMN":{"n":"Garmin Ltd.","iv":120.5,"p":235.11},"DIS":{"n":"Disney","iv":95.7,"p":110.0},"DGX":{"n":"Quest Diagnostics","iv":185.2,"p":194.16},"ATO":{"n":"Atmos Energy","iv":175.2,"p":184.9},"IQV":{"n":"IQVIA Holdings","iv":407.76,"p":166.47},"NRG":{"n":"NRG Energy, Inc.","iv":125.5,"p":161.4},"FTNT":{"n":"Fortinet, Inc.","iv":78.5,"p":83.12},"PYPL":{"n":"PayPal Holdings","iv":93.95,"p":44.19},"CCI":{"n":"Crown Castle Inc.","iv":78.4,"p":85.07},"KEYS":{"n":"Keysight Technologies","iv":325.4,"p":290.21},"HRL":{"n":"Hormel Foods","iv":15.32,"p":22.37},"APD":{"n":"Air Products","iv":322.5,"p":284.15},"BRO":{"n":"Brown & Brown, Inc.","iv":59.8,"p":66.56},"BDX":{"n":"Becton, Dickinson","iv":128.5,"p":156.53},"HWM":{"n":"Howmet Aerospace","iv":185.5,"p":232.94},"GD":{"n":"General Dynamics","iv":368.5,"p":349.63},"CFG":{"n":"Citizens Financial","iv":66.85,"p":57.05},"PEG":{"n":"Public Service Enterprise","iv":41.15,"p":82.78},"DOC":{"n":"Healthpeak Properties","iv":19.5,"p":17.73},"PNW":{"n":"Pinnacle West Capital","iv":105.0,"p":100.07},"CAG":{"n":"Conagra Brands","iv":16.45,"p":15.4},"APP":{"n":"AppLovin Corporation","iv":481.25,"p":439.92},"INTC":{"n":"Intel Corporation","iv":33.96,"p":44.61},"A":{"n":"Agilent Technologies","iv":128.5,"p":111.75},"COF":{"n":"Capital One","iv":53.4,"p":180.14},"CMI":{"n":"Cummins Inc.","iv":495.2,"p":540.24},"PG":{"n":"Procter & Gamble","iv":152.68,"p":147.63},"ABT":{"n":"Abbott Laboratories","iv":44.3,"p":108.83},"BLK":{"n":"BlackRock","iv":24.2,"p":973.95},"FCX":{"n":"Freeport-McMoRan","iv":25.9,"p":56.41},"ED":{"n":"Consolidated Edison","iv":105.5,"p":111.69},"AFL":{"n":"Aflac Incorporated","iv":98.5,"p":107.17},"PWR":{"n":"Quanta Services","iv":28.5,"p":576.92},"HIG":{"n":"Hartford Insurance","iv":446.04,"p":131.36},"KLAC":{"n":"KLA Corporation","iv":12.16,"p":1505.34},"FDX":{"n":"FedEx","iv":87.9,"p":2981.0},"CRWD":{"n":"CrowdStrike Holdings","iv":320.15,"p":428.18},"IT":{"n":"Gartner, Inc.","iv":391.19,"p":159.26},"SHW":{"n":"Sherwin-Williams","iv":8.0,"p":792.0},"EG":{"n":"Everest Group","iv":350.0,"p":315.96},"DE":{"n":"Deere & Company","iv":585.2,"p":567.58},"RTX":{"n":"RTX Corporation","iv":109.83,"p":206.39},"BG":{"n":"Bunge Global SA","iv":125.0,"p":122.04},"ERIE":{"n":"Erie Indemnity","iv":195.4,"p":240.93},"OMC":{"n":"Omnicom Group","iv":128.5,"p":75.84},"DHR":{"n":"Danaher Corporation","iv":24.6,"p":191.5},"ALL":{"n":"Allstate Corporation","iv":265.15,"p":204.07},"FIX":{"n":"Comfort Systems USA","iv":1250.0,"p":1444.6},"CLX":{"n":"Clorox Company","iv":122.4,"p":106.62},"CAT":{"n":"Caterpillar Inc.","iv":707.06,"p":707.06},"BXP":{"n":"BXP, Inc.","iv":55.0,"p":53.41},"MU":{"n":"Micron","iv":37.4,"p":12.0},"DELL":{"n":"Dell Technologies","iv":113.5,"p":31.5},"BX":{"n":"Blackstone","iv":9.1,"p":113.53},"IBM":{"n":"IBM Corporation","iv":210.15,"p":254.68},"WMB":{"n":"Williams Companies","iv":11.95,"p":48.2},"TMUS":{"n":"T-Mobile US","iv":202.13,"p":208.73},"AON":{"n":"Aon plc","iv":305.1,"p":316.99},"INCY":{"n":"Incyte Corporation","iv":69.83,"p":92.95},"NOC":{"n":"Northrop Grumman","iv":42.0,"p":724.84},"CBRE":{"n":"CBRE Group, Inc.","iv":124.3,"p":125.1},"MA":{"n":"Mastercard","iv":536.98,"p":491.37},"MLM":{"n":"Martin Marietta","iv":482.35,"p":567.47},"CSX":{"n":"CSX Corporation","iv":14.5,"p":39.64},"DOV":{"n":"Dover Corporation","iv":178.4,"p":211.49},"EXC":{"n":"Exelon Corporation","iv":44.5,"p":48.01},"UNP":{"n":"Union Pacific","iv":24.5,"p":236.57},"ESS":{"n":"Essex Property Trust","iv":220.5,"p":246.28},"TAP":{"n":"Molson Coors","iv":81.27,"p":42.28},"ORLY":{"n":"O'Reilly Automotive","iv":43.79,"p":87.91},"COST":{"n":"Costco","iv":526.67,"p":988.74},"FTV":{"n":"Fortive Corporation","iv":48.33,"p":55.55},"ARES":{"n":"Ares Management","iv":94.3,"p":107.99},"SPGI":{"n":"S&P Global","iv":15.3,"p":44.0},"NFLX":{"n":"Netflix","iv":49.03,"p":93.86},"PLTR":{"n":"Palantir","iv":4.47,"p":6.9},"IDXX":{"n":"Idexx Laboratories","iv":397.01,"p":579.85},"LYV":{"n":"Live Nation","iv":108.9,"p":154.19},"EVRG":{"n":"Evergy, Inc.","iv":78.5,"p":81.06},"MTD":{"n":"Mettler-Toledo","iv":1050.0,"p":1190.49},"AVB":{"n":"AvalonBay Communities","iv":182.5,"p":165.24},"CSGP":{"n":"CoStar Group","iv":48.0,"p":42.82},"EBAY":{"n":"eBay Inc.","iv":105.0,"p":90.74},"MSFT":{"n":"Microsoft","iv":274.94,"p":395.5},"AMGN":{"n":"Amgen","iv":36.8,"p":351.48},"CDNS":{"n":"Cadence Design Systems","iv":5.3,"p":289.64},"SCHW":{"n":"Charles Schwab","iv":105.4,"p":93.99},"REGN":{"n":"Regeneron","iv":885.5,"p":737.45},"DHI":{"n":"D.R. Horton, Inc.","iv":139.75,"p":137.98},"PPG":{"n":"PPG Industries","iv":122.5,"p":98.38},"TT":{"n":"Trane Technologies","iv":21.3,"p":430.88},"CPAY":{"n":"Corpay, Inc.","iv":325,"p":284.38},"CB":{"n":"Chubb Limited","iv":59.4,"p":329.98},"BSX":{"n":"Boston Scientific","iv":55.45,"p":69.89},"NXPI":{"n":"NXP Semiconductors","iv":177.9,"p":192.35},"CVS":{"n":"CVS Health","iv":10.4,"p":60.0},"ADM":{"n":"Archer-Daniels-Midland","iv":65.5,"p":68.64},"JBHT":{"n":"J.B. Hunt Transport","iv":215.2,"p":200.2},"DPZ":{"n":"Domino's Pizza","iv":410.25,"p":375.3},"KIM":{"n":"Kimco Realty","iv":26.5,"p":23.09},"GOOG":{"n":"Alphabet Inc.","iv":315.5,"p":305.73},"CMG":{"n":"Chipotle Mexican Grill","iv":24.5,"p":32.94},"UBER":{"n":"Uber Technologies","iv":126.72,"p":76.66},"JBL":{"n":"Jabil Inc.","iv":237.48,"p":265.31},"BK":{"n":"Bank of New York Mellon","iv":20.1,"p":115.48},"FITB":{"n":"Fifth Third Bancorp","iv":48.5,"p":43.66},"TSLA":{"n":"Tesla, Inc.","iv":37.68,"p":398.27},"MSI":{"n":"Motorola Solutions","iv":11.7,"p":467.28},"NCLH":{"n":"Norwegian Cruise Line","iv":12.5,"p":19.64},"MPC":{"n":"Marathon Petroleum","iv":132.7,"p":236.24},"ARE":{"n":"Alexandria Real Estate","iv":78.45,"p":49.52},"LLY":{"n":"Eli Lilly","iv":507.89,"p":915.59},"Q":{"n":"Qnity Electronics","iv":138.5,"p":111.94},"BALL":{"n":"Ball Corporation","iv":53.09,"p":58.99},"STZ":{"n":"Constellation Brands","iv":175.5,"p":151.91},"BF.B":{"n":"Brown-Forman","iv":19.5,"p":23.31},"DG":{"n":"Dollar General","iv":134.18,"p":123.45},"DUK":{"n":"Duke Energy","iv":32.2,"p":100.5},"ICE":{"n":"Intercontinental Exchange","iv":12.6,"p":20.2},"FOX":{"n":"Fox Corporation","iv":68.5,"p":52.02},"LDOS":{"n":"Leidos Holdings","iv":204.28,"p":165.95},"CAH":{"n":"Cardinal Health","iv":135.4,"p":110.5},"CSCO":{"n":"Cisco Systems","iv":79.33,"p":79.33},"AAPL":{"n":"Apple Inc.","iv":206.86,"p":252.38},"AWK":{"n":"American Water Works","iv":128.5,"p":137.1},"PFE":{"n":"Pfizer","iv":62.6,"p":27.32},"UNH":{"n":"UnitedHealth Group","iv":400.91,"p":285.54},"JNJ":{"n":"Johnson & Johnson","iv":223.3,"p":238.96},"GL":{"n":"Globe Life Inc.","iv":165.2,"p":137.71},"NEE":{"n":"NextEra Energy","iv":27.4,"p":91.04},"ELV":{"n":"Elevance Health","iv":365.4,"p":291.15},"FICO":{"n":"Fair Isaac Corporation","iv":684.49,"p":1113.16},"JPM":{"n":"JPMorgan Chase","iv":279.22,"p":287.54},"MO":{"n":"Altria Group","iv":20.1,"p":25.7},"EIX":{"n":"Edison International","iv":78.4,"p":71.89},"PH":{"n":"Parker-Hannifin","iv":19.9,"p":918.43},"LEN":{"n":"Lennar Corporation","iv":142.96,"p":93.72},"RSG":{"n":"Republic Services","iv":16.6,"p":221.99},"IR":{"n":"Ingersoll Rand","iv":75.3,"p":82.16},"BKNG":{"n":"Booking Holdings","iv":6970.96,"p":4438.44},"EME":{"n":"EMCOR Group","iv":512.2,"p":751.33},"ALLE":{"n":"Allegion plc","iv":121.34,"p":143.83},"AIG":{"n":"AIG","iv":86.45,"p":73.89},"HAL":{"n":"Halliburton","iv":46.72,"p":36.93},"SLB":{"n":"SLB N.V.","iv":35.7,"p":45.88},"ISRG":{"n":"Intuitive Surgical","iv":252.81,"p":477.2},"PM":{"n":"Philip Morris","iv":129.22,"p":167.84},"MMM":{"n":"3M","iv":24.95,"p":145.08},"GIS":{"n":"General Mills","iv":48.2,"p":37.5},"AMZN":{"n":"Amazon.com","iv":22.74,"p":211.56},"TJX":{"n":"TJX Companies","iv":60.4,"p":152.87},"CINF":{"n":"Cincinnati Financial","iv":368.23,"p":157.86},"HAS":{"n":"Hasbro, Inc.","iv":61.47,"p":91.36},"AME":{"n":"AMETEK, Inc.","iv":178.5,"p":211.5},"MTCH":{"n":"Match Group","iv":54.38,"p":31.47},"HSY":{"n":"Hershey Company","iv":203.44,"p":210.58},"CL":{"n":"Colgate-Palmolive","iv":78.5,"p":85.5},"ACN":{"n":"Accenture","iv":69.7,"p":196.35},"CDW":{"n":"CDW Corporation","iv":268.45,"p":220.5},"HD":{"n":"Home Depot","iv":299.36,"p":335.75},"ADP":{"n":"Automatic Data Processing","iv":235.4,"p":210.66},"PKG":{"n":"Packaging Corp of America","iv":128.5,"p":204.39},"AOS":{"n":"A. O. Smith","iv":72.5,"p":64.54},"PAYC":{"n":"Paycom Software","iv":182.02,"p":124.15},"XYZ":{"n":"Block, Inc.","iv":78.45,"p":58.99},"CPRT":{"n":"Copart, Inc.","iv":36.5,"p":32.52},"AEP":{"n":"American Electric Power","iv":21.9,"p":130.97},"CIEN":{"n":"Ciena","iv":48.5,"p":41.25},"SNDK":{"n":"Sandisk","iv":5821.0,"p":753.69},"PLD":{"n":"Prologis, Inc.","iv":105.42,"p":131.09},"LYB":{"n":"LyondellBasell","iv":17.54,"p":74.57},"MDLZ":{"n":"Mondelez International","iv":72.5,"p":56.49},"HUM":{"n":"Humana Inc.","iv":180.5,"p":166.45},"IEX":{"n":"IDEX Corporation","iv":169.07,"p":187.38},"HSIC":{"n":"Henry Schein","iv":78.5,"p":72.68},"GPN":{"n":"Global Payments","iv":95.5,"p":68.18},"LRCX":{"n":"Lam Research","iv":290.5,"p":233.99},"AMT":{"n":"American Tower","iv":215.8,"p":182.76},"HON":{"n":"Honeywell","iv":37.4,"p":229.92},"KKR":{"n":"KKR & Co. Inc.","iv":20.5,"p":90.63},"GEHC":{"n":"GE HealthCare","iv":77.47,"p":70.38},"KR":{"n":"Kroger Co.","iv":107.25,"p":73.76},"AMAT":{"n":"Applied Materials","iv":154.32,"p":354.6},"FIS":{"n":"Fidelity National Info","iv":55.4,"p":49.26},"NKE":{"n":"Nike, Inc.","iv":55.48,"p":53.44},"EL":{"n":"Estee Lauder","iv":105.0,"p":85.6},"DVN":{"n":"Devon Energy","iv":53.6,"p":48.79},"NSC":{"n":"Norfolk Southern","iv":286.0,"p":278.19},"NVR":{"n":"NVR, Inc.","iv":7890.5,"p":6417.9},"MMC":{"n":"Marsh McLennan","iv":272.64,"p":170.91},"AZO":{"n":"AutoZone, Inc.","iv":3675.5,"p":3341.58},"NWSA":{"n":"News Corp","iv":21.3,"p":23.93},"MAS":{"n":"Masco Corporation","iv":55.48,"p":59.72},"AXON":{"n":"Axon Enterprise","iv":320.15,"p":502.18},"AKAM":{"n":"Akamai Technologies","iv":122.5,"p":110},"ES":{"n":"Eversource Energy","iv":62.4,"p":69.62},"ODFL":{"n":"Old Dominion Freight","iv":150.5,"p":182.36},"HBAN":{"n":"Huntington Bancshares","iv":16.5,"p":15.17},"ADI":{"n":"Analog Devices","iv":284.15,"p":310.44},"VZ":{"n":"Verizon","iv":138.2,"p":181.0},"CRM":{"n":"Salesforce","iv":193.99,"p":193.99},"FOXA":{"n":"Fox Corporation","iv":68.5,"p":57.68},"EOG":{"n":"EOG Resources","iv":22.6,"p":136.98},"QCOM":{"n":"QUALCOMM","iv":241.25,"p":130.67},"CHRW":{"n":"C.H. Robinson","iv":125.4,"p":174.81},"CPB":{"n":"Campbell's Company","iv":44.2,"p":46.5},"ALB":{"n":"Albemarle Corporation","iv":155,"p":163.26},"MET":{"n":"MetLife, Inc.","iv":75.0,"p":68.61},"AMCR":{"n":"Amcor plc","iv":41.5,"p":38.69},"DLTR":{"n":"Dollar Tree","iv":95.5,"p":105.56},"DTE":{"n":"DTE Energy Company","iv":135.25,"p":147.14},"FSLR":{"n":"First Solar","iv":378.01,"p":199.65},"CRL":{"n":"Charles River Labs","iv":185.2,"p":153.05},"PCAR":{"n":"PACCAR Inc.","iv":128.5,"p":112.85},"LW":{"n":"Lamb Weston","iv":52.0,"p":40.64},"L":{"n":"Loews Corporation","iv":133.2,"p":105.65},"BBY":{"n":"Best Buy","iv":78.45,"p":64.19},"ACGL":{"n":"Arch Capital Group","iv":145.5,"p":92.17},"CVX":{"n":"Chevron Corporation","iv":185.0,"p":201.44},"DRI":{"n":"Darden Restaurants","iv":175.5,"p":204.42},"KHC":{"n":"Kraft Heinz","iv":44.24,"p":21.76},"MOH":{"n":"Molina Healthcare","iv":525.76,"p":142.21},"LH":{"n":"Labcorp Holdings","iv":241.3,"p":264.09},"VLO":{"n":"Valero Energy","iv":122.7,"p":238.46},"EMR":{"n":"Emerson Electric","iv":8.0,"p":121.5},"MKC":{"n":"McCormick & Company","iv":52.59,"p":54.05},"WMT":{"n":"Walmart","iv":45.92,"p":122.77},"HUBB":{"n":"Hubbell Incorporated","iv":385.25,"p":492.65},"JKHY":{"n":"Jack Henry & Associates","iv":123.04,"p":164.43},"KVUE":{"n":"Kenvue Inc.","iv":16.5,"p":17.43},"PGR":{"n":"Progressive","iv":87.7,"p":201.44},"KO":{"n":"Coca-Cola","iv":21.9,"p":21.9},"FISV":{"n":"Fiserv, Inc.","iv":222.13,"p":57.02},"CPT":{"n":"Camden Property Trust","iv":95.2,"p":99.68},"AIZ":{"n":"Assurant, Inc.","iv":195.5,"p":211.86},"EXR":{"n":"Extra Space Storage","iv":155,"p":135.99},"CMS":{"n":"CMS Energy","iv":71.5,"p":77.45},"AJG":{"n":"Arthur J. Gallagher","iv":190.5,"p":209.68},"ADBE":{"n":"Adobe Inc.","iv":701.96,"p":248.75},"FRT":{"n":"Federal Realty","iv":100.3,"p":106.29},"EXPD":{"n":"Expeditors International","iv":128.95,"p":147.24},"CHTR":{"n":"Charter Communications","iv":250.0,"p":211.63},"HOLX":{"n":"Hologic, Inc.","iv":75.38,"p":75.33},"DDOG":{"n":"Datadog, Inc.","iv":98.4,"p":129.94},"ABBV":{"n":"AbbVie Inc.","iv":211.11,"p":211.11},"CBOE":{"n":"Cboe Global Markets","iv":178.5,"p":280.5},"SAP":{"n":"SAP SE","iv":178.59,"p":187.17},"EQIX":{"n":"Equinix","iv":9.2,"p":1.5},"GOOGL":{"n":"Alphabet","iv":166.69,"p":310.92},"MRNA":{"n":"Moderna, Inc.","iv":101.28,"p":52.37},"C":{"n":"Citigroup Inc.","iv":125.5,"p":109.85},"INTU":{"n":"Intuit","iv":18.8,"p":446.79},"BKR":{"n":"Baker Hughes","iv":55.2,"p":60.71},"AVGO":{"n":"Broadcom Inc.","iv":22.0,"p":318.92},"MCD":{"n":"McDonald's","iv":320.57,"p":320.57},"BRK.B":{"n":"Berkshire Hathaway","iv":536.04,"p":487.63},"HST":{"n":"Host Hotels & Resorts","iv":26.99,"p":19.1},"APO":{"n":"Apollo Global Management","iv":128.5,"p":111.37},"GEN":{"n":"Gen Digital Inc.","iv":45.35,"p":20.56},"WDC":{"n":"Western Digital","iv":10.7,"p":131.77},"AEE":{"n":"Ameren Corporation","iv":98.4,"p":109.56},"COR":{"n":"Cencora, Inc.","iv":361.5,"p":331.74},"ORCL":{"n":"Oracle","iv":72.22,"p":152.94},"CTRA":{"n":"Coterra Energy","iv":36.0,"p":33.9},"NVDA":{"n":"NVIDIA","iv":90.58,"p":182.69},"DOW":{"n":"Dow Inc.","iv":40.2,"p":37.49},"PNC":{"n":"PNC Financial","iv":201.17,"p":201.17},"REG":{"n":"Regency Centers","iv":82.3,"p":76.69},"CMCSA":{"n":"Comcast","iv":123.7,"p":28.76},"FDS":{"n":"FactSet Research","iv":485.2,"p":208.84},"J":{"n":"Jacobs Solutions","iv":145.5,"p":128.02},"KEY":{"n":"KeyCorp","iv":22.8,"p":19.28},"WAT":{"n":"Waters Corporation","iv":100.75,"p":299.57},"CVNA":{"n":"Carvana","iv":185.5,"p":294.18},"AXP":{"n":"American Express","iv":456.97,"p":298.01},"ALGN":{"n":"Align Technology","iv":125.4,"p":176.25},"NI":{"n":"NiSource Inc.","iv":48.0,"p":46.69},"PODD":{"n":"Insulet Corporation","iv":195.4,"p":228.63},"NUE":{"n":"Nucor Corporation","iv":182.3,"p":161.95},"KMB":{"n":"Kimberly-Clark","iv":85.5,"p":98.58},"PSKY":{"n":"Paramount Skydance","iv":7.5,"p":8.96},"TECH":{"n":"Bio-Techne","iv":48.2,"p":51.59},"GS":{"n":"Goldman Sachs","iv":2.5,"p":805.48},"OTIS":{"n":"Otis Worldwide","iv":66.8,"p":80.23},"WAB":{"n":"Westinghouse Air Brake","iv":171.13,"p":237.14},"GNRC":{"n":"Generac Holdings","iv":175.4,"p":200.85},"AES":{"n":"AES Corporation","iv":15.2,"p":14.15},"PFG":{"n":"Principal Financial","iv":78.8,"p":85.9},"META":{"n":"Meta Platforms","iv":643.59,"p":621.5},"LULU":{"n":"Lululemon Athletica","iv":355.18,"p":165.57},"CHD":{"n":"Church & Dwight","iv":102.4,"p":94.58},"LOW":{"n":"Lowe's","iv":86.3,"p":231.09},"MRK":{"n":"Merck & Co.","iv":82.8,"p":114.51},"TSMC":{"n":"Taiwan Semiconductor","iv":920.8,"p":343.68},"LVS":{"n":"Las Vegas Sands","iv":70.0,"p":54.05},"WFC":{"n":"Wells Fargo","iv":36.68,"p":76.6},"MRSH":{"n":"Marsh & McLennan","iv":27.0,"p":171.02},"F":{"n":"Ford Motor Company","iv":13.97,"p":11.64},"GM":{"n":"General Motors","iv":120.74,"p":73.79},"NOW":{"n":"ServiceNow","iv":231.9,"p":114.55},"BIIB":{"n":"Biogen Inc.","iv":224.5,"p":183.41},"HPE":{"n":"Hewlett Packard Enterprise","iv":26.67,"p":22.12},"LIN":{"n":"Linde plc","iv":231.59,"p":490.44},"DAL":{"n":"Delta Air Lines","iv":182.55,"p":65.01},"O":{"n":"Realty Income","iv":75.5,"p":62.64},"BAX":{"n":"Baxter International","iv":18.25,"p":16.66},"DVA":{"n":"DaVita Inc.","iv":178.5,"p":149.76},"INVH":{"n":"Invitation Homes","iv":47.8,"p":25.0},"DXCM":{"n":"Dexcom, Inc.","iv":78.4,"p":67.27},"CTSH":{"n":"Cognizant","iv":78.4,"p":61.55},"V":{"n":"Visa Inc.","iv":297.59,"p":301.37},"TMO":{"n":"Thermo Fisher","iv":44.6,"p":467.03},"CF":{"n":"CF Industries","iv":95.5,"p":125.56},"AVY":{"n":"Avery Dennison","iv":178.5,"p":162.99},"STX":{"n":"Seagate Technology","iv":10.1,"p":421.0},"NEM":{"n":"Newmont","iv":22.7,"p":106.54},"KDP":{"n":"Keurig Dr Pepper","iv":32.5,"p":27.15},"FFIV":{"n":"F5, Inc.","iv":320.5,"p":290.3},"LII":{"n":"Lennox International","iv":202.76,"p":477.21},"FAST":{"n":"Fastenal Company","iv":14.17,"p":44.49},"PSA":{"n":"Public Storage","iv":249.6,"p":277.33},"CARR":{"n":"Carrier Global","iv":62.15,"p":58.97},"HII":{"n":"Huntington Ingalls","iv":465.2,"p":418.42},"DASH":{"n":"DoorDash, Inc.","iv":128.5,"p":159.26},"UPS":{"n":"United Parcel Service","iv":63.87,"p":96.84},"RJF":{"n":"Raymond James Financial","iv":142.87,"p":142.87},"VRTX":{"n":"Vertex Pharmaceuticals","iv":12.0,"p":454.68},"TDG":{"n":"TransDigm","iv":9.1,"p":30.0},"QRVO":{"n":"Qorvo Inc.","iv":102.96,"p":77.74}};
+
+(function(){
+  var tickers = [];
+  var k;
+  for (k in IV_DATA) {
+    if (IV_DATA.hasOwnProperty(k)) {
+      var d = IV_DATA[k];
+      var mos = ((d.iv - d.p) / d.iv) * 100;
+      tickers.push({ t: k, n: d.n, iv: d.iv, p: d.p, mos: Math.round(mos * 100) / 100 });
+    }
+  }
+
+  // Sort by MoS descending
+  tickers.sort(function(a, b) { return b.mos - a.mos; });
+
+  // Stats
+  var totalMos = 0;
+  var undervalued = 0;
+  var overvalued = 0;
+  var highestTicker = tickers[0];
+  for (var i = 0; i < tickers.length; i++) {
+    totalMos += tickers[i].mos;
+    if (tickers[i].mos > 0) undervalued++;
+    else overvalued++;
+  }
+  var avgMos = Math.round((totalMos / tickers.length) * 10) / 10;
+
+  document.getElementById("statAvgMos").textContent = avgMos + "%";
+  document.getElementById("statAvgMos").style.color = avgMos >= 0 ? "var(--positive)" : "var(--negative)";
+  document.getElementById("statUndervalued").textContent = undervalued;
+  document.getElementById("statOvervalued").textContent = overvalued;
+  document.getElementById("statHighest").textContent = highestTicker.t + " (" + highestTicker.mos + "%)";
+
+  // Top 10 tables
+  function buildTable(id, items) {
+    var tbody = document.getElementById(id).querySelector("tbody");
+    var html = "";
+    for (var j = 0; j < items.length; j++) {
+      var r = items[j];
+      var cls = r.mos >= 0 ? "mos-pos" : "mos-neg";
+      html += "<tr><td><strong>" + r.t + "</strong></td><td>" + r.n + "</td><td>$" + r.iv.toLocaleString() + "</td><td>$" + r.p.toLocaleString() + "</td><td class=\"" + cls + "\">" + r.mos + "%</td></tr>";
+    }
+    tbody.innerHTML = html;
+  }
+
+  buildTable("topUndervalued", tickers.slice(0, 10));
+  var overSorted = tickers.slice().sort(function(a, b) { return a.mos - b.mos; });
+  buildTable("topOvervalued", overSorted.slice(0, 10));
+
+  // Scatter chart - cap at 2000 for readability
+  var scatterData = [];
+  var scatterColors = [];
+  var scatterLabels = [];
+  var maxVal = 0;
+  for (var s = 0; s < tickers.length; s++) {
+    var st = tickers[s];
+    if (st.p > 2000 || st.iv > 2000) continue; // skip extreme outliers for chart clarity
+    scatterData.push({ x: st.p, y: st.iv });
+    scatterLabels.push(st.t);
+    scatterColors.push(st.mos > 0 ? "#10b981" : "#ef4444");
+    if (st.p > maxVal) maxVal = st.p;
+    if (st.iv > maxVal) maxVal = st.iv;
+  }
+
+  var scatterCtx = document.getElementById("scatterChart").getContext("2d");
+  new Chart(scatterCtx, {
+    type: "scatter",
+    data: {
+      datasets: [
+        {
+          label: "Stocks",
+          data: scatterData,
+          backgroundColor: scatterColors,
+          pointRadius: 5,
+          pointHoverRadius: 8
+        },
+        {
+          label: "Fair Value Line",
+          data: [{ x: 0, y: 0 }, { x: maxVal, y: maxVal }],
+          type: "line",
+          borderColor: "#4a8fe7",
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, labels: { color: "#8b949e" } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.datasetIndex === 1) return "";
+              var idx = ctx.dataIndex;
+              return scatterLabels[idx] + " — Price: $" + ctx.parsed.x + ", IV: $" + ctx.parsed.y;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: "Current Price ($)", color: "#8b949e" }, grid: { color: "#21262d" }, ticks: { color: "#8b949e" } },
+        y: { title: { display: true, text: "Intrinsic Value ($)", color: "#8b949e" }, grid: { color: "#21262d" }, ticks: { color: "#8b949e" } }
+      }
+    }
+  });
+
+  // Calculator
+  var tickerInput = document.getElementById("tickerInput");
+  var sugBox = document.getElementById("tickerSuggestions");
+  var ivInput = document.getElementById("ivInput");
+  var priceInput = document.getElementById("priceInput");
+  var calcBtn = document.getElementById("calcBtn");
+  var calcResult = document.getElementById("calcResult");
+  var mosValueEl = document.getElementById("mosValue");
+  var mosVerdictEl = document.getElementById("mosVerdict");
+  var tickerInfo = document.getElementById("tickerInfo");
+
+  tickerInput.addEventListener("input", function() {
+    var val = tickerInput.value.toUpperCase().replace(/[^A-Z.]/g, "");
+    tickerInput.value = val;
+    if (val.length === 0) { sugBox.style.display = "none"; tickerInfo.style.display = "none"; return; }
+    var matches = [];
+    for (var mk in IV_DATA) {
+      if (IV_DATA.hasOwnProperty(mk) && mk.indexOf(val) === 0) {
+        matches.push(mk);
+      }
+    }
+    if (matches.length === 0) { sugBox.style.display = "none"; return; }
+    // If exact match, auto-fill
+    if (IV_DATA[val]) {
+      fillTicker(val);
+      sugBox.style.display = "none";
+      return;
+    }
+    var sugHtml = "";
+    for (var mi = 0; mi < Math.min(matches.length, 8); mi++) {
+      sugHtml += "<div class=\"sug-item\" data-ticker=\"" + matches[mi] + "\">" + matches[mi] + " — " + IV_DATA[matches[mi]].n + "</div>";
+    }
+    sugBox.innerHTML = sugHtml;
+    sugBox.style.display = "block";
+    var sugItems = sugBox.querySelectorAll(".sug-item");
+    for (var si = 0; si < sugItems.length; si++) {
+      sugItems[si].addEventListener("click", function() {
+        var tk = this.getAttribute("data-ticker");
+        tickerInput.value = tk;
+        fillTicker(tk);
+        sugBox.style.display = "none";
+      });
+    }
+  });
+
+  function fillTicker(tk) {
+    var data = IV_DATA[tk];
+    if (!data) return;
+    document.getElementById("tickerName").textContent = data.n + " (" + tk + ")";
+    document.getElementById("tickerIV").textContent = "$" + data.iv;
+    document.getElementById("tickerPrice").textContent = "$" + data.p;
+    tickerInfo.style.display = "block";
+    ivInput.value = data.iv;
+    priceInput.value = data.p;
+  }
+
+  document.addEventListener("click", function(e) {
+    if (e.target.id !== "tickerInput") sugBox.style.display = "none";
+  });
+
+  calcBtn.addEventListener("click", function() {
+    var iv = parseFloat(ivInput.value);
+    var price = parseFloat(priceInput.value);
+    if (!iv || iv <= 0 || !price || price <= 0) { alert("Please enter valid Intrinsic Value and Market Price."); return; }
+    var mos = ((iv - price) / iv) * 100;
+    mos = Math.round(mos * 100) / 100;
+    calcResult.style.display = "flex";
+    mosValueEl.textContent = mos + "%";
+    var verdict, vColor;
+    if (mos > 30) { verdict = "Attractive — Strong margin of safety"; vColor = "#10b981"; }
+    else if (mos > 15) { verdict = "Moderate — Reasonable cushion"; vColor = "#eab308"; }
+    else if (mos > 0) { verdict = "Slim — Limited protection"; vColor = "#f97316"; }
+    else { verdict = "No Margin — Stock appears overvalued"; vColor = "#ef4444"; }
+    mosValueEl.style.color = vColor;
+    mosVerdictEl.textContent = verdict;
+    mosVerdictEl.style.color = vColor;
+    drawGauge(mos);
+  });
+
+  function drawGauge(mos) {
+    var canvas = document.getElementById("mosGauge");
+    var ctx = canvas.getContext("2d");
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    var cx = w / 2;
+    var cy = h - 20;
+    var r = Math.min(cx, cy) - 20;
+
+    // Draw arc zones
+    var zones = [
+      { start: -Math.PI, end: -Math.PI * 0.65, color: "#ef4444" },
+      { start: -Math.PI * 0.65, end: -Math.PI * 0.35, color: "#f97316" },
+      { start: -Math.PI * 0.35, end: -Math.PI * 0.15, color: "#eab308" },
+      { start: -Math.PI * 0.15, end: 0, color: "#10b981" }
+    ];
+    for (var zi = 0; zi < zones.length; zi++) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, zones[zi].start, zones[zi].end);
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = zones[zi].color;
+      ctx.globalAlpha = 0.3;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // Needle
+    var clampedMos = Math.max(-50, Math.min(50, mos));
+    var angle = -Math.PI + ((clampedMos + 50) / 100) * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * (r - 10), cy + Math.sin(angle) * (r - 10));
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#e6edf3";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = "#e6edf3";
+    ctx.fill();
+
+    // Labels
+    ctx.font = "12px sans-serif";
+    ctx.fillStyle = "#8b949e";
+    ctx.textAlign = "left";
+    ctx.fillText("<0% Risky", cx - r - 10, cy + 15);
+    ctx.textAlign = "right";
+    ctx.fillText(">30% Safe", cx + r + 10, cy + 15);
+  }
+})();
+</script>
+</SiteLayout>
