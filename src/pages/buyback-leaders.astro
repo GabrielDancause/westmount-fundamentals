@@ -3,25 +3,74 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 import registry from "../data/pages-registry.json";
 
 const page = (registry as any)["buyback-leaders"];
-export const meta = { title: "Top Stock Buyback Leaders 2026 — 106 Companies Ranked", description: "One tech giant spent $94B on buybacks alone. See which 106 companies are repurchasing the most stock in 2026, ranked by buyback yield.", category: "guide", published: "2026-03-15" };
+export const meta = { title: "Top Stock Buyback Leaders 2026 — 106 Companies Ranked", description: "One tech giant spent $94B on buybacks alone. See which 106 companies are repurchasing the most stock in 2026, ranked by buyback yield.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Stock Buyback Leaders 2026: Who Is Repurchasing the Most Shares?",
-  "description": "Complete ranking of 106 companies by share buyback volume, yield, and share count reduction. Analysis of $709.5 billion in trailing 12-month buybacks.",
-  "datePublished": "2026-03-09",
-  "dateModified": "2026-03-09",
-  "author": {
-    "@type": "Organization",
-    "name": "Westmount Research"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Westmount Research",
-    "url": "https://westmountfundamentals.com"
-  },
-  "mainEntityOfPage": "https://westmountfundamentals.com/buyback-leaders"
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Stock Buyback Leaders 2026: Who Is Repurchasing the Most Shares?",
+      "description": "Complete ranking of 106 companies by share buyback volume, yield, and share count reduction. Analysis of $709.5 billion in trailing 12-month buybacks.",
+      "datePublished": "2026-03-09",
+      "dateModified": "2026-03-20",
+      "author": {
+        "@type": "Organization",
+        "name": "Westmount Research"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Westmount Research",
+        "url": "https://westmountfundamentals.com"
+      },
+      "mainEntityOfPage": "https://westmountfundamentals.com/buyback-leaders"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Which company buys back the most stock?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Apple (AAPL) is the undisputed buyback king, repurchasing approximately $94 billion in shares over the trailing 12 months — more than the next two companies combined. Alphabet (GOOGL) follows at $62 billion and Meta Platforms (META) at $48 billion."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are stock buybacks good for investors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Stock buybacks can be excellent for investors when executed at reasonable valuations. They reduce shares outstanding, boosting earnings per share (EPS) and each remaining share's ownership claim. However, buybacks are only value-creating when the stock is fairly or undervalued."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is buyback yield?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Buyback yield measures how much of its market capitalization a company spends on share repurchases annually. Formula: (Annual Buybacks ÷ Market Cap) × 100. A 5% buyback yield means the company is repurchasing 5% of its market value in shares each year."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do buybacks increase EPS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, buybacks mechanically increase EPS by reducing the denominator (shares outstanding). If a company earns $1 billion with 100 million shares, EPS is $10. After buying back 10 million shares, the same earnings yield $11.11 EPS — an 11.1% boost with zero change in actual profitability."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are buybacks better than dividends?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Neither is universally better — they serve different purposes. Buybacks are tax-efficient, flexible, and boost EPS. Dividends provide predictable income and signal confidence. For total capital return, look at both together."
+          }
+        }
+      ]
+    }
+  ]
 };
 
 ---
@@ -36,7 +85,6 @@ const schema = {
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --green: #22c55e; --red: #ef4444; --yellow: #eab308;
-
 }
 body {
   background: var(--bg-color); color: var(--text-primary);
@@ -233,6 +281,118 @@ footer {
   border-top: 1px solid var(--border-color); padding: 24px 0;
   text-align: center; font-size: 13px; color: var(--text-dim);
 }
+
+/* TSR Calculator */
+.tsr-calculator {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 12px; padding: 32px; margin: 40px 0;
+  position: relative; overflow: hidden;
+}
+.tsr-calculator::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent-color), #22c55e, #eab308);
+}
+.tsr-calculator h2 { font-size: 20px; color: var(--text-bright); margin-bottom: 8px; }
+.tsr-calculator .calc-subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.calc-left { display: flex; flex-direction: column; gap: 16px; }
+.calc-select-wrap { position: relative; }
+.calc-select-wrap select {
+  width: 100%; background: var(--bg-color); border: 1px solid var(--border-color);
+  color: var(--text-primary); padding: 12px 16px; border-radius: 8px;
+  font-size: 14px; font-family: 'Inter', sans-serif; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+}
+.calc-select-wrap::after {
+  content: '▾'; position: absolute; right: 16px; top: 50%;
+  transform: translateY(-50%); color: var(--text-dim); pointer-events: none;
+}
+.calc-results { display: flex; flex-direction: column; gap: 12px; }
+.calc-result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px; background: var(--bg-color); border-radius: 8px;
+}
+.calc-result-label { font-size: 13px; color: var(--text-dim); }
+.calc-result-value { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.calc-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px; background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(74,143,231,0.1));
+  border: 1px solid rgba(34,197,94,0.2); border-radius: 8px;
+}
+.calc-total-label { font-size: 14px; font-weight: 600; color: var(--text-bright); }
+.calc-total-value { font-size: 24px; font-weight: 800; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+.calc-right { display: flex; flex-direction: column; gap: 16px; }
+.calc-stacked-bar {
+  height: 48px; border-radius: 8px; overflow: hidden; display: flex;
+  position: relative;
+}
+.calc-stacked-bar .bar-buyback {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #fff; transition: width 0.4s ease;
+  background: var(--accent-color);
+}
+.calc-stacked-bar .bar-dividend {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #fff; transition: width 0.4s ease;
+  background: var(--green);
+}
+.calc-bar-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-dim); }
+.calc-bar-legend span { display: flex; align-items: center; gap: 6px; }
+.calc-bar-legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+.calc-projection {
+  padding: 16px; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2);
+  border-radius: 8px; font-size: 14px; color: var(--text-primary); line-height: 1.6;
+}
+.calc-projection strong { color: var(--yellow); }
+.calc-sp500 {
+  padding: 16px; background: var(--bg-color); border-radius: 8px;
+}
+.calc-sp500-header { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.calc-sp500-compare { display: flex; gap: 12px; align-items: center; }
+.calc-sp500-bar {
+  flex: 1; height: 24px; background: rgba(74,143,231,0.08); border-radius: 4px; overflow: hidden;
+}
+.calc-sp500-bar .fill {
+  height: 100%; border-radius: 4px; display: flex; align-items: center;
+  padding-left: 8px; font-size: 11px; font-weight: 600; color: #fff;
+  font-family: 'JetBrains Mono', monospace; transition: width 0.4s ease;
+}
+.calc-sp500-label { font-size: 12px; color: var(--text-dim); width: 80px; text-align: right; flex-shrink: 0; }
+
+/* Scatter plot */
+.scatter-section {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 12px; padding: 32px; margin: 40px 0;
+}
+.scatter-section h2 { font-size: 20px; color: var(--text-bright); margin-bottom: 8px; }
+.scatter-section .scatter-subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
+.scatter-canvas-wrap { position: relative; width: 100%; max-width: 800px; margin: 0 auto; }
+.scatter-canvas-wrap canvas { width: 100% !important; height: auto !important; }
+.quadrant-labels { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.quadrant-label { padding: 8px 12px; border-radius: 6px; font-size: 12px; text-align: center; }
+.ql-tl { background: rgba(74,143,231,0.1); color: var(--accent-color); }
+.ql-tr { background: rgba(34,197,94,0.1); color: var(--green); }
+.ql-bl { background: rgba(148,163,184,0.1); color: var(--text-dim); }
+.ql-br { background: rgba(234,179,8,0.1); color: var(--yellow); }
+
+/* Key Insights */
+.insights-section {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 12px; padding: 32px; margin: 40px 0;
+}
+.insights-section h2 { font-size: 20px; color: var(--text-bright); margin-bottom: 24px; }
+.insight-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.insight-card {
+  padding: 20px; background: var(--bg-color); border-radius: 10px;
+  border-left: 3px solid var(--accent-color);
+}
+.insight-card .insight-icon { font-size: 24px; margin-bottom: 8px; }
+.insight-card .insight-stat {
+  font-size: 22px; font-weight: 800; color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace; margin-bottom: 4px;
+}
+.insight-card .insight-text { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .bar-company { display: none; }
@@ -242,12 +402,15 @@ footer {
   .hero h1 { font-size: 24px; }
   .hero .subtitle { font-size: 15px; }
   .filters { flex-direction: column; align-items: stretch; }
+  .calc-grid { grid-template-columns: 1fr; }
+  .quadrant-labels { grid-template-columns: 1fr; }
+  .insight-cards { grid-template-columns: 1fr; }
 }
   </style>
 
 <main class="container">
   <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
-    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Top Stock Buyback Leaders 2026</span></nav>
+    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Top Stock Buyback Leaders 2026</span></nav>
     <span>8 min read</span>
   </div>
   <section class="hero">
@@ -257,28 +420,110 @@ footer {
     <p class="meta">Published March 9, 2026 · SEC filings & earnings reports · 106 companies analyzed</p>
   </section>
 
+  <!-- Stats Grid -->
   <section class="stats-grid" id="statsGrid"></section>
 
+  <!-- TSR Calculator (NEW) -->
+  <section class="tsr-calculator" id="tsrCalculator">
+    <h2>📊 Total Shareholder Return Calculator</h2>
+    <p class="calc-subtitle">Select any company to see its combined capital return from buybacks and dividends — and how it compares to the S&P 500 average.</p>
+    <div class="calc-grid">
+      <div class="calc-left">
+        <div class="calc-select-wrap">
+          <select id="tsrSelect">
+            <option value="">Choose a company…</option>
+          </select>
+        </div>
+        <div class="calc-results" id="tsrResults" style="display:none">
+          <div class="calc-result-row">
+            <span class="calc-result-label">Buyback Yield</span>
+            <span class="calc-result-value" id="tsrBuyback" style="color:var(--accent-color)">—</span>
+          </div>
+          <div class="calc-result-row">
+            <span class="calc-result-label">Dividend Yield</span>
+            <span class="calc-result-value" id="tsrDividend" style="color:var(--green)">—</span>
+          </div>
+          <div class="calc-total-row">
+            <span class="calc-total-label">Total Shareholder Return</span>
+            <span class="calc-total-value" id="tsrTotal">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="calc-right" id="tsrVisuals" style="display:none">
+        <div>
+          <div class="calc-bar-legend">
+            <span><span class="dot" style="background:var(--accent-color)"></span> Buyback Yield</span>
+            <span><span class="dot" style="background:var(--green)"></span> Dividend Yield</span>
+          </div>
+          <div class="calc-stacked-bar" id="tsrStackedBar" style="margin-top:8px">
+            <div class="bar-buyback" id="tsrBarBuyback"></div>
+            <div class="bar-dividend" id="tsrBarDividend"></div>
+          </div>
+        </div>
+        <div class="calc-projection" id="tsrProjection"></div>
+        <div class="calc-sp500" id="tsrSp500Compare">
+          <div class="calc-sp500-header">vs S&P 500 Average Total Return</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="calc-sp500-compare">
+              <div class="calc-sp500-label" id="tsrCompanyLabel">—</div>
+              <div class="calc-sp500-bar"><div class="fill" id="tsrCompanyBar" style="background:var(--green)"></div></div>
+            </div>
+            <div class="calc-sp500-compare">
+              <div class="calc-sp500-label">S&P 500</div>
+              <div class="calc-sp500-bar"><div class="fill" id="tsrSp500Bar" style="background:var(--text-dim)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top 20 by Amount (existing) -->
   <section class="chart-section">
     <h2>Top 20 Buyback Spenders (Trailing 12 Months)</h2>
     <div class="bar-chart" id="barChart"></div>
   </section>
 
+  <!-- Top 20 by Yield (existing) -->
   <section class="chart-section">
     <h2>Top 20 by Buyback Yield (%)</h2>
     <div class="bar-chart" id="yieldChart"></div>
   </section>
 
+  <!-- Scatter Plot (NEW) -->
+  <section class="scatter-section">
+    <h2>Buyback Yield vs Dividend Yield — Scatter Analysis</h2>
+    <p class="scatter-subtitle">Each dot represents a company. Size = buyback amount. Color = sector. Hover for details.</p>
+    <div class="scatter-canvas-wrap">
+      <canvas id="scatterChart" width="800" height="500"></canvas>
+    </div>
+    <div class="quadrant-labels">
+      <div class="quadrant-label ql-tl">↖ Buyback Focused — high buybacks, low dividends</div>
+      <div class="quadrant-label ql-tr">↗ High Both — best total return</div>
+      <div class="quadrant-label ql-bl">↙ Low Return — minimal capital return</div>
+      <div class="quadrant-label ql-br">↘ Dividend Focused — income-oriented</div>
+    </div>
+  </section>
+
+  <!-- Sector Chart (existing) -->
   <section class="sector-chart">
     <h2>Buybacks by Sector</h2>
     <div class="sector-bars" id="sectorBars"></div>
   </section>
 
+  <!-- Key Insights (NEW) -->
+  <section class="insights-section">
+    <h2>Key Insights</h2>
+    <div class="insight-cards" id="insightCards"></div>
+  </section>
+
+  <!-- Key Findings (existing) -->
   <section class="findings">
     <h2>Key Findings</h2>
     <div id="findingsContainer"></div>
   </section>
 
+  <!-- Table (existing) -->
   <section>
     <h2 style="font-size:20px;color:var(--text-bright);margin-bottom:4px;">Complete Buyback Rankings</h2>
     <p style="font-size:14px;color:var(--text-dim);margin-bottom:16px;">Click any column header to sort. Use filters to narrow results.</p>
@@ -323,6 +568,7 @@ footer {
     </div>
   </section>
 
+  <!-- FAQ (existing) -->
   <section class="faq-section">
     <h2>Frequently Asked Questions</h2>
     <div class="faq-item">
@@ -347,6 +593,7 @@ footer {
     </div>
   </section>
 
+  <!-- Methodology (existing) -->
   <section class="methodology">
     <h2>Methodology</h2>
     <p>Buyback data was compiled from SEC 10-K annual filings, quarterly earnings reports (10-Q), and the S&P Dow Jones Indices quarterly buyback reports. Buyback amounts represent trailing 12-month share repurchases as of the Q4 2025 / Q1 2026 reporting period. Market capitalization and P/E ratio data sourced from stockanalysis.com (March 2026).</p>
@@ -355,6 +602,7 @@ footer {
     <p>All data represents point-in-time estimates and may differ slightly from final audited figures. Sector classifications follow the Global Industry Classification Standard (GICS).</p>
   </section>
 
+  <!-- Citation (existing) -->
   <section class="citation">
     <h3>Cite this research</h3>
     <code>Westmount Research. "Stock Buyback Leaders 2026: Who Is Repurchasing the Most Shares?" westmountfundamentals.com/buyback-leaders, March 9, 2026.</code>
@@ -364,7 +612,7 @@ footer {
     This site provides data for informational purposes only. Not investment advice. Past performance does not guarantee future results. Always do your own research before making investment decisions.
   </div>
 
-  
+  <!-- Embed (existing) -->
   <section class="embed-section" style="max-width:800px;margin:40px auto;padding:0 24px">
     <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
       <h3 style="font-size:16px;color:var(--text-bright,#fff);margin-bottom:8px">📎 Embed This Data</h3>
@@ -375,16 +623,8 @@ footer {
       <button id="copy-btn-buyback-leaders" style="margin-top:12px;background:var(--accent-color,#4a8fe7);color:#fff;border:none;padding:8px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">Copy Code</button>
     </div>
   </section>
-  <script is:inline>
-    document.getElementById('copy-btn-buyback-leaders').addEventListener('click', function() {
-      var code = document.getElementById('embed-code-buyback-leaders').textContent;
-      navigator.clipboard.writeText(code);
-      this.textContent = 'Copied!';
-      var btn = this;
-      setTimeout(function() { btn.textContent = 'Copy Code'; }, 2000);
-    });
-  </script>
 
+  <!-- Related Pages (existing) -->
   <section style="max-width:800px;margin:40px auto;padding:0 24px">
     <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
@@ -395,181 +635,360 @@ footer {
     </div>
   </section>
 </main>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script is:inline>
+
 const DATA = {"crawlDate":"2026-03-09","methodology":"Buyback data compiled from SEC 10-K filings, quarterly earnings reports, and S&P Dow Jones Indices quarterly buyback reports. Market data from stockanalysis.com and finviz.com. Buyback amounts represent trailing 12-month share repurchases as of Q4 2025 / Q1 2026 reporting period. Buyback yield calculated as buyback amount divided by market capitalization.","totalCompanies":106,"totalBuybacksB":709.5,"avgBuybackYield":2.89,"medianSharesReduction":2.8,"sectorSummary":[{"sector":"Information Technology","totalBuybacksB":213.5,"companies":19,"avgBuybackB":11.2},{"sector":"Communication Services","totalBuybacksB":129.0,"companies":7,"avgBuybackB":18.4},{"sector":"Financials","totalBuybacksB":127.7,"companies":26,"avgBuybackB":4.9},{"sector":"Energy","totalBuybacksB":64.5,"companies":8,"avgBuybackB":8.1},{"sector":"Health Care","totalBuybacksB":62.0,"companies":13,"avgBuybackB":4.8},{"sector":"Consumer Discretionary","totalBuybacksB":48.3,"companies":11,"avgBuybackB":4.4},{"sector":"Industrials","totalBuybacksB":42.5,"companies":13,"avgBuybackB":3.3},{"sector":"Consumer Staples","totalBuybacksB":22.0,"companies":9,"avgBuybackB":2.4}],"results":[{"ticker":"AAPL","company":"Apple Inc.","sector":"Information Technology","buybackAmountB":94.0,"buybackYield":2.49,"sharesReductionPct":3.8,"marketCapB":3780,"totalReturnYield":2.88,"dividendYield":0.39,"peRatio":32.6,"epsGrowth":3.95,"debtToEquity":null},{"ticker":"GOOGL","company":"Alphabet Inc.","sector":"Communication Services","buybackAmountB":62.0,"buybackYield":1.72,"sharesReductionPct":3.2,"marketCapB":3610,"totalReturnYield":2.17,"dividendYield":0.45,"peRatio":23.5,"epsGrowth":3.31,"debtToEquity":0.16},{"ticker":"META","company":"Meta Platforms Inc.","sector":"Communication Services","buybackAmountB":48.0,"buybackYield":2.94,"sharesReductionPct":4.5,"marketCapB":1630,"totalReturnYield":3.25,"dividendYield":0.31,"peRatio":26.8,"epsGrowth":4.71,"debtToEquity":0.39},{"ticker":"MSFT","company":"Microsoft Corporation","sector":"Information Technology","buybackAmountB":33.0,"buybackYield":1.09,"sharesReductionPct":1.5,"marketCapB":3040,"totalReturnYield":1.82,"dividendYield":0.73,"peRatio":34.2,"epsGrowth":1.52,"debtToEquity":0.32},{"ticker":"NVDA","company":"NVIDIA Corporation","sector":"Information Technology","buybackAmountB":27.0,"buybackYield":0.62,"sharesReductionPct":1.1,"marketCapB":4320,"totalReturnYield":0.64,"dividendYield":0.02,"peRatio":55.0,"epsGrowth":1.11,"debtToEquity":null},{"ticker":"XOM","company":"Exxon Mobil Corporation","sector":"Energy","buybackAmountB":18.0,"buybackYield":2.86,"sharesReductionPct":3.5,"marketCapB":630,"totalReturnYield":6.31,"dividendYield":3.45,"peRatio":14.5,"epsGrowth":3.63,"debtToEquity":0.19},{"ticker":"V","company":"Visa Inc.","sector":"Financials","buybackAmountB":16.5,"buybackYield":2.73,"sharesReductionPct":3.0,"marketCapB":605,"totalReturnYield":3.45,"dividendYield":0.72,"peRatio":31.5,"epsGrowth":3.09,"debtToEquity":null},{"ticker":"CVX","company":"Chevron Corporation","sector":"Energy","buybackAmountB":15.0,"buybackYield":3.96,"sharesReductionPct":4.0,"marketCapB":379,"totalReturnYield":8.11,"dividendYield":4.15,"peRatio":15.2,"epsGrowth":4.17,"debtToEquity":0.25},{"ticker":"JPM","company":"JPMorgan Chase & Co.","sector":"Financials","buybackAmountB":12.5,"buybackYield":1.6,"sharesReductionPct":2.8,"marketCapB":781,"totalReturnYield":3.65,"dividendYield":2.05,"peRatio":13.5,"epsGrowth":2.88,"debtToEquity":null},{"ticker":"MA","company":"Mastercard Incorporated","sector":"Financials","buybackAmountB":11.0,"buybackYield":2.36,"sharesReductionPct":2.8,"marketCapB":466,"totalReturnYield":2.91,"dividendYield":0.55,"peRatio":36.2,"epsGrowth":2.88,"debtToEquity":null},{"ticker":"MPC","company":"Marathon Petroleum Corp.","sector":"Energy","buybackAmountB":10.0,"buybackYield":15.38,"sharesReductionPct":12.5,"marketCapB":65,"totalReturnYield":17.16,"dividendYield":1.78,"peRatio":7.5,"epsGrowth":14.29,"debtToEquity":null},{"ticker":"BAC","company":"Bank of America Corporation","sector":"Financials","buybackAmountB":9.5,"buybackYield":2.72,"sharesReductionPct":3.1,"marketCapB":349,"totalReturnYield":5.07,"dividendYield":2.35,"peRatio":13.2,"epsGrowth":3.2,"debtToEquity":null},{"ticker":"LOW","company":"Lowe's Companies Inc.","sector":"Consumer Discretionary","buybackAmountB":8.5,"buybackYield":6.03,"sharesReductionPct":7.0,"marketCapB":141,"totalReturnYield":7.75,"dividendYield":1.72,"peRatio":18.5,"epsGrowth":7.53,"debtToEquity":null},{"ticker":"WFC","company":"Wells Fargo & Company","sector":"Financials","buybackAmountB":8.0,"buybackYield":3.23,"sharesReductionPct":5.2,"marketCapB":248,"totalReturnYield":5.47,"dividendYield":2.24,"peRatio":14.0,"epsGrowth":5.49,"debtToEquity":null},{"ticker":"UNH","company":"UnitedHealth Group","sector":"Health Care","buybackAmountB":8.0,"buybackYield":3.08,"sharesReductionPct":2.0,"marketCapB":260,"totalReturnYield":4.63,"dividendYield":1.55,"peRatio":18.5,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"HD","company":"The Home Depot Inc.","sector":"Consumer Discretionary","buybackAmountB":8.0,"buybackYield":2.25,"sharesReductionPct":2.5,"marketCapB":356,"totalReturnYield":4.55,"dividendYield":2.3,"peRatio":24.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"AVGO","company":"Broadcom Inc.","sector":"Information Technology","buybackAmountB":8.0,"buybackYield":0.51,"sharesReductionPct":2.0,"marketCapB":1570,"totalReturnYield":1.66,"dividendYield":1.15,"peRatio":32.5,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"GS","company":"The Goldman Sachs Group","sector":"Financials","buybackAmountB":7.5,"buybackYield":2.96,"sharesReductionPct":4.0,"marketCapB":253,"totalReturnYield":5.08,"dividendYield":2.12,"peRatio":14.8,"epsGrowth":4.17,"debtToEquity":null},{"ticker":"AMGN","company":"Amgen Inc.","sector":"Health Care","buybackAmountB":7.5,"buybackYield":3.77,"sharesReductionPct":5.0,"marketCapB":199,"totalReturnYield":6.52,"dividendYield":2.75,"peRatio":22.5,"epsGrowth":5.26,"debtToEquity":null},{"ticker":"CMCSA","company":"Comcast Corporation","sector":"Communication Services","buybackAmountB":7.5,"buybackYield":6.52,"sharesReductionPct":5.5,"marketCapB":115,"totalReturnYield":10.07,"dividendYield":3.55,"peRatio":11.5,"epsGrowth":5.82,"debtToEquity":null},{"ticker":"MS","company":"Morgan Stanley","sector":"Financials","buybackAmountB":7.0,"buybackYield":2.76,"sharesReductionPct":4.2,"marketCapB":254,"totalReturnYield":5.86,"dividendYield":3.1,"peRatio":16.5,"epsGrowth":4.38,"debtToEquity":null},{"ticker":"COP","company":"ConocoPhillips","sector":"Energy","buybackAmountB":7.0,"buybackYield":4.9,"sharesReductionPct":5.5,"marketCapB":143,"totalReturnYield":7.8,"dividendYield":2.9,"peRatio":12.8,"epsGrowth":5.82,"debtToEquity":0.38},{"ticker":"CRM","company":"Salesforce Inc.","sector":"Information Technology","buybackAmountB":7.0,"buybackYield":3.74,"sharesReductionPct":4.5,"marketCapB":187,"totalReturnYield":4.29,"dividendYield":0.55,"peRatio":42.5,"epsGrowth":4.71,"debtToEquity":0.3},{"ticker":"C","company":"Citigroup Inc.","sector":"Financials","buybackAmountB":6.5,"buybackYield":3.49,"sharesReductionPct":5.0,"marketCapB":186,"totalReturnYield":6.64,"dividendYield":3.15,"peRatio":11.5,"epsGrowth":5.26,"debtToEquity":null},{"ticker":"NFLX","company":"Netflix Inc.","sector":"Communication Services","buybackAmountB":6.5,"buybackYield":1.56,"sharesReductionPct":2.8,"marketCapB":418,"totalReturnYield":1.56,"dividendYield":0.0,"peRatio":38.5,"epsGrowth":2.88,"debtToEquity":null},{"ticker":"CI","company":"The Cigna Group","sector":"Health Care","buybackAmountB":6.0,"buybackYield":8.33,"sharesReductionPct":5.5,"marketCapB":72,"totalReturnYield":10.05,"dividendYield":1.72,"peRatio":12.8,"epsGrowth":5.82,"debtToEquity":null},{"ticker":"AMZN","company":"Amazon.com Inc.","sector":"Consumer Discretionary","buybackAmountB":6.0,"buybackYield":0.26,"sharesReductionPct":0.5,"marketCapB":2290,"totalReturnYield":0.26,"dividendYield":0.0,"peRatio":42.0,"epsGrowth":0.5,"debtToEquity":0.41},{"ticker":"ADBE","company":"Adobe Inc.","sector":"Information Technology","buybackAmountB":6.0,"buybackYield":5.17,"sharesReductionPct":4.5,"marketCapB":116,"totalReturnYield":5.17,"dividendYield":0.0,"peRatio":35.0,"epsGrowth":4.71,"debtToEquity":null},{"ticker":"PG","company":"Procter & Gamble Co.","sector":"Consumer Staples","buybackAmountB":6.0,"buybackYield":1.68,"sharesReductionPct":1.5,"marketCapB":357,"totalReturnYield":4.13,"dividendYield":2.45,"peRatio":26.5,"epsGrowth":1.52,"debtToEquity":null},{"ticker":"GM","company":"General Motors Company","sector":"Consumer Discretionary","buybackAmountB":6.0,"buybackYield":8.82,"sharesReductionPct":8.0,"marketCapB":68,"totalReturnYield":9.77,"dividendYield":0.95,"peRatio":6.5,"epsGrowth":8.7,"debtToEquity":null},{"ticker":"AXP","company":"American Express Company","sector":"Financials","buybackAmountB":5.5,"buybackYield":2.66,"sharesReductionPct":3.5,"marketCapB":207,"totalReturnYield":3.71,"dividendYield":1.05,"peRatio":20.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"ABBV","company":"AbbVie Inc.","sector":"Health Care","buybackAmountB":5.5,"buybackYield":1.35,"sharesReductionPct":1.5,"marketCapB":407,"totalReturnYield":4.65,"dividendYield":3.3,"peRatio":18.2,"epsGrowth":1.52,"debtToEquity":null},{"ticker":"CSCO","company":"Cisco Systems Inc.","sector":"Information Technology","buybackAmountB":5.5,"buybackYield":1.77,"sharesReductionPct":2.8,"marketCapB":311,"totalReturnYield":4.32,"dividendYield":2.55,"peRatio":16.5,"epsGrowth":2.88,"debtToEquity":null},{"ticker":"UNP","company":"Union Pacific Corp.","sector":"Industrials","buybackAmountB":5.5,"buybackYield":3.64,"sharesReductionPct":3.5,"marketCapB":151,"totalReturnYield":5.79,"dividendYield":2.15,"peRatio":22.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"DE","company":"Deere & Company","sector":"Industrials","buybackAmountB":5.5,"buybackYield":3.46,"sharesReductionPct":4.5,"marketCapB":159,"totalReturnYield":4.81,"dividendYield":1.35,"peRatio":16.5,"epsGrowth":4.71,"debtToEquity":null},{"ticker":"ELV","company":"Elevance Health Inc.","sector":"Health Care","buybackAmountB":5.0,"buybackYield":7.81,"sharesReductionPct":3.8,"marketCapB":64,"totalReturnYield":9.26,"dividendYield":1.45,"peRatio":14.5,"epsGrowth":3.95,"debtToEquity":null},{"ticker":"MRK","company":"Merck & Co. Inc.","sector":"Health Care","buybackAmountB":5.0,"buybackYield":1.75,"sharesReductionPct":2.0,"marketCapB":286,"totalReturnYield":4.6,"dividendYield":2.85,"peRatio":14.5,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"GILD","company":"Gilead Sciences Inc.","sector":"Health Care","buybackAmountB":5.0,"buybackYield":2.79,"sharesReductionPct":4.5,"marketCapB":179,"totalReturnYield":5.99,"dividendYield":3.2,"peRatio":12.5,"epsGrowth":4.71,"debtToEquity":null},{"ticker":"MCD","company":"McDonald's Corporation","sector":"Consumer Discretionary","buybackAmountB":5.0,"buybackYield":2.15,"sharesReductionPct":2.5,"marketCapB":233,"totalReturnYield":4.3,"dividendYield":2.15,"peRatio":25.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"ACN","company":"Accenture plc","sector":"Information Technology","buybackAmountB":5.0,"buybackYield":3.79,"sharesReductionPct":3.5,"marketCapB":132,"totalReturnYield":5.44,"dividendYield":1.65,"peRatio":28.0,"epsGrowth":3.63,"debtToEquity":0.27},{"ticker":"CAT","company":"Caterpillar Inc.","sector":"Industrials","buybackAmountB":5.0,"buybackYield":1.58,"sharesReductionPct":4.5,"marketCapB":317,"totalReturnYield":3.13,"dividendYield":1.55,"peRatio":17.5,"epsGrowth":4.71,"debtToEquity":null},{"ticker":"GE","company":"GE Aerospace","sector":"Industrials","buybackAmountB":5.0,"buybackYield":1.47,"sharesReductionPct":3.0,"marketCapB":339,"totalReturnYield":2.05,"dividendYield":0.58,"peRatio":32.5,"epsGrowth":3.09,"debtToEquity":null},{"ticker":"HCA","company":"HCA Healthcare Inc.","sector":"Health Care","buybackAmountB":5.0,"buybackYield":4.2,"sharesReductionPct":5.0,"marketCapB":119,"totalReturnYield":4.92,"dividendYield":0.72,"peRatio":14.5,"epsGrowth":5.26,"debtToEquity":null},{"ticker":"VLO","company":"Valero Energy Corporation","sector":"Energy","buybackAmountB":4.5,"buybackYield":6.72,"sharesReductionPct":7.0,"marketCapB":67,"totalReturnYield":9.57,"dividendYield":2.85,"peRatio":9.8,"epsGrowth":7.53,"debtToEquity":0.49},{"ticker":"ORCL","company":"Oracle Corporation","sector":"Information Technology","buybackAmountB":4.5,"buybackYield":1.02,"sharesReductionPct":2.5,"marketCapB":440,"totalReturnYield":2.07,"dividendYield":1.05,"peRatio":32.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"AMAT","company":"Applied Materials Inc.","sector":"Information Technology","buybackAmountB":4.5,"buybackYield":1.74,"sharesReductionPct":3.0,"marketCapB":258,"totalReturnYield":2.59,"dividendYield":0.85,"peRatio":20.5,"epsGrowth":3.09,"debtToEquity":0.33},{"ticker":"RTX","company":"RTX Corporation","sector":"Industrials","buybackAmountB":4.5,"buybackYield":1.6,"sharesReductionPct":2.5,"marketCapB":282,"totalReturnYield":3.75,"dividendYield":2.15,"peRatio":22.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"PSX","company":"Phillips 66","sector":"Energy","buybackAmountB":4.0,"buybackYield":5.97,"sharesReductionPct":6.0,"marketCapB":67,"totalReturnYield":9.07,"dividendYield":3.1,"peRatio":12.5,"epsGrowth":6.38,"debtToEquity":null},{"ticker":"BMY","company":"Bristol-Myers Squibb","sector":"Health Care","buybackAmountB":4.0,"buybackYield":3.25,"sharesReductionPct":3.5,"marketCapB":123,"totalReturnYield":7.35,"dividendYield":4.1,"peRatio":8.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"NKE","company":"NIKE Inc.","sector":"Consumer Discretionary","buybackAmountB":4.0,"buybackYield":4.76,"sharesReductionPct":3.5,"marketCapB":84,"totalReturnYield":6.81,"dividendYield":2.05,"peRatio":28.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"QCOM","company":"QUALCOMM Incorporated","sector":"Information Technology","buybackAmountB":4.0,"buybackYield":2.76,"sharesReductionPct":4.0,"marketCapB":145,"totalReturnYield":5.21,"dividendYield":2.45,"peRatio":16.5,"epsGrowth":4.17,"debtToEquity":null},{"ticker":"LMT","company":"Lockheed Martin Corp.","sector":"Industrials","buybackAmountB":4.0,"buybackYield":2.58,"sharesReductionPct":3.0,"marketCapB":155,"totalReturnYield":5.13,"dividendYield":2.55,"peRatio":18.5,"epsGrowth":3.09,"debtToEquity":null},{"ticker":"JNJ","company":"Johnson & Johnson","sector":"Health Care","buybackAmountB":4.0,"buybackYield":0.69,"sharesReductionPct":1.5,"marketCapB":579,"totalReturnYield":4.04,"dividendYield":3.35,"peRatio":16.5,"epsGrowth":1.52,"debtToEquity":null},{"ticker":"AIG","company":"American Intl Group","sector":"Financials","buybackAmountB":4.0,"buybackYield":7.84,"sharesReductionPct":8.0,"marketCapB":51,"totalReturnYield":9.79,"dividendYield":1.95,"peRatio":10.5,"epsGrowth":8.7,"debtToEquity":0.24},{"ticker":"EOG","company":"EOG Resources Inc.","sector":"Energy","buybackAmountB":3.5,"buybackYield":4.93,"sharesReductionPct":3.0,"marketCapB":71,"totalReturnYield":7.68,"dividendYield":2.75,"peRatio":10.5,"epsGrowth":3.09,"debtToEquity":0.31},{"ticker":"TJX","company":"The TJX Companies Inc.","sector":"Consumer Discretionary","buybackAmountB":3.5,"buybackYield":1.98,"sharesReductionPct":3.0,"marketCapB":177,"totalReturnYield":3.23,"dividendYield":1.25,"peRatio":26.5,"epsGrowth":3.09,"debtToEquity":null},{"ticker":"SPGI","company":"S&P Global Inc.","sector":"Financials","buybackAmountB":3.5,"buybackYield":2.59,"sharesReductionPct":2.5,"marketCapB":135,"totalReturnYield":3.44,"dividendYield":0.85,"peRatio":38.5,"epsGrowth":2.56,"debtToEquity":0.44},{"ticker":"CB","company":"Chubb Limited","sector":"Financials","buybackAmountB":3.5,"buybackYield":2.73,"sharesReductionPct":2.8,"marketCapB":128,"totalReturnYield":4.01,"dividendYield":1.28,"peRatio":12.5,"epsGrowth":2.88,"debtToEquity":0.3},{"ticker":"AFL","company":"Aflac Incorporated","sector":"Financials","buybackAmountB":3.5,"buybackYield":6.14,"sharesReductionPct":7.5,"marketCapB":57,"totalReturnYield":7.99,"dividendYield":1.85,"peRatio":11.5,"epsGrowth":8.11,"debtToEquity":null},{"ticker":"COF","company":"Capital One Financial","sector":"Financials","buybackAmountB":3.2,"buybackYield":2.74,"sharesReductionPct":3.0,"marketCapB":117,"totalReturnYield":4.09,"dividendYield":1.35,"peRatio":12.8,"epsGrowth":3.09,"debtToEquity":0.46},{"ticker":"SCHW","company":"Charles Schwab Corporation","sector":"Financials","buybackAmountB":3.0,"buybackYield":1.8,"sharesReductionPct":2.2,"marketCapB":167,"totalReturnYield":3.12,"dividendYield":1.32,"peRatio":24.0,"epsGrowth":2.25,"debtToEquity":null},{"ticker":"CVS","company":"CVS Health Corporation","sector":"Health Care","buybackAmountB":3.0,"buybackYield":3.03,"sharesReductionPct":2.0,"marketCapB":99,"totalReturnYield":6.48,"dividendYield":3.45,"peRatio":11.0,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"TXN","company":"Texas Instruments","sector":"Information Technology","buybackAmountB":3.0,"buybackYield":1.7,"sharesReductionPct":2.5,"marketCapB":176,"totalReturnYield":4.5,"dividendYield":2.8,"peRatio":28.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"INTU","company":"Intuit Inc.","sector":"Information Technology","buybackAmountB":3.0,"buybackYield":2.26,"sharesReductionPct":2.0,"marketCapB":133,"totalReturnYield":2.96,"dividendYield":0.7,"peRatio":55.0,"epsGrowth":2.04,"debtToEquity":0.36},{"ticker":"WMT","company":"Walmart Inc.","sector":"Consumer Staples","buybackAmountB":3.0,"buybackYield":0.3,"sharesReductionPct":0.5,"marketCapB":987,"totalReturnYield":1.35,"dividendYield":1.05,"peRatio":35.5,"epsGrowth":0.5,"debtToEquity":null},{"ticker":"HON","company":"Honeywell International","sector":"Industrials","buybackAmountB":3.0,"buybackYield":2.0,"sharesReductionPct":2.0,"marketCapB":150,"totalReturnYield":3.85,"dividendYield":1.85,"peRatio":22.5,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"DIS","company":"The Walt Disney Company","sector":"Communication Services","buybackAmountB":3.0,"buybackYield":1.67,"sharesReductionPct":1.5,"marketCapB":180,"totalReturnYield":2.62,"dividendYield":0.95,"peRatio":28.5,"epsGrowth":1.52,"debtToEquity":0.43},{"ticker":"LLY","company":"Eli Lilly and Company","sector":"Health Care","buybackAmountB":3.0,"buybackYield":0.34,"sharesReductionPct":0.5,"marketCapB":885,"totalReturnYield":0.89,"dividendYield":0.55,"peRatio":65.0,"epsGrowth":0.5,"debtToEquity":null},{"ticker":"MET","company":"MetLife Inc.","sector":"Financials","buybackAmountB":3.0,"buybackYield":5.17,"sharesReductionPct":5.0,"marketCapB":58,"totalReturnYield":7.72,"dividendYield":2.55,"peRatio":11.0,"epsGrowth":5.26,"debtToEquity":null},{"ticker":"BLK","company":"BlackRock Inc.","sector":"Financials","buybackAmountB":2.5,"buybackYield":1.6,"sharesReductionPct":1.8,"marketCapB":156,"totalReturnYield":3.7,"dividendYield":2.1,"peRatio":21.5,"epsGrowth":1.83,"debtToEquity":0.27},{"ticker":"OXY","company":"Occidental Petroleum","sector":"Energy","buybackAmountB":2.5,"buybackYield":4.72,"sharesReductionPct":2.2,"marketCapB":53,"totalReturnYield":6.37,"dividendYield":1.65,"peRatio":16.5,"epsGrowth":2.25,"debtToEquity":null},{"ticker":"SBUX","company":"Starbucks Corporation","sector":"Consumer Discretionary","buybackAmountB":2.5,"buybackYield":2.21,"sharesReductionPct":2.0,"marketCapB":113,"totalReturnYield":4.66,"dividendYield":2.45,"peRatio":32.0,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"PM","company":"Philip Morris International","sector":"Consumer Staples","buybackAmountB":2.5,"buybackYield":0.94,"sharesReductionPct":1.2,"marketCapB":265,"totalReturnYield":4.89,"dividendYield":3.95,"peRatio":18.5,"epsGrowth":1.21,"debtToEquity":null},{"ticker":"MDLZ","company":"Mondelez International","sector":"Consumer Staples","buybackAmountB":2.5,"buybackYield":3.33,"sharesReductionPct":2.8,"marketCapB":75,"totalReturnYield":6.18,"dividendYield":2.85,"peRatio":20.5,"epsGrowth":2.88,"debtToEquity":null},{"ticker":"TGT","company":"Target Corporation","sector":"Consumer Discretionary","buybackAmountB":2.5,"buybackYield":4.55,"sharesReductionPct":4.5,"marketCapB":55,"totalReturnYield":8.2,"dividendYield":3.65,"peRatio":14.5,"epsGrowth":4.71,"debtToEquity":null},{"ticker":"UPS","company":"United Parcel Service","sector":"Industrials","buybackAmountB":2.5,"buybackYield":2.87,"sharesReductionPct":1.5,"marketCapB":87,"totalReturnYield":8.22,"dividendYield":5.35,"peRatio":18.5,"epsGrowth":1.52,"debtToEquity":null},{"ticker":"NOC","company":"Northrop Grumman Corp.","sector":"Industrials","buybackAmountB":2.5,"buybackYield":2.34,"sharesReductionPct":3.5,"marketCapB":107,"totalReturnYield":3.89,"dividendYield":1.55,"peRatio":19.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"FDX","company":"FedEx Corporation","sector":"Industrials","buybackAmountB":2.5,"buybackYield":2.98,"sharesReductionPct":3.0,"marketCapB":84,"totalReturnYield":4.63,"dividendYield":1.65,"peRatio":14.5,"epsGrowth":3.09,"debtToEquity":null},{"ticker":"USB","company":"U.S. Bancorp","sector":"Financials","buybackAmountB":2.5,"buybackYield":3.09,"sharesReductionPct":2.5,"marketCapB":81,"totalReturnYield":6.94,"dividendYield":3.85,"peRatio":12.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"PANW","company":"Palo Alto Networks","sector":"Information Technology","buybackAmountB":2.5,"buybackYield":1.85,"sharesReductionPct":2.0,"marketCapB":135,"totalReturnYield":1.85,"dividendYield":0.0,"peRatio":45.0,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"ALL","company":"The Allstate Corporation","sector":"Financials","buybackAmountB":2.5,"buybackYield":4.55,"sharesReductionPct":5.0,"marketCapB":55,"totalReturnYield":6.4,"dividendYield":1.85,"peRatio":11.5,"epsGrowth":5.26,"debtToEquity":0.25},{"ticker":"IBM","company":"IBM Corporation","sector":"Information Technology","buybackAmountB":2.0,"buybackYield":0.82,"sharesReductionPct":1.0,"marketCapB":243,"totalReturnYield":3.47,"dividendYield":2.65,"peRatio":25.0,"epsGrowth":1.01,"debtToEquity":null},{"ticker":"PEP","company":"PepsiCo Inc.","sector":"Consumer Staples","buybackAmountB":2.0,"buybackYield":0.92,"sharesReductionPct":1.0,"marketCapB":218,"totalReturnYield":4.47,"dividendYield":3.55,"peRatio":21.5,"epsGrowth":1.01,"debtToEquity":null},{"ticker":"CL","company":"Colgate-Palmolive Co.","sector":"Consumer Staples","buybackAmountB":2.0,"buybackYield":2.67,"sharesReductionPct":2.5,"marketCapB":75,"totalReturnYield":4.82,"dividendYield":2.15,"peRatio":24.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"GD","company":"General Dynamics Corp.","sector":"Industrials","buybackAmountB":2.0,"buybackYield":2.04,"sharesReductionPct":2.0,"marketCapB":98,"totalReturnYield":3.99,"dividendYield":1.95,"peRatio":18.5,"epsGrowth":2.04,"debtToEquity":0.38},{"ticker":"BK","company":"Bank of New York Mellon","sector":"Financials","buybackAmountB":2.0,"buybackYield":2.53,"sharesReductionPct":3.5,"marketCapB":79,"totalReturnYield":4.88,"dividendYield":2.35,"peRatio":14.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"TRV","company":"Travelers Companies","sector":"Financials","buybackAmountB":2.0,"buybackYield":3.03,"sharesReductionPct":3.5,"marketCapB":66,"totalReturnYield":4.68,"dividendYield":1.65,"peRatio":11.5,"epsGrowth":3.63,"debtToEquity":0.29},{"ticker":"PRU","company":"Prudential Financial","sector":"Financials","buybackAmountB":2.0,"buybackYield":4.17,"sharesReductionPct":3.5,"marketCapB":48,"totalReturnYield":8.32,"dividendYield":4.15,"peRatio":9.5,"epsGrowth":3.63,"debtToEquity":null},{"ticker":"SYF","company":"Synchrony Financial","sector":"Financials","buybackAmountB":2.0,"buybackYield":8.33,"sharesReductionPct":8.5,"marketCapB":24,"totalReturnYield":10.18,"dividendYield":1.85,"peRatio":7.5,"epsGrowth":9.29,"debtToEquity":null},{"ticker":"ROST","company":"Ross Stores Inc.","sector":"Consumer Discretionary","buybackAmountB":1.8,"buybackYield":2.65,"sharesReductionPct":3.2,"marketCapB":68,"totalReturnYield":3.75,"dividendYield":1.1,"peRatio":23.5,"epsGrowth":3.31,"debtToEquity":null},{"ticker":"KO","company":"The Coca-Cola Company","sector":"Consumer Staples","buybackAmountB":1.5,"buybackYield":0.45,"sharesReductionPct":0.5,"marketCapB":331,"totalReturnYield":3.1,"dividendYield":2.65,"peRatio":24.5,"epsGrowth":0.5,"debtToEquity":null},{"ticker":"MO","company":"Altria Group Inc.","sector":"Consumer Staples","buybackAmountB":1.5,"buybackYield":1.35,"sharesReductionPct":2.0,"marketCapB":111,"totalReturnYield":7.9,"dividendYield":6.55,"peRatio":10.5,"epsGrowth":2.04,"debtToEquity":null},{"ticker":"T","company":"AT&T Inc.","sector":"Communication Services","buybackAmountB":1.5,"buybackYield":0.75,"sharesReductionPct":0.8,"marketCapB":201,"totalReturnYield":5.6,"dividendYield":4.85,"peRatio":13.5,"epsGrowth":0.81,"debtToEquity":null},{"ticker":"ICE","company":"Intercontinental Exchange","sector":"Financials","buybackAmountB":1.5,"buybackYield":1.6,"sharesReductionPct":1.5,"marketCapB":94,"totalReturnYield":2.7,"dividendYield":1.1,"peRatio":22.5,"epsGrowth":1.52,"debtToEquity":null},{"ticker":"CME","company":"CME Group Inc.","sector":"Financials","buybackAmountB":1.5,"buybackYield":1.32,"sharesReductionPct":1.0,"marketCapB":114,"totalReturnYield":5.47,"dividendYield":4.15,"peRatio":22.5,"epsGrowth":1.01,"debtToEquity":0.13},{"ticker":"MCO","company":"Moody's Corporation","sector":"Financials","buybackAmountB":1.5,"buybackYield":1.79,"sharesReductionPct":2.5,"marketCapB":84,"totalReturnYield":2.57,"dividendYield":0.78,"peRatio":38.5,"epsGrowth":2.56,"debtToEquity":null},{"ticker":"SNPS","company":"Synopsys Inc.","sector":"Information Technology","buybackAmountB":1.5,"buybackYield":1.79,"sharesReductionPct":2.0,"marketCapB":84,"totalReturnYield":1.79,"dividendYield":0.0,"peRatio":48.5,"epsGrowth":2.04,"debtToEquity":0.36},{"ticker":"NOW","company":"ServiceNow Inc.","sector":"Information Technology","buybackAmountB":1.5,"buybackYield":1.15,"sharesReductionPct":1.0,"marketCapB":130,"totalReturnYield":1.15,"dividendYield":0.0,"peRatio":65.0,"epsGrowth":1.01,"debtToEquity":0.19},{"ticker":"COST","company":"Costco Wholesale Corp.","sector":"Consumer Staples","buybackAmountB":1.0,"buybackYield":0.23,"sharesReductionPct":0.3,"marketCapB":443,"totalReturnYield":0.73,"dividendYield":0.5,"peRatio":48.5,"epsGrowth":0.3,"debtToEquity":0.25},{"ticker":"CDNS","company":"Cadence Design Systems","sector":"Information Technology","buybackAmountB":1.0,"buybackYield":1.22,"sharesReductionPct":1.5,"marketCapB":82,"totalReturnYield":1.22,"dividendYield":0.0,"peRatio":55.0,"epsGrowth":1.52,"debtToEquity":0.49},{"ticker":"PFE","company":"Pfizer Inc.","sector":"Health Care","buybackAmountB":1.0,"buybackYield":0.65,"sharesReductionPct":0.5,"marketCapB":154,"totalReturnYield":6.9,"dividendYield":6.25,"peRatio":22.5,"epsGrowth":0.5,"debtToEquity":null},{"ticker":"INTC","company":"Intel Corporation","sector":"Information Technology","buybackAmountB":0.5,"buybackYield":0.23,"sharesReductionPct":0.2,"marketCapB":217,"totalReturnYield":1.38,"dividendYield":1.15,"peRatio":null,"epsGrowth":0.2,"debtToEquity":0.41},{"ticker":"VZ","company":"Verizon Communications","sector":"Communication Services","buybackAmountB":0.5,"buybackYield":0.23,"sharesReductionPct":0.3,"marketCapB":216,"totalReturnYield":5.58,"dividendYield":5.35,"peRatio":10.5,"epsGrowth":0.3,"debtToEquity":null},{"ticker":"F","company":"Ford Motor Company","sector":"Consumer Discretionary","buybackAmountB":0.5,"buybackYield":1.19,"sharesReductionPct":0.3,"marketCapB":42,"totalReturnYield":6.94,"dividendYield":5.75,"peRatio":6.5,"epsGrowth":0.3,"debtToEquity":null},{"ticker":"MMM","company":"3M Company","sector":"Industrials","buybackAmountB":0.5,"buybackYield":0.62,"sharesReductionPct":0.5,"marketCapB":81,"totalReturnYield":5.07,"dividendYield":4.45,"peRatio":14.5,"epsGrowth":0.5,"debtToEquity":null},{"ticker":"BA","company":"The Boeing Company","sector":"Industrials","buybackAmountB":0.0,"buybackYield":null,"sharesReductionPct":0.0,"marketCapB":182,"totalReturnYield":null,"dividendYield":0.0,"peRatio":null,"epsGrowth":null,"debtToEquity":null}]};
 
-// Stats
+// S&P 500 average total shareholder return (buyback + dividend)
+var SP500_AVG_TSR = 3.8;
+
+// Sector colors for scatter plot
+var SECTOR_COLORS = {
+  'Information Technology': '#4a8fe7',
+  'Communication Services': '#8b5cf6',
+  'Financials': '#22c55e',
+  'Energy': '#f97316',
+  'Health Care': '#ec4899',
+  'Consumer Discretionary': '#06b6d4',
+  'Industrials': '#eab308',
+  'Consumer Staples': '#14b8a6'
+};
+
+// ========== Stats ==========
 function renderStats() {
-  const r = DATA.results;
-  const totalB = DATA.totalBuybacksB;
-  const avgYield = DATA.avgBuybackYield;
-  const medianReduction = DATA.medianSharesReduction;
-  const topByYield = [...r].sort((a,b) => (b.buybackYield||0) - (a.buybackYield||0))[0];
+  var r = DATA.results;
+  var totalB = DATA.totalBuybacksB;
+  var avgYield = DATA.avgBuybackYield;
+  var medianReduction = DATA.medianSharesReduction;
 
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="value">$${totalB}B</div><div class="label">Total Buybacks (TTM)</div></div>
-    <div class="stat-card"><div class="value">${r.length}</div><div class="label">Companies Tracked</div></div>
-    <div class="stat-card"><div class="value">${avgYield}%</div><div class="label">Average Buyback Yield</div></div>
-    <div class="stat-card"><div class="value">${medianReduction}%</div><div class="label">Median Share Reduction</div></div>
-  `;
+  document.getElementById('statsGrid').innerHTML =
+    '<div class="stat-card"><div class="value">$' + totalB + 'B</div><div class="label">Total Buybacks (TTM)</div></div>' +
+    '<div class="stat-card"><div class="value">' + r.length + '</div><div class="label">Companies Tracked</div></div>' +
+    '<div class="stat-card"><div class="value">' + avgYield + '%</div><div class="label">Average Buyback Yield</div></div>' +
+    '<div class="stat-card"><div class="value">' + medianReduction + '%</div><div class="label">Median Share Reduction</div></div>';
 }
 
-// Bar chart - Top 20 by amount
+// ========== TSR Calculator ==========
+function initTSRCalculator() {
+  var select = document.getElementById('tsrSelect');
+  var valid = DATA.results.filter(function(s) { return s.buybackYield !== null && s.totalReturnYield !== null; });
+  valid.sort(function(a, b) { return a.ticker.localeCompare(b.ticker); });
+  valid.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s.ticker;
+    opt.textContent = s.ticker + ' — ' + s.company;
+    select.appendChild(opt);
+  });
+
+  select.addEventListener('change', function() {
+    var ticker = this.value;
+    if (!ticker) {
+      document.getElementById('tsrResults').style.display = 'none';
+      document.getElementById('tsrVisuals').style.display = 'none';
+      return;
+    }
+    var company = DATA.results.find(function(s) { return s.ticker === ticker; });
+    if (!company) return;
+
+    var buybackY = company.buybackYield || 0;
+    var divY = company.dividendYield || 0;
+    var totalY = company.totalReturnYield || (buybackY + divY);
+
+    document.getElementById('tsrBuyback').textContent = buybackY.toFixed(2) + '%';
+    document.getElementById('tsrDividend').textContent = divY.toFixed(2) + '%';
+    document.getElementById('tsrTotal').textContent = totalY.toFixed(2) + '%';
+
+    // Stacked bar
+    var maxBar = Math.max(totalY, SP500_AVG_TSR, 1);
+    var buybackPct = (buybackY / maxBar * 100);
+    var divPct = (divY / maxBar * 100);
+    document.getElementById('tsrBarBuyback').style.width = buybackPct + '%';
+    document.getElementById('tsrBarBuyback').textContent = buybackY > 0.5 ? buybackY.toFixed(1) + '%' : '';
+    document.getElementById('tsrBarDividend').style.width = divPct + '%';
+    document.getElementById('tsrBarDividend').textContent = divY > 0.5 ? divY.toFixed(1) + '%' : '';
+
+    // Projection
+    var shareReduction = company.sharesReductionPct || 0;
+    var fiveYearReduction = (1 - Math.pow(1 - shareReduction / 100, 5)) * 100;
+    document.getElementById('tsrProjection').innerHTML =
+      '<strong>📉 5-Year Share Reduction Projection</strong><br>' +
+      'If <strong>' + company.company + '</strong> continues at ' + shareReduction + '% annual reduction, ' +
+      '<strong>' + fiveYearReduction.toFixed(1) + '%</strong> of shares will be retired in 5 years — ' +
+      'boosting per-share value for remaining shareholders.';
+
+    // S&P 500 compare
+    var compMaxBar = Math.max(totalY, SP500_AVG_TSR);
+    document.getElementById('tsrCompanyLabel').textContent = company.ticker;
+    document.getElementById('tsrCompanyBar').style.width = (totalY / compMaxBar * 100).toFixed(1) + '%';
+    document.getElementById('tsrCompanyBar').textContent = totalY.toFixed(2) + '%';
+    document.getElementById('tsrCompanyBar').style.background = totalY >= SP500_AVG_TSR ? 'var(--green)' : 'var(--red)';
+    document.getElementById('tsrSp500Bar').style.width = (SP500_AVG_TSR / compMaxBar * 100).toFixed(1) + '%';
+    document.getElementById('tsrSp500Bar').textContent = SP500_AVG_TSR.toFixed(2) + '%';
+
+    document.getElementById('tsrResults').style.display = 'flex';
+    document.getElementById('tsrVisuals').style.display = 'flex';
+  });
+}
+
+// ========== Bar chart - Top 20 by amount ==========
 function renderBarChart() {
-  const top20 = DATA.results.slice(0, 20);
-  const maxVal = Math.max(...top20.map(s => s.buybackAmountB));
-  const colors = ['#4a8fe7','#3b82f6','#2563eb','#1d4ed8','#6366f1','#818cf8','#22c55e','#14b8a6','#06b6d4','#0ea5e9','#8b5cf6','#a855f7','#ec4899','#f43f5e','#ef4444','#f97316','#eab308','#84cc16','#10b981','#06b6d4'];
+  var top20 = DATA.results.slice(0, 20);
+  var maxVal = Math.max.apply(null, top20.map(function(s) { return s.buybackAmountB; }));
+  var colors = ['#4a8fe7','#3b82f6','#2563eb','#1d4ed8','#6366f1','#818cf8','#22c55e','#14b8a6','#06b6d4','#0ea5e9','#8b5cf6','#a855f7','#ec4899','#f43f5e','#ef4444','#f97316','#eab308','#84cc16','#10b981','#06b6d4'];
 
-  document.getElementById('barChart').innerHTML = top20.map((s, i) => {
-    const pct = (s.buybackAmountB / maxVal * 100).toFixed(1);
-    return `<div class="bar-row">
-      <div class="bar-label">${s.ticker}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}">$${s.buybackAmountB}B</div>
-      </div>
-      <div class="bar-company">${s.company}</div>
-    </div>`;
+  document.getElementById('barChart').innerHTML = top20.map(function(s, i) {
+    var pct = (s.buybackAmountB / maxVal * 100).toFixed(1);
+    return '<div class="bar-row">' +
+      '<div class="bar-label">' + s.ticker + '</div>' +
+      '<div class="bar-track">' +
+        '<div class="bar-fill" style="width:' + pct + '%;background:' + colors[i % colors.length] + '">$' + s.buybackAmountB + 'B</div>' +
+      '</div>' +
+      '<div class="bar-company">' + s.company + '</div>' +
+    '</div>';
   }).join('');
 }
 
-// Yield chart
+// ========== Yield chart ==========
 function renderYieldChart() {
-  const byYield = [...DATA.results].sort((a,b) => (b.buybackYield||0) - (a.buybackYield||0)).slice(0, 20);
-  const maxVal = Math.max(...byYield.map(s => s.buybackYield || 0));
-  const colors = ['#22c55e','#16a34a','#15803d','#14532d','#10b981','#059669','#047857','#065f46','#34d399','#6ee7b7','#a7f3d0','#84cc16','#65a30d','#4d7c0f','#22d3ee','#06b6d4','#0891b2','#0e7490','#155e75','#164e63'];
+  var byYield = DATA.results.slice().sort(function(a, b) { return (b.buybackYield || 0) - (a.buybackYield || 0); }).slice(0, 20);
+  var maxVal = Math.max.apply(null, byYield.map(function(s) { return s.buybackYield || 0; }));
+  var colors = ['#22c55e','#16a34a','#15803d','#14532d','#10b981','#059669','#047857','#065f46','#34d399','#6ee7b7','#a7f3d0','#84cc16','#65a30d','#4d7c0f','#22d3ee','#06b6d4','#0891b2','#0e7490','#155e75','#164e63'];
 
-  document.getElementById('yieldChart').innerHTML = byYield.map((s, i) => {
-    const pct = ((s.buybackYield || 0) / maxVal * 100).toFixed(1);
-    return `<div class="bar-row">
-      <div class="bar-label">${s.ticker}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}">${s.buybackYield}%</div>
-      </div>
-      <div class="bar-company">${s.company}</div>
-    </div>`;
+  document.getElementById('yieldChart').innerHTML = byYield.map(function(s, i) {
+    var pct = ((s.buybackYield || 0) / maxVal * 100).toFixed(1);
+    return '<div class="bar-row">' +
+      '<div class="bar-label">' + s.ticker + '</div>' +
+      '<div class="bar-track">' +
+        '<div class="bar-fill" style="width:' + pct + '%;background:' + colors[i % colors.length] + '">' + s.buybackYield + '%</div>' +
+      '</div>' +
+      '<div class="bar-company">' + s.company + '</div>' +
+    '</div>';
   }).join('');
 }
 
-// Sector bars
+// ========== Scatter Plot ==========
+function renderScatterPlot() {
+  var ctx = document.getElementById('scatterChart').getContext('2d');
+  var sectors = Object.keys(SECTOR_COLORS);
+  var datasets = sectors.map(function(sector) {
+    var items = DATA.results.filter(function(s) {
+      return s.sector === sector && s.buybackYield !== null && s.dividendYield !== null;
+    });
+    return {
+      label: sector,
+      data: items.map(function(s) {
+        return {
+          x: s.dividendYield || 0,
+          y: s.buybackYield || 0,
+          r: Math.max(3, Math.sqrt(s.buybackAmountB) * 4),
+          ticker: s.ticker,
+          company: s.company,
+          totalReturn: s.totalReturnYield || 0
+        };
+      }),
+      backgroundColor: SECTOR_COLORS[sector] + '99',
+      borderColor: SECTOR_COLORS[sector],
+      borderWidth: 1
+    };
+  });
+
+  new Chart(ctx, {
+    type: 'bubble',
+    data: { datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        x: {
+          title: { display: true, text: 'Dividend Yield (%)', color: '#94a3b8', font: { size: 13 } },
+          grid: { color: 'rgba(74,143,231,0.08)' },
+          ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } },
+          min: -0.5,
+          max: 7.5
+        },
+        y: {
+          title: { display: true, text: 'Buyback Yield (%)', color: '#94a3b8', font: { size: 13 } },
+          grid: { color: 'rgba(74,143,231,0.08)' },
+          ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } },
+          min: -0.5,
+          max: 17
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#94a3b8', usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 11 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var d = context.raw;
+              return d.ticker + ' (' + d.company + ') — Buyback: ' + d.y.toFixed(2) + '%, Div: ' + d.x.toFixed(2) + '%, Total: ' + d.totalReturn.toFixed(2) + '%';
+            }
+          },
+          backgroundColor: '#0a1020',
+          titleColor: '#fff',
+          bodyColor: '#c8d0de',
+          borderColor: '#152040',
+          borderWidth: 1
+        }
+      }
+    }
+  });
+}
+
+// ========== Sector bars ==========
 function renderSectorBars() {
-  const sectors = DATA.sectorSummary;
-  const maxVal = Math.max(...sectors.map(s => s.totalBuybacksB));
-  const sectorColors = {
-    'Information Technology': '#4a8fe7',
-    'Communication Services': '#8b5cf6',
-    'Financials': '#22c55e',
-    'Energy': '#f97316',
-    'Health Care': '#ec4899',
-    'Consumer Discretionary': '#06b6d4',
-    'Industrials': '#eab308',
-    'Consumer Staples': '#14b8a6',
-  };
+  var sectors = DATA.sectorSummary;
+  var maxVal = Math.max.apply(null, sectors.map(function(s) { return s.totalBuybacksB; }));
 
-  document.getElementById('sectorBars').innerHTML = sectors.map(s => {
-    const pct = (s.totalBuybacksB / maxVal * 100).toFixed(1);
-    const color = sectorColors[s.sector] || '#4a8fe7';
-    return `<div class="sector-row">
-      <div class="sector-name">${s.sector}</div>
-      <div class="sector-bar-track">
-        <div class="sector-bar-fill" style="width:${pct}%;background:${color}">$${s.totalBuybacksB}B</div>
-      </div>
-      <div class="sector-count">${s.companies} companies</div>
-    </div>`;
+  document.getElementById('sectorBars').innerHTML = sectors.map(function(s) {
+    var pct = (s.totalBuybacksB / maxVal * 100).toFixed(1);
+    var color = SECTOR_COLORS[s.sector] || '#4a8fe7';
+    return '<div class="sector-row">' +
+      '<div class="sector-name">' + s.sector + '</div>' +
+      '<div class="sector-bar-track">' +
+        '<div class="sector-bar-fill" style="width:' + pct + '%;background:' + color + '">$' + s.totalBuybacksB + 'B</div>' +
+      '</div>' +
+      '<div class="sector-count">' + s.companies + ' companies</div>' +
+    '</div>';
   }).join('');
 }
 
-// Key findings
-function renderFindings() {
-  const r = DATA.results;
-  const top3 = r.slice(0, 3);
-  const top3Total = top3.reduce((a, s) => a + s.buybackAmountB, 0);
-  const top3Pct = (top3Total / DATA.totalBuybacksB * 100).toFixed(0);
-  
-  const byYield = [...r].sort((a,b) => (b.buybackYield||0) - (a.buybackYield||0));
-  const byReduction = [...r].sort((a,b) => (b.sharesReductionPct||0) - (a.sharesReductionPct||0));
-  
-  const topSector = DATA.sectorSummary[0];
-  const highYield = r.filter(s => (s.buybackYield||0) > 5).length;
-  const zeroDiv = r.filter(s => !s.dividendYield || s.dividendYield === 0).length;
+// ========== Key Insights (NEW) ==========
+function renderInsights() {
+  var r = DATA.results;
+  var totalB = DATA.totalBuybacksB;
 
-  const findings = [
-    `<strong>Apple dominates</strong> with $94B in buybacks — more than the GDP of many countries. The top 3 spenders (AAPL, GOOGL, META) account for $${top3Total}B, or ${top3Pct}% of the total $${DATA.totalBuybacksB}B tracked. Mega-cap tech's cash generation is in a league of its own.`,
-    `<strong>Buyback yield tells a different story than raw dollars.</strong> Marathon Petroleum (MPC) leads with a 15.38% buyback yield despite spending "only" $10B — because its $65B market cap means each dollar of buybacks has outsized impact. GM (8.82%), Cigna (8.33%), and Synchrony (8.33%) also stand out as aggressive repurchasers relative to their size.`,
-    `<strong>${topSector.sector} leads sector buybacks</strong> at $${topSector.totalBuybacksB}B across ${topSector.companies} companies. Tech companies generate enormous free cash flow but face a "return or invest" dilemma — buybacks signal confidence that the stock is undervalued, or simply that the company can't deploy capital at higher returns.`,
-    `<strong>${highYield} companies have buyback yields above 5%</strong>, meaning they're repurchasing more than 5% of their market cap annually. At this pace, these companies could buy back all their shares within 20 years. The most aggressive — MPC at 12.5% share reduction — is literally shrinking its equity base at an extraordinary rate.`,
-    `<strong>Buybacks now dwarf dividends for many companies.</strong> ${zeroDiv} companies in our study pay zero dividends, relying entirely on buybacks for capital return. Even among dividend payers, buyback yield often exceeds dividend yield — Comcast returns 6.52% via buybacks vs 3.55% in dividends, and Lowe's returns 6.03% vs 1.72%.`
+  // 1. Total buybacks vs GDP
+  // Bangladesh GDP ~$460B, Finland ~$300B
+  var gdpComparison = totalB > 700 ? 'Bangladesh' : 'Finland';
+
+  // 2. Tech dominance
+  var techTotal = DATA.sectorSummary.find(function(s) { return s.sector === 'Information Technology'; }).totalBuybacksB;
+  var techPct = (techTotal / totalB * 100).toFixed(1);
+
+  // 3. MPC leads yield
+  // already known
+
+  // 4. Average total return
+  var validTR = r.filter(function(s) { return s.totalReturnYield !== null; });
+  var avgTR = (validTR.reduce(function(sum, s) { return sum + s.totalReturnYield; }, 0) / validTR.length).toFixed(2);
+
+  // 5. Companies above 8%
+  var above8 = r.filter(function(s) { return (s.totalReturnYield || 0) >= 8; }).length;
+
+  var insights = [
+    { icon: '💰', stat: '$' + totalB + 'B', text: 'in total buybacks — equivalent to the entire GDP of ' + gdpComparison + '. U.S. companies are returning unprecedented capital to shareholders through repurchases.' },
+    { icon: '💻', stat: '$' + techTotal + 'B', text: 'in tech buybacks — ' + techPct + '% of the total. Information Technology dominates capital returns, led by Apple\'s $94B program.' },
+    { icon: '🚀', stat: '15.38%', text: 'buyback yield for Marathon Petroleum (MPC) — the highest in our study. At 12.5% annual share reduction, MPC is aggressively shrinking its share count.' },
+    { icon: '📊', stat: avgTR + '%', text: 'average total shareholder return (buyback yield + dividend yield) across all 106 companies — combining both capital return channels.' },
+    { icon: '🏆', stat: above8 + ' companies', text: 'have total shareholder yields above 8%, delivering returns that rival long-term equity market averages through capital return alone.' }
   ];
 
-  document.getElementById('findingsContainer').innerHTML = findings.map((f, i) =>
-    `<div class="finding"><div class="finding-num">${i+1}</div><div class="finding-text">${f}</div></div>`
-  ).join('');
+  document.getElementById('insightCards').innerHTML = insights.map(function(ins) {
+    return '<div class="insight-card">' +
+      '<div class="insight-icon">' + ins.icon + '</div>' +
+      '<div class="insight-stat">' + ins.stat + '</div>' +
+      '<div class="insight-text">' + ins.text + '</div>' +
+    '</div>';
+  }).join('');
 }
 
-// Table
-let sortCol = 'buybackAmountB';
-let sortDir = 'desc';
+// ========== Key findings (existing) ==========
+function renderFindings() {
+  var r = DATA.results;
+  var top3 = r.slice(0, 3);
+  var top3Total = top3.reduce(function(a, s) { return a + s.buybackAmountB; }, 0);
+  var top3Pct = (top3Total / DATA.totalBuybacksB * 100).toFixed(0);
+
+  var byYield = r.slice().sort(function(a, b) { return (b.buybackYield || 0) - (a.buybackYield || 0); });
+  var highYield = r.filter(function(s) { return (s.buybackYield || 0) > 5; }).length;
+  var zeroDiv = r.filter(function(s) { return !s.dividendYield || s.dividendYield === 0; }).length;
+  var topSector = DATA.sectorSummary[0];
+
+  var findings = [
+    '<strong>Apple dominates</strong> with $94B in buybacks — more than the GDP of many countries. The top 3 spenders (AAPL, GOOGL, META) account for $' + top3Total + 'B, or ' + top3Pct + '% of the total $' + DATA.totalBuybacksB + 'B tracked. Mega-cap tech\'s cash generation is in a league of its own.',
+    '<strong>Buyback yield tells a different story than raw dollars.</strong> Marathon Petroleum (MPC) leads with a 15.38% buyback yield despite spending "only" $10B — because its $65B market cap means each dollar of buybacks has outsized impact. GM (8.82%), Cigna (8.33%), and Synchrony (8.33%) also stand out as aggressive repurchasers relative to their size.',
+    '<strong>' + topSector.sector + ' leads sector buybacks</strong> at $' + topSector.totalBuybacksB + 'B across ' + topSector.companies + ' companies. Tech companies generate enormous free cash flow but face a "return or invest" dilemma — buybacks signal confidence that the stock is undervalued, or simply that the company can\'t deploy capital at higher returns.',
+    '<strong>' + highYield + ' companies have buyback yields above 5%</strong>, meaning they\'re repurchasing more than 5% of their market cap annually. At this pace, these companies could buy back all their shares within 20 years. The most aggressive — MPC at 12.5% share reduction — is literally shrinking its equity base at an extraordinary rate.',
+    '<strong>Buybacks now dwarf dividends for many companies.</strong> ' + zeroDiv + ' companies in our study pay zero dividends, relying entirely on buybacks for capital return. Even among dividend payers, buyback yield often exceeds dividend yield — Comcast returns 6.52% via buybacks vs 3.55% in dividends, and Lowe\'s returns 6.03% vs 1.72%.'
+  ];
+
+  document.getElementById('findingsContainer').innerHTML = findings.map(function(f, i) {
+    return '<div class="finding"><div class="finding-num">' + (i + 1) + '</div><div class="finding-text">' + f + '</div></div>';
+  }).join('');
+}
+
+// ========== Table ==========
+var sortCol = 'buybackAmountB';
+var sortDir = 'desc';
 
 function renderTable() {
-  const r = [...DATA.results];
-  const sectorVal = document.getElementById('sectorFilter').value;
-  const search = document.getElementById('searchInput').value.toLowerCase();
+  var r = DATA.results.slice();
+  var sectorVal = document.getElementById('sectorFilter').value;
+  var search = document.getElementById('searchInput').value.toLowerCase();
 
-  let filtered = r.filter(s => {
+  var filtered = r.filter(function(s) {
     if (sectorVal && s.sector !== sectorVal) return false;
-    if (search && !s.ticker.toLowerCase().includes(search) && !(s.company||'').toLowerCase().includes(search)) return false;
+    if (search && s.ticker.toLowerCase().indexOf(search) === -1 && (s.company || '').toLowerCase().indexOf(search) === -1) return false;
     return true;
   });
 
-  filtered.sort((a, b) => {
-    let va = a[sortCol], vb = b[sortCol];
+  filtered.sort(function(a, b) {
+    var va = a[sortCol], vb = b[sortCol];
     if (va === null || va === undefined) va = sortDir === 'asc' ? Infinity : -Infinity;
     if (vb === null || vb === undefined) vb = sortDir === 'asc' ? Infinity : -Infinity;
     if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
     return sortDir === 'asc' ? va - vb : vb - va;
   });
 
-  const maxYield = Math.max(...filtered.map(s => s.buybackYield || 0));
+  var maxYield = Math.max.apply(null, filtered.map(function(s) { return s.buybackYield || 0; }));
 
-  document.getElementById('tableBody').innerHTML = filtered.map((s, i) => {
-    const yieldW = ((s.buybackYield||0) / maxYield * 60).toFixed(0);
-    const yieldColor = (s.buybackYield||0) > 5 ? 'var(--green)' : (s.buybackYield||0) > 2 ? 'var(--accent-color)' : 'var(--text-dim)';
-    return `<tr>
-      <td class="mono text-right">${i+1}</td>
-      <td class="ticker-cell">${s.ticker}</td>
-      <td>${s.company || '—'}</td>
-      <td style="font-size:12px;color:var(--text-dim)">${s.sector || '—'}</td>
-      <td class="mono text-right">$${s.buybackAmountB}B</td>
-      <td class="mono text-right"><span class="yield-bar" style="width:${yieldW}px;background:${yieldColor}"></span>${s.buybackYield !== null ? s.buybackYield + '%' : '—'}</td>
-      <td class="mono text-right">${s.sharesReductionPct !== null ? s.sharesReductionPct + '%' : '—'}</td>
-      <td class="mono text-right" style="color:var(--green)">${s.totalReturnYield !== null ? s.totalReturnYield + '%' : '—'}</td>
-      <td class="mono text-right">${s.dividendYield !== null ? s.dividendYield + '%' : '—'}</td>
-      <td class="mono text-right">${s.marketCapB ? '$' + s.marketCapB.toLocaleString() + 'B' : '—'}</td>
-      <td class="mono text-right">${s.peRatio !== null ? s.peRatio : '—'}</td>
-      <td class="mono text-right" style="color:var(--green)">${s.epsGrowth !== null ? '+' + s.epsGrowth + '%' : '—'}</td>
-    </tr>`;
+  document.getElementById('tableBody').innerHTML = filtered.map(function(s, i) {
+    var yieldW = ((s.buybackYield || 0) / maxYield * 60).toFixed(0);
+    var yieldColor = (s.buybackYield || 0) > 5 ? 'var(--green)' : (s.buybackYield || 0) > 2 ? 'var(--accent-color)' : 'var(--text-dim)';
+    return '<tr>' +
+      '<td class="mono text-right">' + (i + 1) + '</td>' +
+      '<td class="ticker-cell">' + s.ticker + '</td>' +
+      '<td>' + (s.company || '—') + '</td>' +
+      '<td style="font-size:12px;color:var(--text-dim)">' + (s.sector || '—') + '</td>' +
+      '<td class="mono text-right">$' + s.buybackAmountB + 'B</td>' +
+      '<td class="mono text-right"><span class="yield-bar" style="width:' + yieldW + 'px;background:' + yieldColor + '"></span>' + (s.buybackYield !== null ? s.buybackYield + '%' : '—') + '</td>' +
+      '<td class="mono text-right">' + (s.sharesReductionPct !== null ? s.sharesReductionPct + '%' : '—') + '</td>' +
+      '<td class="mono text-right" style="color:var(--green)">' + (s.totalReturnYield !== null ? s.totalReturnYield + '%' : '—') + '</td>' +
+      '<td class="mono text-right">' + (s.dividendYield !== null ? s.dividendYield + '%' : '—') + '</td>' +
+      '<td class="mono text-right">' + (s.marketCapB ? '$' + s.marketCapB.toLocaleString() + 'B' : '—') + '</td>' +
+      '<td class="mono text-right">' + (s.peRatio !== null ? s.peRatio : '—') + '</td>' +
+      '<td class="mono text-right" style="color:var(--green)">' + (s.epsGrowth !== null ? '+' + s.epsGrowth + '%' : '—') + '</td>' +
+    '</tr>';
   }).join('');
 
-  document.querySelectorAll('thead th').forEach(th => {
+  document.querySelectorAll('thead th').forEach(function(th) {
     th.classList.remove('sorted-asc', 'sorted-desc');
     if (th.dataset.col === sortCol) th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
   });
 }
 
-// Init filters
+// ========== Init filters ==========
 function initFilters() {
-  const sectors = [...new Set(DATA.results.map(s => s.sector).filter(Boolean))].sort();
-  const sel = document.getElementById('sectorFilter');
-  sectors.forEach(s => {
-    const opt = document.createElement('option');
+  var sectorSet = {};
+  DATA.results.forEach(function(s) { if (s.sector) sectorSet[s.sector] = true; });
+  var sectors = Object.keys(sectorSet).sort();
+  var sel = document.getElementById('sectorFilter');
+  sectors.forEach(function(s) {
+    var opt = document.createElement('option');
     opt.value = s; opt.textContent = s;
     sel.appendChild(opt);
   });
 }
 
-// Sort handlers
-document.querySelectorAll('thead th').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = th.dataset.col;
+// ========== Sort handlers ==========
+document.querySelectorAll('thead th').forEach(function(th) {
+  th.addEventListener('click', function() {
+    var col = th.dataset.col;
     if (!col) return;
     if (sortCol === col) sortDir = sortDir === 'desc' ? 'asc' : 'desc';
     else { sortCol = col; sortDir = th.dataset.type === 'num' ? 'desc' : 'asc'; }
@@ -585,13 +1004,37 @@ document.getElementById('sortPreset').addEventListener('change', function() {
   renderTable();
 });
 
-// Init
+// Embed copy button
+document.getElementById('copy-btn-buyback-leaders').addEventListener('click', function() {
+  var code = document.getElementById('embed-code-buyback-leaders').textContent;
+  navigator.clipboard.writeText(code);
+  this.textContent = 'Copied!';
+  var btn = this;
+  setTimeout(function() { btn.textContent = 'Copy Code'; }, 2000);
+});
+
+// ========== Init everything ==========
 initFilters();
 renderStats();
+initTSRCalculator();
 renderBarChart();
 renderYieldChart();
 renderSectorBars();
+renderInsights();
 renderFindings();
 renderTable();
+
+// Scatter plot needs Chart.js to be loaded
+if (typeof Chart !== 'undefined') {
+  renderScatterPlot();
+} else {
+  // Wait for Chart.js to load
+  var checkChart = setInterval(function() {
+    if (typeof Chart !== 'undefined') {
+      clearInterval(checkChart);
+      renderScatterPlot();
+    }
+  }, 100);
+}
   </script>
 </SiteLayout>
