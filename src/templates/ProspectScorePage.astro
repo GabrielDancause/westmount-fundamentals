@@ -7,6 +7,49 @@ interface Props {
 
 const { data } = Astro.props;
 
+// Cross-linking: load all prospect + IV data to find related pages
+const prospectFiles = import.meta.glob('../data/prospect/*.json', { eager: true });
+const ivFiles = import.meta.glob('../data/iv/*.json', { eager: true });
+
+// Find all pages for same ticker
+const ticker = data.ticker;
+const relatedPages: { slug: string; label: string; type: string }[] = [];
+
+for (const [, rawData] of Object.entries(prospectFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker === ticker && d.slug !== data.slug) {
+    const isGemini = d.slug?.includes('-gemini');
+    relatedPages.push({
+      slug: d.slug,
+      label: `${isGemini ? 'Gemini 3.1' : 'Opus 4.6'} Prospect Score`,
+      type: 'prospect'
+    });
+  }
+}
+
+for (const [path, rawData] of Object.entries(ivFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker === ticker) {
+    const isOpus = path.includes('-opus');
+    relatedPages.push({
+      slug: d.slug,
+      label: `${isOpus ? 'Opus 4.6' : 'Gemini 3.1'} Intrinsic Value`,
+      type: 'iv'
+    });
+  }
+}
+
+// Find 4 related tickers (neighbors by score)
+const allProspects: { ticker: string; name: string; slug: string; score: number }[] = [];
+for (const [, rawData] of Object.entries(prospectFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker !== ticker && d.overallScore) {
+    allProspects.push({ ticker: d.ticker, name: d.companyName, slug: d.slug, score: d.overallScore });
+  }
+}
+allProspects.sort((a, b) => Math.abs(a.score - (data.overallScore || 0)) - Math.abs(b.score - (data.overallScore || 0)));
+const similarCompanies = allProspects.slice(0, 4);
+
 const score = data.overallScore || 0;
 const pillars = data.pillars || {};
 const pillarList = [pillars.competitiveMomentum, pillars.moatDurability, pillars.sentimentCatalyst].filter(Boolean);
@@ -413,11 +456,125 @@ const schema = {
     margin: 0;
   }
 
+  /* Related Analyses */
+  .related-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #152040;
+  }
+  .related-section h2 {
+    color: #e2e8f0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .related-card {
+    display: block;
+    padding: 1rem 1.25rem;
+    background: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #c8d0de;
+    transition: all 0.2s;
+  }
+  .related-card:hover {
+    border-color: #4a8fe7;
+    transform: translateY(-2px);
+    background: #0d1528;
+  }
+  .related-card .rc-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .related-card .rc-label.opus { color: #a855f7; }
+  .related-card .rc-label.gemini { color: #3b82f6; }
+  .related-card .rc-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+  .similar-section h3 {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem;
+  }
+  .hub-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .hub-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(74,143,231,0.1);
+    border: 1px solid rgba(74,143,231,0.2);
+    border-radius: 8px;
+    color: #4a8fe7;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .hub-link:hover {
+    background: rgba(74,143,231,0.2);
+    border-color: #4a8fe7;
+  }
+
   @media (max-width: 640px) {
     .ps-container { padding: 1rem; }
     .ps-header h1 { font-size: 1.5rem; }
     .score-card { flex-direction: column; text-align: center; }
     .dual-section { grid-template-columns: 1fr; }
+    .related-grid { grid-template-columns: 1fr; }
   }
 </style>
+
+  <!-- RELATED ANALYSES -->
+  <div class="related-section">
+    <h2>📊 More Analyses for {data.companyName}</h2>
+
+    {relatedPages.length > 0 && (
+      <div class="related-grid">
+        {relatedPages.map(p => (
+          <a href={`/${p.slug}/`} class="related-card">
+            <div class={`rc-label ${p.label.includes('Opus') ? 'opus' : 'gemini'}`}>{p.label}</div>
+            <div class="rc-title">{data.ticker} — {p.type === 'iv' ? 'DCF Valuation' : 'Economic Score'}</div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    {similarCompanies.length > 0 && (
+      <div class="similar-section">
+        <h3>Similar Prospect Scores</h3>
+        <div class="related-grid">
+          {similarCompanies.map(c => (
+            <a href={`/${c.slug}/`} class="related-card">
+              <div class="rc-label" style="color:#94a3b8">Score: {c.score}/100</div>
+              <div class="rc-title">{c.name} ({c.ticker})</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="hub-links">
+      <a href="/ai-stock-dashboard/" class="hub-link">🤖 AI Dashboard — All 60 Companies</a>
+      <a href="/most-shorted-stocks-march-2026/" class="hub-link">📉 Most Shorted Stocks</a>
+      <a href="/sp500-historical-returns/" class="hub-link">📈 S&P 500 Returns</a>
+    </div>
+  </div>
+
 </SiteLayout>

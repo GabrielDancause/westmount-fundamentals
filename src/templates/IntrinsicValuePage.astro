@@ -7,6 +7,52 @@ interface Props {
 
 const { data } = Astro.props;
 
+// Cross-linking: find related pages for this ticker
+const prospectFiles = import.meta.glob('../data/prospect/*.json', { eager: true });
+const ivFiles = import.meta.glob('../data/iv/*.json', { eager: true });
+
+const ticker = data.ticker;
+const relatedPages: { slug: string; label: string; type: string }[] = [];
+
+// Find prospect pages for same ticker
+for (const [, rawData] of Object.entries(prospectFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker === ticker) {
+    const isGemini = d.slug?.includes('-gemini');
+    relatedPages.push({
+      slug: d.slug,
+      label: `${isGemini ? 'Gemini 3.1' : 'Opus 4.6'} Prospect Score`,
+      type: 'prospect'
+    });
+  }
+}
+
+// Find other IV pages for same ticker
+for (const [path, rawData] of Object.entries(ivFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker === ticker && d.slug !== data.slug) {
+    const isOpus = path.includes('-opus');
+    relatedPages.push({
+      slug: d.slug,
+      label: `${isOpus ? 'Opus 4.6' : 'Gemini 3.1'} Intrinsic Value`,
+      type: 'iv'
+    });
+  }
+}
+
+// Find 4 related companies by similar IV
+const allIVs: { ticker: string; name: string; slug: string; iv: number }[] = [];
+for (const [, rawData] of Object.entries(ivFiles)) {
+  const d = (rawData as any).default ?? rawData;
+  if (d.ticker !== ticker && d.computedIV && d.currentPrice) {
+    const mos = ((d.computedIV - d.currentPrice) / d.currentPrice) * 100;
+    allIVs.push({ ticker: d.ticker, name: d.companyName, slug: d.slug, iv: mos });
+  }
+}
+const myMoS = data.currentPrice ? ((data.computedIV - data.currentPrice) / data.currentPrice) * 100 : 0;
+allIVs.sort((a, b) => Math.abs(a.iv - myMoS) - Math.abs(b.iv - myMoS));
+const similarCompanies = allIVs.slice(0, 4);
+
 // --- USE PRE-COMPUTED VALUES ---
 const intrinsicValuePerShare = data.computedIV || 0;
 const currentPrice = data.currentPrice || 0;
@@ -435,11 +481,125 @@ const thesisTitle = data.thesisTitle || '';
     line-height: 1.6;
     margin: 0;
   }
+  /* Related Analyses */
+  .related-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #152040;
+  }
+  .related-section h2 {
+    color: #e2e8f0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .related-card {
+    display: block;
+    padding: 1rem 1.25rem;
+    background: #0a1020;
+    border: 1px solid #152040;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #c8d0de;
+    transition: all 0.2s;
+  }
+  .related-card:hover {
+    border-color: #4a8fe7;
+    transform: translateY(-2px);
+    background: #0d1528;
+  }
+  .related-card .rc-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.3rem;
+  }
+  .related-card .rc-label.opus { color: #a855f7; }
+  .related-card .rc-label.gemini { color: #3b82f6; }
+  .related-card .rc-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+  .similar-section h3 {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem;
+  }
+  .hub-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .hub-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(74,143,231,0.1);
+    border: 1px solid rgba(74,143,231,0.2);
+    border-radius: 8px;
+    color: #4a8fe7;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .hub-link:hover {
+    background: rgba(74,143,231,0.2);
+    border-color: #4a8fe7;
+  }
+
   @media (max-width: 640px) {
     .iv-container { padding: 1rem; }
     .gemini-header h1 { font-size: 1.5rem; }
     .verdict-value { font-size: 2.2rem; }
     .verdict-comparison { flex-direction: column; gap: 0.5rem; }
+    .related-grid { grid-template-columns: 1fr; }
   }
 </style>
+
+  <!-- RELATED ANALYSES -->
+  <div class="related-section" style="max-width:800px;margin:2rem auto;padding:0 1.5rem;">
+    <h2>📊 More Analyses for {data.companyName}</h2>
+
+    {relatedPages.length > 0 && (
+      <div class="related-grid">
+        {relatedPages.map(p => (
+          <a href={`/${p.slug}/`} class="related-card">
+            <div class={`rc-label ${p.label.includes('Opus') ? 'opus' : 'gemini'}`}>{p.label}</div>
+            <div class="rc-title">{data.ticker} — {p.type === 'iv' ? 'DCF Valuation' : 'Economic Score'}</div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    {similarCompanies.length > 0 && (
+      <div class="similar-section">
+        <h3>Similar Valuations</h3>
+        <div class="related-grid">
+          {similarCompanies.map(c => (
+            <a href={`/${c.slug}/`} class="related-card">
+              <div class="rc-label" style="color:#94a3b8">MoS: {c.iv.toFixed(1)}%</div>
+              <div class="rc-title">{c.name} ({c.ticker})</div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="hub-links">
+      <a href="/ai-stock-dashboard/" class="hub-link">🤖 AI Dashboard — All Companies</a>
+      <a href="/most-shorted-stocks-march-2026/" class="hub-link">📉 Most Shorted Stocks</a>
+      <a href="/sp500-historical-returns/" class="hub-link">📈 S&P 500 Returns</a>
+    </div>
+  </div>
+
 </SiteLayout>
