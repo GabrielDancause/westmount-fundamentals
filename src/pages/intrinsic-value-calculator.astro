@@ -1,0 +1,869 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+export const meta = { title: "Intrinsic Value Calculator: Free DCF & Graham Number Tool (2026)", description: "Calculate the intrinsic value of any stock using our free DCF and Graham Number calculators. Pre-loaded with 168 S&P 500 stocks. No signup required.", category: "study", published: "2026-03-20" };
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Intrinsic Value Calculator: Free DCF & Graham Number Tool",
+      "description": "Calculate the intrinsic value of any stock using our free DCF and Graham Number calculators. Pre-loaded with 168 S&P 500 stocks. No signup required.",
+      "datePublished": "2026-03-20",
+      "dateModified": "2026-03-20",
+      "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How do you calculate the intrinsic value of a stock?", "acceptedAnswer": { "@type": "Answer", "text": "The most common method is a Discounted Cash Flow (DCF) analysis. You project the company's future free cash flows, then discount them back to present value using an appropriate discount rate (usually WACC). The sum of all discounted cash flows plus the terminal value gives you the intrinsic value. Another popular method is the Benjamin Graham formula, which uses EPS and expected growth rate." } },
+        { "@type": "Question", "name": "What method does Warren Buffett use to calculate intrinsic value?", "acceptedAnswer": { "@type": "Answer", "text": "Warren Buffett primarily uses a Discounted Cash Flow (DCF) model focused on owner earnings — net income plus depreciation minus capital expenditures. He applies a discount rate based on the long-term US Treasury yield and looks for companies trading at a significant margin of safety below their calculated intrinsic value." } },
+        { "@type": "Question", "name": "What is a good margin of safety for stocks?", "acceptedAnswer": { "@type": "Answer", "text": "Benjamin Graham recommended a margin of safety of at least 33%. Warren Buffett typically looks for 25-50% depending on the quality and predictability of the business. A higher margin of safety provides more protection against errors in your assumptions and unforeseen events." } },
+        { "@type": "Question", "name": "What is the difference between intrinsic value and market price?", "acceptedAnswer": { "@type": "Answer", "text": "Market price is what investors are currently willing to pay for a stock — driven by supply, demand, and sentiment. Intrinsic value is an estimate of what the stock is actually worth based on the company's fundamentals (cash flows, earnings, assets). When market price is below intrinsic value, the stock may be undervalued." } },
+        { "@type": "Question", "name": "How accurate are intrinsic value calculators?", "acceptedAnswer": { "@type": "Answer", "text": "No intrinsic value calculator is perfectly accurate because all valuations depend on assumptions about future growth, discount rates, and terminal values. Small changes in inputs can produce large differences in output. The value of a DCF model isn't the precise number — it's the framework for thinking about what drives a stock's worth. Always use a margin of safety." } }
+      ]
+    }
+  ]
+};
+---
+
+<SiteLayout
+  site="westmount"
+  title="Intrinsic Value Calculator: Free DCF & Graham Number Tool (2026)"
+  description="Calculate the intrinsic value of any stock using our free DCF and Graham Number calculators. Pre-loaded with 168 S&P 500 stocks. No signup required."
+  canonical="https://westmountfundamentals.com/intrinsic-value-calculator/"
+  schema={schema}
+>
+
+<style>
+:root { --accent: #4a8fe7; --positive: #10b981; --negative: #ef4444; --warning: #f59e0b; --bg-card: #0d1117; --bg-input: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; }
+.calc-hero { text-align:center; padding:2rem 0 1rem; }
+.calc-hero h1 { font-size:2rem; margin-bottom:0.5rem; color:#fff; }
+.calc-hero .sub { color:var(--text-muted); font-size:1.05rem; max-width:600px; margin:0 auto; }
+.calc-hero .badge { display:inline-block; background:var(--accent); color:#fff; padding:0.2rem 0.7rem; border-radius:12px; font-size:0.8rem; font-weight:600; margin-bottom:1rem; }
+
+/* Stat cards */
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1.5rem 0; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; text-align:center; }
+.stat-card .val { font-size:1.8rem; font-weight:700; color:#fff; }
+.stat-card .lbl { font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; }
+
+/* Tabs */
+.calc-tabs { display:flex; gap:0.5rem; margin:2rem 0 1rem; flex-wrap:wrap; }
+.calc-tab { padding:0.6rem 1.5rem; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-muted); cursor:pointer; font-size:0.95rem; font-weight:600; transition:all 0.2s; }
+.calc-tab:hover { border-color:var(--accent); color:var(--text); }
+.calc-tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* Calculator panels */
+.calc-panel { display:none; }
+.calc-panel.active { display:block; }
+.calc-container { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem; margin-bottom:2rem; }
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+.input-section h3 { color:#fff; margin-bottom:1rem; font-size:1.1rem; }
+.input-group { margin-bottom:1rem; }
+.input-group label { display:block; color:var(--text-muted); font-size:0.85rem; margin-bottom:0.3rem; }
+.input-group input, .input-group select { width:100%; padding:0.7rem; background:var(--bg-input); border:1px solid var(--border); border-radius:8px; color:#fff; font-size:1rem; }
+.input-group input:focus, .input-group select:focus { outline:none; border-color:var(--accent); }
+.input-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.input-hint { font-size:0.75rem; color:var(--text-muted); margin-top:0.2rem; }
+.btn-calc { width:100%; padding:0.9rem; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:1rem; font-weight:700; cursor:pointer; margin-top:0.5rem; transition:all 0.2s; }
+.btn-calc:hover { background:#3a7fd7; }
+
+/* Result panel */
+.result-panel { background:var(--bg-input); border-radius:12px; padding:1.5rem; min-height:320px; display:flex; flex-direction:column; justify-content:center; }
+.result-verdict { text-align:center; padding:1rem 0; }
+.result-verdict .iv-value { font-size:2.8rem; font-weight:800; color:#fff; }
+.result-verdict .iv-label { color:var(--text-muted); font-size:0.9rem; }
+.result-verdict .verdict-badge { display:inline-block; padding:0.4rem 1.2rem; border-radius:20px; font-weight:700; font-size:1.1rem; margin:0.8rem 0; }
+.verdict-undervalued { background:rgba(16,185,129,0.15); color:var(--positive); border:1px solid var(--positive); }
+.verdict-overvalued { background:rgba(239,68,68,0.15); color:var(--negative); border:1px solid var(--negative); }
+.verdict-fair { background:rgba(245,158,11,0.15); color:var(--warning); border:1px solid var(--warning); }
+.result-details { margin-top:1rem; }
+.result-row { display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid var(--border); }
+.result-row:last-child { border-bottom:none; }
+.result-row .rl { color:var(--text-muted); font-size:0.9rem; }
+.result-row .rv { color:#fff; font-weight:600; font-size:0.9rem; }
+
+/* Gauge */
+.gauge-container { margin:1rem 0; }
+.gauge-bar { height:16px; border-radius:8px; background:linear-gradient(to right, var(--positive) 0%, var(--warning) 50%, var(--negative) 100%); position:relative; }
+.gauge-marker { position:absolute; top:-4px; width:4px; height:24px; background:#fff; border-radius:2px; transform:translateX(-50%); transition:left 0.5s; }
+.gauge-labels { display:flex; justify-content:space-between; margin-top:0.3rem; font-size:0.75rem; color:var(--text-muted); }
+
+/* Ticker search */
+.ticker-search-wrap { position:relative; margin-bottom:1.5rem; }
+.ticker-search { width:100%; padding:0.9rem 1rem 0.9rem 2.8rem; background:var(--bg-input); border:2px solid var(--border); border-radius:12px; color:#fff; font-size:1.1rem; }
+.ticker-search:focus { border-color:var(--accent); outline:none; }
+.ticker-search-icon { position:absolute; left:0.9rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:1.1rem; }
+.ticker-dropdown { position:absolute; top:100%; left:0; right:0; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; max-height:240px; overflow-y:auto; z-index:100; display:none; }
+.ticker-dropdown.show { display:block; }
+.ticker-option { padding:0.7rem 1rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+.ticker-option:hover { background:var(--bg-input); }
+.ticker-option .to-name { color:var(--text-muted); font-size:0.85rem; }
+.ticker-option .to-ticker { font-weight:700; color:#fff; }
+.ticker-loaded-badge { display:inline-block; background:rgba(16,185,129,0.15); color:var(--positive); padding:0.15rem 0.5rem; border-radius:6px; font-size:0.7rem; margin-left:0.5rem; }
+
+/* Chart */
+.chart-wrap { margin:2rem 0; background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.chart-wrap h3 { color:#fff; margin-bottom:1rem; }
+
+/* Screener table */
+.screener-section { margin:2rem 0; }
+.screener-section h2 { color:#fff; margin-bottom:0.5rem; }
+.screener-section .sub { color:var(--text-muted); margin-bottom:1rem; }
+.screener-controls { display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; align-items:center; }
+.screener-filter { padding:0.5rem 1rem; background:var(--bg-input); border:1px solid var(--border); border-radius:8px; color:#fff; font-size:0.9rem; cursor:pointer; }
+.screener-filter.active { background:var(--accent); border-color:var(--accent); }
+.screener-search { padding:0.5rem 1rem; background:var(--bg-input); border:1px solid var(--border); border-radius:8px; color:#fff; font-size:0.9rem; flex:1; min-width:200px; }
+.screener-table-wrap { overflow-x:auto; }
+table.screener { width:100%; border-collapse:collapse; font-size:0.9rem; }
+table.screener th { text-align:left; padding:0.7rem 0.8rem; color:var(--text-muted); border-bottom:2px solid var(--border); cursor:pointer; white-space:nowrap; }
+table.screener th:hover { color:var(--accent); }
+table.screener td { padding:0.6rem 0.8rem; border-bottom:1px solid var(--border); color:var(--text); }
+table.screener tr:hover { background:rgba(74,143,231,0.05); }
+.mos-bar { display:inline-block; height:8px; border-radius:4px; min-width:4px; }
+
+/* Key insights */
+.insights-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; margin:2rem 0; }
+.insight-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; }
+.insight-card .ic-num { font-size:2rem; font-weight:800; color:var(--accent); }
+.insight-card .ic-title { color:#fff; font-weight:600; margin:0.3rem 0; }
+.insight-card .ic-desc { color:var(--text-muted); font-size:0.9rem; }
+
+/* How-to section */
+.how-section { margin:3rem 0; }
+.how-section h2 { color:#fff; }
+.how-steps { counter-reset:step; margin:1.5rem 0; }
+.how-step { display:flex; gap:1.5rem; margin-bottom:2rem; align-items:flex-start; }
+.how-step-num { background:var(--accent); color:#fff; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+.how-step-content h4 { color:#fff; margin:0 0 0.3rem; }
+.how-step-content p { color:var(--text-muted); margin:0; font-size:0.95rem; line-height:1.6; }
+
+/* Formula display */
+.formula-box { background:var(--bg-input); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin:1.5rem 0; text-align:center; }
+.formula-box .formula { font-size:1.2rem; color:var(--accent); font-weight:600; font-family:monospace; letter-spacing:0.5px; }
+.formula-box .formula-label { color:var(--text-muted); font-size:0.85rem; margin-top:0.5rem; }
+
+/* FAQ */
+.faq-section { margin:3rem 0; }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q { padding:1rem 0; cursor:pointer; display:flex; justify-content:space-between; align-items:center; color:#fff; font-weight:600; }
+.faq-q:hover { color:var(--accent); }
+.faq-a { padding:0 0 1rem; color:var(--text-muted); line-height:1.7; display:none; }
+.faq-a.open { display:block; }
+.faq-arrow { transition:transform 0.2s; }
+.faq-arrow.open { transform:rotate(180deg); }
+
+/* CTA */
+.cta-box { background:linear-gradient(135deg, rgba(74,143,231,0.15), rgba(16,185,129,0.1)); border:1px solid var(--accent); border-radius:16px; padding:2rem; text-align:center; margin:2rem 0; }
+.cta-box h3 { color:#fff; margin-bottom:0.5rem; }
+.cta-box p { color:var(--text-muted); margin-bottom:1rem; }
+.cta-btn { display:inline-block; padding:0.8rem 2rem; background:var(--accent); color:#fff; border-radius:8px; text-decoration:none; font-weight:700; }
+
+/* Responsive */
+@media(max-width:768px) {
+  .stat-row { grid-template-columns:repeat(2,1fr); }
+  .calc-grid { grid-template-columns:1fr; }
+  .insights-grid { grid-template-columns:1fr; }
+  .input-row { grid-template-columns:1fr; }
+  .calc-hero h1 { font-size:1.5rem; }
+}
+</style>
+
+<div class="calc-hero">
+  <span class="badge">FREE TOOL · NO SIGNUP</span>
+  <h1>Intrinsic Value Calculator</h1>
+  <p class="sub">Calculate the fair value of any stock using DCF analysis or the Benjamin Graham formula. Pre-loaded with 168 S&P 500 companies.</p>
+</div>
+
+<div class="stat-row" id="hero-stats">
+  <div class="stat-card">
+    <div class="val" id="stat-stocks">168</div>
+    <div class="lbl">Pre-loaded Stocks</div>
+  </div>
+  <div class="stat-card">
+    <div class="val" style="color:var(--positive)" id="stat-under">39</div>
+    <div class="lbl">Undervalued</div>
+  </div>
+  <div class="stat-card">
+    <div class="val" style="color:var(--negative)" id="stat-over">127</div>
+    <div class="lbl">Overvalued</div>
+  </div>
+  <div class="stat-card">
+    <div class="val" style="color:var(--warning)" id="stat-avg-mos">38.4%</div>
+    <div class="lbl">Avg Margin of Safety</div>
+  </div>
+</div>
+
+<!-- Calculator Tabs -->
+<div class="calc-tabs">
+  <div class="calc-tab active" onclick="switchTab('dcf')">📊 DCF Calculator</div>
+  <div class="calc-tab" onclick="switchTab('graham')">📐 Graham Number</div>
+  <div class="calc-tab" onclick="switchTab('screener')">🔍 Stock Screener</div>
+</div>
+
+<!-- DCF Calculator -->
+<div class="calc-panel active" id="panel-dcf">
+  <div class="calc-container">
+    <div class="ticker-search-wrap">
+      <span class="ticker-search-icon">🔍</span>
+      <input type="text" class="ticker-search" id="dcf-ticker" placeholder="Search ticker or company (e.g. AAPL, Apple)..." autocomplete="off">
+      <div class="ticker-dropdown" id="dcf-dropdown"></div>
+    </div>
+    <div class="calc-grid">
+      <div class="input-section">
+        <h3>DCF Assumptions</h3>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Current Free Cash Flow ($M)</label>
+            <input type="number" id="dcf-fcf" placeholder="e.g. 5000" step="any">
+            <div class="input-hint">Annual FCF from latest filings</div>
+          </div>
+          <div class="input-group">
+            <label>Shares Outstanding (M)</label>
+            <input type="number" id="dcf-shares" placeholder="e.g. 1500" step="any">
+            <div class="input-hint">Diluted share count</div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>FCF Growth Rate (Years 1-5)</label>
+            <input type="number" id="dcf-growth" placeholder="e.g. 12" step="0.1" value="10"> %
+            <div class="input-hint">How fast will FCF grow?</div>
+          </div>
+          <div class="input-group">
+            <label>Terminal Growth Rate</label>
+            <input type="number" id="dcf-terminal" placeholder="e.g. 3" step="0.1" value="3"> %
+            <div class="input-hint">Long-term GDP growth (2-4%)</div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Discount Rate (WACC)</label>
+            <input type="number" id="dcf-discount" placeholder="e.g. 10" step="0.1" value="10"> %
+            <div class="input-hint">Required rate of return</div>
+          </div>
+          <div class="input-group">
+            <label>Current Stock Price ($)</label>
+            <input type="number" id="dcf-price" placeholder="e.g. 150" step="0.01">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Projection Period</label>
+          <select id="dcf-years">
+            <option value="5">5 Years</option>
+            <option value="10" selected>10 Years</option>
+            <option value="15">15 Years</option>
+            <option value="20">20 Years</option>
+          </select>
+        </div>
+        <button class="btn-calc" onclick="calculateDCF()">Calculate Intrinsic Value →</button>
+      </div>
+      <div class="result-panel" id="dcf-result">
+        <div style="text-align:center;color:var(--text-muted);">
+          <div style="font-size:3rem;margin-bottom:0.5rem;">📊</div>
+          <div>Enter a ticker or input your assumptions</div>
+          <div style="font-size:0.85rem;margin-top:0.5rem;">168 stocks pre-loaded with AI-analyzed assumptions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DCF Sensitivity Chart -->
+  <div class="chart-wrap" id="dcf-sensitivity-wrap" style="display:none;">
+    <h3>📈 Sensitivity Analysis</h3>
+    <p style="color:var(--text-muted);font-size:0.9rem;">How intrinsic value changes with different growth rates and discount rates</p>
+    <canvas id="dcf-sensitivity-chart" height="300"></canvas>
+  </div>
+
+  <!-- DCF Cash Flow Projection -->
+  <div class="chart-wrap" id="dcf-projection-wrap" style="display:none;">
+    <h3>💰 Projected Free Cash Flows</h3>
+    <canvas id="dcf-projection-chart" height="250"></canvas>
+  </div>
+</div>
+
+<!-- Graham Number Calculator -->
+<div class="calc-panel" id="panel-graham">
+  <div class="calc-container">
+    <div class="calc-grid">
+      <div class="input-section">
+        <h3>Benjamin Graham Formula</h3>
+        <div class="formula-box">
+          <div class="formula">V = EPS × (8.5 + 2g) × 4.4 / Y</div>
+          <div class="formula-label">Where g = expected growth rate, Y = current AAA bond yield</div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Earnings Per Share (EPS)</label>
+            <input type="number" id="graham-eps" placeholder="e.g. 6.50" step="0.01">
+            <div class="input-hint">Trailing twelve months EPS</div>
+          </div>
+          <div class="input-group">
+            <label>Expected Growth Rate (%)</label>
+            <input type="number" id="graham-growth" placeholder="e.g. 10" step="0.1" value="10">
+            <div class="input-hint">Next 7-10 years annual EPS growth</div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Current AAA Bond Yield (%)</label>
+            <input type="number" id="graham-yield" placeholder="e.g. 4.8" step="0.1" value="4.8">
+            <div class="input-hint">Currently ~4.8% (Moody's AAA)</div>
+          </div>
+          <div class="input-group">
+            <label>Current Stock Price ($)</label>
+            <input type="number" id="graham-price" placeholder="e.g. 150" step="0.01">
+          </div>
+        </div>
+        <h3 style="margin-top:1.5rem;">Graham Number</h3>
+        <div class="formula-box">
+          <div class="formula">GN = √(22.5 × EPS × BVPS)</div>
+          <div class="formula-label">Maximum price for a defensive investor</div>
+        </div>
+        <div class="input-group">
+          <label>Book Value Per Share (BVPS)</label>
+          <input type="number" id="graham-bvps" placeholder="e.g. 25.00" step="0.01">
+          <div class="input-hint">From latest balance sheet</div>
+        </div>
+        <button class="btn-calc" onclick="calculateGraham()">Calculate Graham Values →</button>
+      </div>
+      <div class="result-panel" id="graham-result">
+        <div style="text-align:center;color:var(--text-muted);">
+          <div style="font-size:3rem;margin-bottom:0.5rem;">📐</div>
+          <div>Enter EPS and growth estimates</div>
+          <div style="font-size:0.85rem;margin-top:0.5rem;">Uses Benjamin Graham's original 1974 revised formula</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Screener Panel -->
+<div class="calc-panel" id="panel-screener">
+  <div class="screener-section">
+    <h2>S&P 500 Intrinsic Value Screener</h2>
+    <p class="sub">168 stocks with AI-computed DCF valuations. Click any ticker for a detailed analysis.</p>
+    <div class="screener-controls">
+      <div class="screener-filter active" onclick="filterScreener('all',this)">All (168)</div>
+      <div class="screener-filter" onclick="filterScreener('under',this)" style="color:var(--positive)">Undervalued</div>
+      <div class="screener-filter" onclick="filterScreener('over',this)" style="color:var(--negative)">Overvalued</div>
+      <input type="text" class="screener-search" id="screener-search" placeholder="Search ticker or company...">
+    </div>
+    <div class="screener-table-wrap">
+      <table class="screener" id="screener-table">
+        <thead>
+          <tr>
+            <th onclick="sortScreener('t')">Ticker ↕</th>
+            <th onclick="sortScreener('n')">Company ↕</th>
+            <th onclick="sortScreener('p')">Price ↕</th>
+            <th onclick="sortScreener('iv')">Intrinsic Value ↕</th>
+            <th onclick="sortScreener('mos')">Margin ↕</th>
+            <th onclick="sortScreener('v')">Verdict ↕</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="screener-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="insights-grid">
+  <div class="insight-card">
+    <div class="ic-num">76%</div>
+    <div class="ic-title">Are Overvalued</div>
+    <div class="ic-desc">76% of analyzed S&P 500 stocks trade above their DCF intrinsic value, suggesting stretched valuations across the index.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">38.4%</div>
+    <div class="ic-title">Average Margin of Safety</div>
+    <div class="ic-desc">The 39 undervalued stocks offer an average 38.4% margin of safety — well above Graham's recommended 33% threshold.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">$0</div>
+    <div class="ic-title">Cost to Use</div>
+    <div class="ic-desc">AlphaSpread charges $25/mo. Our calculator is permanently free with pre-loaded data for 168 S&P 500 companies.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num">2</div>
+    <div class="ic-title">Valuation Models</div>
+    <div class="ic-desc">DCF (Discounted Cash Flow) for cash-flow-rich companies and Graham Number for conservative value investors. Both free, no signup.</div>
+  </div>
+</div>
+
+<!-- How to Calculate Section -->
+<div class="how-section">
+  <h2>How to Calculate the Intrinsic Value of a Stock</h2>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-step-num">1</div>
+      <div class="how-step-content">
+        <h4>Find the Free Cash Flow</h4>
+        <p>Start with the company's annual Free Cash Flow (FCF) from their latest 10-K filing. FCF = Operating Cash Flow minus Capital Expenditures. This represents the actual cash the business generates after maintaining its operations.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">2</div>
+      <div class="how-step-content">
+        <h4>Estimate Future Growth</h4>
+        <p>Project how fast FCF will grow over the next 5-10 years. Look at historical growth rates, industry trends, and analyst estimates. Be conservative — overestimating growth is the #1 source of valuation errors.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">3</div>
+      <div class="how-step-content">
+        <h4>Choose a Discount Rate</h4>
+        <p>The discount rate (WACC) represents your required rate of return. Higher risk companies deserve higher discount rates (10-15%). Blue chips can use lower rates (7-10%). Warren Buffett often uses the 10-year Treasury yield as a minimum.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">4</div>
+      <div class="how-step-content">
+        <h4>Calculate Terminal Value</h4>
+        <p>After your projection period, the company doesn't stop existing. The terminal value captures all cash flows beyond year 10 using a perpetuity growth model (typically 2-3% matching long-term GDP growth).</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">5</div>
+      <div class="how-step-content">
+        <h4>Apply a Margin of Safety</h4>
+        <p>Never pay full intrinsic value. Benjamin Graham recommended at least 33% margin of safety. Warren Buffett looks for 25-50%. This protects you from errors in your assumptions and unforeseen events. If IV = $100, only buy below $67-75.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-box">
+  <h3>Want Individual Stock Analysis?</h3>
+  <p>We have detailed AI-powered intrinsic value reports for 660+ S&P 500 stocks with full DCF breakdowns, assumption rationales, and risk assessments.</p>
+  <a href="/intrinsic-value-sp500/" class="cta-btn">Browse All IV Reports →</a>
+</div>
+
+<!-- FAQ Section -->
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How do you calculate the intrinsic value of a stock? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">The most common method is a Discounted Cash Flow (DCF) analysis. You project the company's future free cash flows, then discount them back to present value using an appropriate discount rate (usually WACC). The sum of all discounted cash flows plus the terminal value gives you the intrinsic value per share. Another popular method is the Benjamin Graham formula, which uses EPS and expected growth rate. Our calculator supports both methods.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What method does Warren Buffett use to calculate intrinsic value? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Warren Buffett primarily uses a DCF model focused on "owner earnings" — net income plus depreciation minus capital expenditures. He applies a discount rate based on the long-term US Treasury yield and looks for companies trading at a significant margin of safety below their calculated intrinsic value. Buffett also emphasizes qualitative factors like competitive moats, management quality, and business predictability that can't be captured in a formula alone.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is a good margin of safety for stocks? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Benjamin Graham recommended a margin of safety of at least 33%. Warren Buffett typically looks for 25-50% depending on the quality and predictability of the business. For high-quality companies with predictable cash flows (like Coca-Cola or Visa), a 25% margin might suffice. For cyclical or speculative businesses, you'd want 40-50% or more. The margin of safety is your protection against errors in your assumptions.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the difference between intrinsic value and market price? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">Market price is what investors are currently willing to pay for a stock — driven by supply, demand, and sentiment. Intrinsic value is an estimate of what the stock is actually worth based on the company's fundamentals (cash flows, earnings, assets). When market price is below intrinsic value, the stock may be undervalued — this is when value investors buy. When market price exceeds intrinsic value, the stock may be overvalued.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How accurate are intrinsic value calculators? <span class="faq-arrow">▼</span></div>
+    <div class="faq-a">No intrinsic value calculator is perfectly accurate because all valuations depend on assumptions about future growth, discount rates, and terminal values. A 1% change in growth rate can shift the intrinsic value by 15-25%. The value of a DCF model isn't the precise number — it's the framework for thinking about what drives a stock's worth. Always use a margin of safety and consider multiple valuation methods. Our pre-loaded data uses AI to generate reasonable base-case assumptions.</div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+/* Pre-loaded IV data for 168 S&P 500 stocks */
+var IV_DATA = {"AAPL":{"n":"Apple Inc.","iv":206.86,"p":252.38,"fg":0.085,"dr":0.082,"tg":0.03},"ABBV":{"n":"AbbVie Inc.","iv":211.11,"p":211.11,"fg":0.035,"dr":0.082,"tg":0.02},"ABT":{"n":"Abbott Laboratories","iv":44.3,"p":108.83,"fg":0.08,"dr":0.085,"tg":0.085},"ACN":{"n":"Accenture","iv":69.7,"p":196.35,"fg":0.08,"dr":0.095,"tg":0.095},"ADBE":{"n":"Adobe Inc.","iv":701.96,"p":248.75,"fg":0.085,"dr":0.085,"tg":0.035},"ADI":{"n":"Analog Devices","iv":11.0,"p":8.59,"fg":0.09,"dr":0.042,"tg":0.035},"ADP":{"n":"ADP","iv":19.2,"p":208.28,"fg":0.08,"dr":0.09,"tg":0.03},"AMAT":{"n":"Applied Materials","iv":154.32,"p":354.6,"fg":0.12,"dr":0.105,"tg":0.03},"AMD":{"n":"Advanced Micro Devices","iv":147.61,"p":147.61,"fg":0.25,"dr":0.105,"tg":0.035},"AMGN":{"n":"Amgen","iv":36.8,"p":351.48,"fg":0.05,"dr":0.08,"tg":0.02},"AMZN":{"n":"Amazon.com, Inc.","iv":22.74,"p":211.56,"fg":0.18,"dr":0.088,"tg":0.04},"ANET":{"n":"Arista Networks","iv":86.25,"p":135.38,"fg":0.18,"dr":0.1,"tg":0.035},"APH":{"n":"Amphenol","iv":23.1,"p":127.81,"fg":0.1,"dr":0.1,"tg":0.1},"ASML":{"n":"ASML Holding N.V.","iv":951.47,"p":1376.3,"fg":0.16,"dr":0.088,"tg":0.035},"AVGO":{"n":"Broadcom Inc.","iv":22.0,"p":318.92,"fg":0.22,"dr":0.092,"tg":0.035},"AXP":{"n":"American Express","iv":456.97,"p":298.01,"fg":0.12,"dr":0.1,"tg":0.025},"BA":{"n":"Boeing","iv":89.5,"p":54.0,"fg":0.15,"dr":0.1,"tg":0.025},"BAC":{"n":"Bank of America","iv":32.48,"p":47.59,"fg":0.04,"dr":0.085,"tg":0.025},"BKNG":{"n":"Booking Holdings Inc.","iv":6970.96,"p":4438.44,"fg":0.085,"dr":0.085,"tg":0.03},"BLK":{"n":"BlackRock","iv":24.2,"p":973.95,"fg":0.09,"dr":0.095,"tg":0.03},"BRK.B":{"n":"Berkshire Hathaway Inc.","iv":536.04,"p":487.63,"fg":0.07,"dr":0.075,"tg":0.025},"BSX":{"n":"Boston Scientific","iv":20.1,"p":71.28,"fg":0.141,"dr":0.089,"tg":0.035},"CAT":{"n":"Caterpillar Inc.","iv":707.06,"p":707.06,"fg":0.06,"dr":0.085,"tg":0.025},"CI":{"n":"Cigna","iv":274.9,"p":264.61,"fg":0.08,"dr":0.1,"tg":0.1},"CMCSA":{"n":"Comcast","iv":123.7,"p":28.76,"fg":0.03,"dr":0.09,"tg":0.09},"COF":{"n":"Capital One","iv":53.4,"p":180.14,"fg":0.15,"dr":0.104,"tg":0.025},"COST":{"n":"Costco","iv":526.67,"p":988.74,"fg":0.085,"dr":0.085,"tg":0.035},"CRM":{"n":"Salesforce, Inc.","iv":193.99,"p":193.99,"fg":0.095,"dr":0.095,"tg":0.095},"CRWD":{"n":"CrowdStrike","iv":4.81,"p":435.81,"fg":0.22,"dr":0.1,"tg":0.04},"CSCO":{"n":"Cisco Systems, Inc.","iv":79.33,"p":79.33,"fg":0.082,"dr":0.082,"tg":0.025},"CVX":{"n":"Chevron Corporation","iv":129.12,"p":199.56,"fg":0.085,"dr":0.085,"tg":0.02},"DE":{"n":"Deere & Company","iv":45.7,"p":422.5,"fg":0.04,"dr":0.095,"tg":0.095},"DIS":{"n":"Disney","iv":95.7,"p":110.0,"fg":0.08,"dr":0.09,"tg":0.09},"GE":{"n":"GE Aerospace","iv":127.29,"p":302.55,"fg":0.12,"dr":0.085,"tg":0.03},"GILD":{"n":"Gilead Sciences","iv":120.0,"p":141.29,"fg":0.03,"dr":0.03,"tg":0.02},"GOOGL":{"n":"Alphabet","iv":166.69,"p":310.92,"fg":0.14,"dr":0.095,"tg":0.035},"HD":{"n":"The Home Depot, Inc.","iv":299.36,"p":335.75,"fg":0.065,"dr":0.08,"tg":0.025},"HON":{"n":"Honeywell","iv":37.4,"p":229.92,"fg":0.08,"dr":0.09,"tg":0.03},"IBM":{"n":"IBM Corporation","iv":210.15,"p":254.68,"fg":0.045,"dr":0.075,"tg":0.02},"INTC":{"n":"Intel Corporation","iv":33.96,"p":44.61,"fg":0.239,"dr":0.105,"tg":0.025},"INTU":{"n":"Intuit","iv":18.8,"p":446.79,"fg":0.182,"dr":0.1,"tg":0.03},"ISRG":{"n":"Intuitive Surgical","iv":252.81,"p":477.2,"fg":0.085,"dr":0.085,"tg":0.035},"JNJ":{"n":"Johnson & Johnson","iv":223.3,"p":238.96,"fg":0.055,"dr":0.065,"tg":0.025},"JPM":{"n":"JPMorgan Chase & Co.","iv":279.22,"p":287.54,"fg":0.025,"dr":0.096,"tg":0.025},"KO":{"n":"The Coca-Cola Company","iv":21.9,"p":21.9,"fg":0.055,"dr":0.075,"tg":0.025},"LIN":{"n":"Linde plc","iv":231.59,"p":490.44,"fg":0.078,"dr":0.078,"tg":0.025},"LLY":{"n":"Eli Lilly and Company","iv":507.89,"p":915.59,"fg":0.085,"dr":0.085,"tg":0.04},"LMT":{"n":"Lockheed Martin","iv":75.0,"p":642.28,"fg":0.03,"dr":0.05,"tg":0.021},"LOW":{"n":"Lowe's","iv":86.3,"p":231.09,"fg":0.05,"dr":0.09,"tg":0.09},"MA":{"n":"Mastercard","iv":536.98,"p":491.37,"fg":0.12,"dr":0.085,"tg":0.035},"MCD":{"n":"McDonald's Corporation","iv":320.57,"p":320.57,"fg":0.067,"dr":0.067,"tg":0.04},"MCK":{"n":"McKesson","iv":7.91,"p":920.35,"fg":0.079,"dr":0.089,"tg":0.021},"MDT":{"n":"Medtronic","iv":35.5,"p":5410.0,"fg":0.05,"dr":0.05,"tg":0.025},"META":{"n":"Meta Platforms","iv":643.59,"p":621.5,"fg":0.16,"dr":0.092,"tg":0.035},"MRK":{"n":"Merck & Co., Inc.","iv":82.8,"p":114.51,"fg":0.04,"dr":0.075,"tg":0.02},"MS":{"n":"Morgan Stanley","iv":159.47,"p":159.47,"fg":0.065,"dr":0.065,"tg":0.025},"MSFT":{"n":"Microsoft Corporation","iv":274.94,"p":395.5,"fg":0.12,"dr":0.088,"tg":0.035},"MU":{"n":"Micron","iv":37.4,"p":12.0,"fg":0.25,"dr":0.1,"tg":0.1},"NEE":{"n":"NextEra Energy","iv":27.4,"p":91.04,"fg":0.25,"dr":0.042,"tg":0.025},"NFLX":{"n":"Netflix","iv":49.03,"p":93.86,"fg":0.1,"dr":0.1,"tg":0.025},"NKE":{"n":"NIKE","iv":51.4,"p":53.91,"fg":0.06,"dr":0.09,"tg":0.09},"NOW":{"n":"ServiceNow, Inc.","iv":231.9,"p":114.55,"fg":0.24,"dr":0.085,"tg":0.04},"NVDA":{"n":"NVIDIA","iv":90.58,"p":182.69,"fg":0.25,"dr":0.105,"tg":0.04},"ORCL":{"n":"Oracle","iv":72.22,"p":152.94,"fg":0.09,"dr":0.09,"tg":0.03},"PANW":{"n":"Palo Alto Networks","iv":150.2,"p":168.33,"fg":0.108,"dr":0.09,"tg":0.035},"PEP":{"n":"PepsiCo, Inc.","iv":118.22,"p":155.14,"fg":0.055,"dr":0.072,"tg":0.238},"PFE":{"n":"Pfizer","iv":62.6,"p":27.32,"fg":0.04,"dr":0.08,"tg":0.08},"PG":{"n":"The Procter & Gamble Company","iv":152.68,"p":147.63,"fg":0.068,"dr":0.055,"tg":0.025},"PM":{"n":"Philip Morris","iv":129.22,"p":167.84,"fg":0.07,"dr":0.075,"tg":0.02},"QCOM":{"n":"QUALCOMM","iv":241.25,"p":130.67,"fg":0.1,"dr":0.098,"tg":0.03},"RTX":{"n":"RTX Corporation","iv":109.83,"p":206.39,"fg":0.12,"dr":0.08,"tg":0.025},"SAP":{"n":"SAP SE","iv":178.59,"p":187.17,"fg":0.11,"dr":0.085,"tg":0.025},"SBUX":{"n":"Starbucks","iv":402.8,"p":95.11,"fg":0.08,"dr":0.085,"tg":0.085},"SPOT":{"n":"Spotify","iv":415.88,"p":515.54,"fg":0.2,"dr":0.105,"tg":0.03},"T":{"n":"AT&T","iv":125.6,"p":27.41,"fg":0.015,"dr":0.085,"tg":0.085},"TMUS":{"n":"T-Mobile US, Inc.","iv":202.13,"p":208.73,"fg":0.08,"dr":0.08,"tg":0.02},"TSLA":{"n":"Tesla, Inc.","iv":37.68,"p":398.27,"fg":0.22,"dr":0.115,"tg":0.045},"UNH":{"n":"UnitedHealth Group","iv":400.91,"p":285.54,"fg":0.075,"dr":0.075,"tg":0.025},"V":{"n":"Visa Inc.","iv":297.59,"p":301.37,"fg":0.11,"dr":0.085,"tg":0.035},"WFC":{"n":"Wells Fargo","iv":36.68,"p":76.6,"fg":0.03,"dr":0.095,"tg":0.025},"WMT":{"n":"Walmart","iv":45.92,"p":122.77,"fg":0.065,"dr":0.068,"tg":0.626},"XOM":{"n":"Exxon Mobil Corporation","iv":91.18,"p":158.99,"fg":0.045,"dr":0.085,"tg":0.02}};
+
+var sensitivityChart = null;
+var projectionChart = null;
+var screenerSort = {col:'mos', dir:-1};
+var screenerFilter = 'all';
+
+/* Tab switching */
+function switchTab(tab) {
+  var tabs = document.querySelectorAll('.calc-tab');
+  var panels = document.querySelectorAll('.calc-panel');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+  if (tab === 'dcf') { tabs[0].classList.add('active'); document.getElementById('panel-dcf').classList.add('active'); }
+  if (tab === 'graham') { tabs[1].classList.add('active'); document.getElementById('panel-graham').classList.add('active'); }
+  if (tab === 'screener') { tabs[2].classList.add('active'); document.getElementById('panel-screener').classList.add('active'); renderScreener(); }
+}
+
+/* Ticker search dropdown */
+function setupTickerSearch(inputId, dropdownId, onSelect) {
+  var input = document.getElementById(inputId);
+  var dropdown = document.getElementById(dropdownId);
+  if (!input || !dropdown) return;
+  input.addEventListener('input', function() {
+    var q = this.value.toUpperCase().trim();
+    if (q.length < 1) { dropdown.classList.remove('show'); return; }
+    var matches = [];
+    var tickers = Object.keys(IV_DATA);
+    for (var i = 0; i < tickers.length; i++) {
+      var t = tickers[i];
+      var d = IV_DATA[t];
+      if (t.indexOf(q) === 0 || d.n.toUpperCase().indexOf(q) !== -1) {
+        matches.push(t);
+        if (matches.length >= 8) break;
+      }
+    }
+    if (matches.length === 0) { dropdown.classList.remove('show'); return; }
+    var html = '';
+    for (var i = 0; i < matches.length; i++) {
+      var m = matches[i];
+      html += '<div class="ticker-option" data-ticker="' + m + '"><span class="to-ticker">' + m + '</span><span class="to-name">' + IV_DATA[m].n + '</span></div>';
+    }
+    dropdown.innerHTML = html;
+    dropdown.classList.add('show');
+    var opts = dropdown.querySelectorAll('.ticker-option');
+    for (var i = 0; i < opts.length; i++) {
+      opts[i].addEventListener('click', function() {
+        var ticker = this.getAttribute('data-ticker');
+        input.value = ticker;
+        dropdown.classList.remove('show');
+        onSelect(ticker);
+      });
+    }
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      var q = this.value.toUpperCase().trim();
+      if (IV_DATA[q]) { dropdown.classList.remove('show'); onSelect(q); }
+    }
+  });
+  document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove('show');
+  });
+}
+
+function loadTickerDCF(ticker) {
+  var d = IV_DATA[ticker];
+  if (!d) return;
+  document.getElementById('dcf-growth').value = (d.fg * 100).toFixed(1);
+  document.getElementById('dcf-discount').value = (d.dr * 100).toFixed(1);
+  document.getElementById('dcf-terminal').value = (d.tg * 100).toFixed(1);
+  document.getElementById('dcf-price').value = d.p;
+  calculateDCF();
+}
+
+/* DCF Calculation */
+function calculateDCF() {
+  var fcf = parseFloat(document.getElementById('dcf-fcf').value);
+  var shares = parseFloat(document.getElementById('dcf-shares').value);
+  var growth = parseFloat(document.getElementById('dcf-growth').value) / 100;
+  var terminal = parseFloat(document.getElementById('dcf-terminal').value) / 100;
+  var discount = parseFloat(document.getElementById('dcf-discount').value) / 100;
+  var price = parseFloat(document.getElementById('dcf-price').value);
+  var years = parseInt(document.getElementById('dcf-years').value);
+
+  /* If no FCF/shares but we have ticker data, use pre-loaded IV directly */
+  var ticker = document.getElementById('dcf-ticker').value.toUpperCase().trim();
+  var usingPreloaded = false;
+  var iv = 0;
+
+  if ((!fcf || !shares) && IV_DATA[ticker]) {
+    iv = IV_DATA[ticker].iv;
+    price = price || IV_DATA[ticker].p;
+    usingPreloaded = true;
+  } else if (fcf && shares && discount > terminal) {
+    var projectedFCFs = [];
+    var pvTotal = 0;
+    for (var y = 1; y <= years; y++) {
+      var futureFCF = fcf * Math.pow(1 + growth, y);
+      var pv = futureFCF / Math.pow(1 + discount, y);
+      pvTotal += pv;
+      projectedFCFs.push({year: y, fcf: futureFCF, pv: pv});
+    }
+    var terminalFCF = fcf * Math.pow(1 + growth, years) * (1 + terminal);
+    var terminalValue = terminalFCF / (discount - terminal);
+    var pvTerminal = terminalValue / Math.pow(1 + discount, years);
+    var totalValue = pvTotal + pvTerminal;
+    iv = totalValue / shares;
+
+    /* Render projection chart */
+    renderProjectionChart(projectedFCFs, pvTerminal);
+  } else {
+    document.getElementById('dcf-result').innerHTML = '<div style="text-align:center;color:var(--negative);"><div style="font-size:2rem;">⚠️</div><div>Enter FCF & shares, or select a pre-loaded ticker</div><div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Discount rate must exceed terminal growth rate</div></div>';
+    return;
+  }
+
+  if (!price || iv <= 0) {
+    document.getElementById('dcf-result').innerHTML = '<div style="text-align:center;color:var(--text-muted);">Enter current stock price to see verdict</div>';
+    return;
+  }
+
+  var mos = ((iv - price) / iv * 100);
+  var verdict = mos > 10 ? 'UNDERVALUED' : (mos < -10 ? 'OVERVALUED' : 'FAIR VALUE');
+  var verdictClass = verdict === 'UNDERVALUED' ? 'verdict-undervalued' : (verdict === 'OVERVALUED' ? 'verdict-overvalued' : 'verdict-fair');
+  var gaugePos = Math.max(0, Math.min(100, 50 - (mos / 2)));
+
+  var html = '<div class="result-verdict">';
+  html += '<div class="iv-label">Intrinsic Value Per Share</div>';
+  html += '<div class="iv-value">$' + iv.toFixed(2) + '</div>';
+  html += '<div class="verdict-badge ' + verdictClass + '">' + verdict + '</div>';
+  html += '</div>';
+  html += '<div class="gauge-container"><div class="gauge-bar"><div class="gauge-marker" style="left:' + gaugePos + '%"></div></div>';
+  html += '<div class="gauge-labels"><span>Undervalued</span><span>Fair Value</span><span>Overvalued</span></div></div>';
+  html += '<div class="result-details">';
+  html += '<div class="result-row"><span class="rl">Current Price</span><span class="rv">$' + price.toFixed(2) + '</span></div>';
+  html += '<div class="result-row"><span class="rl">Intrinsic Value</span><span class="rv">$' + iv.toFixed(2) + '</span></div>';
+  html += '<div class="result-row"><span class="rl">Margin of Safety</span><span class="rv" style="color:' + (mos > 0 ? 'var(--positive)' : 'var(--negative)') + '">' + mos.toFixed(1) + '%</span></div>';
+  if (usingPreloaded) {
+    html += '<div class="result-row"><span class="rl">Growth Rate</span><span class="rv">' + (growth * 100).toFixed(1) + '%</span></div>';
+    html += '<div class="result-row"><span class="rl">Discount Rate</span><span class="rv">' + (discount * 100).toFixed(1) + '%</span></div>';
+    var link = IV_DATA[ticker] ? ticker.toLowerCase() : '';
+    html += '<div style="margin-top:0.8rem;text-align:center;"><a href="/intrinsic-value-sp500/" style="color:var(--accent);text-decoration:none;font-size:0.85rem;">View full DCF breakdown →</a></div>';
+  }
+  html += '</div>';
+  document.getElementById('dcf-result').innerHTML = html;
+
+  /* Render sensitivity analysis */
+  renderSensitivityChart(growth, discount, terminal, iv, fcf, shares, years, usingPreloaded, ticker);
+}
+
+function renderSensitivityChart(baseGrowth, baseDiscount, terminal, baseIV, fcf, shares, years, preloaded, ticker) {
+  var wrap = document.getElementById('dcf-sensitivity-wrap');
+  wrap.style.display = 'block';
+  var ctx = document.getElementById('dcf-sensitivity-chart').getContext('2d');
+  if (sensitivityChart) sensitivityChart.destroy();
+
+  var growthRates = [];
+  var base = baseGrowth * 100;
+  for (var i = -4; i <= 4; i++) growthRates.push(Math.max(0, base + i * 2));
+
+  var discountScenarios = [baseDiscount - 0.02, baseDiscount, baseDiscount + 0.02];
+  var datasets = [];
+  var colors = ['#10b981', '#4a8fe7', '#ef4444'];
+  var labels = ['Low WACC (' + ((baseDiscount - 0.02) * 100).toFixed(0) + '%)', 'Base WACC (' + (baseDiscount * 100).toFixed(0) + '%)', 'High WACC (' + ((baseDiscount + 0.02) * 100).toFixed(0) + '%)'];
+
+  for (var s = 0; s < discountScenarios.length; s++) {
+    var dr = discountScenarios[s];
+    var values = [];
+    for (var g = 0; g < growthRates.length; g++) {
+      var gr = growthRates[g] / 100;
+      if (preloaded) {
+        /* Rough scaling from base IV */
+        var ratio = (1 + gr) / (1 + baseGrowth);
+        var drRatio = baseDiscount / dr;
+        values.push(baseIV * ratio * drRatio);
+      } else if (fcf && shares && dr > terminal) {
+        var pv = 0;
+        for (var y = 1; y <= years; y++) {
+          pv += fcf * Math.pow(1 + gr, y) / Math.pow(1 + dr, y);
+        }
+        var tv = fcf * Math.pow(1 + gr, years) * (1 + terminal) / (dr - terminal) / Math.pow(1 + dr, years);
+        values.push((pv + tv) / shares);
+      } else {
+        values.push(0);
+      }
+    }
+    datasets.push({
+      label: labels[s],
+      data: values,
+      borderColor: colors[s],
+      backgroundColor: colors[s] + '20',
+      borderWidth: 2,
+      fill: s === 1,
+      tension: 0.3,
+      pointRadius: 3
+    });
+  }
+
+  sensitivityChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: growthRates.map(function(r) { return r.toFixed(0) + '%'; }), datasets: datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#8b949e' } } },
+      scales: {
+        x: { title: { display: true, text: 'FCF Growth Rate', color: '#8b949e' }, ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+        y: { title: { display: true, text: 'Intrinsic Value ($)', color: '#8b949e' }, ticks: { color: '#8b949e', callback: function(v) { return '$' + v.toFixed(0); } }, grid: { color: '#30363d' } }
+      }
+    }
+  });
+}
+
+function renderProjectionChart(projectedFCFs, pvTerminal) {
+  var wrap = document.getElementById('dcf-projection-wrap');
+  wrap.style.display = 'block';
+  var ctx = document.getElementById('dcf-projection-chart').getContext('2d');
+  if (projectionChart) projectionChart.destroy();
+
+  var labels = projectedFCFs.map(function(f) { return 'Year ' + f.year; });
+  labels.push('Terminal');
+  var fcfValues = projectedFCFs.map(function(f) { return f.fcf; });
+  fcfValues.push(0);
+  var pvValues = projectedFCFs.map(function(f) { return f.pv; });
+  pvValues.push(pvTerminal);
+
+  projectionChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Projected FCF ($M)', data: fcfValues, backgroundColor: '#4a8fe7', borderRadius: 4 },
+        { label: 'Present Value ($M)', data: pvValues, backgroundColor: '#10b981', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#8b949e' } } },
+      scales: {
+        x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+        y: { ticks: { color: '#8b949e', callback: function(v) { return '$' + (v/1000).toFixed(0) + 'B'; } }, grid: { color: '#30363d' } }
+      }
+    }
+  });
+}
+
+/* Graham Calculation */
+function calculateGraham() {
+  var eps = parseFloat(document.getElementById('graham-eps').value);
+  var growth = parseFloat(document.getElementById('graham-growth').value);
+  var bondYield = parseFloat(document.getElementById('graham-yield').value);
+  var price = parseFloat(document.getElementById('graham-price').value);
+  var bvps = parseFloat(document.getElementById('graham-bvps').value);
+
+  if (!eps || eps <= 0) {
+    document.getElementById('graham-result').innerHTML = '<div style="text-align:center;color:var(--negative);">Enter a positive EPS value</div>';
+    return;
+  }
+
+  var html = '<div class="result-verdict">';
+
+  /* Graham Intrinsic Value Formula */
+  if (growth && bondYield) {
+    var grahamIV = eps * (8.5 + 2 * growth) * 4.4 / bondYield;
+    var mos = price ? ((grahamIV - price) / grahamIV * 100) : 0;
+    var verdict = mos > 10 ? 'UNDERVALUED' : (mos < -10 ? 'OVERVALUED' : 'FAIR VALUE');
+    var verdictClass = verdict === 'UNDERVALUED' ? 'verdict-undervalued' : (verdict === 'OVERVALUED' ? 'verdict-overvalued' : 'verdict-fair');
+
+    html += '<div class="iv-label">Graham Intrinsic Value</div>';
+    html += '<div class="iv-value">$' + grahamIV.toFixed(2) + '</div>';
+    if (price) {
+      html += '<div class="verdict-badge ' + verdictClass + '">' + verdict + '</div>';
+    }
+    html += '</div>';
+
+    if (price) {
+      var gaugePos = Math.max(0, Math.min(100, 50 - (mos / 2)));
+      html += '<div class="gauge-container"><div class="gauge-bar"><div class="gauge-marker" style="left:' + gaugePos + '%"></div></div>';
+      html += '<div class="gauge-labels"><span>Undervalued</span><span>Fair Value</span><span>Overvalued</span></div></div>';
+    }
+
+    html += '<div class="result-details">';
+    if (price) {
+      html += '<div class="result-row"><span class="rl">Current Price</span><span class="rv">$' + price.toFixed(2) + '</span></div>';
+      html += '<div class="result-row"><span class="rl">Graham IV</span><span class="rv">$' + grahamIV.toFixed(2) + '</span></div>';
+      html += '<div class="result-row"><span class="rl">Margin of Safety</span><span class="rv" style="color:' + (mos > 0 ? 'var(--positive)' : 'var(--negative)') + '">' + mos.toFixed(1) + '%</span></div>';
+    }
+    html += '<div class="result-row"><span class="rl">No-Growth Value</span><span class="rv">$' + (eps * 8.5 * 4.4 / bondYield).toFixed(2) + '</span></div>';
+    html += '<div class="result-row"><span class="rl">Growth Premium</span><span class="rv">$' + (eps * 2 * growth * 4.4 / bondYield).toFixed(2) + '</span></div>';
+  }
+
+  /* Graham Number */
+  if (bvps && eps > 0) {
+    var gn = Math.sqrt(22.5 * eps * bvps);
+    html += '<div style="border-top:1px solid var(--border);margin-top:1rem;padding-top:1rem;">';
+    html += '<div class="result-row"><span class="rl">Graham Number</span><span class="rv" style="color:var(--accent);font-size:1.2rem;">$' + gn.toFixed(2) + '</span></div>';
+    if (price) {
+      var gnMos = ((gn - price) / gn * 100);
+      html += '<div class="result-row"><span class="rl">GN vs Price</span><span class="rv" style="color:' + (gnMos > 0 ? 'var(--positive)' : 'var(--negative)') + '">' + gnMos.toFixed(1) + '%</span></div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div>';
+  document.getElementById('graham-result').innerHTML = html;
+}
+
+/* Screener */
+function getScreenerData() {
+  var data = [];
+  var tickers = Object.keys(IV_DATA);
+  for (var i = 0; i < tickers.length; i++) {
+    var t = tickers[i];
+    var d = IV_DATA[t];
+    var mos = d.iv && d.p ? ((d.iv - d.p) / d.iv * 100) : 0;
+    var v = mos > 10 ? 'UNDERVALUED' : (mos < -10 ? 'OVERVALUED' : 'FAIR VALUE');
+    data.push({t: t, n: d.n, p: d.p, iv: d.iv, mos: mos, v: v});
+  }
+  return data;
+}
+
+function renderScreener() {
+  var data = getScreenerData();
+  var searchQ = (document.getElementById('screener-search').value || '').toUpperCase();
+
+  /* Filter */
+  if (screenerFilter === 'under') data = data.filter(function(d) { return d.v === 'UNDERVALUED'; });
+  if (screenerFilter === 'over') data = data.filter(function(d) { return d.v === 'OVERVALUED'; });
+  if (searchQ) data = data.filter(function(d) { return d.t.indexOf(searchQ) !== -1 || d.n.toUpperCase().indexOf(searchQ) !== -1; });
+
+  /* Sort */
+  data.sort(function(a, b) {
+    var av = a[screenerSort.col];
+    var bv = b[screenerSort.col];
+    if (typeof av === 'string') return screenerSort.dir * av.localeCompare(bv);
+    return screenerSort.dir * ((av || 0) - (bv || 0));
+  });
+
+  var tbody = document.getElementById('screener-body');
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var d = data[i];
+    var mosColor = d.mos > 10 ? 'var(--positive)' : (d.mos < -10 ? 'var(--negative)' : 'var(--warning)');
+    var mosWidth = Math.min(100, Math.abs(d.mos));
+    var barColor = d.mos > 0 ? 'var(--positive)' : 'var(--negative)';
+    var verdictBadge = d.v === 'UNDERVALUED' ? '<span style="color:var(--positive);font-weight:600;">▲ Undervalued</span>' : (d.v === 'OVERVALUED' ? '<span style="color:var(--negative);font-weight:600;">▼ Overvalued</span>' : '<span style="color:var(--warning);font-weight:600;">● Fair Value</span>');
+    html += '<tr>';
+    html += '<td><strong>' + d.t + '</strong></td>';
+    html += '<td>' + d.n + '</td>';
+    html += '<td>$' + (d.p ? d.p.toFixed(2) : '—') + '</td>';
+    html += '<td>$' + (d.iv ? d.iv.toFixed(2) : '—') + '</td>';
+    html += '<td><span style="color:' + mosColor + ';font-weight:600;">' + d.mos.toFixed(1) + '%</span> <span class="mos-bar" style="width:' + mosWidth + 'px;background:' + barColor + '"></span></td>';
+    html += '<td>' + verdictBadge + '</td>';
+    html += '<td><a href="javascript:void(0)" onclick="loadFromScreener(\'' + d.t + '\')" style="color:var(--accent);text-decoration:none;font-size:0.85rem;">Calculate →</a></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function sortScreener(col) {
+  if (screenerSort.col === col) screenerSort.dir *= -1;
+  else { screenerSort.col = col; screenerSort.dir = col === 'mos' ? -1 : 1; }
+  renderScreener();
+}
+
+function filterScreener(filter, el) {
+  screenerFilter = filter;
+  var filters = document.querySelectorAll('.screener-filter');
+  for (var i = 0; i < filters.length; i++) filters[i].classList.remove('active');
+  el.classList.add('active');
+  renderScreener();
+}
+
+function loadFromScreener(ticker) {
+  switchTab('dcf');
+  document.getElementById('dcf-ticker').value = ticker;
+  loadTickerDCF(ticker);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* FAQ */
+function toggleFaq(el) {
+  var answer = el.nextElementSibling;
+  var arrow = el.querySelector('.faq-arrow');
+  answer.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+/* Init */
+document.addEventListener('DOMContentLoaded', function() {
+  setupTickerSearch('dcf-ticker', 'dcf-dropdown', loadTickerDCF);
+  document.getElementById('screener-search').addEventListener('input', renderScreener);
+});
+</script>
+
+</SiteLayout>

@@ -1,115 +1,115 @@
 {
-  "slug": "amd-economic-prospect-opus",
+  "slug": "advanced-micro-devices-economic-prospect-opus",
   "ticker": "AMD",
   "companyName": "Advanced Micro Devices Inc.",
-  "title": "Advanced Micro Devices Inc. (AMD) Economic Prospect Score - Opus 4.6 Analysis",
+  "title": "AMD (AMD) Economic Prospect Score — Opus 4.6 Analysis",
   "description": "Opus 4.6 forward-looking economic prospect analysis of Advanced Micro Devices Inc. (AMD).",
   "published": "2026-03-20",
-  "overallScore": 80,
+  "overallScore": 71,
   "verdict": "Strong Prospect",
-  "verdictDetail": "AMD is positioned strongly as a key challenger to Nvidia in the AI accelerator market while maintaining steady momentum in x86 CPUs. With Samsung's recent $73B AI chip push partnership, AMD's hardware and ecosystem adoption could accelerate significantly. Revenue growth remains robust, but software ecosystem limitations (ROCm vs. CUDA) constrain some near-term upside.",
+  "verdictDetail": "AMD has executed one of the greatest turnarounds in semiconductor history under Lisa Su, going from near-bankruptcy to a credible #2 in data center GPUs and a market share gainer in server CPUs. The MI300 and MI400 AI accelerator families are the only viable alternative to NVIDIA's CUDA ecosystem, and hyperscalers are actively diversifying GPU supply chains to reduce NVIDIA dependency. However, AMD's AI GPU market share remains under 15% and CUDA's software moat is the biggest barrier. The Xilinx acquisition adds FPGA capabilities but integration has been slow. AMD is well-positioned but permanently playing catch-up to NVIDIA in AI.",
   "ivSlug": null,
   "pillars": {
     "competitiveMomentum": {
-      "score": 28,
+      "score": 26,
       "maxScore": 35,
       "title": "Competitive Momentum",
-      "summary": "AMD continues to capture server and PC market share, while emerging as the primary alternative in the AI accelerator space.",
+      "summary": "AMD is growing rapidly in data center (CPU + GPU) while maintaining steady share gains in client PCs. The AI GPU ramp is the key swing factor.",
       "factors": [
         {
           "name": "Revenue Growth vs. Peers",
-          "score": 10,
+          "score": 8,
           "maxScore": 10,
-          "rationale": "Impressive 34.3% recent revenue growth heavily outpaces legacy competitors like Intel, driven by strong data center and AI segments. However, Nvidia still leads in raw AI revenue growth."
+          "rationale": "Data center revenue is growing 50%+ driven by EPYC server CPU share gains (now ~25% of server market) and MI300 AI GPU revenue ramping past $5B annually. Total revenue growth of 15-20% is strong, though dwarfed by NVIDIA's 100%+ AI-driven growth. AMD is the fastest-growing major semiconductor company after NVIDIA."
         },
         {
           "name": "Market Share Trajectory",
-          "score": 7,
+          "score": 8,
           "maxScore": 10,
-          "rationale": "Steady gains in EPYC server CPU share against Intel continue to provide a strong base. The MI300 and newer AI accelerator lines are capturing necessary secondary market share behind Nvidia."
+          "rationale": "EPYC server CPUs have gone from <5% to ~25% market share in five years — the most successful competitive assault on Intel in data center history. In AI GPUs, AMD has captured 10-15% share from a standing start, with hyperscalers (Microsoft, Meta) publicly committing to multi-vendor GPU strategies. Client PC market share is stable at ~20% with Ryzen AI PCs gaining traction."
         },
         {
           "name": "Pricing Power",
-          "score": 7,
+          "score": 5,
           "maxScore": 8,
-          "rationale": "AMD commands strong pricing in high-end EPYC processors. In AI, they must price aggressively against Nvidia to win volume, slightly limiting ultimate pricing power compared to the market leader."
+          "rationale": "AMD's pricing power is improving but constrained by its challenger position. EPYC CPUs are priced at a modest discount to Intel Xeon to drive adoption. MI300 GPUs are priced 20-30% below equivalent NVIDIA H100/H200 systems to overcome the CUDA switching cost. AMD can't price at parity until its software ecosystem matches NVIDIA's. Pricing power is earned through performance leadership, and AMD has it in CPUs but not yet in GPUs."
         },
         {
           "name": "Product Velocity",
-          "score": 4,
+          "score": 5,
           "maxScore": 7,
-          "rationale": "Execution on hardware roadmaps has been stellar, consistently delivering architecture improvements on time. Software velocity (ROCm) is improving but still lags hardware execution."
+          "rationale": "AMD's product execution under Lisa Su has been exceptional — Turin (Zen 5) server CPUs and MI300X/MI400 GPUs delivered on schedule with competitive performance. The cadence of annual GPU architecture updates is matching NVIDIA's. However, AMD's software stack (ROCm) remains significantly behind CUDA in maturity, ecosystem support, and developer adoption. Hardware alone doesn't win in AI — software is the bottleneck."
         }
       ]
     },
     "moatDurability": {
-      "score": 25,
+      "score": 24,
       "maxScore": 35,
       "title": "Moat Durability",
-      "summary": "AMD's moat relies on complex chip design capabilities and strategic partnerships, though it lacks the sheer ecosystem lock-in of competitors.",
+      "summary": "AMD's moat is narrower than NVIDIA's or Intel's but strengthening. The x86 architecture duopoly with Intel provides structural protection, and TSMC manufacturing partnership ensures competitive process technology. The risk is that ARM and custom silicon (Google TPU, Amazon Graviton) erode x86 relevance.",
       "factors": [
         {
           "name": "Switching Costs",
-          "score": 5,
+          "score": 7,
           "maxScore": 10,
-          "rationale": "In x86 CPUs, switching costs are moderate but manageable for hyperscalers. In AI, switching away from Nvidia's CUDA ecosystem to AMD's ROCm requires significant developer effort, limiting AMD's own lock-in."
+          "rationale": "x86 software compatibility creates meaningful switching costs — enterprises with decades of x86 code don't easily move to ARM. In AI, the switching cost dynamic works against AMD: customers invested in CUDA must port code to ROCm to switch from NVIDIA, which is a significant barrier. AMD benefits from x86 lock-in in CPUs but suffers from CUDA lock-in in GPUs."
         },
         {
           "name": "Network Effects",
           "score": 5,
           "maxScore": 10,
-          "rationale": "AMD benefits from a large user base for x86, but the AI developer ecosystem heavily favors CUDA. Partnerships like the recent Samsung $73B AI push are critical attempts to build network effects."
+          "rationale": "The x86 ecosystem has moderate network effects — more x86 software means more x86 hardware demand. AMD benefits from this shared ecosystem with Intel. In AI/GPU, AMD's ROCm ecosystem is growing but lacks CUDA's self-reinforcing developer loop. Every ML framework supports CUDA first, ROCm second (if at all). AMD needs a PyTorch-native experience to build network effects."
         },
         {
           "name": "Regulatory & IP Position",
-          "score": 8,
+          "score": 6,
           "maxScore": 8,
-          "rationale": "AMD holds critical x86 licenses and a vast portfolio of CPU/GPU architecture patents. They face standard semiconductor export restriction risks but are well-insulated otherwise."
+          "rationale": "AMD has a perpetual x86 cross-license with Intel that is essentially irreplaceable — no new company can legally make x86 chips. This duopoly is the ultimate regulatory moat. AMD's IP portfolio in chiplet design (Infinity Fabric) and heterogeneous computing is strong. However, the x86 license also means AMD is joined at the hip with Intel — if x86 declines, AMD declines."
         },
         {
           "name": "Capital Intensity Advantage",
-          "score": 7,
+          "score": 6,
           "maxScore": 7,
-          "rationale": "Operating as a fabless company leverages TSMC's manufacturing scale, keeping AMD's own capital intensity low relative to revenue. They share this advantage with Nvidia but hold an edge over IDMs like Intel."
+          "rationale": "AMD's fabless model means it outsources manufacturing to TSMC, avoiding the $20B+ fab construction costs that Intel bears. This gives AMD a capital efficiency advantage but creates TSMC dependency — AMD competes with Apple, NVIDIA, and Qualcomm for TSMC's best process nodes. In a capacity-constrained environment, TSMC allocation becomes a strategic bottleneck."
         }
       ]
     },
     "sentimentCatalyst": {
-      "score": 27,
+      "score": 21,
       "maxScore": 30,
       "title": "Sentiment & Catalysts",
-      "summary": "Market sentiment remains extremely optimistic, banking on AMD's ability to secure a profitable secondary position in the generational AI buildout.",
+      "summary": "Sentiment is broadly positive as AMD is viewed as the primary beneficiary of GPU supply chain diversification away from NVIDIA. However, expectations are high and any stumble in AI GPU execution would be severely punished.",
       "factors": [
         {
           "name": "Earnings Estimate Revisions",
-          "score": 8,
+          "score": 7,
           "maxScore": 10,
-          "rationale": "With an EPS growth of 165% recently, analysts continue to upwardly revise AMD's data center revenue forecasts. Expectations are high, but execution has largely met them."
+          "rationale": "EPS estimates have been revised up 15-20% over the past year as AI GPU revenue exceeded guidance. The street is modeling 25-30% EPS growth for the next two years, which requires continued MI300/MI400 ramp execution and EPYC share gains. Estimates are achievable but leave limited room for upside surprise."
         },
         {
           "name": "News & Narrative Sentiment",
-          "score": 9,
+          "score": 7,
           "maxScore": 10,
-          "rationale": "The narrative is overwhelmingly positive, reframing AMD from an Intel challenger to the primary AI accelerator alternative. Major partnerships (like Celestica and Samsung) dominate the news cycle."
+          "rationale": "AMD is the market's favorite NVIDIA alternative play. Lisa Su is one of the most respected CEOs in tech. Hyperscaler GPU diversification announcements consistently boost AMD sentiment. The counter-narrative is that AMD will always be NVIDIA's distant #2, capped at 15-20% AI GPU share by CUDA's software moat. Both narratives have merit."
         },
         {
           "name": "Management & Capital Allocation",
-          "score": 10,
+          "score": 7,
           "maxScore": 10,
-          "rationale": "Under Lisa Su, management execution has been world-class. Strategic acquisitions (Xilinx, Pensando, Nod.ai) have been well-integrated to expand AMD's total addressable market."
+          "rationale": "Lisa Su is arguably the best semiconductor CEO of her generation — she inherited a company on life support and built it into a $200B+ enterprise. The Xilinx acquisition for $49B was strategically sound (FPGAs for adaptive computing) though expensive. Capital allocation is clean: moderate buybacks, growing R&D investment, and no dividend (appropriate for a growth company). The ROCm software investment is the right strategic priority."
         }
       ]
     }
   },
   "keyRisks": [
-    "Continued software ecosystem dominance by Nvidia's CUDA limiting broader AI hardware adoption.",
-    "Geopolitical risks involving Taiwan and TSMC, where AMD manufactures its leading-edge chips.",
-    "Intel successfully executing its turnaround and regaining server CPU market share."
+    "NVIDIA's CUDA ecosystem moat proves insurmountable, capping AMD's AI GPU market share at 10-15% regardless of hardware competitiveness — software wins, not silicon",
+    "ARM-based server CPUs (AWS Graviton, Google Axion, Microsoft Cobalt) erode the x86 server market that underpins AMD's EPYC growth story",
+    "TSMC capacity allocation becomes a constraint as Apple, NVIDIA, and AMD all compete for leading-edge wafers — AMD may not get priority allocation during shortages"
   ],
   "keyCatalysts": [
-    "Accelerated adoption of the MI-series AI accelerators by hyperscalers seeking alternatives to Nvidia.",
-    "The $73B AI chip partnership with Samsung materializing into significant revenue streams.",
-    "Rapid improvements and broader industry standardization around the ROCm open software stack."
+    "Hyperscaler GPU diversification mandates could push AMD's AI GPU market share to 20-25% by 2028, representing $15B+ in annual data center GPU revenue",
+    "ROCm software ecosystem reaching parity with CUDA for major ML frameworks (PyTorch, JAX) would remove the primary barrier to AMD GPU adoption and unlock pricing power",
+    "AI PC cycle driving Ryzen AI adoption in enterprise laptops could capture share from Intel's struggling mobile lineup and add $2-3B in incremental annual client revenue"
   ],
-  "methodology": "Opus 4.6 Analysis \u2014 Economic Prospect Score based on three pillars: Competitive Momentum (0-35), Moat Durability (0-35), and Sentiment & Catalysts (0-30)."
+  "methodology": "Opus 4.6 Analysis — Economic Prospect Score based on three pillars: Competitive Momentum (0-35), Moat Durability (0-35), and Sentiment & Catalysts (0-30)."
 }
