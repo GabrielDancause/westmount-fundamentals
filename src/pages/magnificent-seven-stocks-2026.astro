@@ -3,7 +3,7 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 import registry from "../data/pages-registry.json";
 
 const page = (registry as any)["magnificent-seven-stocks-2026"];
-export const meta = { title: "Magnificent 7 Stocks 2026: Performance, Valuations, and W...", description: "Is the stock market dangerously top-heavy? We analyze the Magnificent 7", category: "guide", published: "2026-03-15" };
+export const meta = { title: "Magnificent 7 Stocks 2026: Performance, Valuations, and Weight in S&P 500", description: "Is the stock market dangerously top-heavy? We analyze the Magnificent 7 stocks — valuations, YTD returns, market cap treemap, and interactive investment calculator.", category: "study", published: "2026-03-15" };
 
 const schema = {
   "@context": "https://schema.org",
@@ -22,7 +22,7 @@ const schema = {
       "name": "What is the Mag 7 performance in 2026?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The performance of the Mag 7 stocks varies by company, but collectively they continue to drive a significant portion of the broader market's returns. You can view their individual year-to-date (YTD) returns and revenue growth in our live data table above."
+        "text": "As of March 2026, 6 of the 7 Magnificent Seven stocks are negative YTD. META is the sole positive performer at +0.31%, while MSFT is the worst at -14.64%. Despite the selloff, the group still controls $20.56 trillion in combined market cap."
       }
     },
     {
@@ -46,12 +46,11 @@ const schema = {
       "name": "How do Mag 7 valuations compare to the rest of the market?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Historically, the Magnificent 7 stocks trade at a premium valuation (higher P/E ratios) compared to the rest of the S&P 500 due to their strong revenue growth, robust profit margins, and dominant market positions in high-growth areas like artificial intelligence and cloud computing."
+        "text": "The Magnificent 7 stocks trade at widely varying valuations. Excluding Tesla's extreme 377x P/E, the group averages about 30x earnings with revenue growth ranging from 13% to 73%. Tesla is the clear outlier, trading at over 10x the group's median P/E ratio."
       }
     }
   ]
 };
-
 ---
 
 <SiteLayout
@@ -61,502 +60,506 @@ const schema = {
   canonical={`https://westmountfundamentals.com/${page.slug}/`} schema={schema}
 >
   <style>
-:root {
-            --green: #10b981;
-            --red: #ef4444;
+    :root {
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --orange: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+    header { margin-bottom: 3rem; text-align: center; }
+    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2; }
+    .subtitle { font-size: 1.125rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; }
+    h2 { font-size: 1.75rem; margin-bottom: 1.5rem; color: var(--text-main); }
+    h3 { font-size: 1.25rem; margin-bottom: 1rem; color: var(--text-main); }
 
-}
+    /* Stats Grid - 4 cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+    .stat-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    /* Treemap */
+    .treemap-section { margin-bottom: 3rem; }
+    .treemap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      min-height: 280px;
+    }
+    .treemap-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0.75rem;
+      border-radius: 8px;
+      min-height: 100px;
+      position: relative;
+      transition: transform 0.15s;
+    }
+    .treemap-cell:hover { transform: scale(1.02); z-index: 2; }
+    .treemap-ticker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .treemap-mcap {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.85);
+      margin-top: 0.25rem;
+    }
+    .treemap-ytd {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.35rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.3);
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 3rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+    th, td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border-color); }
+    th { background: rgba(21, 32, 64, 0.3); font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+    tr:last-child td { border-bottom: none; }
+    .text-right { text-align: right; }
+    .text-green { color: var(--green); }
+    .text-red { color: var(--red); }
+    .font-bold { font-weight: 700; }
 
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
+    /* Chart sections */
+    .chart-section { margin-bottom: 3rem; }
+    .chart-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .chart-box canvas { width: 100% !important; }
 
-        /* Sticky Nav */
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background-color: var(--nav-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
-        }
+    /* Calculator */
+    .calc-section { margin-bottom: 3rem; }
+    .calc-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 2rem;
+    }
+    .calc-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .calc-controls label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .calc-controls select {
+      background: var(--bg-color, #060a12);
+      color: var(--text-main, #c8d0de);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .calc-result {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .calc-card {
+      flex: 1;
+      min-width: 200px;
+      background: rgba(21, 32, 64, 0.3);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .calc-card-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+    .calc-card-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    .calc-card-sub {
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+    }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Key Insights */
+    .insights-section { margin-bottom: 3rem; }
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .insight-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .insight-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .insight-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .insight-text strong { color: var(--text-main); }
 
-        .nav-brand {
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--text-main);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    /* FAQ */
+    .faq-section { margin-bottom: 3rem; }
+    .faq-item {
+      margin-bottom: 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+    }
+    .faq-question { font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--accent-color); }
+    .faq-answer { color: var(--text-muted); font-size: 0.95rem; }
 
-        .nav-brand span {
-            color: var(--accent-color);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        /* Layout */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-        }
-
-        header {
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-
-        .subtitle {
-            font-size: 1.125rem;
-            color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .card-label {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-            margin-bottom: 3rem;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        th, td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: rgba(21, 32, 64, 0.3);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .text-green { color: var(--green); }
-        .text-red { color: var(--red); }
-        .font-bold { font-weight: 700; }
-
-        /* Chart */
-        .chart-section {
-            margin-bottom: 4rem;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 400px;
-            width: 100%;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        canvas {
-            flex-grow: 1;
-            width: 100%;
-        }
-
-        h2 {
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-main);
-        }
-
-        /* FAQ */
-        .faq-section {
-            margin-bottom: 4rem;
-        }
-
-        .faq-item {
-            margin-bottom: 1.5rem;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-        }
-
-        .faq-question {
-            font-weight: 600;
-            font-size: 1.125rem;
-            margin-bottom: 0.75rem;
-            color: var(--accent-color);
-        }
-
-        .faq-answer {
-            color: var(--text-muted);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .nav-links { display: none; }
-        }
+    @media (max-width: 768px) {
+      h1 { font-size: 1.75rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-value { font-size: 1.35rem; }
+      .treemap { min-height: 200px; }
+      .treemap-cell { min-height: 70px; padding: 0.6rem 0.4rem; }
+      .treemap-ticker { font-size: 1rem; }
+      .calc-result { flex-direction: column; }
+    }
   </style>
 
-<div class="container">
-  <div style="max-width:1280px;margin:0 auto;padding:16px 24px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
-    <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/guides/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Guides</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Magnificent 7 Stocks 2026: Performance, Valuati...</span></nav>
-    <span>3 min read</span>
+  <div class="container">
+    <div style="max-width:1280px;margin:0 auto;padding:0 0 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim,#94a3b8)">
+      <nav aria-label="Breadcrumb"><a href="/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Home</a> <span style="margin:0 6px;opacity:0.5">›</span> <a href="/studies/" style="color:var(--text-dim,#94a3b8);text-decoration:none">Studies</a> <span style="margin:0 6px;opacity:0.5">›</span> <span style="color:var(--text-primary,#c8d0de)">Magnificent 7 Stocks 2026</span></nav>
+      <span>5 min read</span>
+    </div>
+
+    <header>
+      <h1>{page.h1}</h1>
+      <p class="subtitle">Interactive analysis of the seven tech giants that control a third of the S&P 500 — valuations, market cap breakdown, YTD performance, and what your $10K investment would be worth today.</p>
+    </header>
+
+    <!-- 1. Stats Grid (4 cards) -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Combined Market Cap</div>
+        <div class="stat-value font-mono">$20.56T</div>
+        <div class="stat-sub">7 companies, more than most countries' GDP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">S&P 500 Weight</div>
+        <div class="stat-value font-mono">32.24%</div>
+        <div class="stat-sub">Of the entire 500-stock index</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Best Performer</div>
+        <div class="stat-value font-mono" style="color:var(--green)">META</div>
+        <div class="stat-sub" style="color:var(--green)">+0.31% YTD — only positive stock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Worst Performer</div>
+        <div class="stat-value font-mono" style="color:var(--red)">MSFT</div>
+        <div class="stat-sub" style="color:var(--red)">-14.64% YTD</div>
+      </div>
+    </section>
+
+    <!-- 2. Market Cap Treemap -->
+    <section class="treemap-section">
+      <h2>Market Cap Treemap</h2>
+      <div class="treemap" id="treemap"></div>
+    </section>
+
+    <!-- 3. Data Table (SEO fallback) -->
+    <section>
+      <h2>Mag 7 Performance &amp; Valuations</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Company</th>
+              <th class="text-right">Price</th>
+              <th class="text-right">Market Cap</th>
+              <th class="text-right">P/E Ratio</th>
+              <th class="text-right">Rev Growth</th>
+              <th class="text-right">YTD Return</th>
+              <th class="text-right">Weight (S&amp;P 500)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono font-bold">AAPL</td>
+              <td>Apple Inc.</td>
+              <td class="text-right">$261.05</td>
+              <td class="text-right">$3.84T</td>
+              <td class="text-right">33.04</td>
+              <td class="text-right text-green">15.70%</td>
+              <td class="text-right text-red">-3.68%</td>
+              <td class="text-right">6.63%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">MSFT</td>
+              <td>Microsoft Corp.</td>
+              <td class="text-right">$403.68</td>
+              <td class="text-right">$3.00T</td>
+              <td class="text-right">25.25</td>
+              <td class="text-right text-green">16.70%</td>
+              <td class="text-right text-red">-14.64%</td>
+              <td class="text-right">4.96%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">GOOGL</td>
+              <td>Alphabet Inc.</td>
+              <td class="text-right">$309.04</td>
+              <td class="text-right">$3.74T</td>
+              <td class="text-right">28.59</td>
+              <td class="text-right text-green">18.00%</td>
+              <td class="text-right text-red">-1.94%</td>
+              <td class="text-right">5.54%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">AMZN</td>
+              <td>Amazon.com Inc.</td>
+              <td class="text-right">$212.89</td>
+              <td class="text-right">$2.29T</td>
+              <td class="text-right">29.65</td>
+              <td class="text-right text-green">13.60%</td>
+              <td class="text-right text-red">-6.01%</td>
+              <td class="text-right">3.47%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">NVDA</td>
+              <td>NVIDIA Corp.</td>
+              <td class="text-right">$185.88</td>
+              <td class="text-right">$4.52T</td>
+              <td class="text-right">37.93</td>
+              <td class="text-right text-green">73.20%</td>
+              <td class="text-right text-red">-1.57%</td>
+              <td class="text-right">7.32%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">META</td>
+              <td>Meta Platforms Inc.</td>
+              <td class="text-right">$652.42</td>
+              <td class="text-right">$1.65T</td>
+              <td class="text-right">27.79</td>
+              <td class="text-right text-green">23.80%</td>
+              <td class="text-right text-green">0.31%</td>
+              <td class="text-right">2.40%</td>
+            </tr>
+            <tr>
+              <td class="font-mono font-bold">TSLA</td>
+              <td>Tesla Inc.</td>
+              <td class="text-right">$408.02</td>
+              <td class="text-right">$1.53T</td>
+              <td class="text-right">377.80</td>
+              <td class="text-right text-red">-3.10%</td>
+              <td class="text-right text-red">-6.86%</td>
+              <td class="text-right">1.92%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Valuation Comparison Chart -->
+    <section class="chart-section">
+      <h2>Valuation vs. Growth: Who's Earning Their Premium?</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;font-size:0.9rem">P/E Ratio on the left axis, Revenue Growth % on the right. Tesla's 377× P/E is capped and annotated — it dwarfs the rest of the group.</p>
+      <div class="chart-box">
+        <canvas id="valuationChart" height="320"></canvas>
+      </div>
+    </section>
+
+    <!-- 5. YTD Performance Bar Chart -->
+    <section class="chart-section">
+      <h2>2026 YTD Performance Ranking</h2>
+      <div class="chart-box">
+        <canvas id="ytdChart" height="300"></canvas>
+      </div>
+    </section>
+
+    <!-- 6. Concentration Risk (Chart.js donut) -->
+    <section class="chart-section">
+      <h2>S&amp;P 500 Concentration Risk</h2>
+      <p style="color:var(--text-muted);margin-bottom:1rem;font-size:0.9rem">Just 7 stocks make up nearly a third of the entire S&amp;P 500 index.</p>
+      <div class="chart-box" style="max-width:500px;margin:0 auto;">
+        <canvas id="concentrationChart" height="400"></canvas>
+      </div>
+    </section>
+
+    <!-- 7. $10K Calculator -->
+    <section class="calc-section">
+      <h2>💰 What If You Invested $10,000?</h2>
+      <div class="calc-box">
+        <p style="color:var(--text-muted);margin-bottom:1.25rem;font-size:0.95rem">See what a $10,000 investment at the start of 2026 would be worth today based on actual YTD returns.</p>
+        <div class="calc-controls">
+          <label for="calcSelect">Choose investment:</label>
+          <select id="calcSelect">
+            <option value="equal">Equal-weight all 7 stocks</option>
+            <option value="AAPL">Apple (AAPL)</option>
+            <option value="MSFT">Microsoft (MSFT)</option>
+            <option value="GOOGL">Alphabet (GOOGL)</option>
+            <option value="AMZN">Amazon (AMZN)</option>
+            <option value="NVDA">NVIDIA (NVDA)</option>
+            <option value="META">Meta (META)</option>
+            <option value="TSLA">Tesla (TSLA)</option>
+          </select>
+        </div>
+        <div class="calc-result">
+          <div class="calc-card">
+            <div class="calc-card-label">Your Investment</div>
+            <div class="calc-card-value" style="color:var(--text-main)">$10,000</div>
+            <div class="calc-card-sub" style="color:var(--text-muted)">Jan 1, 2026</div>
+          </div>
+          <div class="calc-card">
+            <div class="calc-card-label">Worth Today</div>
+            <div class="calc-card-value" id="calcValue" style="color:var(--red)">$9,535</div>
+            <div class="calc-card-sub" id="calcReturn" style="color:var(--red)">-4.65% return</div>
+          </div>
+          <div class="calc-card">
+            <div class="calc-card-label">S&amp;P 500 Comparison</div>
+            <div class="calc-card-value" id="calcSP" style="color:var(--red)">$9,570</div>
+            <div class="calc-card-sub" style="color:var(--red)">S&amp;P 500 YTD: ~-4.30%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Key Insights -->
+    <section class="insights-section">
+      <h2>Key Insights</h2>
+      <div class="insights-grid">
+        <div class="insight-card">
+          <div class="insight-icon">📉</div>
+          <div class="insight-text"><strong>6 of 7 Mag 7 stocks are negative YTD</strong> in 2026. Only Meta has eked out a small gain, while the rest of the group is deep in the red.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">👑</div>
+          <div class="insight-text"><strong>NVIDIA is now the world's largest company</strong> by market cap at $4.52T, surpassing Apple and Microsoft on the back of insatiable AI chip demand.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">⚡</div>
+          <div class="insight-text"><strong>Tesla trades at 377× earnings</strong> — more than 12× the group's median P/E of ~29. It's also the only Mag 7 stock with negative revenue growth.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🌍</div>
+          <div class="insight-text"><strong>$20.56 trillion in combined market cap</strong> — these 7 companies are worth more than the GDP of every country except the U.S. and China.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">⚠️</div>
+          <div class="insight-text"><strong>32% of the S&amp;P 500 in just 7 stocks.</strong> Despite the selloff, the Mag 7's concentration has barely budged. Passive investors are more exposed than ever.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. FAQ -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <div class="faq-question">What are the Magnificent 7 stocks 2026?</div>
+        <div class="faq-answer">The Magnificent 7 stocks refer to Apple (AAPL), Microsoft (MSFT), Alphabet (GOOGL), Amazon (AMZN), NVIDIA (NVDA), Meta Platforms (META), and Tesla (TSLA). These technology giants dominate the U.S. stock market in terms of market capitalization and influence.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">What is the Mag 7 performance in 2026?</div>
+        <div class="faq-answer">As of March 2026, 6 of the 7 Magnificent Seven stocks are negative YTD. META is the sole positive performer at +0.31%, while MSFT is the worst at -14.64%. Despite the selloff, the group still controls $20.56 trillion in combined market cap.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">What is the magnificent seven weight in S&amp;P 500?</div>
+        <div class="faq-answer">As of our latest data, the Magnificent Seven stocks account for approximately 32.24% of the entire S&amp;P 500 index. This represents an unprecedented level of market concentration in just a handful of companies.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Is the S&amp;P 500 too concentrated in the Mag 7?</div>
+        <div class="faq-answer">With the top 7 companies making up 32.24% of the index, the S&amp;P 500 is highly concentrated. While this concentration has driven strong market returns during tech rallies, it also exposes passive index investors to significant concentration risk if the technology sector experiences a downturn.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How do Mag 7 valuations compare to the rest of the market?</div>
+        <div class="faq-answer">The Magnificent 7 stocks trade at widely varying valuations. Excluding Tesla's extreme 377x P/E, the group averages about 30x earnings with revenue growth ranging from 13% to 73%. Tesla is the clear outlier, trading at over 10x the group's median P/E ratio.</div>
+      </div>
+    </section>
+
+    <!-- 10. Methodology -->
+    <section style="margin-bottom:3rem">
+      <h2>Methodology</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;">
+        Data is sourced from Yahoo Finance. "Weight in S&amp;P 500" is approximated by analyzing the top holdings of the SPDR S&amp;P 500 ETF Trust (SPY). Total combined market cap and other financial metrics represent live or recently closed market data. YTD returns are calculated from January 2, 2026 closing prices. The S&amp;P 500 YTD benchmark uses the SPY ETF return over the same period.
+      </p>
+    </section>
   </div>
 
-        <section class="summary-cards">
-    <h1>{page.h1}</h1>
-
-            <div class="card">
-                <div class="card-label">Combined Market Cap</div>
-                <div class="card-value font-mono">$20.56T</div>
-            </div>
-            <div class="card">
-                <div class="card-label">Combined Weight in S&P 500</div>
-                <div class="card-value font-mono">32.24%</div>
-            </div>
-            <div class="card">
-                <div class="card-label">Concentration Risk</div>
-                <div class="card-value" style="color: var(--red)">EXTREME</div>
-            </div>
-        </section>
-
-        <section>
-            <h2>Mag 7 Performance & Valuations</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Ticker</th>
-                            <th>Company</th>
-                            <th class="text-right">Price</th>
-                            <th class="text-right">Market Cap</th>
-                            <th class="text-right">P/E Ratio</th>
-                            <th class="text-right">Rev Growth</th>
-                            <th class="text-right">YTD Return</th>
-                            <th class="text-right">Weight (S&P 500)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-      <tr>
-        <td class="font-mono font-bold">AAPL</td>
-        <td>Apple Inc.</td>
-        <td class="text-right">$261.05</td>
-        <td class="text-right">$3.84T</td>
-        <td class="text-right">33.04</td>
-        <td class="text-right text-green">15.70%</td>
-        <td class="text-right text-red">-3.68%</td>
-        <td class="text-right">6.63%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">MSFT</td>
-        <td>Microsoft Corp.</td>
-        <td class="text-right">$403.68</td>
-        <td class="text-right">$3.00T</td>
-        <td class="text-right">25.25</td>
-        <td class="text-right text-green">16.70%</td>
-        <td class="text-right text-red">-14.64%</td>
-        <td class="text-right">4.96%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">GOOGL</td>
-        <td>Alphabet Inc.</td>
-        <td class="text-right">$309.04</td>
-        <td class="text-right">$3.74T</td>
-        <td class="text-right">28.59</td>
-        <td class="text-right text-green">18.00%</td>
-        <td class="text-right text-red">-1.94%</td>
-        <td class="text-right">5.54%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">AMZN</td>
-        <td>Amazon.com Inc.</td>
-        <td class="text-right">$212.89</td>
-        <td class="text-right">$2.29T</td>
-        <td class="text-right">29.65</td>
-        <td class="text-right text-green">13.60%</td>
-        <td class="text-right text-red">-6.01%</td>
-        <td class="text-right">3.47%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">NVDA</td>
-        <td>NVIDIA Corp.</td>
-        <td class="text-right">$185.88</td>
-        <td class="text-right">$4.52T</td>
-        <td class="text-right">37.93</td>
-        <td class="text-right text-green">73.20%</td>
-        <td class="text-right text-red">-1.57%</td>
-        <td class="text-right">7.32%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">META</td>
-        <td>Meta Platforms Inc.</td>
-        <td class="text-right">$652.42</td>
-        <td class="text-right">$1.65T</td>
-        <td class="text-right">27.79</td>
-        <td class="text-right text-green">23.80%</td>
-        <td class="text-right text-green">0.31%</td>
-        <td class="text-right">2.40%</td>
-      </tr>
-
-      <tr>
-        <td class="font-mono font-bold">TSLA</td>
-        <td>Tesla Inc.</td>
-        <td class="text-right">$408.02</td>
-        <td class="text-right">$1.53T</td>
-        <td class="text-right">377.80</td>
-        <td class="text-right text-red">-3.10%</td>
-        <td class="text-right text-red">-6.86%</td>
-        <td class="text-right">1.92%</td>
-      </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="chart-section">
-            <h2>S&P 500 Concentration Risk</h2>
-            <div class="chart-container">
-                <canvas id="weightChart"></canvas>
-            </div>
-        </section>
-
-        <section class="faq-section">
-            <h2>Frequently Asked Questions</h2>
-
-            <div class="faq-item">
-                <div class="faq-question">What are the Magnificent 7 stocks 2026?</div>
-                <div class="faq-answer">The Magnificent 7 stocks refer to Apple (AAPL), Microsoft (MSFT), Alphabet (GOOGL), Amazon (AMZN), NVIDIA (NVDA), Meta Platforms (META), and Tesla (TSLA). These technology giants dominate the U.S. stock market in terms of market capitalization and influence.</div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">What is the Mag 7 performance in 2026?</div>
-                <div class="faq-answer">The performance of the Mag 7 stocks varies by company, but collectively they continue to drive a significant portion of the broader market's returns. You can view their individual year-to-date (YTD) returns and revenue growth in our live data table above.</div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">What is the magnificent seven weight in S&P 500?</div>
-                <div class="faq-answer">As of our latest data, the Magnificent Seven stocks account for approximately 32.24% of the entire S&P 500 index. This represents an unprecedented level of market concentration in just a handful of companies.</div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Is the S&P 500 too concentrated in the Mag 7?</div>
-                <div class="faq-answer">With the top 7 companies making up 32.24% of the index, the S&P 500 is highly concentrated. While this concentration has driven strong market returns during tech rallies, it also exposes passive index investors to significant concentration risk if the technology sector experiences a downturn.</div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">How do Mag 7 valuations compare to the rest of the market?</div>
-                <div class="faq-answer">Historically, the Magnificent 7 stocks trade at a premium valuation (higher P/E ratios) compared to the rest of the S&P 500 due to their strong revenue growth, robust profit margins, and dominant market positions in high-growth areas like artificial intelligence and cloud computing.</div>
-            </div>
-
-        </section>
-
-        <section>
-            <h2>Methodology</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
-                Data is sourced from Yahoo Finance. "Weight in S&P 500" is approximated by analyzing the top holdings of the SPDR S&P 500 ETF Trust (SPY). Total combined market cap and other financial metrics represent live or recently closed market data. Null values indicate data was temporarily unavailable from the upstream provider.
-            </p>
-        </section>
-    </div>
-  <script is:inline>
-// Native HTML5 Canvas Chart Drawing
-        window.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('weightChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-
-            // Handle resizing
-            function resizeCanvas() {
-                const parent = canvas.parentElement;
-                // Subtract padding
-                canvas.width = parent.clientWidth - 48;
-                canvas.height = parent.clientHeight - 48;
-                drawChart();
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-
-            const rawStocksData = [{"symbol":"AAPL","name":"Apple Inc.","price":261.05,"marketCap":3836893200384,"pe":33.0443,"revenueGrowth":0.157,"ytdReturn":-0.036751446096912097,"weightInSp500":0.066321105},{"symbol":"MSFT","name":"Microsoft Corp.","price":403.68,"marketCap":3000302305280,"pe":25.245779,"revenueGrowth":0.167,"ytdReturn":-0.1464456423306824,"weightInSp500":0.049592398},{"symbol":"GOOGL","name":"Alphabet Inc.","price":309.04,"marketCap":3738457079808,"pe":28.588345,"revenueGrowth":0.18,"ytdReturn":-0.019387574218044476,"weightInSp500":0.055417498},{"symbol":"AMZN","name":"Amazon.com Inc.","price":212.885,"marketCap":2285303496704,"pe":29.649721,"revenueGrowth":0.136,"ytdReturn":-0.06011037527593823,"weightInSp500":0.0347072},{"symbol":"NVDA","name":"NVIDIA Corp.","price":185.8785,"marketCap":4517777113088,"pe":37.933674,"revenueGrowth":0.732,"ytdReturn":-0.015734741898217525,"weightInSp500":0.0731529},{"symbol":"META","name":"Meta Platforms Inc.","price":652.4234,"marketCap":1650341183488,"pe":27.786346,"revenueGrowth":0.238,"ytdReturn":0.003095627279105928,"weightInSp500":0.0239825},{"symbol":"TSLA","name":"Tesla Inc.","price":408.02,"marketCap":1531067236352,"pe":377.79626,"revenueGrowth":-0.031,"ytdReturn":-0.06859635862260377,"weightInSp500":0.0192144}];
-            const combinedWeight = 0.3223880010000001;
-
-            // Sort by weight
-            const chartData = [...rawStocksData].sort((a, b) => (b.weightInSp500 || 0) - (a.weightInSp500 || 0));
-
-            function drawChart() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                const width = canvas.width;
-                const height = canvas.height;
-                const padding = 40;
-
-                const labels = [...chartData.map(d => d.symbol), 'Rest of S&P 500'];
-                const weights = [...chartData.map(d => d.weightInSp500 || 0), 1 - combinedWeight];
-
-                // Draw pie chart
-                const centerX = width / 2;
-                const centerY = height / 2;
-                const radius = Math.min(centerX, centerY) - padding;
-
-                let startAngle = -0.5 * Math.PI; // Start at top
-
-                const colors = [
-                    '#4a8fe7', '#3b82f6', '#2563eb', '#1d4ed8',
-                    '#1e40af', '#1e3a8a', '#172554', '#1f2937'
-                ];
-
-                for (let i = 0; i < weights.length; i++) {
-                    const sliceAngle = 2 * Math.PI * weights[i];
-                    const endAngle = startAngle + sliceAngle;
-
-                    ctx.beginPath();
-                    ctx.moveTo(centerX, centerY);
-                    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-                    ctx.closePath();
-
-                    ctx.fillStyle = colors[i % colors.length];
-                    ctx.fill();
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = '#0a1020';
-                    ctx.stroke();
-
-                    // Labels for larger slices
-                    if (weights[i] > 0.02) {
-                        const midAngle = startAngle + sliceAngle / 2;
-                        const labelRadius = radius * 0.7;
-                        const labelX = centerX + Math.cos(midAngle) * labelRadius;
-                        const labelY = centerY + Math.sin(midAngle) * labelRadius;
-
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 12px "JetBrains Mono", monospace';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(labels[i], labelX, labelY - 8);
-                        ctx.font = '10px "JetBrains Mono", monospace';
-                        ctx.fillText((weights[i] * 100).toFixed(1) + '%', labelX, labelY + 8);
-                    }
-
-                    startAngle = endAngle;
-                }
-            }
-
-            resizeCanvas();
-        });
-  </script>
-
-  
-  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+  <!-- Cite This Page -->
+  <section style="max-width:800px;margin:0 auto 40px;padding:0 24px">
     <div style="background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:12px;padding:24px">
       <h3 style="font-size:14px;color:var(--text-dim,#94a3b8);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Cite This Page</h3>
-      <code style="display:block;background:var(--bg-color,#060a12);padding:16px;border-radius:8px;font-size:13px;color:var(--text-primary,#c8d0de);font-family:monospace;white-space:pre-wrap;word-break:break-all">Westmount Fundamentals. "Magnificent 7 Stocks 2026: Performance, Valuations, and W...." westmountfundamentals.com/magnificent-seven-stocks-2026, 2026.</code>
+      <code style="display:block;background:var(--bg-color,#060a12);padding:16px;border-radius:8px;font-size:13px;color:var(--text-primary,#c8d0de);font-family:monospace;white-space:pre-wrap;word-break:break-all">Westmount Fundamentals. "Magnificent 7 Stocks 2026: Performance, Valuations, and Weight in S&amp;P 500." westmountfundamentals.com/magnificent-seven-stocks-2026, 2026.</code>
     </div>
   </section>
 
-  <section style="max-width:800px;margin:40px auto;padding:0 24px">
+  <!-- Related Pages -->
+  <section style="max-width:800px;margin:0 auto 40px;padding:0 24px">
     <h2 style="font-size:20px;color:var(--text-bright,#fff);margin-bottom:16px">Related Pages</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
       <a href="/stocks-for-beginners/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">Stocks for Beginners: The Ultimate Guide to Investing</a>
@@ -565,4 +568,242 @@ const schema = {
       <a href="/when-to-sell-stocks/" style="display:block;padding:16px;background:var(--card-bg,#0a1020);border:1px solid var(--border-color,#152040);border-radius:8px;text-decoration:none;color:var(--text-primary,#c8d0de);transition:transform 0.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">When to Sell Stocks: A Complete Beginner's Guide</a>
     </div>
   </section>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    // Magnificent 7 Data
+    window.MAG7_DATA = [
+      { ticker: "AAPL", company: "Apple Inc.", price: 261.05, marketCap: 3.84, pe: 33.04, revGrowth: 15.70, ytdReturn: -3.68, spWeight: 6.63, color: "#4a8fe7" },
+      { ticker: "MSFT", company: "Microsoft Corp.", price: 403.68, marketCap: 3.00, pe: 25.25, revGrowth: 16.70, ytdReturn: -14.64, spWeight: 4.96, color: "#2563eb" },
+      { ticker: "GOOGL", company: "Alphabet Inc.", price: 309.04, marketCap: 3.74, pe: 28.59, revGrowth: 18.00, ytdReturn: -1.94, spWeight: 5.54, color: "#1d4ed8" },
+      { ticker: "AMZN", company: "Amazon.com Inc.", price: 212.89, marketCap: 2.29, pe: 29.65, revGrowth: 13.60, ytdReturn: -6.01, spWeight: 3.47, color: "#f59e0b" },
+      { ticker: "NVDA", company: "NVIDIA Corp.", price: 185.88, marketCap: 4.52, pe: 37.93, revGrowth: 73.20, ytdReturn: -1.57, spWeight: 7.32, color: "#10b981" },
+      { ticker: "META", company: "Meta Platforms Inc.", price: 652.42, marketCap: 1.65, pe: 27.79, revGrowth: 23.80, ytdReturn: 0.31, spWeight: 2.40, color: "#3b82f6" },
+      { ticker: "TSLA", company: "Tesla Inc.", price: 408.02, marketCap: 1.53, pe: 377.80, revGrowth: -3.10, ytdReturn: -6.86, spWeight: 1.92, color: "#ef4444" }
+    ];
+
+    const DATA = window.MAG7_DATA;
+    const SP500_YTD = -4.30;
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      // ====== TREEMAP ======
+      const treemap = document.getElementById('treemap');
+      if (treemap) {
+        const totalMcap = DATA.reduce((s, d) => s + d.marketCap, 0);
+        const sorted = [...DATA].sort((a, b) => b.marketCap - a.marketCap);
+        sorted.forEach(function(stock) {
+          var pct = (stock.marketCap / totalMcap) * 100;
+          var cell = document.createElement('div');
+          cell.className = 'treemap-cell';
+          var bg = stock.ytdReturn >= 0
+            ? 'linear-gradient(135deg, #065f46, #047857)'
+            : 'linear-gradient(135deg, #7f1d1d, #991b1b)';
+          cell.style.cssText = 'flex-basis:' + Math.max(pct * 1.8, 12) + '%;flex-grow:' + (pct / 10).toFixed(1) + ';background:' + bg;
+          var ytdColor = stock.ytdReturn >= 0 ? '#34d399' : '#fca5a5';
+          var ytdSign = stock.ytdReturn >= 0 ? '+' : '';
+          cell.innerHTML = '<div class="treemap-ticker">' + stock.ticker + '</div>'
+            + '<div class="treemap-mcap">$' + stock.marketCap.toFixed(2) + 'T</div>'
+            + '<div class="treemap-ytd" style="color:' + ytdColor + '">' + ytdSign + stock.ytdReturn.toFixed(2) + '%</div>';
+          treemap.appendChild(cell);
+        });
+      }
+
+      // ====== VALUATION CHART (dual axis) ======
+      var valCtx = document.getElementById('valuationChart');
+      if (valCtx) {
+        var tickers = DATA.map(function(d) { return d.ticker; });
+        var peData = DATA.map(function(d) { return d.ticker === 'TSLA' ? 60 : d.pe; });
+        var growthData = DATA.map(function(d) { return d.revGrowth; });
+
+        new Chart(valCtx, {
+          type: 'bar',
+          data: {
+            labels: tickers,
+            datasets: [
+              {
+                label: 'P/E Ratio',
+                data: peData,
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                yAxisID: 'y',
+                borderRadius: 4
+              },
+              {
+                label: 'Revenue Growth %',
+                data: growthData,
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                borderWidth: 1,
+                yAxisID: 'y1',
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { labels: { color: '#94a3b8', font: { size: 12 } } },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    if (ctx.datasetIndex === 0 && ctx.label === 'TSLA') {
+                      return 'P/E Ratio: 377.80 (capped at 60 on chart)';
+                    }
+                    return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1);
+                  }
+                }
+              },
+              annotation: {
+                annotations: {
+                  tslaPE: {
+                    type: 'label',
+                    xValue: 'TSLA',
+                    yValue: 58,
+                    content: ['⚡ Actual: 377.8×'],
+                    color: '#fbbf24',
+                    font: { size: 11, weight: 'bold' },
+                    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                    borderColor: '#f59e0b',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    padding: { top: 4, bottom: 4, left: 6, right: 6 }
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { ticks: { color: '#94a3b8', font: { family: "'JetBrains Mono', monospace", weight: 'bold' } }, grid: { color: 'rgba(148,163,184,0.08)' } },
+              y: { position: 'left', title: { display: true, text: 'P/E Ratio', color: '#3b82f6' }, ticks: { color: '#3b82f6' }, grid: { color: 'rgba(148,163,184,0.08)' }, max: 70, beginAtZero: true },
+              y1: { position: 'right', title: { display: true, text: 'Revenue Growth %', color: '#10b981' }, ticks: { color: '#10b981' }, grid: { drawOnChartArea: false }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // ====== YTD PERFORMANCE CHART ======
+      var ytdCtx = document.getElementById('ytdChart');
+      if (ytdCtx) {
+        var sorted = [...DATA].sort(function(a, b) { return b.ytdReturn - a.ytdReturn; });
+        new Chart(ytdCtx, {
+          type: 'bar',
+          data: {
+            labels: sorted.map(function(d) { return d.ticker; }),
+            datasets: [{
+              label: 'YTD Return %',
+              data: sorted.map(function(d) { return d.ytdReturn; }),
+              backgroundColor: sorted.map(function(d) { return d.ytdReturn >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.7)'; }),
+              borderColor: sorted.map(function(d) { return d.ytdReturn >= 0 ? '#10b981' : '#ef4444'; }),
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    return ctx.parsed.x.toFixed(2) + '% YTD';
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'YTD Return %', color: '#94a3b8' },
+                ticks: { color: '#94a3b8', callback: function(v) { return v + '%'; } },
+                grid: { color: 'rgba(148,163,184,0.08)' }
+              },
+              y: {
+                ticks: { color: '#94a3b8', font: { family: "'JetBrains Mono', monospace", weight: 'bold', size: 13 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      // ====== CONCENTRATION DONUT ======
+      var concCtx = document.getElementById('concentrationChart');
+      if (concCtx) {
+        var sortedByWeight = [...DATA].sort(function(a, b) { return b.spWeight - a.spWeight; });
+        var totalWeight = DATA.reduce(function(s, d) { return s + d.spWeight; }, 0);
+        var rest = 100 - totalWeight;
+        new Chart(concCtx, {
+          type: 'doughnut',
+          data: {
+            labels: sortedByWeight.map(function(d) { return d.ticker; }).concat(['Rest of S&P 500']),
+            datasets: [{
+              data: sortedByWeight.map(function(d) { return d.spWeight; }).concat([rest]),
+              backgroundColor: [
+                '#4a8fe7', '#3b82f6', '#2563eb', '#1d4ed8', '#1e40af', '#6366f1', '#8b5cf6', '#1f2937'
+              ],
+              borderColor: '#0a1020',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            cutout: '55%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#94a3b8',
+                  padding: 12,
+                  font: { size: 12 },
+                  usePointStyle: true
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    return ctx.label + ': ' + ctx.parsed.toFixed(2) + '%';
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // ====== $10K CALCULATOR ======
+      var sel = document.getElementById('calcSelect');
+      if (sel) {
+        function updateCalc() {
+          var choice = sel.value;
+          var val, ret;
+          if (choice === 'equal') {
+            var perStock = 10000 / 7;
+            val = DATA.reduce(function(s, d) { return s + perStock * (1 + d.ytdReturn / 100); }, 0);
+            ret = ((val - 10000) / 10000) * 100;
+          } else {
+            var stock = DATA.find(function(d) { return d.ticker === choice; });
+            ret = stock.ytdReturn;
+            val = 10000 * (1 + ret / 100);
+          }
+          var sp = 10000 * (1 + SP500_YTD / 100);
+          var valEl = document.getElementById('calcValue');
+          var retEl = document.getElementById('calcReturn');
+          var spEl = document.getElementById('calcSP');
+          var color = ret >= 0 ? 'var(--green)' : 'var(--red)';
+          var sign = ret >= 0 ? '+' : '';
+          valEl.textContent = '$' + val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+          valEl.style.color = color;
+          retEl.textContent = sign + ret.toFixed(2) + '% return';
+          retEl.style.color = color;
+          spEl.textContent = '$' + sp.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        sel.addEventListener('change', updateCalc);
+        updateCalc();
+      }
+    });
+  </script>
 </SiteLayout>
