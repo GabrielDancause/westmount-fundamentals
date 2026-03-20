@@ -1,0 +1,817 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import registry from "../data/pages-registry.json";
+
+const page = (registry as any)["voo-etf-analysis"];
+export const meta = { title: "VOO ETF Analysis: Vanguard S&P 500 ETF Complete Guide (2026)", description: "Complete VOO ETF analysis — expense ratio, holdings, performance, dividends, and how VOO compares to SPY, IVV, and VTI. Interactive growth calculator included.", category: "study", published: "2026-03-20" };
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "VOO ETF Analysis: Vanguard S&P 500 ETF Complete Guide",
+    "description": meta.description,
+    "datePublished": "2026-03-20",
+    "publisher": { "@type": "Organization", "name": "Westmount Research" }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is VOO ETF?", "acceptedAnswer": { "@type": "Answer", "text": "VOO is the Vanguard S&P 500 ETF, which tracks the S&P 500 index of 500 large-cap U.S. stocks. It has an ultra-low expense ratio of 0.03% and over $1.1 trillion in assets under management." } },
+      { "@type": "Question", "name": "Is VOO a good investment?", "acceptedAnswer": { "@type": "Answer", "text": "VOO is widely regarded as one of the best long-term investments available. It offers broad U.S. large-cap exposure at just 0.03% expense ratio, has returned approximately 10.5% annualized since inception in 2010, and pays quarterly dividends yielding around 1.3%." } },
+      { "@type": "Question", "name": "What is the difference between VOO and SPY?", "acceptedAnswer": { "@type": "Answer", "text": "Both track the S&P 500, but VOO charges 0.03% vs SPY's 0.0945%. SPY has higher trading volume and tighter spreads, making it preferred by active traders. VOO is better for long-term buy-and-hold investors due to its lower cost." } },
+      { "@type": "Question", "name": "Should I buy VOO or VTI?", "acceptedAnswer": { "@type": "Answer", "text": "VOO tracks the S&P 500 (500 large-cap stocks) while VTI tracks the total U.S. stock market (~4,000 stocks). VTI includes mid- and small-cap exposure. Performance is very similar — VOO and VTI overlap about 85% by weight. Both charge 0.03%." } },
+      { "@type": "Question", "name": "What is VOO's expense ratio?", "acceptedAnswer": { "@type": "Answer", "text": "VOO's expense ratio is 0.03%, meaning you pay just $3 per year for every $10,000 invested. This makes it one of the cheapest S&P 500 ETFs available." } }
+    ]
+  }
+];
+---
+
+<SiteLayout
+  site="westmount"
+  title={page.title}
+  description={page.description}
+  canonical="https://westmountfundamentals.com/voo-etf-analysis/"
+  schema={schema}
+>
+  <style is:global>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #060a12;
+      color: #c8d0de;
+      line-height: 1.7;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(6, 10, 18, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #152040;
+      padding: 16px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    nav a { color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { color: #8a9ab0; font-weight: 400; }
+    .nav-links a:hover { color: #4a8fe7; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 60px 24px; }
+    .hero { text-align: center; margin-bottom: 60px; }
+    h1 {
+      font-size: 2.8rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 20px;
+      background: linear-gradient(90deg, #fff, #4a8fe7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { color: #5a6a80; font-size: 1.1rem; max-width: 750px; margin: 0 auto; }
+    .updated { color: #5a6a80; font-size: 0.85rem; margin-bottom: 12px; }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-bottom: 60px;
+    }
+    .stat-card {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
+      padding: 24px; text-align: center;
+    }
+    .stat-val { font-size: 2.2rem; font-weight: 900; color: #4a8fe7; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; }
+    .stat-val.positive { color: #10b981; }
+    .stat-val.negative { color: #ef4444; }
+    .stat-label { font-size: 0.85rem; color: #8a9ab0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .section-title { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 24px; border-bottom: 1px solid #30363d; padding-bottom: 12px; }
+    .section-title span { color: #4a8fe7; }
+    .chart-container {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
+      padding: 24px; margin-bottom: 60px; height: 420px; position: relative;
+    }
+    .table-container {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
+      overflow-x: auto; margin-bottom: 60px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    thead th {
+      background: #161b22; color: #fff; padding: 14px 16px; text-align: left;
+      font-weight: 700; border-bottom: 2px solid #30363d; white-space: nowrap;
+    }
+    tbody td { padding: 12px 16px; border-bottom: 1px solid #21262d; }
+    tbody tr:hover { background: rgba(74, 143, 231, 0.05); }
+    .highlight-row { background: rgba(74, 143, 231, 0.08); }
+    .badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px;
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .badge-best { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .badge-good { background: rgba(74, 143, 231, 0.15); color: #4a8fe7; }
+
+    /* Overview Dashboard */
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px; margin-bottom: 60px;
+    }
+    .overview-item {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
+      padding: 20px; text-align: center;
+    }
+    .overview-item .ov-val { font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .overview-item .ov-label { font-size: 0.78rem; color: #8a9ab0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Calculator */
+    .calc-section {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
+      padding: 32px; margin-bottom: 60px;
+    }
+    .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px; }
+    .calc-field label { display: block; font-size: 0.82rem; color: #8a9ab0; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .calc-field input {
+      width: 100%; padding: 12px 16px; background: #161b22; border: 1px solid #30363d;
+      border-radius: 8px; color: #fff; font-size: 1rem; font-family: 'JetBrains Mono', monospace;
+    }
+    .calc-field input:focus { outline: none; border-color: #4a8fe7; }
+    .calc-btn {
+      background: #4a8fe7; color: #fff; border: none; padding: 14px 32px;
+      border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .calc-btn:hover { background: #3a7fd7; }
+    .calc-result {
+      display: none; margin-top: 24px; padding: 24px;
+      background: rgba(74, 143, 231, 0.08); border: 1px solid rgba(74, 143, 231, 0.2);
+      border-radius: 10px;
+    }
+    .calc-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+    .calc-result-item { text-align: center; }
+    .calc-result-item .cr-val { font-size: 1.6rem; font-weight: 800; color: #10b981; font-family: 'JetBrains Mono', monospace; }
+    .calc-result-item .cr-label { font-size: 0.78rem; color: #8a9ab0; margin-top: 4px; }
+
+    /* Pros/Cons */
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 60px; }
+    .pros-card, .cons-card {
+      background: #0d1117; border-radius: 12px; padding: 28px;
+    }
+    .pros-card { border: 1px solid rgba(16, 185, 129, 0.3); }
+    .cons-card { border: 1px solid rgba(239, 68, 68, 0.3); }
+    .pros-card h3 { color: #10b981; margin-bottom: 16px; font-size: 1.2rem; }
+    .cons-card h3 { color: #ef4444; margin-bottom: 16px; font-size: 1.2rem; }
+    .pros-card li, .cons-card li { margin-bottom: 10px; padding-left: 8px; }
+
+    /* Insights */
+    .insights-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px; margin-bottom: 60px;
+    }
+    .insight-card {
+      background: #0d1117; border: 1px solid #30363d; border-radius: 12px;
+      padding: 24px; border-left: 3px solid #4a8fe7;
+    }
+    .insight-card h4 { color: #fff; font-size: 1rem; margin-bottom: 8px; }
+    .insight-card p { font-size: 0.9rem; color: #8a9ab0; }
+    .insight-num { color: #4a8fe7; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+    /* VS Section */
+    .vs-header { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 24px; }
+    .vs-badge { background: #4a8fe7; color: #fff; padding: 6px 18px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; }
+
+    /* FAQ */
+    .faq-section { margin-bottom: 60px; }
+    .faq-item { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+    .faq-q { padding: 18px 24px; cursor: pointer; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q:hover { background: rgba(74, 143, 231, 0.05); }
+    .faq-a { padding: 0 24px 18px; color: #8a9ab0; display: none; line-height: 1.7; }
+    .faq-item.open .faq-a { display: block; }
+    .faq-arrow { transition: transform 0.2s; color: #4a8fe7; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+    .doughnut-wrap { max-width: 500px; margin: 0 auto; height: 380px; position: relative; }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .pros-cons { grid-template-columns: 1fr; }
+      .chart-container { height: 320px; }
+      .overview-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+
+  <nav>
+    <a href="/">Westmount</a>
+    <div class="nav-links">
+      <a href="/best-canadian-etfs-2026/">ETFs</a>
+      <a href="/ai-stocks/">Stocks</a>
+      <a href="/average-stock-market-return/">Returns</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <p class="updated">Updated March 2026</p>
+      <h1>VOO ETF Analysis: Vanguard S&P 500 ETF Complete Guide</h1>
+      <p class="subtitle">Everything you need to know about the Vanguard S&P 500 ETF (VOO) — performance history, expense ratio, holdings breakdown, dividend yield, and how it compares to SPY, IVV, and VTI.</p>
+    </div>
+
+    <!-- 1. VOO Overview Dashboard -->
+    <h2 class="section-title">📊 <span>VOO</span> Overview Dashboard</h2>
+    <div class="overview-grid">
+      <div class="overview-item">
+        <div class="ov-val">$515</div>
+        <div class="ov-label">Share Price</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-val" style="color:#10b981">0.03%</div>
+        <div class="ov-label">Expense Ratio</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-val">1.3%</div>
+        <div class="ov-label">Dividend Yield</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-val">$1.1T</div>
+        <div class="ov-label">AUM</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-val">2010</div>
+        <div class="ov-label">Inception</div>
+      </div>
+      <div class="overview-item">
+        <div class="ov-val">S&P 500</div>
+        <div class="ov-label">Benchmark</div>
+      </div>
+    </div>
+
+    <!-- 10. Stat Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val positive">10.5%</div>
+        <div class="stat-label">Annualized Return Since Inception</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">503</div>
+        <div class="stat-label">Holdings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val positive">$51,500</div>
+        <div class="stat-label">$10K Invested in 2010</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">$3/yr</div>
+        <div class="stat-label">Cost per $10K Invested</div>
+      </div>
+    </div>
+
+    <!-- 2. Interactive VOO Growth Calculator -->
+    <h2 class="section-title">🧮 VOO <span>Growth Calculator</span></h2>
+    <div class="calc-section">
+      <p style="color:#8a9ab0; margin-bottom:20px;">Project your VOO portfolio growth using the historical average annualized return of ~10.5%.</p>
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label>Initial Investment ($)</label>
+          <input type="number" id="calcInitial" value="10000" min="0" />
+        </div>
+        <div class="calc-field">
+          <label>Monthly Contribution ($)</label>
+          <input type="number" id="calcMonthly" value="500" min="0" />
+        </div>
+        <div class="calc-field">
+          <label>Years</label>
+          <input type="number" id="calcYears" value="20" min="1" max="50" />
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculateGrowth()">Calculate Projected Growth</button>
+      <div class="calc-result" id="calcResult">
+        <div class="calc-result-grid">
+          <div class="calc-result-item">
+            <div class="cr-val" id="crTotal">—</div>
+            <div class="cr-label">Projected Portfolio Value</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="cr-val" id="crContrib">—</div>
+            <div class="cr-label">Total Contributions</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="cr-val" id="crGain">—</div>
+            <div class="cr-label">Investment Gains</div>
+          </div>
+          <div class="calc-result-item">
+            <div class="cr-val" id="crMultiple">—</div>
+            <div class="cr-label">Growth Multiple</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. $10K Growth Chart -->
+    <h2 class="section-title">📈 $10K Invested in <span>VOO</span> Since Inception</h2>
+    <div class="chart-container">
+      <canvas id="growthChart"></canvas>
+    </div>
+
+    <!-- 6. Annual Returns Bar Chart -->
+    <h2 class="section-title">📊 VOO <span>Annual Returns</span> (2011–2025)</h2>
+    <div class="chart-container">
+      <canvas id="returnsChart"></canvas>
+    </div>
+
+    <!-- 4. VOO vs SPY vs IVV Comparison -->
+    <h2 class="section-title">⚔️ VOO vs <span>SPY</span> vs IVV</h2>
+    <p style="color:#8a9ab0; margin-bottom:20px;">All three ETFs track the S&P 500 — the difference is in fees, structure, and liquidity.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>VOO</th>
+            <th>SPY</th>
+            <th>IVV</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><strong>Expense Ratio</strong></td>
+            <td>0.03% <span class="badge badge-best">Best</span></td>
+            <td>0.0945%</td>
+            <td>0.03% <span class="badge badge-best">Best</span></td>
+          </tr>
+          <tr>
+            <td><strong>AUM</strong></td>
+            <td>$1.1T</td>
+            <td>$570B</td>
+            <td>$560B</td>
+          </tr>
+          <tr>
+            <td><strong>Issuer</strong></td>
+            <td>Vanguard</td>
+            <td>State Street</td>
+            <td>BlackRock (iShares)</td>
+          </tr>
+          <tr>
+            <td><strong>Inception</strong></td>
+            <td>2010</td>
+            <td>1993</td>
+            <td>2000</td>
+          </tr>
+          <tr>
+            <td><strong>Tracking Error</strong></td>
+            <td>0.01%</td>
+            <td>0.02%</td>
+            <td>0.01%</td>
+          </tr>
+          <tr>
+            <td><strong>Dividend Yield</strong></td>
+            <td>~1.3%</td>
+            <td>~1.3%</td>
+            <td>~1.3%</td>
+          </tr>
+          <tr>
+            <td><strong>Min. Investment</strong></td>
+            <td>1 share (~$515)</td>
+            <td>1 share (~$520)</td>
+            <td>1 share (~$525)</td>
+          </tr>
+          <tr>
+            <td><strong>Avg. Daily Volume</strong></td>
+            <td>~5M shares</td>
+            <td>~70M shares <span class="badge badge-good">Highest</span></td>
+            <td>~8M shares</td>
+          </tr>
+          <tr>
+            <td><strong>Best For</strong></td>
+            <td>Long-term investors</td>
+            <td>Active traders</td>
+            <td>Long-term investors</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. VOO vs VTI -->
+    <h2 class="section-title">🔄 <span>VOO vs VTI</span> — S&P 500 vs Total Market</h2>
+    <div class="vs-header">
+      <span style="font-size:1.2rem; font-weight:700; color:#fff;">VOO</span>
+      <span class="vs-badge">VS</span>
+      <span style="font-size:1.2rem; font-weight:700; color:#fff;">VTI</span>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>VOO (S&P 500)</th>
+            <th>VTI (Total Market)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Index</strong></td>
+            <td>S&P 500</td>
+            <td>CRSP US Total Market</td>
+          </tr>
+          <tr>
+            <td><strong>Holdings</strong></td>
+            <td>~503 stocks</td>
+            <td>~3,600 stocks</td>
+          </tr>
+          <tr>
+            <td><strong>Expense Ratio</strong></td>
+            <td>0.03%</td>
+            <td>0.03%</td>
+          </tr>
+          <tr>
+            <td><strong>Market Cap Focus</strong></td>
+            <td>Large-cap only</td>
+            <td>Large, mid, and small-cap</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Portfolio Overlap</strong></td>
+            <td colspan="2" style="text-align:center; color:#4a8fe7; font-weight:700;">~85% by weight</td>
+          </tr>
+          <tr>
+            <td><strong>10Y Annualized</strong></td>
+            <td>~12.5%</td>
+            <td>~12.1%</td>
+          </tr>
+          <tr>
+            <td><strong>Dividend Yield</strong></td>
+            <td>~1.3%</td>
+            <td>~1.3%</td>
+          </tr>
+          <tr>
+            <td><strong>Small-Cap Exposure</strong></td>
+            <td>None</td>
+            <td>~7%</td>
+          </tr>
+          <tr>
+            <td><strong>AUM</strong></td>
+            <td>$1.1T</td>
+            <td>$430B</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="insight-card" style="margin-bottom:60px;">
+      <h4>Bottom Line: VOO vs VTI</h4>
+      <p>The performance difference between VOO and VTI has been minimal — less than 0.5% per year over most periods. VOO gives you pure large-cap exposure, while VTI adds small- and mid-cap diversification. With ~85% overlap by market weight, choosing either is a solid decision. If you want simplicity and slight large-cap tilt, go VOO. If you want broader diversification, go VTI.</p>
+    </div>
+
+    <!-- 7. Top 10 Holdings -->
+    <h2 class="section-title">🏢 VOO <span>Top 10 Holdings</span></h2>
+    <p style="color:#8a9ab0; margin-bottom:20px;">VOO's top 10 holdings make up approximately 36% of the total portfolio, reflecting the heavy concentration in mega-cap tech stocks.</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Company</th>
+            <th>Ticker</th>
+            <th>Weight</th>
+            <th>Sector</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Apple Inc.</strong></td>
+            <td>AAPL</td>
+            <td>7.1%</td>
+            <td>Technology</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Microsoft Corp.</strong></td>
+            <td>MSFT</td>
+            <td>6.4%</td>
+            <td>Technology</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>NVIDIA Corp.</strong></td>
+            <td>NVDA</td>
+            <td>5.8%</td>
+            <td>Technology</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>Amazon.com Inc.</strong></td>
+            <td>AMZN</td>
+            <td>3.9%</td>
+            <td>Consumer Disc.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><strong>Alphabet Inc. (Class A)</strong></td>
+            <td>GOOGL</td>
+            <td>2.3%</td>
+            <td>Communication</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><strong>Meta Platforms Inc.</strong></td>
+            <td>META</td>
+            <td>2.7%</td>
+            <td>Communication</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><strong>Berkshire Hathaway (B)</strong></td>
+            <td>BRK.B</td>
+            <td>2.0%</td>
+            <td>Financials</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><strong>Broadcom Inc.</strong></td>
+            <td>AVGO</td>
+            <td>1.9%</td>
+            <td>Technology</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><strong>Eli Lilly & Co.</strong></td>
+            <td>LLY</td>
+            <td>1.7%</td>
+            <td>Healthcare</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><strong>Tesla Inc.</strong></td>
+            <td>TSLA</td>
+            <td>1.5%</td>
+            <td>Consumer Disc.</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr style="background:#161b22; font-weight:700;">
+            <td colspan="3">Top 10 Total</td>
+            <td>35.3%</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- 8. Sector Allocation -->
+    <h2 class="section-title">🎯 VOO <span>Sector Allocation</span></h2>
+    <div class="chart-container" style="height:440px;">
+      <div class="doughnut-wrap">
+        <canvas id="sectorChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 9. Pros and Cons -->
+    <h2 class="section-title">✅ VOO <span>Pros & Cons</span></h2>
+    <div class="pros-cons">
+      <div class="pros-card">
+        <h3>✅ Pros</h3>
+        <ul style="list-style:none;">
+          <li>🟢 Ultra-low 0.03% expense ratio — only $3/year per $10K</li>
+          <li>🟢 Broad exposure to 500 largest U.S. companies</li>
+          <li>🟢 Strong historical returns (~10.5% annualized since 2010)</li>
+          <li>🟢 Quarterly dividend payments (~1.3% yield)</li>
+          <li>🟢 Tax-efficient ETF structure with Vanguard's patented heartbeat trades</li>
+          <li>🟢 Massive AUM ($1.1T) ensures deep liquidity</li>
+          <li>🟢 Simple, set-and-forget investing</li>
+        </ul>
+      </div>
+      <div class="cons-card">
+        <h3>❌ Cons</h3>
+        <ul style="list-style:none;">
+          <li>🔴 No small- or mid-cap exposure</li>
+          <li>🔴 Heavy concentration in top 10 stocks (~35%)</li>
+          <li>🔴 U.S.-only — no international diversification</li>
+          <li>🔴 Market-cap weighted means you buy more of overvalued stocks</li>
+          <li>🔴 Can't outperform the index (by design)</li>
+          <li>🔴 Vulnerable to U.S. market drawdowns (e.g., -18.2% in 2022)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11. Key Insights -->
+    <h2 class="section-title">💡 5 Key <span>Insights</span></h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-num">Insight 1</div>
+        <h4>The 0.03% Advantage Compounds</h4>
+        <p>VOO charges just $3 per $10,000 invested — compared to $9.45 for SPY. Over 30 years on a $100K portfolio, that fee difference saves you roughly $5,000+ in compounding costs.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 2</div>
+        <h4>$10K → $51K in 15 Years</h4>
+        <p>A $10,000 investment in VOO at inception in September 2010 would be worth approximately $51,500 today — a 415% total return driven by one of history's strongest bull runs.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 3</div>
+        <h4>Concentration Risk Is Real</h4>
+        <p>The top 10 holdings account for ~35% of VOO's weight, with technology stocks dominating at ~32%. The "diversified" S&P 500 is more concentrated than many investors realize.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 4</div>
+        <h4>VOO vs VTI: 85% the Same</h4>
+        <p>VOO and VTI overlap approximately 85% by portfolio weight. The performance gap between the two has been less than 0.5% per year in most periods, making either a solid choice.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">Insight 5</div>
+        <h4>Dividends Add Up Quietly</h4>
+        <p>At a ~1.3% yield, VOO generates approximately $6,700 in annual dividends on a $515,000 portfolio. Reinvested, these dividends contribute significantly to long-term compounding.</p>
+      </div>
+    </div>
+
+    <!-- 12. FAQ -->
+    <h2 class="section-title">❓ Frequently Asked <span>Questions</span></h2>
+    <div class="faq-section">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What is VOO ETF?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">VOO is the Vanguard S&P 500 ETF, which tracks the S&P 500 index of 500 large-cap U.S. stocks. It has an ultra-low expense ratio of 0.03% and over $1.1 trillion in assets under management, making it one of the largest ETFs in the world.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Is VOO a good investment?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">VOO is widely regarded as one of the best long-term investments available. It offers broad U.S. large-cap exposure at just 0.03% expense ratio, has returned approximately 10.5% annualized since inception in 2010, and pays quarterly dividends yielding around 1.3%. For most passive investors, VOO is a core portfolio holding.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What is the difference between VOO and SPY?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">Both track the S&P 500, but VOO charges 0.03% vs SPY's 0.0945%. SPY has significantly higher trading volume (~70M shares/day vs ~5M for VOO) and tighter spreads, making it preferred by active traders and institutions. VOO is better for long-term buy-and-hold investors due to its lower cost.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Should I buy VOO or VTI?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">VOO tracks the S&P 500 (500 large-cap stocks) while VTI tracks the total U.S. stock market (~3,600 stocks including mid- and small-caps). They overlap about 85% by weight and both charge 0.03%. Performance has been nearly identical. Choose VOO for a large-cap focus, or VTI for broader diversification.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What is VOO's expense ratio?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-a">VOO's expense ratio is 0.03%, meaning you pay just $3 per year for every $10,000 invested. This makes it one of the cheapest S&P 500 ETFs available, tied with iShares' IVV and significantly cheaper than SPY's 0.0945%.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script is:inline>
+    /* Calculator */
+    function calculateGrowth() {
+      var initial = parseFloat(document.getElementById('calcInitial').value) || 0;
+      var monthly = parseFloat(document.getElementById('calcMonthly').value) || 0;
+      var years = parseInt(document.getElementById('calcYears').value) || 20;
+      var rate = 0.105;
+      var monthlyRate = rate / 12;
+      var months = years * 12;
+      var total = initial;
+      for (var i = 0; i < months; i++) {
+        total = total * (1 + monthlyRate) + monthly;
+      }
+      var contributions = initial + (monthly * months);
+      var gains = total - contributions;
+      var multiple = contributions > 0 ? (total / contributions) : 0;
+      document.getElementById('crTotal').textContent = '$' + formatNum(total);
+      document.getElementById('crContrib').textContent = '$' + formatNum(contributions);
+      document.getElementById('crGain').textContent = '$' + formatNum(gains);
+      document.getElementById('crMultiple').textContent = multiple.toFixed(1) + 'x';
+      document.getElementById('calcResult').style.display = 'block';
+    }
+    function formatNum(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'K';
+      return n.toFixed(0);
+    }
+
+    /* FAQ toggle */
+    function toggleFaq(el) {
+      var item = el.parentElement;
+      var isOpen = item.className.indexOf('open') !== -1;
+      if (isOpen) {
+        item.className = 'faq-item';
+      } else {
+        item.className = 'faq-item open';
+      }
+    }
+
+    /* Growth Chart: $10K invested in VOO 2010-2025 */
+    var growthCtx = document.getElementById('growthChart').getContext('2d');
+    new Chart(growthCtx, {
+      type: 'line',
+      data: {
+        labels: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+        datasets: [{
+          label: 'Portfolio Value ($)',
+          data: [10000, 10210, 11844, 15681, 17829, 18079, 20249, 24663, 23578, 31004, 36709, 47244, 38645, 48810, 61013, 59793],
+          borderColor: '#4a8fe7',
+          backgroundColor: 'rgba(74, 143, 231, 0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointBackgroundColor: '#4a8fe7',
+          borderWidth: 2.5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return '$' + ctx.parsed.y.toLocaleString(); }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(48, 54, 61, 0.5)' },
+            ticks: { color: '#8a9ab0', callback: function(v) { return '$' + (v/1000) + 'K'; } }
+          },
+          x: {
+            grid: { color: 'rgba(48, 54, 61, 0.3)' },
+            ticks: { color: '#8a9ab0' }
+          }
+        }
+      }
+    });
+
+    /* Annual Returns Bar Chart */
+    var returnsCtx = document.getElementById('returnsChart').getContext('2d');
+    var returnsData = [2.1, 16.0, 32.4, 13.7, 1.4, 12.0, 21.8, -4.4, 31.5, 18.4, 28.7, -18.2, 26.3, 25.0, -2.0];
+    var barColors = [];
+    for (var i = 0; i < returnsData.length; i++) {
+      barColors.push(returnsData[i] >= 0 ? '#10b981' : '#ef4444');
+    }
+    new Chart(returnsCtx, {
+      type: 'bar',
+      data: {
+        labels: ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+        datasets: [{
+          label: 'Annual Return (%)',
+          data: returnsData,
+          backgroundColor: barColors,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ctx.parsed.y.toFixed(1) + '%'; }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(48, 54, 61, 0.5)' },
+            ticks: { color: '#8a9ab0', callback: function(v) { return v + '%'; } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#8a9ab0' }
+          }
+        }
+      }
+    });
+
+    /* Sector Allocation Doughnut */
+    var sectorCtx = document.getElementById('sectorChart').getContext('2d');
+    new Chart(sectorCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Technology', 'Financials', 'Healthcare', 'Consumer Disc.', 'Communication', 'Industrials', 'Consumer Staples', 'Energy', 'Utilities', 'Real Estate', 'Materials'],
+        datasets: [{
+          data: [32, 13, 12, 10, 9, 8, 6, 4, 3, 2, 1],
+          backgroundColor: [
+            '#4a8fe7', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6',
+            '#06b6d4', '#ec4899', '#f97316', '#6366f1', '#14b8a6', '#78716c'
+          ],
+          borderColor: '#0d1117',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { color: '#c8d0de', padding: 12, font: { size: 12 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ctx.label + ': ' + ctx.parsed + '%'; }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</SiteLayout>

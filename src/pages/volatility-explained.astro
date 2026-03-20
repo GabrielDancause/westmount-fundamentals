@@ -1,0 +1,701 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+export const meta = {
+  title: "Volatility Explained — VIX, Implied & Historical Volatility Calculator | Westmount Fundamentals",
+  description: "Understand market volatility with interactive calculators, VIX fear gauge, historical charts, and expert guides on implied volatility, historical volatility, and the VIX index.",
+  category: "study",
+  published: "2026-03-20",
+};
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": meta.title,
+    "description": meta.description,
+    "datePublished": meta.published,
+    "author": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "publisher": { "@type": "Organization", "name": "Westmount Fundamentals", "url": "https://westmountfundamentals.com" },
+    "mainEntityOfPage": "https://westmountfundamentals.com/volatility-explained/"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is volatility in the stock market?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Volatility measures how much a stock's price fluctuates over time, expressed as a percentage. Higher volatility means larger price swings. It is typically calculated as the annualized standard deviation of returns and helps investors assess risk." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between implied volatility and historical volatility?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Historical volatility (HV) measures actual past price movements using standard deviation of returns. Implied volatility (IV) is forward-looking, derived from options prices, reflecting what the market expects future volatility to be. When IV exceeds HV, options are considered expensive." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the VIX and how does it work?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The VIX (CBOE Volatility Index) measures the market's expectation of 30-day volatility on the S&P 500, derived from options prices. Often called the 'fear gauge,' a VIX below 20 suggests calm markets while readings above 30 indicate significant fear and uncertainty." }
+      },
+      {
+        "@type": "Question",
+        "name": "How do you use a volatility calculator?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Enter the current stock price and the expected annualized volatility percentage. The calculator converts this into expected price ranges over 1-day, 1-week, and 1-month periods using the square root of time rule, showing the one-standard-deviation move in each timeframe." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is high volatility good or bad for investors?",
+        "acceptedAnswer": { "@type": "Answer", "text": "High volatility is neither inherently good nor bad — it depends on your strategy. For long-term investors, volatility creates buying opportunities in quality stocks. For options traders, high implied volatility means richer premiums. However, high volatility also increases short-term risk and requires careful position sizing." }
+      }
+    ]
+  }
+];
+---
+<SiteLayout
+  title={meta.title}
+  description={meta.description}
+  site="westmount"
+  canonical="https://westmountfundamentals.com/volatility-explained/"
+  schema={schema}
+>
+
+<style>
+  :root {
+    --accent: #4a8fe7;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --bg-card: #0d1117;
+    --border: #30363d;
+  }
+  .vol-hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, rgba(74,143,231,0.1), rgba(74,143,231,0.02));
+    border-bottom: 1px solid rgba(74,143,231,0.15);
+  }
+  .vol-hero h1 { font-size: 2.2rem; margin-bottom: 0.5rem; color: #e8eaed; }
+  .vol-hero .subtitle { color: #9aa0a6; font-size: 1.1rem; max-width: 750px; margin: 0 auto 1.5rem; }
+
+  .stat-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    min-width: 160px;
+    text-align: center;
+    flex: 1;
+    max-width: 220px;
+  }
+  .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.75rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .section { margin-bottom: 3rem; }
+  .section h2 { font-size: 1.6rem; color: #e8eaed; margin-bottom: 1rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; display: inline-block; }
+  .section h3 { font-size: 1.2rem; color: #c9d1d9; margin: 1.5rem 0 0.75rem; }
+  .section p, .section li { color: #9aa0a6; line-height: 1.7; }
+  .section ul { padding-left: 1.5rem; }
+  .section li { margin-bottom: 0.5rem; }
+
+  .tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .tool-card h3 { color: var(--accent); margin-top: 0; font-size: 1.25rem; }
+  .input-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1rem; }
+  .input-group { display: flex; flex-direction: column; gap: 0.3rem; }
+  .input-group label { font-size: 0.8rem; color: #9aa0a6; text-transform: uppercase; letter-spacing: 0.04em; }
+  .input-group input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    color: #e8eaed;
+    font-size: 1rem;
+    width: 160px;
+  }
+  .btn-calc {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .btn-calc:hover { opacity: 0.85; }
+  .result-box {
+    background: rgba(74,143,231,0.08);
+    border: 1px solid rgba(74,143,231,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    display: none;
+  }
+  .result-box .result-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #c9d1d9; }
+  .result-box .result-row:last-child { border-bottom: none; }
+  .result-box .result-label { color: #9aa0a6; }
+  .result-box .result-val { font-weight: 600; color: var(--accent); }
+
+  /* VIX Gauge */
+  .gauge-wrap { display: flex; flex-direction: column; align-items: center; margin: 1.5rem 0; }
+  .gauge-bar {
+    width: 100%;
+    max-width: 500px;
+    height: 36px;
+    border-radius: 18px;
+    background: linear-gradient(to right, var(--positive) 0%, #fbbf24 33%, #f97316 66%, var(--negative) 100%);
+    position: relative;
+    margin-bottom: 0.5rem;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -8px;
+    width: 4px;
+    height: 52px;
+    background: #fff;
+    border-radius: 2px;
+    transform: translateX(-50%);
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  }
+  .gauge-labels { display: flex; justify-content: space-between; width: 100%; max-width: 500px; font-size: 0.7rem; color: #9aa0a6; }
+  .gauge-reading { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .gauge-zone { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+
+  /* HV vs IV comparison */
+  .comparison-result { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+  .comp-card {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .comp-card .comp-val { font-size: 1.5rem; font-weight: 700; }
+  .comp-card .comp-label { font-size: 0.8rem; color: #9aa0a6; margin-top: 0.25rem; }
+
+  /* Tables */
+  .vol-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  .vol-table th, .vol-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+  .vol-table th { color: var(--accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; background: rgba(74,143,231,0.06); }
+  .vol-table td { color: #c9d1d9; font-size: 0.95rem; }
+  .vol-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* Chart */
+  .chart-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .chart-wrap canvas { width: 100% !important; max-height: 400px; }
+
+  /* Insights */
+  .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .insight-card .insight-num { font-size: 1.8rem; font-weight: 700; color: var(--accent); margin-bottom: 0.3rem; }
+  .insight-card .insight-title { font-weight: 600; color: #e8eaed; margin-bottom: 0.4rem; }
+  .insight-card .insight-desc { font-size: 0.9rem; color: #9aa0a6; line-height: 1.5; }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+  .faq-q { font-weight: 600; color: #e8eaed; font-size: 1.05rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q::after { content: '+'; font-size: 1.3rem; color: var(--accent); transition: transform 0.2s; }
+  .faq-q.open::after { content: '−'; }
+  .faq-a { color: #9aa0a6; line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding-top: 0; }
+  .faq-a.open { max-height: 500px; padding-top: 0.75rem; }
+
+  @media (max-width: 640px) {
+    .vol-hero h1 { font-size: 1.6rem; }
+    .stat-card { min-width: 130px; padding: 0.8rem 1rem; }
+    .stat-card .stat-value { font-size: 1.4rem; }
+    .input-group input { width: 120px; }
+    .container { padding: 1.5rem 1rem; }
+    .vol-table { font-size: 0.85rem; }
+    .vol-table th, .vol-table td { padding: 0.5rem 0.6rem; }
+  }
+</style>
+
+<!-- Hero -->
+<div class="vol-hero">
+  <h1>Volatility Explained: VIX, Implied &amp; Historical Volatility</h1>
+  <p class="subtitle">Interactive calculators, real data, and expert analysis to help you understand stock market volatility, the VIX fear gauge, and how to use volatility in your investing strategy.</p>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-value">22.1</div><div class="stat-label">Current VIX</div></div>
+    <div class="stat-card"><div class="stat-value">19.5</div><div class="stat-label">10-Year Avg VIX</div></div>
+    <div class="stat-card"><div class="stat-value">82.69</div><div class="stat-label">All-Time High VIX</div></div>
+    <div class="stat-card"><div class="stat-value">15.5%</div><div class="stat-label">S&amp;P 500 Avg Volatility</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Volatility Calculator -->
+  <div class="section" id="volatility-calculator">
+    <h2>Interactive Volatility Calculator</h2>
+    <p>Enter a stock price and expected annualized volatility to see the implied price range over different time horizons. This uses the square root of time rule to convert annualized volatility into daily, weekly, and monthly expected moves.</p>
+    <div class="tool-card">
+      <h3>&#128200; Expected Range Calculator</h3>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Stock Price ($)</label>
+          <input type="number" id="calcPrice" value="150" min="0" step="0.01" />
+        </div>
+        <div class="input-group">
+          <label>Expected Move / IV (%)</label>
+          <input type="number" id="calcVol" value="25" min="0" step="0.1" />
+        </div>
+        <button class="btn-calc" id="btnCalcRange" type="button">Calculate</button>
+      </div>
+      <div class="result-box" id="rangeResult">
+        <div class="result-row"><span class="result-label">1-Day Expected Range (±1σ)</span><span class="result-val" id="res1d"></span></div>
+        <div class="result-row"><span class="result-label">1-Week Expected Range (±1σ)</span><span class="result-val" id="res1w"></span></div>
+        <div class="result-row"><span class="result-label">1-Month Expected Range (±1σ)</span><span class="result-val" id="res1m"></span></div>
+        <div class="result-row"><span class="result-label">Daily Move ($)</span><span class="result-val" id="resDailyMove"></span></div>
+        <div class="result-row"><span class="result-label">Weekly Move ($)</span><span class="result-val" id="resWeeklyMove"></span></div>
+        <div class="result-row"><span class="result-label">Monthly Move ($)</span><span class="result-val" id="resMonthlyMove"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HV vs IV Comparison -->
+  <div class="section" id="hv-iv-comparison">
+    <h2>Historical vs Implied Volatility Comparison</h2>
+    <p>Compare a stock's historical volatility with its current implied volatility to see if options are trading at a premium or discount. When IV exceeds HV, options are considered expensive — a signal for options sellers.</p>
+    <div class="tool-card">
+      <h3>&#128202; IV Premium/Discount Analyzer</h3>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Historical Volatility (%)</label>
+          <input type="number" id="inputHV" value="20" min="0" step="0.1" />
+        </div>
+        <div class="input-group">
+          <label>Implied Volatility (%)</label>
+          <input type="number" id="inputIV" value="28" min="0" step="0.1" />
+        </div>
+        <button class="btn-calc" id="btnCompare" type="button">Compare</button>
+      </div>
+      <div class="result-box" id="compareResult">
+        <div class="comparison-result">
+          <div class="comp-card">
+            <div class="comp-val" id="compHV">—</div>
+            <div class="comp-label">Historical Volatility</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-val" id="compIV">—</div>
+            <div class="comp-label">Implied Volatility</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-val" id="compDiff">—</div>
+            <div class="comp-label">IV Premium/Discount</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-val" id="compSignal">—</div>
+            <div class="comp-label">Signal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIX Fear Gauge -->
+  <div class="section" id="vix-fear-gauge">
+    <h2>VIX Fear Gauge — Market Sentiment Indicator</h2>
+    <p>The CBOE Volatility Index (VIX) measures expected 30-day volatility on the S&amp;P 500. Known as the "fear gauge," it rises when investors buy protective puts. Here is where the VIX sits today relative to historical zones.</p>
+    <div class="tool-card" style="text-align:center;">
+      <div class="gauge-reading" id="vixReading" style="color:var(--accent);">22.1</div>
+      <div class="gauge-zone" id="vixZone" style="color:#fbbf24;">Elevated — Moderate Fear</div>
+      <div class="gauge-wrap">
+        <div class="gauge-bar">
+          <div class="gauge-marker" id="vixMarker" style="left:36.8%;"></div>
+        </div>
+        <div class="gauge-labels">
+          <span>0 — Complacent</span>
+          <span>12 — Normal</span>
+          <span>20 — Elevated</span>
+          <span>30 — Extreme</span>
+          <span>60+</span>
+        </div>
+      </div>
+      <table class="vol-table" style="max-width:600px;margin:1.5rem auto 0;">
+        <thead><tr><th>VIX Range</th><th>Zone</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td>0 – 12</td><td style="color:var(--positive);">Complacent</td><td>Extremely low fear, markets may be overbought</td></tr>
+          <tr><td>12 – 20</td><td style="color:#60a5fa;">Normal</td><td>Healthy market conditions, typical environment</td></tr>
+          <tr><td>20 – 30</td><td style="color:#fbbf24;">Elevated</td><td>Increased uncertainty, hedging activity rising</td></tr>
+          <tr><td>30+</td><td style="color:var(--negative);">Extreme Fear</td><td>Panic selling, potential capitulation, historically a buying signal</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- VIX Historical Chart -->
+  <div class="section" id="vix-history">
+    <h2>VIX Historical Levels (2015–2025)</h2>
+    <p>The VIX has spiked during every major crisis. Understanding these episodes helps investors put current volatility in context. Note how the market always mean-reverts — extreme spikes are temporary.</p>
+    <div class="chart-wrap">
+      <canvas id="vixLineChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Average VIX by Year -->
+  <div class="section" id="vix-by-year">
+    <h2>Average VIX by Year</h2>
+    <p>Annual average VIX levels show how sustained fear was across different years. 2020 stands out dramatically due to the COVID-19 pandemic, while 2017 saw historic calm.</p>
+    <div class="chart-wrap">
+      <canvas id="vixBarChart"></canvas>
+    </div>
+  </div>
+
+  <!-- What is Volatility -->
+  <div class="section" id="what-is-volatility">
+    <h2>What Is Volatility?</h2>
+    <p>Volatility is a statistical measure of the dispersion of returns for a given security or market index. In simpler terms, it measures how much and how quickly a stock's price moves. Higher volatility means the price can change dramatically in a short time, in either direction.</p>
+
+    <h3>Standard Deviation — The Math Behind Volatility</h3>
+    <p>Volatility is calculated as the <strong>annualized standard deviation</strong> of daily returns. If a stock has 20% annualized volatility, it means the stock is expected to move within ±20% of its current price over one year, approximately 68% of the time (one standard deviation). Two standard deviations (±40%) capture about 95% of expected outcomes.</p>
+
+    <h3>Historical Volatility (HV) — Looking Backward</h3>
+    <p>Historical volatility measures the actual price fluctuations a stock has experienced over a specific past period — usually 20, 30, or 60 trading days. It is a purely backward-looking metric. A stock with 30% HV has been swinging 30% annualized based on recent trading. Traders use HV to baseline what "normal" movement looks like for a given stock.</p>
+
+    <h3>Implied Volatility (IV) — Looking Forward</h3>
+    <p>Implied volatility is derived from options prices using models like Black-Scholes. It represents the market's consensus forecast of how much a stock will move in the future. IV is forward-looking and baked into option premiums. When IV is high, options are expensive. When IV is low, options are cheap. The implied volatility calculator above shows you exactly how IV translates to expected price ranges.</p>
+
+    <h3>The VIX — Wall Street's Fear Gauge</h3>
+    <p>The CBOE Volatility Index (VIX) applies the implied volatility concept to the entire S&amp;P 500 index. It aggregates options prices across strikes to calculate the market's expected 30-day volatility. Created in 1993, it has become the single most-watched volatility indicator globally. The VIX is mean-reverting — extreme spikes always come back down, typically within weeks.</p>
+  </div>
+
+  <!-- Volatility Interpretation Table -->
+  <div class="section" id="volatility-interpretation">
+    <h2>Volatility Interpretation Guide</h2>
+    <p>Use this table to quickly interpret any stock's annualized volatility. This applies to both historical and implied volatility readings.</p>
+    <table class="vol-table">
+      <thead>
+        <tr><th>Volatility Level</th><th>Range</th><th>Examples</th><th>What It Means</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--positive);font-weight:600;">Low</td>
+          <td>&lt; 15%</td>
+          <td>Utilities, consumer staples, large-cap blue chips</td>
+          <td>Stable, predictable price action. Suitable for conservative investors and income strategies.</td>
+        </tr>
+        <tr>
+          <td style="color:#60a5fa;font-weight:600;">Medium</td>
+          <td>15% – 25%</td>
+          <td>S&amp;P 500, large-cap tech, financials</td>
+          <td>Normal market volatility. Most diversified portfolios fall here. Standard options pricing.</td>
+        </tr>
+        <tr>
+          <td style="color:#fbbf24;font-weight:600;">High</td>
+          <td>25% – 40%</td>
+          <td>Growth tech, biotech, small-caps</td>
+          <td>Significant price swings. Requires careful position sizing. Options premiums are elevated.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--negative);font-weight:600;">Extreme</td>
+          <td>&gt; 40%</td>
+          <td>Meme stocks, crypto-correlated, pre-earnings biotech</td>
+          <td>Wild price action. High risk/reward. Options are very expensive. Only for experienced traders.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VIX Level Guide -->
+  <div class="section" id="vix-level-guide">
+    <h2>VIX Level Guide — What History Shows</h2>
+    <p>Different VIX levels have historically correlated with distinct market return profiles. Understanding these patterns can help you time entries and manage risk.</p>
+    <table class="vol-table">
+      <thead>
+        <tr><th>VIX Level</th><th>Market Regime</th><th>Avg Forward 1-Year S&amp;P 500 Return</th><th>Strategy Implications</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--positive);">Below 12</td>
+          <td>Extreme Complacency</td>
+          <td>+7% (below average)</td>
+          <td>Markets often top here. Reduce risk, hedge cheaply. Low put prices make protection attractive.</td>
+        </tr>
+        <tr>
+          <td style="color:#60a5fa;">12 – 20</td>
+          <td>Normal / Goldilocks</td>
+          <td>+10% (average)</td>
+          <td>Stay invested per your allocation. Standard environment for all strategies.</td>
+        </tr>
+        <tr>
+          <td style="color:#fbbf24;">20 – 30</td>
+          <td>Elevated Fear</td>
+          <td>+13% (above average)</td>
+          <td>Consider adding to positions. Sell premium strategies work well. Markets pricing in risk.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--negative);">30 – 40</td>
+          <td>High Fear</td>
+          <td>+18% (strong)</td>
+          <td>Historically great buying zone. Dollar-cost average in. Sell puts on quality names.</td>
+        </tr>
+        <tr>
+          <td style="color:var(--negative);font-weight:700;">Above 40</td>
+          <td>Panic / Crisis</td>
+          <td>+25%+ (exceptional)</td>
+          <td>Generational buying opportunities. Maximum fear = maximum opportunity. Be greedy when others are fearful.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- How to Use Volatility -->
+  <div class="section" id="how-to-use-volatility">
+    <h2>How to Use Volatility in Investing</h2>
+
+    <h3>1. Position Sizing with Volatility</h3>
+    <p>Volatility should directly inform how much of a stock you buy. The higher the volatility, the smaller your position should be to maintain consistent portfolio risk. A simple approach: allocate a fixed risk budget (e.g., 2% of portfolio) per position and divide by the stock's volatility. A stock with 40% volatility gets half the position size of one with 20% volatility.</p>
+
+    <h3>2. Options Strategies</h3>
+    <p>Implied volatility is the most critical variable in options pricing. When IV is high relative to HV (use the comparison tool above), options are expensive — favor selling strategies like covered calls, cash-secured puts, and iron condors. When IV is low relative to HV, options are cheap — favor buying strategies like long calls, long puts, or straddles ahead of expected catalysts.</p>
+
+    <h3>3. Risk Management</h3>
+    <p>Use volatility to set appropriate stop-losses. A stock with 15% annualized volatility might warrant a 5-7% stop-loss, while a stock with 40% volatility needs a wider 12-15% stop to avoid getting stopped out by normal noise. The volatility calculator above helps you determine what a "normal" daily or weekly move looks like, so you can distinguish signal from noise.</p>
+
+    <h3>4. Market Timing with the VIX</h3>
+    <p>While timing the market is difficult, the VIX provides a useful contrarian signal. Historically, buying when the VIX spikes above 30 and selling when it drops below 12 has outperformed buy-and-hold over long periods. This does not mean timing every trade — but adjusting your allocation at extremes has clear statistical backing.</p>
+
+    <h3>5. Portfolio Construction</h3>
+    <p>Mix low-volatility and high-volatility assets to achieve your desired portfolio risk. Combining stocks with different volatility profiles — and low correlation — reduces overall portfolio volatility more than holding any single asset class. This is the mathematical basis of diversification.</p>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="section" id="key-insights">
+    <h2>5 Key Insights on Volatility</h2>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-num">01</div>
+        <div class="insight-title">Volatility Is Mean-Reverting</div>
+        <div class="insight-desc">Every VIX spike in history has eventually returned to the 15-20 range. Extreme volatility is always temporary — trade accordingly.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">02</div>
+        <div class="insight-title">IV Overstates Realized Moves</div>
+        <div class="insight-desc">Implied volatility overestimates actual moves ~83% of the time. This "volatility risk premium" is why options sellers consistently profit.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">03</div>
+        <div class="insight-title">High VIX = Higher Forward Returns</div>
+        <div class="insight-desc">Buying the S&amp;P 500 when VIX is above 30 has historically delivered 18%+ annualized returns over the following year.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">04</div>
+        <div class="insight-title">Volatility Clusters</div>
+        <div class="insight-desc">High-volatility days tend to follow high-volatility days. Once a regime shift occurs, expect elevated volatility to persist for weeks or months.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-num">05</div>
+        <div class="insight-title">Low Volatility ≠ Low Risk</div>
+        <div class="insight-desc">Periods of ultra-low VIX (sub-12) often precede sharp corrections. Complacency breeds risk — use calm periods to buy cheap hedges.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is volatility in the stock market?</div>
+      <div class="faq-a">Volatility measures how much a stock's price fluctuates over time, expressed as a percentage. It is calculated as the annualized standard deviation of daily returns. Higher volatility means larger, more unpredictable price swings. A stock with 30% volatility is expected to move within ±30% of its price over a year (one standard deviation). Volatility is neither good nor bad — it is simply a measure of uncertainty and price movement magnitude.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the difference between implied volatility and historical volatility?</div>
+      <div class="faq-a">Historical volatility (HV) measures actual past price movements over a specific period — it looks backward. Implied volatility (IV) is derived from current options prices and represents the market's forecast of future volatility — it looks forward. When IV is significantly higher than HV, options are considered expensive (the market is pricing in more risk than recent history shows). When IV is lower than HV, options may be cheap. Traders use the IV-to-HV ratio as a key signal for options strategies.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the VIX and how does it work?</div>
+      <div class="faq-a">The VIX (CBOE Volatility Index) is calculated from S&amp;P 500 index options prices. It represents the market's expectation of 30-day annualized volatility. A VIX of 20 means the market expects the S&amp;P 500 to move about ±5.8% over the next 30 days (20% ÷ √12). The VIX rises when investors buy put options for protection, which typically happens during market declines, earning it the nickname "fear gauge." The VIX was introduced by the CBOE in 1993.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do you use a volatility calculator?</div>
+      <div class="faq-a">Enter the current stock price and its annualized volatility (either historical or implied). The calculator uses the square root of time rule to convert annual volatility into shorter periods: daily volatility = annual ÷ √252 (trading days), weekly = annual ÷ √52, monthly = annual ÷ √12. Multiply by the stock price to get the expected dollar move. This one-standard-deviation range captures approximately 68% of expected price outcomes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is high volatility good or bad for investors?</div>
+      <div class="faq-a">It depends on your strategy and time horizon. For long-term investors, high volatility creates buying opportunities — historically, buying during VIX spikes above 30 delivers above-average returns. For options sellers, high implied volatility means richer premiums. However, for short-term traders, high volatility increases the risk of large losses and can trigger stop-losses. The key is position sizing — reduce position sizes when volatility is high to keep your dollar risk constant.</div>
+    </div>
+  </div>
+
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+(function() {
+  // Volatility Calculator
+  var btnCalc = document.getElementById("btnCalcRange");
+  if (btnCalc) {
+    btnCalc.addEventListener("click", function() {
+      var price = parseFloat(document.getElementById("calcPrice").value) || 0;
+      var vol = parseFloat(document.getElementById("calcVol").value) || 0;
+      var annualVol = vol / 100;
+      var dailyVol = annualVol / Math.sqrt(252);
+      var weeklyVol = annualVol / Math.sqrt(52);
+      var monthlyVol = annualVol / Math.sqrt(12);
+      var dailyMove = price * dailyVol;
+      var weeklyMove = price * weeklyVol;
+      var monthlyMove = price * monthlyVol;
+      document.getElementById("res1d").textContent = "$" + (price - dailyMove).toFixed(2) + " – $" + (price + dailyMove).toFixed(2);
+      document.getElementById("res1w").textContent = "$" + (price - weeklyMove).toFixed(2) + " – $" + (price + weeklyMove).toFixed(2);
+      document.getElementById("res1m").textContent = "$" + (price - monthlyMove).toFixed(2) + " – $" + (price + monthlyMove).toFixed(2);
+      document.getElementById("resDailyMove").textContent = "±$" + dailyMove.toFixed(2) + " (" + (dailyVol * 100).toFixed(2) + "%)";
+      document.getElementById("resWeeklyMove").textContent = "±$" + weeklyMove.toFixed(2) + " (" + (weeklyVol * 100).toFixed(2) + "%)";
+      document.getElementById("resMonthlyMove").textContent = "±$" + monthlyMove.toFixed(2) + " (" + (monthlyVol * 100).toFixed(2) + "%)";
+      document.getElementById("rangeResult").style.display = "block";
+    });
+  }
+
+  // HV vs IV Comparison
+  var btnCompare = document.getElementById("btnCompare");
+  if (btnCompare) {
+    btnCompare.addEventListener("click", function() {
+      var hv = parseFloat(document.getElementById("inputHV").value) || 0;
+      var iv = parseFloat(document.getElementById("inputIV").value) || 0;
+      var diff = iv - hv;
+      var pct = hv > 0 ? ((diff / hv) * 100) : 0;
+      var signal = "";
+      var signalColor = "";
+      if (diff > 5) {
+        signal = "IV Premium — Options Expensive";
+        signalColor = "#ef4444";
+      } else if (diff < -5) {
+        signal = "IV Discount — Options Cheap";
+        signalColor = "#10b981";
+      } else {
+        signal = "Fair Value — Neutral";
+        signalColor = "#fbbf24";
+      }
+      document.getElementById("compHV").textContent = hv.toFixed(1) + "%";
+      document.getElementById("compIV").textContent = iv.toFixed(1) + "%";
+      document.getElementById("compDiff").textContent = (diff > 0 ? "+" : "") + diff.toFixed(1) + "% (" + (pct > 0 ? "+" : "") + pct.toFixed(0) + "%)";
+      document.getElementById("compDiff").style.color = diff > 0 ? "#ef4444" : "#10b981";
+      document.getElementById("compSignal").textContent = signal;
+      document.getElementById("compSignal").style.color = signalColor;
+      document.getElementById("compareResult").style.display = "block";
+    });
+  }
+
+  // FAQ Toggle
+  var faqItems = document.querySelectorAll(".faq-q");
+  for (var i = 0; i < faqItems.length; i++) {
+    faqItems[i].addEventListener("click", function() {
+      var answer = this.nextElementSibling;
+      var isOpen = this.className.indexOf("open") !== -1;
+      if (isOpen) {
+        this.className = this.className.replace(" open", "");
+        answer.className = answer.className.replace(" open", "");
+      } else {
+        this.className += " open";
+        answer.className += " open";
+      }
+    });
+  }
+
+  // VIX Line Chart — Historical 2015-2025
+  var vixLineCtx = document.getElementById("vixLineChart");
+  if (vixLineCtx) {
+    var vixLabels = ["Jan 2015","Jul 2015","Jan 2016","Jul 2016","Jan 2017","Jul 2017","Jan 2018","Jul 2018","Jan 2019","Jul 2019","Jan 2020","Mar 2020","Jul 2020","Jan 2021","Jul 2021","Jan 2022","Mar 2022","Jul 2022","Jan 2023","Jul 2023","Jan 2024","Jul 2024","Jan 2025"];
+    var vixData = [20.0,12.1,22.2,11.9,11.3,10.2,13.5,12.4,19.5,13.3,14.5,82.7,24.5,22.0,16.7,24.8,33.5,24.0,19.4,13.8,13.1,16.4,22.1];
+    var annotations = [
+      {x: 11, label: "COVID: VIX 82.69"},
+      {x: 16, label: "Ukraine War Spike"},
+      {x: 5, label: "2017 Calm (VIX ~10)"}
+    ];
+    new Chart(vixLineCtx.getContext("2d"), {
+      type: "line",
+      data: {
+        labels: vixLabels,
+        datasets: [{
+          label: "VIX Level",
+          data: vixData,
+          borderColor: "#4a8fe7",
+          backgroundColor: "rgba(74,143,231,0.1)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          pointBackgroundColor: "#4a8fe7"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6" } },
+          tooltip: {
+            callbacks: {
+              afterLabel: function(ctx) {
+                for (var a = 0; a < annotations.length; a++) {
+                  if (annotations[a].x === ctx.dataIndex) return annotations[a].label;
+                }
+                return "";
+              }
+            }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6", maxRotation: 45 }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" }, title: { display: true, text: "VIX Level", color: "#9aa0a6" } }
+        }
+      }
+    });
+  }
+
+  // VIX Bar Chart — Average by Year
+  var vixBarCtx = document.getElementById("vixBarChart");
+  if (vixBarCtx) {
+    var years = ["2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"];
+    var avgVix = [16.7,15.8,11.1,16.6,15.4,29.3,19.7,25.6,17.0,15.5,22.1];
+    var barColors = [];
+    for (var b = 0; b < avgVix.length; b++) {
+      if (avgVix[b] > 25) barColors.push("#ef4444");
+      else if (avgVix[b] > 20) barColors.push("#fbbf24");
+      else if (avgVix[b] > 15) barColors.push("#60a5fa");
+      else barColors.push("#10b981");
+    }
+    new Chart(vixBarCtx.getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: years,
+        datasets: [{
+          label: "Average VIX",
+          data: avgVix,
+          backgroundColor: barColors,
+          borderRadius: 6,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#9aa0a6" } }
+        },
+        scales: {
+          x: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y: { ticks: { color: "#9aa0a6" }, grid: { color: "rgba(255,255,255,0.05)" }, title: { display: true, text: "Average VIX", color: "#9aa0a6" } }
+        }
+      }
+    });
+  }
+})();
+</script>
+
+</SiteLayout>
