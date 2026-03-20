@@ -3,7 +3,7 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 import registry from "../data/pages-registry.json";
 
 const page = (registry as any)["dividend-aristocrats"];
-export const meta = { title: "All 67 Dividend Aristocrats (2026) — Yields, Payouts & Streaks", description: "Complete list of all 67 S&P 500 Dividend Aristocrats with current yields up to 5.8%, payout ratios, growth rates, and 25+ year streak data.", category: "guide", published: "2026-03-15" };
+export const meta = { title: "All 67 Dividend Aristocrats (2026) — Yields, Payouts & Streaks", description: "Complete list of all 67 S&P 500 Dividend Aristocrats with current yields up to 5.8%, payout ratios, growth rates, and 25+ year streak data.", category: "study", published: "2026-03-15" };
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -70,21 +70,114 @@ const schema = {
 <!-- Big Stats -->
 <div class="stats-grid" id="stats">
     <div class="stat-card">
-        <div class="stat-value">67</div>
+        <div class="stat-value" id="statTotal">67</div>
         <div class="stat-label">Dividend Aristocrats</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">2.42%</div>
+        <div class="stat-value" id="statAvgYield">2.42%</div>
         <div class="stat-label">Average Yield</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">51</div>
-        <div class="stat-label">Median Years Increasing</div>
+        <div class="stat-value" id="statHighYield">—</div>
+        <div class="stat-label">Highest Yield</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">71</div>
-        <div class="stat-label">Longest Streak (DOV)</div>
+        <div class="stat-value" id="statLongestStreak">—</div>
+        <div class="stat-label">Longest Streak</div>
     </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ★ DIVIDEND INCOME CALCULATOR — the hook that keeps users      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section calculator-section" id="calculator">
+    <h2 class="section-title">💰 Dividend Income Calculator</h2>
+    <p class="section-desc">See how much passive income a Dividend Aristocrat could generate — and how it grows over time.</p>
+
+    <div class="calc-wrapper">
+        <div class="calc-inputs">
+            <div class="calc-field">
+                <label for="calcAmount">Investment Amount ($)</label>
+                <input type="number" id="calcAmount" value="10000" min="100" step="100">
+            </div>
+            <div class="calc-field">
+                <label for="calcStock">Select an Aristocrat</label>
+                <select id="calcStock">
+                    <option value="__ALL__">Equal-weight all 67 aristocrats</option>
+                </select>
+            </div>
+            <div class="calc-field">
+                <label for="calcGrowth">Assumed Dividend Growth Rate</label>
+                <select id="calcGrowth">
+                    <option value="0.05">5% — Conservative</option>
+                    <option value="0.07" selected>7% — Moderate</option>
+                    <option value="0.10">10% — Aggressive</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="calc-results">
+            <div class="calc-result-row">
+                <span class="calc-result-label">Current Annual Income</span>
+                <span class="calc-result-value" id="calcAnnual">—</span>
+            </div>
+            <div class="calc-result-row">
+                <span class="calc-result-label">Monthly Income</span>
+                <span class="calc-result-value" id="calcMonthly">—</span>
+            </div>
+            <div class="calc-result-row">
+                <span class="calc-result-label">Yield on Investment</span>
+                <span class="calc-result-value" id="calcYieldPct">—</span>
+            </div>
+            <div class="calc-result-row">
+                <span class="calc-result-label">Consecutive Years of Increases</span>
+                <span class="calc-result-value" id="calcStreak">—</span>
+            </div>
+            <div class="calc-result-divider"></div>
+            <div class="calc-result-row highlight">
+                <span class="calc-result-label">Projected Annual Income — Year 5</span>
+                <span class="calc-result-value" id="calcYear5">—</span>
+            </div>
+            <div class="calc-result-row highlight">
+                <span class="calc-result-label">Projected Annual Income — Year 10</span>
+                <span class="calc-result-value" id="calcYear10">—</span>
+            </div>
+        </div>
+
+        <!-- Projected income bar chart -->
+        <div class="calc-chart-wrap">
+            <h3 class="calc-chart-title">Projected Annual Dividend Income Over 10 Years</h3>
+            <canvas id="calcBarChart" height="260"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ★ DIVIDEND GROWTH PROJECTION — 3-line chart                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="growthProjection">
+    <h2 class="section-title">Dividend Growth Projection</h2>
+    <p class="section-desc">How your dividend income could grow under conservative (5%), moderate (7%), and aggressive (10%) growth scenarios. Updates when you change the stock selection above.</p>
+    <div class="chart-canvas-wrap">
+        <canvas id="growthLineChart" height="300"></canvas>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- ★ SECTOR YIELD COMPARISON — horizontal bar chart               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="section" id="sectorYieldSection">
+    <h2 class="section-title">Average Yield by Sector</h2>
+    <p class="section-desc">Which sectors pay the most among the 67 Dividend Aristocrats.</p>
+    <div class="chart-canvas-wrap">
+        <canvas id="sectorYieldChart" height="320"></canvas>
+    </div>
+</div>
+
+<!-- Key Insights (data-driven) -->
+<div class="section">
+    <h2 class="section-title">Key Insights</h2>
+    <div class="insights-grid" id="insightsGrid"></div>
 </div>
 
 <!-- Chart: Top 20 by Yield -->
@@ -287,8 +380,243 @@ const schema = {
 
 
 </div>
+
+  <!-- Chart.js from CDN -->
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
   <script is:inline>
 const DATA = {"crawlDate": "2026-03-09", "methodology": "Complete list of 67 S&P 500 Dividend Aristocrats — companies with 25+ consecutive years of dividend increases. Data sourced from stockanalysis.com (yields, prices, P/E ratios, market cap, beta). Sector classifications follow the GICS standard.", "totalCompanies": 67, "averageYield": 2.42, "medianYearsIncreasing": 51, "highestYield": {"ticker": "MO", "yield": 6.37}, "lowestYield": {"ticker": "WST", "yield": 0.36}, "sectorBreakdown": {"Industrials": 16, "Consumer Staples": 15, "Financials": 9, "Materials": 7, "Health Care": 6, "Consumer Discretionary": 4, "Utilities": 4, "Information Technology": 3, "Energy": 2, "Real Estate": 1}, "source": "stockanalysis.com", "results": [{"ticker": "DOV", "company": "Dover Corporation", "sector": "Industrials", "yearsIncreasing": 71, "currentYield": 1.0, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 26.15, "forwardPe": 19.68, "marketCapB": 28.11, "priceUSD": 208.42, "beta": 1.25, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "GPC", "company": "Genuine Parts Company", "sector": "Consumer Discretionary", "yearsIncreasing": 70, "currentYield": 3.68, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 245.79, "forwardPe": 14.92, "marketCapB": 16.07, "priceUSD": 115.52, "beta": 0.73, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "PG", "company": "Procter & Gamble", "sector": "Consumer Staples", "yearsIncreasing": 70, "currentYield": 2.75, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.77, "forwardPe": 21.54, "marketCapB": 357.04, "priceUSD": 153.63, "beta": 0.34, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "PH", "company": "Parker-Hannifin", "sector": "Industrials", "yearsIncreasing": 70, "currentYield": 0.78, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 33.68, "forwardPe": 28.52, "marketCapB": 116.59, "priceUSD": 923.72, "beta": 1.22, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "EMR", "company": "Emerson Electric", "sector": "Industrials", "yearsIncreasing": 69, "currentYield": 1.6, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 33.91, "forwardPe": 20.78, "marketCapB": 77.76, "priceUSD": 138.36, "beta": 1.24, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CINF", "company": "Cincinnati Financial", "sector": "Financials", "yearsIncreasing": 65, "currentYield": 2.27, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 10.9, "forwardPe": 19.35, "marketCapB": 25.74, "priceUSD": 165.39, "beta": 0.64, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "JNJ", "company": "Johnson & Johnson", "sector": "Health Care", "yearsIncreasing": 64, "currentYield": 2.16, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 21.8, "forwardPe": 20.84, "marketCapB": 579.34, "priceUSD": 240.4, "beta": 0.33, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "KO", "company": "Coca-Cola", "sector": "Consumer Staples", "yearsIncreasing": 64, "currentYield": 2.75, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 25.34, "forwardPe": 23.81, "marketCapB": 331.33, "priceUSD": 77.04, "beta": 0.33, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CL", "company": "Colgate-Palmolive", "sector": "Consumer Staples", "yearsIncreasing": 63, "currentYield": 2.22, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 35.57, "forwardPe": 24.11, "marketCapB": 74.99, "priceUSD": 93.56, "beta": 0.26, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "NDSN", "company": "Nordson Corporation", "sector": "Industrials", "yearsIncreasing": 63, "currentYield": 1.2, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 29.51, "forwardPe": 23.86, "marketCapB": 15.22, "priceUSD": 272.84, "beta": 0.99, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "HRL", "company": "Hormel Foods", "sector": "Consumer Staples", "yearsIncreasing": 60, "currentYield": 4.79, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 27.46, "forwardPe": 16.1, "marketCapB": 13.44, "priceUSD": 24.42, "beta": 0.31, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "FRT", "company": "Federal Realty Investment Trust", "sector": "Real Estate", "yearsIncreasing": 59, "currentYield": 4.2, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.99, "forwardPe": 35.52, "marketCapB": 9.34, "priceUSD": 107.55, "beta": 1.01, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "SWK", "company": "Stanley Black & Decker", "sector": "Industrials", "yearsIncreasing": 59, "currentYield": 4.36, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 28.71, "forwardPe": 14.16, "marketCapB": 11.81, "priceUSD": 76.08, "beta": 1.15, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "MO", "company": "Altria Group", "sector": "Consumer Staples", "yearsIncreasing": 57, "currentYield": 6.37, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 16.16, "forwardPe": 11.84, "marketCapB": 111.2, "priceUSD": 66.51, "beta": 0.43, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "SYY", "company": "Sysco Corporation", "sector": "Consumer Staples", "yearsIncreasing": 57, "currentYield": 2.53, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.96, "forwardPe": 17.93, "marketCapB": 40.82, "priceUSD": 85.23, "beta": 0.59, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ITW", "company": "Illinois Tool Works", "sector": "Industrials", "yearsIncreasing": 56, "currentYield": 2.32, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 26.42, "forwardPe": 24.59, "marketCapB": 79.88, "priceUSD": 277.16, "beta": 1.12, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "GWW", "company": "W.W. Grainger", "sector": "Industrials", "yearsIncreasing": 55, "currentYield": 0.81, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 31.43, "forwardPe": 25.53, "marketCapB": 52.72, "priceUSD": 1112.79, "beta": 1.09, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "PPG", "company": "PPG Industries", "sector": "Materials", "yearsIncreasing": 55, "currentYield": 2.66, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 15.42, "forwardPe": 13.35, "marketCapB": 23.88, "priceUSD": 106.7, "beta": 1.12, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "TGT", "company": "Target Corporation", "sector": "Consumer Discretionary", "yearsIncreasing": 55, "currentYield": 3.78, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 14.86, "forwardPe": 15.14, "marketCapB": 54.7, "priceUSD": 120.79, "beta": 1.1, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ABBV", "company": "AbbVie", "sector": "Health Care", "yearsIncreasing": 54, "currentYield": 3.01, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 97.5, "forwardPe": 15.84, "marketCapB": 406.87, "priceUSD": 230.11, "beta": 0.33, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ABT", "company": "Abbott Laboratories", "sector": "Health Care", "yearsIncreasing": 54, "currentYield": 2.3, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 29.45, "forwardPe": 19.3, "marketCapB": 190.38, "priceUSD": 109.56, "beta": 0.74, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "BDX", "company": "Becton Dickinson", "sector": "Health Care", "yearsIncreasing": 54, "currentYield": 2.51, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 27.29, "forwardPe": 12.97, "marketCapB": 47.59, "priceUSD": 167.12, "beta": 0.31, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "KMB", "company": "Kimberly-Clark", "sector": "Consumer Staples", "yearsIncreasing": 54, "currentYield": 4.9, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 21.52, "forwardPe": 13.79, "marketCapB": 34.71, "priceUSD": 104.58, "beta": 0.23, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "LOW", "company": "Lowe's Companies", "sector": "Consumer Discretionary", "yearsIncreasing": 54, "currentYield": 1.91, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 21.26, "forwardPe": 19.96, "marketCapB": 141.3, "priceUSD": 251.89, "beta": 0.94, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "PEP", "company": "PepsiCo", "sector": "Consumer Staples", "yearsIncreasing": 54, "currentYield": 3.57, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 26.57, "forwardPe": 18.49, "marketCapB": 217.88, "priceUSD": 159.43, "beta": 0.37, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ADM", "company": "Archer-Daniels-Midland", "sector": "Consumer Staples", "yearsIncreasing": 53, "currentYield": 3.08, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 30.28, "forwardPe": 16.84, "marketCapB": 32.45, "priceUSD": 67.44, "beta": 0.68, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "BF.B", "company": "Brown-Forman", "sector": "Consumer Staples", "yearsIncreasing": 53, "currentYield": 3.66, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 30.15, "forwardPe": 27.8, "marketCapB": 12.05, "priceUSD": 25.26, "beta": 0.68, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ED", "company": "Consolidated Edison", "sector": "Utilities", "yearsIncreasing": 53, "currentYield": 3.16, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 19.91, "forwardPe": 18.49, "marketCapB": 40.57, "priceUSD": 112.28, "beta": 0.35, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "NUE", "company": "Nucor Corporation", "sector": "Materials", "yearsIncreasing": 53, "currentYield": 1.33, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.44, "forwardPe": 13.9, "marketCapB": 38.44, "priceUSD": 168.75, "beta": 1.77, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "SPGI", "company": "S&P Global", "sector": "Financials", "yearsIncreasing": 53, "currentYield": 0.86, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 30.86, "forwardPe": 23.05, "marketCapB": 135.15, "priceUSD": 452.36, "beta": 1.22, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "WMT", "company": "Walmart", "sector": "Consumer Staples", "yearsIncreasing": 53, "currentYield": 0.8, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 45.35, "forwardPe": 42.32, "marketCapB": 986.71, "priceUSD": 123.8, "beta": 0.66, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ADP", "company": "Automatic Data Processing", "sector": "Industrials", "yearsIncreasing": 51, "currentYield": 3.01, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 21.73, "forwardPe": 19.66, "marketCapB": 91.09, "priceUSD": 226.24, "beta": 0.85, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "APD", "company": "Air Products & Chemicals", "sector": "Materials", "yearsIncreasing": 51, "currentYield": 2.66, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 20.49, "forwardPe": 20.49, "marketCapB": 60.6, "priceUSD": 272.18, "beta": 0.86, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "MCD", "company": "McDonald's", "sector": "Consumer Discretionary", "yearsIncreasing": 51, "currentYield": 2.27, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 27.45, "forwardPe": 24.86, "marketCapB": 233.05, "priceUSD": 328.06, "beta": 0.5, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "MDT", "company": "Medtronic", "sector": "Health Care", "yearsIncreasing": 50, "currentYield": 3.12, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 25.39, "forwardPe": 15.27, "marketCapB": 116.71, "priceUSD": 90.9, "beta": 0.73, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CLX", "company": "Clorox", "sector": "Consumer Staples", "yearsIncreasing": 49, "currentYield": 4.33, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 18.71, "forwardPe": 17.3, "marketCapB": 13.86, "priceUSD": 114.66, "beta": 0.57, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "PNR", "company": "Pentair", "sector": "Industrials", "yearsIncreasing": 49, "currentYield": 1.17, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 23.45, "forwardPe": 17.25, "marketCapB": 15.05, "priceUSD": 92.17, "beta": 1.21, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "SHW", "company": "Sherwin-Williams", "sector": "Materials", "yearsIncreasing": 49, "currentYield": 0.97, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 32.15, "forwardPe": 27.68, "marketCapB": 81.27, "priceUSD": 329.88, "beta": 1.24, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "BEN", "company": "Franklin Resources", "sector": "Financials", "yearsIncreasing": 46, "currentYield": 5.03, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 24.29, "forwardPe": 9.99, "marketCapB": 13.66, "priceUSD": 26.24, "beta": 1.46, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CTAS", "company": "Cintas", "sector": "Industrials", "yearsIncreasing": 45, "currentYield": 0.88, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 44.08, "forwardPe": 39.58, "marketCapB": 81.42, "priceUSD": 203.61, "beta": 0.94, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "XOM", "company": "Exxon Mobil", "sector": "Energy", "yearsIncreasing": 45, "currentYield": 2.72, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.57, "forwardPe": 21.77, "marketCapB": 630.06, "priceUSD": 151.21, "beta": 0.35, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ATO", "company": "Atmos Energy", "sector": "Utilities", "yearsIncreasing": 44, "currentYield": 2.16, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 24.07, "forwardPe": 22.04, "marketCapB": 30.61, "priceUSD": 185.04, "beta": 0.7, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "AFL", "company": "Aflac", "sector": "Financials", "yearsIncreasing": 42, "currentYield": 2.19, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 16.32, "forwardPe": 15.12, "marketCapB": 57.47, "priceUSD": 111.29, "beta": 0.65, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ECL", "company": "Ecolab", "sector": "Materials", "yearsIncreasing": 40, "currentYield": 1.03, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 38.83, "forwardPe": 33.19, "marketCapB": 79.71, "priceUSD": 282.69, "beta": 0.98, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "TROW", "company": "T. Rowe Price", "sector": "Financials", "yearsIncreasing": 40, "currentYield": 5.75, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 9.78, "forwardPe": 8.98, "marketCapB": 19.71, "priceUSD": 90.4, "beta": 1.55, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CVX", "company": "Chevron", "sector": "Energy", "yearsIncreasing": 39, "currentYield": 3.75, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 28.65, "forwardPe": 27.85, "marketCapB": 379.0, "priceUSD": 189.94, "beta": 0.66, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "MKC", "company": "McCormick & Company", "sector": "Consumer Staples", "yearsIncreasing": 39, "currentYield": 2.96, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 22.13, "forwardPe": 20.92, "marketCapB": 17.41, "priceUSD": 64.85, "beta": 0.57, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ERIE", "company": "Erie Indemnity", "sector": "Financials", "yearsIncreasing": 36, "currentYield": 2.25, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 24.31, "forwardPe": 19.23, "marketCapB": 13.59, "priceUSD": 259.85, "beta": 0.41, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "JKHY", "company": "Jack Henry & Associates", "sector": "Information Technology", "yearsIncreasing": 36, "currentYield": 1.42, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 24.66, "forwardPe": 26.18, "marketCapB": 12.4, "priceUSD": 171.83, "beta": 0.73, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "GD", "company": "General Dynamics", "sector": "Industrials", "yearsIncreasing": 35, "currentYield": 1.65, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 23.53, "forwardPe": 22.27, "marketCapB": 98.14, "priceUSD": 363.49, "beta": 0.37, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CB", "company": "Chubb Limited", "sector": "Financials", "yearsIncreasing": 34, "currentYield": 1.18, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 12.77, "forwardPe": 12.25, "marketCapB": 127.97, "priceUSD": 328.0, "beta": 0.49, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "LIN", "company": "Linde", "sector": "Materials", "yearsIncreasing": 34, "currentYield": 1.24, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 33.18, "forwardPe": 27.18, "marketCapB": 224.63, "priceUSD": 484.74, "beta": 0.8, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ROP", "company": "Roper Technologies", "sector": "Information Technology", "yearsIncreasing": 34, "currentYield": 0.99, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 25.88, "forwardPe": 17.12, "marketCapB": 37.83, "priceUSD": 367.5, "beta": 0.93, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "AOS", "company": "A. O. Smith", "sector": "Industrials", "yearsIncreasing": 33, "currentYield": 2.03, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 18.44, "forwardPe": 17.67, "marketCapB": 9.82, "priceUSD": 71.01, "beta": 1.3, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "BRO", "company": "Brown & Brown", "sector": "Financials", "yearsIncreasing": 33, "currentYield": 0.9, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 23.26, "forwardPe": 16.23, "marketCapB": 25.02, "priceUSD": 73.5, "beta": 0.8, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CAT", "company": "Caterpillar", "sector": "Industrials", "yearsIncreasing": 33, "currentYield": 0.89, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 36.2, "forwardPe": 29.79, "marketCapB": 316.81, "priceUSD": 680.9, "beta": 1.53, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "WST", "company": "West Pharmaceutical Services", "sector": "Health Care", "yearsIncreasing": 33, "currentYield": 0.36, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 36.21, "forwardPe": 30.69, "marketCapB": 17.71, "priceUSD": 245.86, "beta": 1.18, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ALB", "company": "Albemarle Corporation", "sector": "Materials", "yearsIncreasing": 31, "currentYield": 1.0, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 20.79, "forwardPe": 20.79, "marketCapB": 19.13, "priceUSD": 162.29, "beta": 1.48, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "EXPD", "company": "Expeditors International", "sector": "Industrials", "yearsIncreasing": 31, "currentYield": 1.05, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 24.68, "forwardPe": 24.47, "marketCapB": 19.61, "priceUSD": 146.86, "beta": 1.11, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CHD", "company": "Church & Dwight", "sector": "Consumer Staples", "yearsIncreasing": 30, "currentYield": 1.22, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 33.34, "forwardPe": 26.71, "marketCapB": 23.84, "priceUSD": 100.7, "beta": 0.43, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "IBM", "company": "IBM", "sector": "Information Technology", "yearsIncreasing": 30, "currentYield": 2.6, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 23.24, "forwardPe": 20.89, "marketCapB": 242.81, "priceUSD": 258.85, "beta": 0.71, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "NEE", "company": "NextEra Energy", "sector": "Utilities", "yearsIncreasing": 30, "currentYield": 2.74, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 27.58, "forwardPe": 22.66, "marketCapB": 189.64, "priceUSD": 91.02, "beta": 0.75, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "SJM", "company": "J.M. Smucker", "sector": "Consumer Staples", "yearsIncreasing": 30, "currentYield": 3.96, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 10.94, "forwardPe": 10.94, "marketCapB": 11.86, "priceUSD": 111.21, "beta": 0.18, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "CHRW", "company": "C.H. Robinson Worldwide", "sector": "Industrials", "yearsIncreasing": 28, "currentYield": 1.4, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 37.19, "forwardPe": 29.7, "marketCapB": 21.31, "priceUSD": 179.64, "beta": 0.9, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "FAST", "company": "Fastenal", "sector": "Industrials", "yearsIncreasing": 27, "currentYield": 2.07, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 42.62, "forwardPe": 37.99, "marketCapB": 53.35, "priceUSD": 46.46, "beta": 0.86, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "FDS", "company": "FactSet Research Systems", "sector": "Financials", "yearsIncreasing": 27, "currentYield": 1.95, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 14.37, "forwardPe": 12.69, "marketCapB": 8.38, "priceUSD": 225.87, "beta": 0.75, "totalReturn5yr": null, "latestIncreasePct": null}, {"ticker": "ES", "company": "Eversource Energy", "sector": "Utilities", "yearsIncreasing": 26, "currentYield": 4.23, "payoutRatio": null, "divGrowth5yr": null, "divGrowth10yr": null, "peRatio": 16.32, "forwardPe": 15.23, "marketCapB": 27.95, "priceUSD": 74.44, "beta": 0.75, "totalReturn5yr": null, "latestIncreasePct": null}]};
+
+/* ─── Chart.js instances ─── */
+let calcBarChartInstance = null;
+let growthLineChartInstance = null;
+let sectorYieldChartInstance = null;
+
+/* ─── Helpers ─── */
+function usd(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+/* ─── Stats Grid (dynamic) ─── */
+function buildStatsGrid() {
+    const sorted = [...DATA.results].sort((a, b) => b.currentYield - a.currentYield);
+    const longest = [...DATA.results].sort((a, b) => b.yearsIncreasing - a.yearsIncreasing)[0];
+    document.getElementById('statTotal').textContent = DATA.totalCompanies;
+    document.getElementById('statAvgYield').textContent = DATA.averageYield + '%';
+    document.getElementById('statHighYield').innerHTML = sorted[0].ticker + ' <span style="font-size:0.7em;color:#48bb78">' + sorted[0].currentYield.toFixed(2) + '%</span>';
+    document.getElementById('statLongestStreak').innerHTML = longest.ticker + ' <span style="font-size:0.7em;color:#8a9ab0">' + longest.yearsIncreasing + ' yr</span>';
+}
+
+/* ─── Key Insights ─── */
+function buildInsights() {
+    const highYieldStocks = DATA.results.filter(r => r.currentYield >= 4).sort((a,b) => b.currentYield - a.currentYield);
+    const avgStreak = (DATA.results.reduce((s,r) => s + r.yearsIncreasing, 0) / DATA.results.length).toFixed(0);
+    // sector counts
+    const sectorCounts = {};
+    DATA.results.forEach(r => { sectorCounts[r.sector] = (sectorCounts[r.sector]||0) + 1; });
+    const topSector = Object.entries(sectorCounts).sort((a,b) => b[1]-a[1])[0];
+    // equal-weight income on 10k
+    const avgYield = DATA.results.reduce((s,r) => s + r.currentYield, 0) / DATA.results.length;
+    const equalIncome = (10000 * avgYield / 100).toFixed(2);
+
+    const insights = [
+        `<strong>${highYieldStocks.length}</strong> aristocrats yield more than 4%, led by <strong>${highYieldStocks[0].ticker}</strong> at ${highYieldStocks[0].currentYield.toFixed(2)}%.`,
+        `The average dividend streak is <strong>${avgStreak} years</strong> — that's decades of consecutive increases through recessions, wars, and pandemics.`,
+        `<strong>${topSector[0]}</strong> dominates with <strong>${topSector[1]}</strong> aristocrats — the most of any GICS sector.`,
+        `Investing <strong>$10,000</strong> equally in all 67 would generate <strong>${usd(parseFloat(equalIncome))}</strong>/year in dividends at current yields.`,
+        `Yields range from <strong>${DATA.lowestYield.yield}%</strong> (${DATA.lowestYield.ticker}) to <strong>${DATA.highestYield.yield}%</strong> (${DATA.highestYield.ticker}) — a 17× spread.`
+    ];
+
+    const icons = ['📈','⏳','🏭','💵','📊'];
+    document.getElementById('insightsGrid').innerHTML = insights.map((t,i) => `
+        <div class="insight-card"><span class="insight-icon">${icons[i]}</span><div class="insight-text">${t}</div></div>
+    `).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ★ CALCULATOR LOGIC                                             */
+/* ═══════════════════════════════════════════════════════════════ */
+function populateCalcDropdown() {
+    const sel = document.getElementById('calcStock');
+    const sorted = [...DATA.results].sort((a,b) => a.ticker.localeCompare(b.ticker));
+    sorted.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.ticker;
+        opt.textContent = r.ticker + ' — ' + r.company + ' (' + r.currentYield.toFixed(2) + '%)';
+        sel.appendChild(opt);
+    });
+}
+
+function getSelectedYieldAndStreak() {
+    const val = document.getElementById('calcStock').value;
+    if (val === '__ALL__') {
+        const avg = DATA.results.reduce((s,r) => s + r.currentYield, 0) / DATA.results.length;
+        const avgStreak = Math.round(DATA.results.reduce((s,r) => s + r.yearsIncreasing, 0) / DATA.results.length);
+        return { yield: avg, streak: avgStreak, label: 'All 67 (equal-weight)' };
+    }
+    const stock = DATA.results.find(r => r.ticker === val);
+    return { yield: stock.currentYield, streak: stock.yearsIncreasing, label: stock.ticker };
+}
+
+function updateCalculator() {
+    const amount = parseFloat(document.getElementById('calcAmount').value) || 10000;
+    const growthRate = parseFloat(document.getElementById('calcGrowth').value);
+    const info = getSelectedYieldAndStreak();
+    const yieldPct = info.yield;
+    const annualIncome = amount * yieldPct / 100;
+    const monthlyIncome = annualIncome / 12;
+
+    document.getElementById('calcAnnual').textContent = usd(annualIncome);
+    document.getElementById('calcMonthly').textContent = usd(monthlyIncome);
+    document.getElementById('calcYieldPct').textContent = yieldPct.toFixed(2) + '%';
+    document.getElementById('calcStreak').textContent = info.streak + ' years';
+
+    // Projected income
+    const yr5 = annualIncome * Math.pow(1 + growthRate, 5);
+    const yr10 = annualIncome * Math.pow(1 + growthRate, 10);
+    document.getElementById('calcYear5').textContent = usd(yr5);
+    document.getElementById('calcYear10').textContent = usd(yr10);
+
+    // Bar chart — projected income each year
+    const labels = [];
+    const values = [];
+    for (let y = 0; y <= 10; y++) {
+        labels.push(y === 0 ? 'Now' : 'Yr ' + y);
+        values.push(+(annualIncome * Math.pow(1 + growthRate, y)).toFixed(2));
+    }
+
+    const ctx = document.getElementById('calcBarChart').getContext('2d');
+    if (calcBarChartInstance) calcBarChartInstance.destroy();
+    calcBarChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Projected Annual Income',
+                data: values,
+                backgroundColor: values.map((_,i) => i === 0 ? '#4a8fe7' : 'rgba(74,143,231,0.' + (40 + i*5) + ')'),
+                borderRadius: 4,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: { label: ctx => usd(ctx.parsed.y) }
+                }
+            },
+            scales: {
+                x: { ticks: { color: '#8a9ab0', font: { size: 11 } }, grid: { display: false } },
+                y: {
+                    ticks: { color: '#5a6a80', font: { size: 11 }, callback: v => '$' + v.toLocaleString() },
+                    grid: { color: 'rgba(255,255,255,0.04)' }
+                }
+            }
+        }
+    });
+
+    // Also update the growth projection line chart
+    updateGrowthLineChart(annualIncome);
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ★ GROWTH PROJECTION LINE CHART (3 scenarios)                   */
+/* ═══════════════════════════════════════════════════════════════ */
+function updateGrowthLineChart(baseIncome) {
+    if (baseIncome === undefined) {
+        const amount = parseFloat(document.getElementById('calcAmount').value) || 10000;
+        const info = getSelectedYieldAndStreak();
+        baseIncome = amount * info.yield / 100;
+    }
+    const rates = [0.05, 0.07, 0.10];
+    const labels = Array.from({length:11}, (_,i) => i === 0 ? 'Now' : 'Yr ' + i);
+    const datasets = [
+        { label: '5% Growth (Conservative)', borderColor: '#48bb78', backgroundColor: 'rgba(72,187,120,0.08)', data: [] },
+        { label: '7% Growth (Moderate)', borderColor: '#4a8fe7', backgroundColor: 'rgba(74,143,231,0.08)', data: [] },
+        { label: '10% Growth (Aggressive)', borderColor: '#f6ad55', backgroundColor: 'rgba(246,173,85,0.08)', data: [] },
+    ];
+    rates.forEach((r,ri) => {
+        for (let y = 0; y <= 10; y++) datasets[ri].data.push(+(baseIncome * Math.pow(1+r,y)).toFixed(2));
+    });
+    datasets.forEach(d => { d.fill = true; d.tension = 0.3; d.pointRadius = 3; d.pointHoverRadius = 5; d.borderWidth = 2; });
+
+    const ctx = document.getElementById('growthLineChart').getContext('2d');
+    if (growthLineChartInstance) growthLineChartInstance.destroy();
+    growthLineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { labels: { color: '#8a9ab0', font: { size: 12 }, usePointStyle: true, pointStyle: 'circle' } },
+                tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + usd(ctx.parsed.y) } }
+            },
+            scales: {
+                x: { ticks: { color: '#8a9ab0' }, grid: { display: false } },
+                y: { ticks: { color: '#5a6a80', callback: v => '$' + v.toLocaleString() }, grid: { color: 'rgba(255,255,255,0.04)' } }
+            }
+        }
+    });
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ★ SECTOR YIELD COMPARISON — horizontal bar chart               */
+/* ═══════════════════════════════════════════════════════════════ */
+function buildSectorYieldChart() {
+    const sectorYields = {};
+    DATA.results.forEach(r => {
+        if (!sectorYields[r.sector]) sectorYields[r.sector] = [];
+        sectorYields[r.sector].push(r.currentYield);
+    });
+    const sectorAvg = Object.entries(sectorYields).map(([s,ys]) => ({
+        sector: s,
+        avg: ys.reduce((a,b) => a+b,0) / ys.length,
+        count: ys.length
+    })).sort((a,b) => b.avg - a.avg);
+
+    const colors = ['#4a8fe7','#48bb78','#f6ad55','#fc8181','#9f7aea','#ed64a6','#38b2ac','#ecc94b','#667eea','#e53e3e'];
+
+    const ctx = document.getElementById('sectorYieldChart').getContext('2d');
+    if (sectorYieldChartInstance) sectorYieldChartInstance.destroy();
+    sectorYieldChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: sectorAvg.map(s => s.sector),
+            datasets: [{
+                label: 'Avg Yield %',
+                data: sectorAvg.map(s => +s.avg.toFixed(2)),
+                backgroundColor: sectorAvg.map((_,i) => colors[i % colors.length]),
+                borderRadius: 4,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.parsed.x.toFixed(2) + '% avg yield (' + sectorAvg[ctx.dataIndex].count + ' companies)'
+                    }
+                }
+            },
+            scales: {
+                x: { ticks: { color: '#5a6a80', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                y: { ticks: { color: '#c8d0de', font: { size: 12 } }, grid: { display: false } }
+            }
+        }
+    });
+}
+
+/* ─── Calculator event listeners ─── */
+document.getElementById('calcAmount').addEventListener('input', updateCalculator);
+document.getElementById('calcStock').addEventListener('change', updateCalculator);
+document.getElementById('calcGrowth').addEventListener('change', updateCalculator);
 
 // Populate yield chart (top 20)
 function buildYieldChart() {
@@ -499,6 +827,11 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 });
 
 // Init
+buildStatsGrid();
+buildInsights();
+populateCalcDropdown();
+updateCalculator();
+buildSectorYieldChart();
 buildYieldChart();
 buildFindings();
 buildSectorGrid();
@@ -560,8 +893,39 @@ h1 { font-size: 2.4rem; font-weight: 900; color: #fff; letter-spacing: -1px; mar
 /* Stats */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 40px auto; max-width: 900px; }
 .stat-card { background: linear-gradient(135deg, #0a1020 0%, #0d1428 100%); border: 1px solid #152040; border-radius: 14px; padding: 24px 16px; text-align: center; }
-.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 700; color: #4a8fe7; line-height: 1.1; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; font-weight: 700; color: #4a8fe7; line-height: 1.2; }
 .stat-label { font-size: 0.75rem; color: #5a6a80; margin-top: 6px; }
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ★ CALCULATOR STYLES                                            */
+/* ═══════════════════════════════════════════════════════════════ */
+.calculator-section { background: linear-gradient(135deg, #0a1628 0%, #0d1020 100%); border: 2px solid #1a3060; border-radius: 20px; padding: 36px 32px; position: relative; overflow: hidden; }
+.calculator-section::before { content: ''; position: absolute; top: -80px; right: -80px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(74,143,231,0.12) 0%, transparent 70%); pointer-events: none; }
+.calc-wrapper { position: relative; z-index: 1; }
+.calc-inputs { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 16px; margin-bottom: 28px; }
+.calc-field label { display: block; font-size: 0.78rem; color: #8a9ab0; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.calc-field input, .calc-field select { width: 100%; background: #060a12; border: 1px solid #1a3060; color: #e0e8f0; padding: 12px 14px; border-radius: 10px; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+.calc-field input:focus, .calc-field select:focus { outline: none; border-color: #4a8fe7; box-shadow: 0 0 0 3px rgba(74,143,231,0.15); }
+
+.calc-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; margin-bottom: 28px; background: rgba(0,0,0,0.2); border-radius: 14px; padding: 20px 24px; }
+.calc-result-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
+.calc-result-label { font-size: 0.85rem; color: #8a9ab0; }
+.calc-result-value { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 700; color: #48bb78; }
+.calc-result-row.highlight .calc-result-value { color: #f6ad55; font-size: 1.15rem; }
+.calc-result-divider { grid-column: 1/-1; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0; }
+
+.calc-chart-wrap { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 20px 20px 12px; }
+.calc-chart-title { font-size: 0.88rem; color: #8a9ab0; font-weight: 600; margin-bottom: 12px; text-align: center; }
+
+/* Chart canvas wrapper */
+.chart-canvas-wrap { background: #0a1020; border: 1px solid #152040; border-radius: 14px; padding: 24px; min-height: 320px; }
+
+/* Key Insights */
+.insights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-bottom: 40px; }
+.insight-card { background: linear-gradient(135deg, #0a1020, #0d1428); border: 1px solid #152040; border-radius: 12px; padding: 18px; display: flex; gap: 14px; align-items: flex-start; }
+.insight-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; }
+.insight-text { font-size: 0.85rem; color: #b0bcd0; line-height: 1.55; }
+.insight-text strong { color: #4a8fe7; }
 
 /* Sections */
 .section { margin: 50px auto; }
@@ -666,10 +1030,14 @@ tr:hover { background: rgba(74,143,231,0.04); }
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
     .findings { grid-template-columns: 1fr; }
     h1 { font-size: 1.8rem; }
-    .stat-value { font-size: 1.5rem; }
+    .stat-value { font-size: 1.3rem; }
     .sector-grid { grid-template-columns: repeat(2, 1fr); }
     .controls { flex-direction: column; }
     .search-input { width: 100%; }
     .result-count { margin-left: 0; }
+    .calc-inputs { grid-template-columns: 1fr; }
+    .calc-results { grid-template-columns: 1fr; }
+    .calculator-section { padding: 24px 16px; }
+    .insights-grid { grid-template-columns: 1fr; }
 }
   </style>
